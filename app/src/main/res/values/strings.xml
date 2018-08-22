@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">SCP</string>
+    <string name="title_series">SCP系列</string>
+    <string name="title_library">SCP图书馆</string>
+    <string name="title_story">基金会故事</string>
+    <string name="title_scp_cn">SCP-CN</string>
+    <string name="title_scp_int">SCP-INT</string>
+    <string name="title_home">首页</string>
+    <string name="title_latest">最近更新</string>
+    <string name="other">其他</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/thousand1"
+        android:icon="@color/colorPrimary"
+        android:title="001-999"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/thousand2"
+        android:title="1000-1999"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/thousand3"
+        android:title="2000-2999"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/thousand4"
+        android:title="3000-3999"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/thousand5"
+        android:title="4000-4999"
+        app:showAsAction="never"/>
+</menu>

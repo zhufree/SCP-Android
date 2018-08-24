@@ -2,10 +2,14 @@ package info.free.scp
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_web.*
+import android.widget.Toast
+import android.webkit.JavascriptInterface
+import android.widget.Toast.LENGTH_SHORT
 
 
 class WebActivity : AppCompatActivity() {

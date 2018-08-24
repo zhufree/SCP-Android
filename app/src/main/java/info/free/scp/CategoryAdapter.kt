@@ -12,32 +12,19 @@ import android.widget.AdapterView
  *
  */
 
-class CategoryAdapter(val dataList: MutableList<SimpleSCPModel>, val mContext: Context) : RecyclerView.Adapter<CategoryHolder>() {
-    private var mOnItemClickListener: OnItemClickListener? = null
+class CategoryAdapter(mContext: Context, dataList: MutableList<SimpleSCPModel>)
+    : BaseAdapter<CategoryHolder, SimpleSCPModel>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)
 //        val newHolder = CategoryHolder(view)
+        view?.setOnLongClickListener(this)
+        view?.setOnClickListener(this)
         return CategoryHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return dataList.size
-    }
-
     override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
-        if (mOnItemClickListener != null) {
-            holder.itemView.setOnClickListener { mOnItemClickListener?.onItemClick(holder, position) }
-        }
+        holder.itemView.tag = position
         holder.setData(dataList[position])
-    }
-
-    fun setOnItemClickListener(l: OnItemClickListener) {
-        this.mOnItemClickListener = l
-    }
-
-
-    interface OnItemClickListener {
-        fun onItemClick(holder: CategoryHolder, position: Int)
     }
 }

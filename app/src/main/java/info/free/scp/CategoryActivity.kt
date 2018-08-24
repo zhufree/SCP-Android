@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
+import android.view.View
 import kotlinx.android.synthetic.main.activity_category.*
 
 class CategoryActivity : AppCompatActivity() {
@@ -22,18 +24,18 @@ class CategoryActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
-        mAdapter = CategoryAdapter(scpList, this)
+        mAdapter = CategoryAdapter(this, scpList)
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rlScpList.layoutManager = lm
         rlScpList.adapter = mAdapter
-        mAdapter?.setOnItemClickListener(object: CategoryAdapter.OnItemClickListener {
-            override fun onItemClick(holder: CategoryHolder, position: Int) {
+        mAdapter?.mOnItemClickListener = object: BaseAdapter.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
                 val intent = Intent()
                 intent.putExtra("link", scpList[position].link)
                 intent.setClass(this@CategoryActivity, WebActivity::class.java)
                 startActivity(intent)
             }
-        })
+        }
         createRangeList(1, 999)
 
         toolbar.inflateMenu(R.menu.series_category_menu) //设置右上角的填充菜单
@@ -58,6 +60,7 @@ class CategoryActivity : AppCompatActivity() {
             true
 
         }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

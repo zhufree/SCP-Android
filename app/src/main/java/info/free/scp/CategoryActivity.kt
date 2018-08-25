@@ -3,16 +3,16 @@ package info.free.scp
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.view.menu.MenuBuilder
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
-import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.View
+import info.free.scp.bean.ScpModel
+import info.free.scp.service.HttpManager
 import kotlinx.android.synthetic.main.activity_category.*
 
 class CategoryActivity : AppCompatActivity() {
-    private val scpList: MutableList<SimpleSCPModel> = emptyList<SimpleSCPModel>().toMutableList()
+    private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var mAdapter: CategoryAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +42,7 @@ class CategoryActivity : AppCompatActivity() {
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.thousand1 -> {
-                    createRangeList(1, 999)
+                    createRangeList(1, 300)
                 }
                 R.id.thousand2 -> {
                     createRangeList(1000, 1999)
@@ -70,15 +70,9 @@ class CategoryActivity : AppCompatActivity() {
 
     private fun createRangeList(start: Int, end: Int) {
         scpList.clear()
-        for (i in start .. end) {
-            if (i < 10) {
-                scpList.add(SimpleSCPModel("SCP-00$i", "/scp-00$i"))
-            } else if (i < 100) {
-                scpList.add(SimpleSCPModel("SCP-0$i", "/scp-0$i"))
-            } else {
-                scpList.add(SimpleSCPModel("SCP-$i", "/scp-$i"))
-            }
+        HttpManager.instance.getAllScpSeriesModel(start-1, end - start) {
+            scpList.addAll(it)
+            mAdapter?.notifyDataSetChanged()
         }
-        mAdapter?.notifyDataSetChanged()
     }
 }

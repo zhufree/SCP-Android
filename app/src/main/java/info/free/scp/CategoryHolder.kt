@@ -2,6 +2,7 @@ package info.free.scp
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import info.free.scp.bean.ScpModel
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**
@@ -11,7 +12,7 @@ import kotlinx.android.synthetic.main.item_category.view.*
 
 class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
 
-    fun setData(model: SimpleSCPModel) {
+    fun setData(model: ScpModel) {
         itemView.tvScpTitle.text = model.title
     }
 }

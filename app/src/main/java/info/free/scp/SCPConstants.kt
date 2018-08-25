@@ -11,4 +11,6 @@ object SCPConstants {
     const val CATEGORY_SCP_STORY = 4
     const val CATEGORY_SCP_LIBRARY = 5
     const val CATEGORY_SCP_OTHERS = 6
+
+    const val BMOB_API_URL = "https://api.bmob.cn/"
 }

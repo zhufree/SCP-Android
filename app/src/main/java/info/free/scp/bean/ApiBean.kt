@@ -1,4 +1,6 @@
-package info.zhufree.freelove67.bean
+package info.free.scp.bean
+
+import kotlinx.serialization.Serializable
 
 /**
  * Created by zhufree on 2018/5/23.
@@ -6,6 +8,7 @@ package info.zhufree.freelove67.bean
  */
 
 class ApiBean {
+    @Serializable
     data class ApiListResponse<T> (val results: List<T>)
     data class AddResponse (val createdAt: String, val objectId: String)
     data class UploadResponse(val filename: String, val url: String, val cdn: String)

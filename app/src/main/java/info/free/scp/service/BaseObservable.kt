@@ -1,4 +1,4 @@
-package info.zhufree.freelove67.service
+package info.free.scp.service
 
 import android.util.Log
 import io.reactivex.Observer

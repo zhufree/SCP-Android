@@ -1,8 +1,8 @@
-package info.zhufree.freelove67.service
+package info.free.scp.service
 
 import info.free.scp.PrivateConstants
+import info.free.scp.bean.ApiBean
 import info.free.scp.bean.ScpModel
-import info.zhufree.freelove67.bean.ApiBean
 import io.reactivex.Observable
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -14,13 +14,16 @@ import retrofit2.http.*
 
 interface ApiService {
     // 获取全部数据
+    // --data-urlencode 'limit=200' \
+    // --data-urlencode 'skip=400' \
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesModel")
-    fun getAllScpSeriesModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getAllScpSeriesModel(@Query("limit") limit: Int, @Query("skip") skip: Int)
+            : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
             "Content-Type:application/json",

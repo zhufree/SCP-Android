@@ -1,19 +1,17 @@
 package info.free.scp
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
+import info.free.scp.bean.ScpModel
 
 /**
  * Created by zhufree on 2018/8/22.
  *
  */
 
-class CategoryAdapter(mContext: Context, dataList: MutableList<SimpleSCPModel>)
-    : BaseAdapter<CategoryHolder, SimpleSCPModel>(mContext, dataList) {
+class CategoryAdapter(mContext: Context, dataList: MutableList<ScpModel>)
+    : BaseAdapter<CategoryHolder, ScpModel>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)

@@ -12,3 +12,21 @@ TODO 8.23
 - [x] 整理scp网站的内容结构，为之后划分板块做准备 （PNG已上传git)
 - [x] toolbar展开菜单theme修改
 - [x] 整理笔记
+
+
+# v0.0.2
+发现原来scp系列也还是有标题，看来需要重抓了
+数据来自爬虫抓取，存储在bmob平台，自己的api和key是私下存储的在PrivateConstants这个类里
+需要尝试这个开源项目的可以自己创建一个bmob账号然后把数据（后续会把爬虫和数据都整理一份上传）传到后台，填上自己的key：
+```
+object PrivateConstants {
+    const val APP_ID = "xxx"
+    const val API_KEY = "xxx"
+}
+```
+
+TODO
+- [ ] 搭建网络请求框架
+- [ ] 完成基本数据库存储功能
+- [ ] 重新抓取scp系列，抓取标题
+- [ ] 考虑抓取正文html内容

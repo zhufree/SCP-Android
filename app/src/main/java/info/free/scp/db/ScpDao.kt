@@ -165,9 +165,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      */
     private fun packScp(model: ScpModel): ContentValues {
         val cv = ContentValues()
-        if (model.sId.isNotEmpty()) {
-            cv.put(ScpTable.ID, model.sId)
-        }
         if (model.link.isNotEmpty()) {
             cv.put(ScpTable.LINK, model.link)
         }
@@ -203,8 +200,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * cursor转model取出
      */
     private fun extractScp(cursor: Cursor): ScpModel {
-        return ScpModel(getCursorString(cursor, ScpTable.ID),
-                getCursorString(cursor, ScpTable.LINK),
+        return ScpModel("", getCursorString(cursor, ScpTable.LINK),
                 getCursorString(cursor, ScpTable.TITLE),
                 getCursorString(cursor, ScpTable.DETAIL_HTML),
                 getCursorString(cursor, ScpTable.SUB_TEXT),

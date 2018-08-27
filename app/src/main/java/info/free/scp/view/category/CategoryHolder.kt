@@ -2,7 +2,6 @@ package info.free.scp.view.category
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import info.free.scp.bean.ScpModel
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**
@@ -12,7 +11,7 @@ import kotlinx.android.synthetic.main.item_category.view.*
 
 class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
 
-    fun setData(model: ScpModel) {
-        itemView.tvScpTitle.text = model.title
+    fun setData(start: Int) {
+        itemView.tvScpTitle.text = if (start == 0) "${start+1}~${start+499}" else "$start~${start+499}"
     }
 }

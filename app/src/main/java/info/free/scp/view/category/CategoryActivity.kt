@@ -16,9 +16,12 @@ import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
 
 class CategoryActivity : AppCompatActivity() {
+    private val categoryList: MutableList<Int> = arrayOf(0, 500, 1000, 1500, 2000, 2500, 3000, 3500,
+            4000, 4500).toMutableList()
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null
     private var scpAdapter: ScpAdapter? = null
+    private var type = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,37 +32,44 @@ class CategoryActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
-        categoryAdapter = CategoryAdapter(this, scpList)
+        categoryAdapter = CategoryAdapter(this, categoryList)
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rlScpList.layoutManager = lm
         rlScpList.adapter = categoryAdapter
         categoryAdapter?.mOnItemClickListener = object: BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                val intent = Intent()
-                intent.putExtra("link", scpList[position].link)
-                intent.setClass(this@CategoryActivity, WebActivity::class.java)
-                startActivity(intent)
+                type = 1;
+                if (scpAdapter == null) {
+                    scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
+                    scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+                        override fun onItemClick(view: View, position: Int) {
+                            val intent = Intent()
+                            intent.putExtra("link", scpList[position].link)
+                            intent.setClass(this@CategoryActivity, WebActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
+                    rlScpList.adapter = scpAdapter
+                }
+                createRangeList(categoryList[position])
             }
         }
-        createRangeList(1, 999)
+
 
         toolbar.inflateMenu(R.menu.series_category_menu) //设置右上角的填充菜单
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
-                R.id.thousand1 -> {
-                    createRangeList(1, 300)
-                }
-                R.id.thousand2 -> {
-                    createRangeList(1000, 1999)
-                }
-                R.id.thousand3 -> {
-                    createRangeList(2000, 2999)
-                }
-                R.id.thousand4 -> {
-                    createRangeList(3000, 3999)
-                }
-                R.id.thousand5 -> {
-                    createRangeList(4000, 4999)
+                R.id.reverse -> {
+                    when (type) {
+                        0 -> {
+                            categoryList.reverse()
+                            categoryAdapter?.notifyDataSetChanged()
+                        }
+                        1-> {
+                            scpList.reverse()
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
                 }
             }
             true
@@ -72,14 +82,14 @@ class CategoryActivity : AppCompatActivity() {
         return true
     }
 
-    private fun createRangeList(start: Int, end: Int) {
+    private fun createRangeList(start: Int) {
         scpList.clear()
-        HttpManager.instance.getAllScpSeriesModel(start-1, end - start) {
+        HttpManager.instance.getAllScpSeriesModel(start, if (start == 0) 499 else 500) {
             scpList.addAll(it)
             for (scp in it) {
                 ScpDao.getInstance().replaceScpModel(scp)
             }
-            categoryAdapter?.notifyDataSetChanged()
+            scpAdapter?.notifyDataSetChanged()
         }
     }
 }

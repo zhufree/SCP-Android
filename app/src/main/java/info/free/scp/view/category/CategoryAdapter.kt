@@ -4,7 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.bean.ScpModel
 import info.free.scp.view.base.BaseAdapter
 
 /**
@@ -12,8 +11,8 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
-class CategoryAdapter(mContext: Context, dataList: MutableList<ScpModel>)
-    : BaseAdapter<CategoryHolder, ScpModel>(mContext, dataList) {
+class CategoryAdapter(mContext: Context, dataList: MutableList<Int>)
+    : BaseAdapter<CategoryHolder, Int>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)

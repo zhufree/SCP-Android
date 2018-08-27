@@ -1,4 +1,4 @@
-package info.free.scp
+package info.free.scp.view.category
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

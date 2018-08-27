@@ -1,16 +1,18 @@
-package info.free.scp
+package info.free.scp.view.category
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import info.free.scp.R
 import info.free.scp.bean.ScpModel
+import info.free.scp.view.base.BaseAdapter
 
 /**
  * Created by zhufree on 2018/8/22.
  *
  */
 
-class CategoryAdapter(mContext: Context, dataList: MutableList<ScpModel>)
+class ScpAdapter(mContext: Context, dataList: MutableList<ScpModel>)
     : BaseAdapter<CategoryHolder, ScpModel>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {

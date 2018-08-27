@@ -1,4 +1,4 @@
-package info.free.scp
+package info.free.scp.view.category
 
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -7,13 +7,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
 import android.view.Menu
 import android.view.View
+import info.free.scp.R
 import info.free.scp.bean.ScpModel
+import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
+import info.free.scp.view.WebActivity
+import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
 
 class CategoryActivity : AppCompatActivity() {
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    private var mAdapter: CategoryAdapter? = null
+    private var categoryAdapter: CategoryAdapter? = null
+    private var scpAdapter: ScpAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,11 +29,11 @@ class CategoryActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
-        mAdapter = CategoryAdapter(this, scpList)
+        categoryAdapter = CategoryAdapter(this, scpList)
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rlScpList.layoutManager = lm
-        rlScpList.adapter = mAdapter
-        mAdapter?.mOnItemClickListener = object: BaseAdapter.OnItemClickListener {
+        rlScpList.adapter = categoryAdapter
+        categoryAdapter?.mOnItemClickListener = object: BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent()
                 intent.putExtra("link", scpList[position].link)
@@ -58,7 +63,6 @@ class CategoryActivity : AppCompatActivity() {
                 }
             }
             true
-
         }
 
     }
@@ -72,7 +76,10 @@ class CategoryActivity : AppCompatActivity() {
         scpList.clear()
         HttpManager.instance.getAllScpSeriesModel(start-1, end - start) {
             scpList.addAll(it)
-            mAdapter?.notifyDataSetChanged()
+            for (scp in it) {
+                ScpDao.getInstance().replaceScpModel(scp)
+            }
+            categoryAdapter?.notifyDataSetChanged()
         }
     }
 }

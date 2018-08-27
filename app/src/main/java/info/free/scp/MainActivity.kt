@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import info.free.scp.SCPConstants.CATEGORY_SCP_SERIES
+import info.free.scp.view.category.CategoryActivity
+import info.free.scp.view.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), HomeFragment.CategoryListener {

@@ -20,9 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CategoryActivity"
+        <activity android:name=".view.category.CategoryActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity android:name=".WebActivity"/>
+        <activity android:name=".view.WebActivity"/>
     </application>
 
 </manifest>

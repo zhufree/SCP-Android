@@ -13,4 +13,6 @@ import kotlinx.serialization.Serializable
 data class ScpModel(@SerialName("objectId") val sId: String, var link: String, var title: String,
                     @Optional var detailHtml: String = "", @Optional var subtext: String = "",
                     @Optional var snippet: String = "", @Optional var desc: String = "",
+                    @Optional var author: String = "", @Optional var createdTime: String = "",
+                    @Optional var updatedTime: String = "", @Optional var hasRead: Boolean = false,
                     val createdAt: String, val updatedAt: String)

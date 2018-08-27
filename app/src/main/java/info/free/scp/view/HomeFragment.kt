@@ -1,4 +1,4 @@
-package info.free.scp
+package info.free.scp.view
 
 
 import android.app.Fragment
@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import info.free.scp.R
 import info.free.scp.SCPConstants.CATEGORY_SCP_SERIES
 import kotlinx.android.synthetic.main.fragment_home.view.*
 

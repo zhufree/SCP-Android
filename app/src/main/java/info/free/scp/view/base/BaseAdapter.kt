@@ -18,7 +18,7 @@ abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any>(context: Context?
     : RecyclerView.Adapter<H>(),
         View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null
-    private var mOnItemLongClickListener: OnItemLongClickListener? = null
+    var mOnItemLongClickListener: OnItemLongClickListener? = null
     var mInflater: LayoutInflater? = LayoutInflater.from(context)
     var mContext: Context? = context
 
@@ -42,14 +42,6 @@ abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any>(context: Context?
     interface OnItemClickListener {
         fun onItemClick(view: View, position: Int)
     }
-
-    fun setOnItemLongClickListener(listener: OnItemLongClickListener) {
-        this.mOnItemLongClickListener = listener
-    }
-
-//    fun setOnItemClickListener(listener: OnItemClickListener) {
-//        this.mOnItemClickListener = listener
-//    }
 
     override fun getItemCount(): Int {
         return dataList.size

@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager.VERTICAL
 import android.view.Menu
 import android.view.View
 import info.free.scp.R
+import info.free.scp.SCPConstants.SERIES
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
@@ -16,12 +17,11 @@ import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
 
 class CategoryActivity : AppCompatActivity() {
-    private val categoryList: MutableList<Int> = arrayOf(0, 500, 1000, 1500, 2000, 2500, 3000, 3500,
-            4000, 4500).toMutableList()
+    private val categoryList: MutableList<Int> = emptyList<Int>().toMutableList()
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null
     private var scpAdapter: ScpAdapter? = null
-    private var type = 0
+    private var pageType = 0 //一级目录和二级目录
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,7 @@ class CategoryActivity : AppCompatActivity() {
         rlScpList.adapter = categoryAdapter
         categoryAdapter?.mOnItemClickListener = object: BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
-                type = 1;
+                pageType = 1
                 if (scpAdapter == null) {
                     scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
                     scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
@@ -60,7 +60,7 @@ class CategoryActivity : AppCompatActivity() {
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.reverse -> {
-                    when (type) {
+                    when (pageType) {
                         0 -> {
                             categoryList.reverse()
                             categoryAdapter?.notifyDataSetChanged()
@@ -75,6 +75,17 @@ class CategoryActivity : AppCompatActivity() {
             true
         }
 
+    }
+
+    private fun initData() {
+        val categoryType  = intent.getIntExtra("type", -1)
+        categoryList.clear()
+        when (categoryType) {
+            SERIES -> {
+                categoryList.addAll(arrayOf(0, 500, 1000, 1500, 2000, 2500, 3000, 3500,
+                4000, 4500).toMutableList())
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

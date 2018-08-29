@@ -1,0 +1,88 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.free.scp.view.home.LibraryFragment">
+
+    <TextView
+        android:id="@+id/tvScpLibrary"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:text="@string/title_library"
+        android:background="#eee"
+        app:layout_constraintBottom_toTopOf="@id/tvScpInt"
+        app:layout_constraintEnd_toStartOf="@id/tvScpStory"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvScpStory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_scp_story"
+        app:layout_constraintBottom_toTopOf="@+id/tvScpSettings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvScpLibrary"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvScpInt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_scp_int"
+        app:layout_constraintBottom_toTopOf="@+id/tvExiledLibrary"
+        app:layout_constraintEnd_toStartOf="@id/tvScpSettings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvScpLibrary" />
+
+
+    <TextView
+        android:id="@+id/tvScpSettings"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_scp_settings"
+        app:layout_constraintBottom_toTopOf="@+id/tvExiledLibrary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvScpInt"
+        app:layout_constraintTop_toBottomOf="@id/tvScpStory" />
+
+    <TextView
+        android:id="@+id/tvExiledLibrary"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="@string/title_exiled_library"
+        android:background="#eee"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvScpInt" />
+
+
+</android.support.constraint.ConstraintLayout>

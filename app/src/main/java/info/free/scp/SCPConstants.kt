@@ -5,12 +5,11 @@ package info.free.scp
  */
 
 object SCPConstants {
-    const val CATEGORY_SCP_SERIES = 1
-    const val CATEGORY_SCP_SERIES_CN = 2
-    const val CATEGORY_SCP_SERIES_INT = 3
-    const val CATEGORY_SCP_STORY = 4
-    const val CATEGORY_SCP_LIBRARY = 5
-    const val CATEGORY_SCP_OTHERS = 6
+    const val SERIES = 1
+    const val SERIES_CN = 2
+    const val SERIES_STORY = 3
+    const val SERIES_ARCHIVED = 4
+    const val SERIES_ABOUT = 5
 
     const val BMOB_API_URL = "https://api.bmob.cn/"
 }

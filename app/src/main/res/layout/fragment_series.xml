@@ -1,0 +1,88 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.free.scp.view.home.SeriesFragment">
+
+    <TextView
+        android:id="@+id/tvScpSeries"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center"
+        android:text="@string/title_series"
+        android:background="#eee"
+        app:layout_constraintBottom_toTopOf="@id/tvSeriesStory"
+        app:layout_constraintEnd_toStartOf="@id/tvSeriesCn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSeriesCn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_series_cn"
+        app:layout_constraintBottom_toTopOf="@+id/tvSeriesArchived"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvScpSeries"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSeriesStory"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="24dp"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_series_story"
+        app:layout_constraintBottom_toTopOf="@+id/tvSeriesAbout"
+        app:layout_constraintEnd_toStartOf="@id/tvSeriesArchived"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvScpSeries" />
+
+
+    <TextView
+        android:id="@+id/tvSeriesArchived"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:background="#eee"
+        android:gravity="center"
+        android:text="@string/title_series_archived"
+        app:layout_constraintBottom_toTopOf="@+id/tvSeriesAbout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tvSeriesStory"
+        app:layout_constraintTop_toBottomOf="@id/tvSeriesCn" />
+
+    <TextView
+        android:id="@+id/tvSeriesAbout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="@string/title_series_about"
+        android:background="#eee"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSeriesArchived" />
+
+
+</android.support.constraint.ConstraintLayout>

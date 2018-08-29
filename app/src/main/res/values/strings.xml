@@ -1,13 +1,22 @@
 <resources>
     <string name="app_name">SCP</string>
-    <string name="title_series">SCP系列</string>
-    <string name="title_library">SCP图书馆</string>
-    <string name="title_story">基金会故事</string>
-    <string name="title_scp_cn">SCP-CN</string>
-    <string name="title_scp_int">SCP-INT</string>
     <string name="title_home">首页</string>
     <string name="title_latest">最近更新</string>
     <string name="other">其他</string>
+
+    <string name="title_series">SCP系列</string>
+    <string name="title_series_cn">SCP-CN系列</string>
+    <string name="title_series_story">SCP故事版</string>
+    <string name="title_series_archived">归档内容</string>
+    <string name="title_series_about">相关信息</string>
+
+    <string name="title_library">SCP图书馆</string>
+    <string name="title_scp_story">基金会故事</string>
+    <string name="title_scp_story_cn">中国原创故事</string>
+    <string name="title_scp_int">SCP国际</string>
+    <string name="title_scp_settings">设定中心</string>
+    <string name="title_exiled_library">放逐者图书馆</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

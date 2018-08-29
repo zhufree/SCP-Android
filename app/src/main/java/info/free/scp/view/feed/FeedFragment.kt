@@ -1,24 +1,22 @@
-package info.free.scp.view
+package info.free.scp.view.feed
 
 
 import android.app.Fragment
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants.CATEGORY_SCP_SERIES
-import kotlinx.android.synthetic.main.fragment_home.view.*
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [FeedFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * 最新，包括最新，随机和评分三个部分
  */
-class HomeFragment() : Fragment() {
+class FeedFragment : Fragment() {
     private var listener: CategoryListener? = null
 
     // TODO: Rename and change types of parameters
@@ -50,15 +48,6 @@ class HomeFragment() : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.tvLibrary?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvScpSeries?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvScpCn?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvScpInt?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvScpStory?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvOthers?.setBackgroundColor(Color.parseColor("#eeeeee"))
-        view?.tvScpSeries?.setOnClickListener {
-            listener?.onCategoryClick(CATEGORY_SCP_SERIES)
-        }
     }
 
     override fun onDetach() {
@@ -82,8 +71,8 @@ class HomeFragment() : Fragment() {
          */
         // TODO: Rename and change types and number of parameters
 //        fun newInstance(param1: String, param2: String): HomeFragment {
-        fun newInstance(): HomeFragment {
-            val fragment = HomeFragment()
+        fun newInstance(): FeedFragment {
+            val fragment = FeedFragment()
 //            val args = Bundle()
 //            args.putString(ARG_PARAM1, param1)
 //            args.putString(ARG_PARAM2, param2)

@@ -63,6 +63,38 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return columnNameList
     }
 
+    fun initBasicInfo() {
+        val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
+                "", "", "", "", "", "",
+                "", false, "", "")
+        replaceScpModel(basicScp)
+        basicScp.link = "/object-classes"
+        basicScp.title = "项目分级"
+        replaceScpModel(basicScp)
+        basicScp.link = "/secure-facilities-locations-cn"
+        basicScp.title = "安保设施地点"
+        replaceScpModel(basicScp)
+        basicScp.link = "/task-forces"
+        basicScp.title = "机动特遣队"
+        replaceScpModel(basicScp)
+    }
+
+    fun getBasicInfo(): MutableList<ScpModel> {
+        val basicList = emptyList<ScpModel>().toMutableList()
+        getScpModelByLink("/security-clearance-levels")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/object-classes")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/secure-facilities-locations-cn")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/task-forces")?.let {
+            basicList.add(it)
+        }
+        return basicList
+    }
     /**
      * 网络请求到数据时保存一次
      * 返回更新后的model
@@ -75,7 +107,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             val cv = packScp(model)
-            if (getShelfInfoByLink(model.link) == null) {
+            if (getScpModelByLink(model.link) == null) {
                 // 如果之前没有，直接存储
                 db.insert(ScpTable.TABLE_NAME, null, cv)
             } else {
@@ -87,10 +119,10 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         } finally {
             db.endTransaction()
         }
-        return getShelfInfoByLink(model.link)
+        return getScpModelByLink(model.link)
     }
 
-    fun getShelfInfoByLink(link: String?): ScpModel? {
+    fun getScpModelByLink(link: String?): ScpModel? {
         if (link == null) {
             return null
         }

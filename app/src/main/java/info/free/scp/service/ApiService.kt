@@ -22,7 +22,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesModel")
-    fun getAllScpSeriesModel(@Query("limit") limit: Int, @Query("skip") skip: Int)
+    fun getAllScpSeriesModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
@@ -30,16 +30,17 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/PhotoModel")
-    fun getAllPhotoModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    @GET("1/classes/SeriesCNModel")
+    fun getAllSeriesCnModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
+            : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ArticleModel")
-    fun getAllArticleModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    @GET("1/classes/JokeScpCNModel")
+    fun getJokeSnModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 添加数据，直接传json字符串
     @Headers(

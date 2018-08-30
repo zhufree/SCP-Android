@@ -4,6 +4,11 @@
     <item
         android:id="@+id/reverse"
         android:icon="@drawable/ic_swap_vert_white_24dp"
-        android:title="顺序"
+        android:title="reverse"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/cn_page"
+        android:icon="@drawable/ic_g_translate_white_24dp"
+        android:title="cn"
+        app:showAsAction="ifRoom"/>
 </menu>

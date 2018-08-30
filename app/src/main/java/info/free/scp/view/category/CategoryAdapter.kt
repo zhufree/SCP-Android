@@ -11,8 +11,8 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
-class CategoryAdapter(mContext: Context, dataList: MutableList<Int>)
-    : BaseAdapter<CategoryHolder, Int>(mContext, dataList) {
+class CategoryAdapter(mContext: Context, val type: Int, dataList: MutableList<Any>)
+    : BaseAdapter<CategoryHolder, Any>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)
@@ -24,6 +24,6 @@ class CategoryAdapter(mContext: Context, dataList: MutableList<Int>)
 
     override fun onBindViewHolder(holder: CategoryHolder, position: Int) {
         holder.itemView.tag = position
-        holder.setData(dataList[position])
+        holder.setData(dataList[position], type)
     }
 }

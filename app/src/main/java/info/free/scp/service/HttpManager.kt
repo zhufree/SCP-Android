@@ -19,21 +19,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 
 class HttpManager {
     private val TAG = javaClass.name
-//    // 发送时，update需要去掉bmobObject的属性
-//    private val postExclusionStrategy = object : ExclusionStrategy {
-//
-//        override fun shouldSkipField(fa: FieldAttributes): Boolean {
-//            return fa.name == "createdAt" || fa.name.startsWith("_")
-//                ||fa.name == "objectId" || fa.name == "updatedAt"// 把bmobObject的保留属性去掉
-//        }
-//
-//        override fun shouldSkipClass(clazz: Class<*>): Boolean {
-//            return false
-//        }
-//    }
-//    private val postGson = GsonBuilder().setExclusionStrategies(postExclusionStrategy).create()
-//
-//
+
     val contentType = MediaType.parse("application/json")!!
     val json = JSON
     private val retrofit: Retrofit = Retrofit.Builder()
@@ -44,31 +30,31 @@ class HttpManager {
     private val apiService = retrofit.create(ApiService::class.java)
 //
     fun getAllScpSeriesModel(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getAllScpSeriesModel(limit, skip).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        apiService.getAllScpSeriesModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
                     }
                 })
     }
-//
-//    fun getAllPhotoModel(updateView: (photoList: List<PhotoModel>) -> Unit) {
-//        apiService.getAllPhotoModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<PhotoModel>>() {
-//                    override fun onNext(t: ApiBean.ApiListResponse<PhotoModel>) {
-//                        updateView(t.results)
-//                    }
-//                })
-//    }
-//
-//    fun getAllArticleModel(updateView: (eventList: List<ArticleModel>) -> Unit) {
-//        apiService.getAllArticleModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ArticleModel>>() {
-//                    override fun onNext(t: ApiBean.ApiListResponse<ArticleModel>) {
-//                        updateView(t.results)
-//                    }
-//                })
-//    }
+
+    fun getAllSeriesCnModel(skip:Int, limit: Int, updateView: (photoList: List<ScpModel>) -> Unit) {
+        apiService.getAllSeriesCnModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+
+    fun getJokeCnModel(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getJokeSnModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
 //
 //    fun getArticle(objectId: String, doLater: (article: ArticleModel)->Unit) {
 //        apiService.getArticle(objectId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())

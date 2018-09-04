@@ -29,8 +29,8 @@ class HttpManager {
             .build()
     private val apiService = retrofit.create(ApiService::class.java)
 //
-    fun getAllScpSeriesModel(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getAllScpSeriesModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    fun getScpSeriesModel(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getScpSeriesModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
@@ -38,8 +38,8 @@ class HttpManager {
                 })
     }
 
-    fun getAllSeriesCnModel(skip:Int, limit: Int, updateView: (photoList: List<ScpModel>) -> Unit) {
-        apiService.getAllSeriesCnModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+    fun getSeriesCnModel(skip:Int, limit: Int, updateView: (photoList: List<ScpModel>) -> Unit) {
+        apiService.getSeriesCnModel(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
@@ -48,142 +48,54 @@ class HttpManager {
     }
 
     fun getJokeCnModel(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getJokeSnModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        apiService.getJokeCnModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
                     }
                 })
     }
-//
-//    fun getArticle(objectId: String, doLater: (article: ArticleModel)->Unit) {
-//        apiService.getArticle(objectId).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ArticleModel>() {
-//                    override fun onNext(t: ArticleModel) {
-//                        doLater(t)
-//                    }
-//                })
-//    }
-//
-//    fun addEvent(event: EventModel, updateView: (event: EventModel) -> Unit) {
-//        val eventStr = postGson.toJson(event)
-//        val eventBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), eventStr)
-//        apiService.addNewEvent(eventBody).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.AddResponse>() {
-//                    override fun onNext(t: ApiBean.AddResponse) {
-//                        updateView(event)
-//                    }
-//                })
-//    }
-//
-//    fun addPhoto(photo: PhotoModel, updateView: (photo: PhotoModel) -> Unit) {
-//        val bodyStr = postGson.toJson(photo)
-//        Log.i(TAG, bodyStr)
-//        val body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), bodyStr)
-//        Log.i(TAG, body.toString())
-//        apiService.addNewPhoto(body).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.AddResponse>() {
-//                    override fun onNext(t: ApiBean.AddResponse) {
-//                        updateView(photo)
-//                    }
-//                })
-//    }
-//
-//    fun addArticle(article: ArticleModel, updateView: (article: ArticleModel) -> Unit) {
-//        val articleStr = postGson.toJson(article)
-//        val articleBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), articleStr)
-//        apiService.addNewArticle(articleBody).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.AddResponse>() {
-//                    override fun onNext(t: ApiBean.AddResponse) {
-//                        article.objectId = t.objectId
-//                        updateView(article)
-//                    }
-//                })
-//    }
-//
-//    fun uploadPhoto(file: File,  updateView: (picUrl: String) -> Unit) {
-//        val body = Utils.fileToByteBody(file)
-//        apiService.uploadPhoto(file.name ?: "default.jpg", body).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(object : BaseObserver<ApiBean.UploadResponse>() {
-//                    override fun onNext(t: ApiBean.UploadResponse) {
-//                        updateView(t.url)
-//                    }
-//                })
-//    }
-//
-//    fun updateModel(model: BmobObject, modelType: String, updateView:()-> Unit) {
-//        val modelStr = postGson.toJson(model)
-//        val modelBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), modelStr)
-//        when (modelType) {
-//            EVENT_TYPE-> {
-//                Log.i(TAG, postGson.toJson(model))
-//                apiService.updateEvent(model.objectId, modelBody).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(object : BaseObserver<ApiBean.UpdateResponse>() {
-//                            override fun onNext(t: ApiBean.UpdateResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//            PHOTO_TYPE-> {
-//                apiService.updatePhoto(model.objectId, modelBody).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(object : BaseObserver<ApiBean.UpdateResponse>() {
-//                            override fun onNext(t: ApiBean.UpdateResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//            ARTICLE_TYPE-> {
-//                apiService.updateArticle(model.objectId, modelBody).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(object : BaseObserver<ApiBean.UpdateResponse>() {
-//                            override fun onNext(t: ApiBean.UpdateResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//        }
-//    }
-//
-//    fun deleteModel(objectId: String,modelType: String, updateView:() -> Unit) {
-//        when (modelType) {
-//            EVENT_TYPE-> {
-//                apiService.deleteEvent(objectId).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .doOnError {
-//                            Log.i(TAG, it.localizedMessage)
-//                        }
-//                        .subscribe(object : BaseObserver<ApiBean.DeleteResponse>() {
-//                            override fun onNext(t: ApiBean.DeleteResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//            PHOTO_TYPE-> {
-//                apiService.deletePhoto(objectId).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(object : BaseObserver<ApiBean.DeleteResponse>() {
-//                            override fun onNext(t: ApiBean.DeleteResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//            ARTICLE_TYPE-> {
-//                apiService.deleteArticle(objectId).subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribe(object : BaseObserver<ApiBean.DeleteResponse>() {
-//                            override fun onNext(t: ApiBean.DeleteResponse) {
-//                                updateView()
-//                            }
-//                        })
-//            }
-//        }
-//    }
+
+    fun getJokeScp(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getJokeModel().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getExScp(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getExScp().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getArchivedScp(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getArchivedScp().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getRemovedScp(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getRemovedScp().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getDecommissionedScp(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getDecommissionedScp().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
 
     companion object {
         val instance = HttpManager()

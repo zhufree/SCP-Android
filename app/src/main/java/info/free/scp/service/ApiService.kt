@@ -22,7 +22,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesModel")
-    fun getAllScpSeriesModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
+    fun getScpSeriesModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
@@ -31,7 +31,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesCNModel")
-    fun getAllSeriesCnModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
+    fun getSeriesCnModel(@Query("skip") skip: Int, @Query("limit") limit: Int)
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
@@ -40,7 +40,48 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/JokeScpCNModel")
-    fun getJokeSnModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getJokeCnModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/JokeScpModel")
+    fun getJokeModel(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ExScpModel")
+    fun getExScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ArchivedScpModel")
+    fun getArchivedScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/RemovedScpModel")
+    fun getRemovedScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/DecommissionedScpModel")
+    fun getDecommissionedScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 添加数据，直接传json字符串
     @Headers(

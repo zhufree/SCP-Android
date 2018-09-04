@@ -54,6 +54,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         seriesFragment.listener = listener
+        libraryFragment.listener = listener
         val todoViewPagerAdapter = HomeFragmentPager(fragmentManager, fragmentList, titleList)
         vpHome.adapter = todoViewPagerAdapter
         tabHome.setupWithViewPager(vpHome)

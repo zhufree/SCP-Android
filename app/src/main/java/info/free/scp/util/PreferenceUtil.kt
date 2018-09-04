@@ -6,7 +6,7 @@ import info.free.scp.ScpApplication
 
 /**
  * Created by zhufree on 2018/8/30.
- *
+ * SharedPreference工具类
  */
 
 object PreferenceUtil {

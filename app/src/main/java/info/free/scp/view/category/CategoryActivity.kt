@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager.VERTICAL
 import android.view.Menu
 import android.view.View
 import info.free.scp.R
+import info.free.scp.SCPConstants.SCP_LIBRARY
 import info.free.scp.SCPConstants.SERIES
 import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
@@ -95,7 +96,7 @@ class CategoryActivity : AppCompatActivity() {
             SERIES_ARCHIVED -> {
                 pageType = 0
                 categoryList.addAll(arrayOf("搞笑SCP", "异常物品记录", "超常事件记录"))
-                categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "废除SCP", "删除SCP"))
+                categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "被归档的SCP", "废除SCP", "删除SCP"))
             }
             SERIES_ABOUT -> {
                 if (PreferenceUtil.getInit()) {
@@ -119,6 +120,9 @@ class CategoryActivity : AppCompatActivity() {
                     rlScpList.adapter = scpAdapter
                     scpAdapter?.notifyDataSetChanged()
                 }
+            }
+            SCP_LIBRARY -> {
+
             }
         }
 
@@ -178,7 +182,7 @@ class CategoryActivity : AppCompatActivity() {
             SERIES -> {
                 val start = position
                 val limit = if (start == 0) 499 else 500
-                HttpManager.instance.getAllScpSeriesModel(start, limit) {
+                HttpManager.instance.getScpSeriesModel(start, limit) {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -189,7 +193,7 @@ class CategoryActivity : AppCompatActivity() {
             SERIES_CN -> {
                 val start = position
                 val limit = if (start == 0) 99 else 100
-                HttpManager.instance.getAllSeriesCnModel(start, limit) {
+                HttpManager.instance.getSeriesCnModel(start, limit) {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -209,6 +213,50 @@ class CategoryActivity : AppCompatActivity() {
                                 }
                                 scpAdapter?.notifyDataSetChanged()
                             }
+                        } else {
+                            HttpManager.instance.getJokeScp {
+                                scpList.addAll(it)
+                                for (scp in it) {
+                                    ScpDao.getInstance().replaceScpModel(scp)
+                                }
+                                scpAdapter?.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    3 -> {
+                        HttpManager.instance.getExScp {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    4 -> {
+                        HttpManager.instance.getArchivedScp {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    5 -> {
+                        HttpManager.instance.getRemovedScp {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    6 -> {
+                        HttpManager.instance.getDecommissionedScp {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
                         }
                     }
                 }

@@ -30,15 +30,15 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
             //检测新加的表字段是否存在，如果不存在的话添加Alter
             val columnNameList = getColumnNameList(db, ScpTable.TABLE_NAME)
-            //            if (columnNameList != null) {
-            //先暂时使用这种方式进行判断
-            //                if (!columnNameList.contains(ScpTable.FIRST_ARTICLE_ID)) {
-            //                    val sql = createAddAlterSql(ScpTable.TABLE_NAME, "${ScpTable.FIRST_ARTICLE_ID} INTEGER default -1")
-            //                    if (!Tools.StringIsEmpty(sql)) {
-            //                        db?.execSQL(sql)
-            //                    }
-            //                }
-            //            }
+//            if (columnNameList != null) {
+//            //先暂时使用这种方式进行判断
+//                if (!columnNameList.contains(ScpTable.NUMBER)) {
+//                    val sql = createAddAlterSql(ScpTable.TABLE_NAME, "${ScpTable.FIRST_ARTICLE_ID} INTEGER default -1")
+//                    if (!Tools.StringIsEmpty(sql)) {
+//                        db?.execSQL(sql)
+//                    }
+//                }
+//            }
         }
     }
 
@@ -66,7 +66,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun initBasicInfo() {
         val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
                 "", "", "", "", "", "",
-                "", false, "", "")
+                "", false, "", "", "")
         replaceScpModel(basicScp)
         basicScp.link = "/object-classes"
         basicScp.title = "项目分级"
@@ -76,6 +76,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         replaceScpModel(basicScp)
         basicScp.link = "/task-forces"
         basicScp.title = "机动特遣队"
+        replaceScpModel(basicScp)
+        basicScp.link = "/log-of-anomalous-items"
+        basicScp.title = "异常项目记录"
+        replaceScpModel(basicScp)
+        basicScp.link = "/log-of-extranormal-events"
+        basicScp.title = "超常事件记录"
         replaceScpModel(basicScp)
     }
 
@@ -91,6 +97,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             basicList.add(it)
         }
         getScpModelByLink("/task-forces")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/log-of-anomalous-items")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/log-of-extranormal-events")?.let {
             basicList.add(it)
         }
         return basicList
@@ -224,6 +236,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.updatedTime.isNotEmpty()) {
             cv.put(ScpTable.UPDATED_TIME, model.updatedTime)
         }
+        if (model.number.isNotEmpty()) {
+            cv.put(ScpTable.NUMBER, model.updatedTime)
+        }
         cv.put(ScpTable.HAS_READ, if (model.hasRead) 1 else 0)
         return cv
     }
@@ -241,7 +256,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.AUTHOR),
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.UPDATED_TIME),
-                getCursorInt(cursor, ScpTable.HAS_READ) == 1,
+                getCursorInt(cursor, ScpTable.HAS_READ) == 1, getCursorString(cursor, ScpTable.NUMBER),
                 "", "")
 
     }

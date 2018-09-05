@@ -80,6 +80,7 @@ class CategoryActivity : AppCompatActivity() {
         categoryType  = intent.getIntExtra("type", -1)
         categoryList.clear()
         scpList.clear()
+        // 一级目录
         when (categoryType) {
             SERIES -> {
                 pageType = 0
@@ -91,7 +92,9 @@ class CategoryActivity : AppCompatActivity() {
             }
             SERIES_STORY -> {
                 pageType = 0
-                categoryList.addAll(arrayOf("SCP系列1故事版","SCP系列2故事版","SCP系列3故事版"))
+                categoryList.addAll(arrayOf("SCP系列1故事版1~499","SCP系列1故事版500~999","SCP系列1故事版1000~1499",
+                        "SCP系列1故事版1499~1808", "SCP系列2故事版1~499", "SCP系列2故事版500~999", "SCP系列2故事版1000~1193",
+                        "SCP系列3故事版1~499","SCP系列3故事版500~999","SCP系列3故事版1000~1211"))
             }
             SERIES_ARCHIVED -> {
                 pageType = 0
@@ -145,7 +148,7 @@ class CategoryActivity : AppCompatActivity() {
                             }
                         }
                         rlScpList.adapter = scpAdapter
-                        getCategoryList(position)
+                        getScpList(position)
                     }
                 }
             } else {
@@ -176,11 +179,11 @@ class CategoryActivity : AppCompatActivity() {
         return true
     }
 
-    private fun getCategoryList(position: Int) {
+    private fun getScpList(position: Int) {
         scpList.clear()
         when (categoryType) {
             SERIES -> {
-                val start = position
+                val start = position*500 - 1
                 val limit = if (start == 0) 499 else 500
                 HttpManager.instance.getScpSeriesModel(start, limit) {
                     scpList.addAll(it)
@@ -201,11 +204,137 @@ class CategoryActivity : AppCompatActivity() {
                     scpAdapter?.notifyDataSetChanged()
                 }
             }
+            SERIES_STORY -> {
+                when (position) {
+                    // 故事版1~499
+                    0 -> {
+                        val start = 0
+                        val limit = 499
+                        HttpManager.instance.getFirstStory(start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版1 500~999
+                    1 -> {
+                        val start = 499
+                        val limit = 500
+                        HttpManager.instance.getFirstStory(start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版1 1000~1499
+                    2 -> {
+                        val start = 999
+                        val limit = 500
+                        HttpManager.instance.getFirstStory(start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版1 1500~1808
+                    3 -> {
+                        val start = 1499
+                        val limit = 500
+                        HttpManager.instance.getFirstStory(start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版2 1~499
+                    4 -> {
+                        val start = 0
+                        val limit = 499
+                        HttpManager.instance.getSecondStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版2 500~999
+                    5 -> {
+                        val start = 499
+                        val limit = 500
+                        HttpManager.instance.getSecondStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版2 1000~1193
+                    6 -> {
+                        val start = 999
+                        val limit = 500
+                        HttpManager.instance.getSecondStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版3 1~499
+                    7 -> {
+                        val start = 0
+                        val limit = 499
+                        HttpManager.instance.getThirdStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版3 500~999
+                    8 -> {
+                        val start = 499
+                        val limit = 500
+                        HttpManager.instance.getSecondStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                    // 故事版3 1000~1211
+                    9 -> {
+                        val start = 999
+                        val limit = 500
+                        HttpManager.instance.getSecondStory (start, limit) {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
+                }
+            }
             SERIES_ARCHIVED -> {
+                // 内容较少，直接全部加载
                 when (position) {
                     0 -> {
                         // 搞笑scp
                         if (isCnPage) {
+                            // cn
                             HttpManager.instance.getJokeCnModel {
                                 scpList.addAll(it)
                                 for (scp in it) {
@@ -224,6 +353,7 @@ class CategoryActivity : AppCompatActivity() {
                         }
                     }
                     3 -> {
+                        // 已解明scp
                         HttpManager.instance.getExScp {
                             scpList.addAll(it)
                             for (scp in it) {
@@ -233,6 +363,7 @@ class CategoryActivity : AppCompatActivity() {
                         }
                     }
                     4 -> {
+                        // 归档scp
                         HttpManager.instance.getArchivedScp {
                             scpList.addAll(it)
                             for (scp in it) {
@@ -242,6 +373,7 @@ class CategoryActivity : AppCompatActivity() {
                         }
                     }
                     5 -> {
+                        // 已移除scp
                         HttpManager.instance.getRemovedScp {
                             scpList.addAll(it)
                             for (scp in it) {
@@ -251,6 +383,7 @@ class CategoryActivity : AppCompatActivity() {
                         }
                     }
                     6 -> {
+                        // 废弃scp
                         HttpManager.instance.getDecommissionedScp {
                             scpList.addAll(it)
                             for (scp in it) {

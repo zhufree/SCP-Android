@@ -83,6 +83,30 @@ interface ApiService {
     @GET("1/classes/DecommissionedScpModel")
     fun getDecommissionedScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/SeriesFirstStory")
+    fun getFirstStory(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/SeriesSecondStory")
+    fun getSecondStory(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/SeriesThirdStory")
+    fun getThirdStory(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+
     // 添加数据，直接传json字符串
     @Headers(
             "Content-Type:application/json",

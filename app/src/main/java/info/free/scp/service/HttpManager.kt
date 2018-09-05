@@ -96,6 +96,30 @@ class HttpManager {
                     }
                 })
     }
+    fun getFirstStory(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getFirstStory(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getSecondStory(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getSecondStory(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getThirdStory(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getThirdStory(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
 
     companion object {
         val instance = HttpManager()

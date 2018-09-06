@@ -183,11 +183,17 @@ class CategoryActivity : AppCompatActivity() {
         scpList.clear()
         when (categoryType) {
             SERIES -> {
-                val start = position*500 - 1
+                // 0,499,999
+                val start = if (position == 0) 0 else position*500 - 1
                 val limit = if (start == 0) 499 else 500
+                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
+                scpAdapter?.notifyDataSetChanged()
                 HttpManager.instance.getScpSeriesModel(start, limit) {
+                    scpList.clear()
                     scpList.addAll(it)
-                    for (scp in it) {
+                    for ((index, scp) in it.withIndex()) {
+                        scp.type = SERIES
+                        scp.index = start+index
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
                     scpAdapter?.notifyDataSetChanged()

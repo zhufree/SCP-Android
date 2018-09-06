@@ -8,7 +8,6 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/cn_page"
-        android:icon="@drawable/ic_g_translate_white_24dp"
         android:title="cn"
         app:showAsAction="ifRoom"/>
 </menu>

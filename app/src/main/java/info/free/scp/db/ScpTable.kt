@@ -19,9 +19,12 @@ object ScpTable {
     const val UPDATED_TIME = "updatedTime"
     const val HAS_READ = "hasRead"
     const val NUMBER = "number"
+    const val TYPE = "type"
+    const val INDEX = "index_"
 
     const val CREATE_TABLE_SQL = "create table IF NOT EXISTS $TABLE_NAME (" +
             "$ID VARCHAR, $LINK VARCHAR PRIMARY KEY, $TITLE VARCHAR, $DETAIL_HTML VARCHAR," +
             "$SUB_TEXT VARCHAR, $SNIPPET VARCHAR, $DESC VARCHAR, $AUTHOR VARCHAR, " +
-            "$CREATED_TIME VARCHAR, $UPDATED_TIME VARCHAR, $HAS_READ INTEGER, $NUMBER VARCHAR)"
+            "$CREATED_TIME VARCHAR, $UPDATED_TIME VARCHAR, $HAS_READ INTEGER, $NUMBER VARCHAR," +
+            "$TYPE INTEGER, $INDEX INTEGER)"
 }

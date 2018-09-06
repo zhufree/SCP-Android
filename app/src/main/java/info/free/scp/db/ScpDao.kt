@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
 import java.util.*
@@ -66,22 +67,31 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun initBasicInfo() {
         val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
                 "", "", "", "", "", "",
-                "", false, "", "", "")
+                "", false, "", SERIES_ABOUT, 0, "", "")
         replaceScpModel(basicScp)
         basicScp.link = "/object-classes"
         basicScp.title = "项目分级"
+        basicScp.index = 1
         replaceScpModel(basicScp)
-        basicScp.link = "/secure-facilities-locations-cn"
+        basicScp.link = "/secure-facilities-locations"
         basicScp.title = "安保设施地点"
+        basicScp.index = 2
         replaceScpModel(basicScp)
         basicScp.link = "/task-forces"
         basicScp.title = "机动特遣队"
+        basicScp.index = 3
         replaceScpModel(basicScp)
         basicScp.link = "/log-of-anomalous-items"
         basicScp.title = "异常项目记录"
+        basicScp.index = 4
         replaceScpModel(basicScp)
         basicScp.link = "/log-of-extranormal-events"
         basicScp.title = "超常事件记录"
+        basicScp.index = 5
+        replaceScpModel(basicScp)
+        basicScp.link = "/secure-facilities-locations-cn"
+        basicScp.title = "安保设施地点(CN)"
+        basicScp.index = 6
         replaceScpModel(basicScp)
     }
 
@@ -93,7 +103,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         getScpModelByLink("/object-classes")?.let {
             basicList.add(it)
         }
-        getScpModelByLink("/secure-facilities-locations-cn")?.let {
+        getScpModelByLink("/secure-facilities-locations")?.let {
             basicList.add(it)
         }
         getScpModelByLink("/task-forces")?.let {
@@ -103,6 +113,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             basicList.add(it)
         }
         getScpModelByLink("/log-of-extranormal-events")?.let {
+            basicList.add(it)
+        }
+        getScpModelByLink("/secure-facilities-locations-cn")?.let {
             basicList.add(it)
         }
         return basicList
@@ -141,19 +154,43 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                     + ScpTable.LINK + "=?", arrayOf(link))
-            var shelfModel: ScpModel? = null
+            var scpModel: ScpModel? = null
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    shelfModel = extractScp(cursor)
+                    scpModel = extractScp(cursor)
                 }
                 cursor.close()
             }
-            return shelfModel
+            return scpModel
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
+    }
+
+    fun getScpByTypeAndRange(type: Int, start: Int, range: Int) : MutableList<ScpModel>{
+        val end = start + range
+        val resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.TYPE + "=? AND " + ScpTable.INDEX + " BETWEEN ? AND ?;",
+                        arrayOf(type.toString(), start.toString(), end.toString()))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
+                }
+                return resultList
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
     }
 
     private fun getSubShelfInfoByName(name: String): ScpModel? {
@@ -239,6 +276,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.number.isNotEmpty()) {
             cv.put(ScpTable.NUMBER, model.updatedTime)
         }
+        if (model.type > -1) {
+            cv.put(ScpTable.TYPE, model.type)
+        }
+        if (model.index > -1) {
+            cv.put(ScpTable.INDEX, model.index)
+        }
         cv.put(ScpTable.HAS_READ, if (model.hasRead) 1 else 0)
         return cv
     }
@@ -256,7 +299,10 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.AUTHOR),
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.UPDATED_TIME),
-                getCursorInt(cursor, ScpTable.HAS_READ) == 1, getCursorString(cursor, ScpTable.NUMBER),
+                getCursorInt(cursor, ScpTable.HAS_READ) == 1,
+                getCursorString(cursor, ScpTable.NUMBER),
+                getCursorInt(cursor, ScpTable.TYPE),
+                getCursorInt(cursor, ScpTable.INDEX),
                 "", "")
 
     }

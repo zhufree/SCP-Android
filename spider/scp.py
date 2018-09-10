@@ -148,6 +148,7 @@ def get_removed_scp():
         print(new_article)
         article_list.append(new_article)
     write_to_csv(article_list, 'removed-scps.csv')
+
 def get_setting():
     article_list = []
     doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub')
@@ -180,6 +181,24 @@ def get_series_archived():
             article_list.append(new_article)
     write_series_to_csv(article_list, 'scp-series-archive.csv')
 
+def get_tales():
+    article_list = []
+    letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',\
+    'V', 'W', 'X', 'Y','Z', '0-9']
+    doc = pq('http://scp-wiki-cn.wikidot.com/tales-by-page-name')
+    for i in range(0, 27):
+	    for section_tr in list(list(doc('div#page-content .section').items())[i]('div.list-pages-box tr').items()):
+	        new_article = {}
+	        tds = list(section_tr('td').items())
+	        new_article['title'] = tds[0].text()
+	        new_article['link'] = tds[0]('a').attr('href')
+	        new_article['author'] = tds[1].text()
+	        new_article['created_time'] = tds[2].text()
+        	new_article['page_code'] = letter_list[i]
+	        print(new_article)
+	        article_list.append(new_article)
+    write_tales_to_csv(article_list, 'scp-tales.csv')
+
 def write_to_file(list_str, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
         f.write(list_str.replace("'",'"'))
@@ -209,5 +228,11 @@ def write_series_to_csv(article_list, file_name):
         for i in article_list:
             concat_str = i['title'] + ',' + i['link'] + ','+ i['author'] + ',' + i['snippet']
             f.write(concat_str.replace('\n', '') +'\n')
+def write_tales_to_csv(article_list, file_name):
+    with open(file_name, 'w+', encoding='utf-8') as f:
+        f.write("title,link,author,created_time,page_code\n")
+        for i in article_list:
+            concat_str = i['title'].replace(',', '，') + ',' + i['link'] + ','+ i['author'] + ','  + i['created_time'].replace(',', '，') + ',' + i['page_code']
+            f.write(concat_str.replace('\n', '') +'\n')
 
-get_series_story()
+get_tales()

@@ -8,7 +8,7 @@ import android.support.v7.widget.LinearLayoutManager.VERTICAL
 import android.view.Menu
 import android.view.View
 import info.free.scp.R
-import info.free.scp.SCPConstants.SCP_LIBRARY
+import info.free.scp.SCPConstants.SCP_STORY
 import info.free.scp.SCPConstants.SERIES
 import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
@@ -124,7 +124,7 @@ class CategoryActivity : AppCompatActivity() {
                     scpAdapter?.notifyDataSetChanged()
                 }
             }
-            SCP_LIBRARY -> {
+            SCP_STORY -> {
 
             }
         }

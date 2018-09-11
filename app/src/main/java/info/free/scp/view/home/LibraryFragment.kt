@@ -8,9 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants.SCP_EXILED
-import info.free.scp.SCPConstants.SCP_INT
-import info.free.scp.SCPConstants.SCP_LIBRARY
 import info.free.scp.SCPConstants.SCP_SETTINGS
 import info.free.scp.SCPConstants.SCP_STORY
 import info.free.scp.view.home.HomeFragment.CategoryListener
@@ -54,11 +51,8 @@ class LibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.tvScpLibrary?.setOnClickListener { listener?.onCategoryClick(SCP_LIBRARY) }
-        view?.tvScpStory?.setOnClickListener { listener?.onCategoryClick(SCP_STORY) }
-        view?.tvScpInt?.setOnClickListener { listener?.onCategoryClick(SCP_INT) }
+        view?.tvScpTales?.setOnClickListener { listener?.onCategoryClick(SCP_STORY) }
         view?.tvScpSettings?.setOnClickListener { listener?.onCategoryClick(SCP_SETTINGS) }
-        view?.tvExiledLibrary?.setOnClickListener { listener?.onCategoryClick(SCP_EXILED) }
     }
 
     override fun onDetach() {

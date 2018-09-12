@@ -167,25 +167,24 @@ def get_setting():
 
 def get_series_archived():
     article_list = []
-    for i in range(1,3):
-        doc = pq('http://scp-wiki-cn.wikidot.com/series-archive/p/' + str(i))
-        # doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub-cn')
-        for tr in list(doc('div.list-pages-box tr').items())[1:]:
-            new_article = {}
-            tds = list(tr('td').items())
-            new_article['title'] = tds[0].text()
-            new_article['link'] = tds[0]('a').attr('href')
-            new_article['author'] = tds[1].text()
-            new_article['snippet'] = tds[2].text()
-            print(new_article)
-            article_list.append(new_article)
-    write_series_to_csv(article_list, 'scp-series-archive.csv')
+    # for i in range(1,3):
+    doc = pq('http://scp-wiki-cn.wikidot.com/series-archive-cn')
+    for tr in list(doc('div.list-pages-box tr').items())[1:]:
+        new_article = {}
+        tds = list(tr('td').items())
+        new_article['title'] = tds[0].text()
+        new_article['link'] = tds[0]('a').attr('href')
+        new_article['author'] = tds[1].text()
+        new_article['snippet'] = tds[2].text()
+        print(new_article)
+        article_list.append(new_article)
+    write_series_to_csv(article_list, 'scp-story-series-cn.csv')
 
 def get_tales():
     article_list = []
     letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',\
     'V', 'W', 'X', 'Y','Z', '0-9']
-    doc = pq('http://scp-wiki-cn.wikidot.com/tales-by-page-name')
+    doc = pq('http://scp-wiki-cn.wikidot.com/tales-cn-by-page-name')
     for i in range(0, 27):
 	    for section_tr in list(list(doc('div#page-content .section').items())[i]('div.list-pages-box tr').items()):
 	        new_article = {}
@@ -197,7 +196,7 @@ def get_tales():
         	new_article['page_code'] = letter_list[i]
 	        print(new_article)
 	        article_list.append(new_article)
-    write_tales_to_csv(article_list, 'scp-tales.csv')
+    write_tales_to_csv(article_list, 'scp-tales-cn.csv')
 
 def write_to_file(list_str, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
@@ -235,4 +234,4 @@ def write_tales_to_csv(article_list, file_name):
             concat_str = i['title'].replace(',', '，') + ',' + i['link'] + ','+ i['author'] + ','  + i['created_time'].replace(',', '，') + ',' + i['page_code']
             f.write(concat_str.replace('\n', '') +'\n')
 
-get_tales()
+get_series_archived()

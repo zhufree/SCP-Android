@@ -63,7 +63,7 @@ class HomeFragment : Fragment() {
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.cn_page -> {
-                    libraryFragment.changeToCnPage()
+                    libraryFragment.changePage()
                 }
             }
             true

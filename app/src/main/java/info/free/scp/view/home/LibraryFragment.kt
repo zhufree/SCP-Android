@@ -4,12 +4,25 @@ package info.free.scp.view.home
 import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
+import info.free.scp.SCPConstants.SCP_ESSAY_CONTEST
+import info.free.scp.SCPConstants.SCP_ESSAY_CONTEST_CN
+import info.free.scp.SCPConstants.SCP_EVENT
+import info.free.scp.SCPConstants.SCP_EVENT_CN
 import info.free.scp.SCPConstants.SCP_SETTINGS
-import info.free.scp.SCPConstants.SCP_STORY
+import info.free.scp.SCPConstants.SCP_SETTINGS_CN
+import info.free.scp.SCPConstants.SCP_STORY_SERIES
+import info.free.scp.SCPConstants.SCP_STORY_SERIES_CN
+import info.free.scp.SCPConstants.SCP_TALES
+import info.free.scp.SCPConstants.SCP_TALES_BY_TIME
+import info.free.scp.SCPConstants.SCP_TALES_CN
+import info.free.scp.ScpApplication
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library.view.*
@@ -22,6 +35,7 @@ import kotlinx.android.synthetic.main.fragment_library.view.*
  */
 class LibraryFragment : Fragment() {
     var listener: CategoryListener? = null
+    private var isCnPage = false // 是否是cn页面
 
     // TODO: Rename and change types of parameters
     //    private var mParam1: String? = null
@@ -52,17 +66,47 @@ class LibraryFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.tvScpTales?.setOnClickListener { listener?.onCategoryClick(SCP_STORY) }
-        view?.tvStorySeries?.setOnClickListener { listener?.onCategoryClick(SCP_SETTINGS) }
+        view?.tvScpTales?.setOnClickListener {
+            listener?.onCategoryClick(if (isCnPage) SCP_TALES_CN else SCP_TALES)
+        }
+        view?.tvStorySeries?.setOnClickListener {
+            listener?.onCategoryClick(if (isCnPage) SCP_STORY_SERIES_CN else SCP_STORY_SERIES)
+        }
+        view?.tvSettings?.setOnClickListener {
+            listener?.onCategoryClick(if (isCnPage) SCP_SETTINGS_CN else SCP_SETTINGS)
+        }
+        view?.tvEssayContest?.setOnClickListener {
+            listener?.onCategoryClick(if (isCnPage) SCP_ESSAY_CONTEST_CN else SCP_ESSAY_CONTEST)
+        }
+        view?.tvEventRecord?.setOnClickListener {
+            listener?.onCategoryClick(if (isCnPage) SCP_EVENT_CN else SCP_EVENT)
+        }
+        view?.tvMore?.setOnClickListener {
+            if (isCnPage) {
+                listener?.onCategoryClick(SCP_TALES_BY_TIME)
+            } else {
+                Toast.makeText(ScpApplication.context, "更多功能敬请期待", LENGTH_SHORT).show()
+            }
+        }
     }
 
-    fun changeToCnPage() {
-        tvScpTales.setText(R.string.title_scp_tales_cn)
-        tvSettings.setText(R.string.title_scp_settings_cn)
-        tvStorySeries.setText(R.string.title_scp_story_series_cn)
-        tvEssayContest.setText(R.string.title_scp_essay_cn)
-        tvEventRecord.setText(R.string.title_scp_event_cn)
-        tvMore.setText(R.string.title_scp_story_by_time)
+    fun changePage() {
+        isCnPage = !isCnPage
+        if (isCnPage) {
+            tvScpTales.setText(R.string.title_scp_tales_cn)
+            tvSettings.setText(R.string.title_scp_settings_cn)
+            tvStorySeries.setText(R.string.title_scp_story_series_cn)
+            tvEssayContest.setText(R.string.title_scp_essay_cn)
+            tvEventRecord.setText(R.string.title_scp_event)
+            tvMore.setText(R.string.title_scp_story_by_time)
+        } else {
+            tvScpTales.setText(R.string.title_scp_tales)
+            tvSettings.setText(R.string.title_scp_settings)
+            tvStorySeries.setText(R.string.title_scp_story_series)
+            tvEssayContest.setText(R.string.title_scp_essay)
+            tvEventRecord.setText(R.string.title_scp_event)
+            tvMore.setText(R.string.title_more_function)
+        }
     }
 
     override fun onDetach() {

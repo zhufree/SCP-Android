@@ -99,5 +99,4 @@
         app:layout_constraintStart_toEndOf="@id/tvEventRecord"
         app:layout_constraintTop_toBottomOf="@id/tvEssayContest" />
 
-
 </android.support.constraint.ConstraintLayout>

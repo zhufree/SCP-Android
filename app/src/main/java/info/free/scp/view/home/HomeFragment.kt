@@ -58,6 +58,17 @@ class HomeFragment : Fragment() {
         val todoViewPagerAdapter = HomeFragmentPager(fragmentManager, fragmentList, titleList)
         vpHome.adapter = todoViewPagerAdapter
         tabHome.setupWithViewPager(vpHome)
+
+        toolbar.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
+        toolbar.setOnMenuItemClickListener{
+            when (it.itemId) {
+                R.id.cn_page -> {
+                    libraryFragment.changeToCnPage()
+                }
+            }
+            true
+        }
+
     }
 
     override fun onDetach() {

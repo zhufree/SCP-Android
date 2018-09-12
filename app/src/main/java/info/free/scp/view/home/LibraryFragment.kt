@@ -11,6 +11,7 @@ import info.free.scp.R
 import info.free.scp.SCPConstants.SCP_SETTINGS
 import info.free.scp.SCPConstants.SCP_STORY
 import info.free.scp.view.home.HomeFragment.CategoryListener
+import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library.view.*
 
 /**
@@ -52,7 +53,16 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view?.tvScpTales?.setOnClickListener { listener?.onCategoryClick(SCP_STORY) }
-        view?.tvScpSettings?.setOnClickListener { listener?.onCategoryClick(SCP_SETTINGS) }
+        view?.tvStorySeries?.setOnClickListener { listener?.onCategoryClick(SCP_SETTINGS) }
+    }
+
+    fun changeToCnPage() {
+        tvScpTales.setText(R.string.title_scp_tales_cn)
+        tvSettings.setText(R.string.title_scp_settings_cn)
+        tvStorySeries.setText(R.string.title_scp_story_series_cn)
+        tvEssayContest.setText(R.string.title_scp_essay_cn)
+        tvEventRecord.setText(R.string.title_scp_event_cn)
+        tvMore.setText(R.string.title_scp_story_by_time)
     }
 
     override fun onDetach() {

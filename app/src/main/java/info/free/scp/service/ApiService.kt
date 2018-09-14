@@ -113,7 +113,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/ScpTalesModel")
-    fun getScpTales(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getScpTales(@Query("where") where: String): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
             "Content-Type:application/json",
@@ -121,7 +121,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/ScpTalesCnModel")
-    fun getCnScpTales(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getCnScpTales(@Query("where") where: String): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
             "Content-Type:application/json",
@@ -129,7 +129,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesArchiveModel")
-    fun getScpStorySeries(@Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getScpStorySeries(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 中国原创故事系列 60
     @Headers(

@@ -67,7 +67,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun initBasicInfo() {
         val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
                 "", "", "", "", "", "",
-                "", false, "", SERIES_ABOUT, 0, "", "")
+                "", false, "", SERIES_ABOUT, 0, "",
+                "","","")
         replaceScpModel(basicScp)
         basicScp.link = "/object-classes"
         basicScp.title = "项目分级"
@@ -303,7 +304,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.NUMBER),
                 getCursorInt(cursor, ScpTable.TYPE),
                 getCursorInt(cursor, ScpTable.INDEX),
-                "", "")
+                "", "","","")
 
     }
 }

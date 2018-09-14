@@ -5,10 +5,18 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
+import info.free.scp.SCPConstants.SCP_SETTINGS
+import info.free.scp.SCPConstants.SCP_SETTINGS_CN
+import info.free.scp.SCPConstants.SCP_STORY_SERIES
+import info.free.scp.SCPConstants.SCP_STORY_SERIES_CN
 import info.free.scp.SCPConstants.SCP_TALES
+import info.free.scp.SCPConstants.SCP_TALES_CN
 import info.free.scp.SCPConstants.SERIES
 import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
@@ -76,6 +84,34 @@ class CategoryActivity : AppCompatActivity() {
 
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (pageType == 0 || categoryType == SERIES_ABOUT) {
+                finish()
+            } else {
+                pageType = 0
+                initData()
+            }
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    private fun initScpAdapter() {
+        if (scpAdapter == null) {
+            scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
+            scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    val intent = Intent()
+                    intent.putExtra("link", scpList[position].link)
+                    intent.setClass(this@CategoryActivity, WebActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+            rlScpList.adapter = scpAdapter
+            scpAdapter?.notifyDataSetChanged()
+        }
+    }
+
     private fun initData() {
         categoryType  = intent.getIntExtra("type", -1)
         categoryList.clear()
@@ -110,22 +146,24 @@ class CategoryActivity : AppCompatActivity() {
                     PreferenceUtil.setInit()
                 }
                 pageType = 1
-                if (scpAdapter == null) {
-                    scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
-                    scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                        override fun onItemClick(view: View, position: Int) {
-                            val intent = Intent()
-                            intent.putExtra("link", scpList[position].link)
-                            intent.setClass(this@CategoryActivity, WebActivity::class.java)
-                            startActivity(intent)
-                        }
-                    }
-                    rlScpList.adapter = scpAdapter
-                    scpAdapter?.notifyDataSetChanged()
-                }
+                initScpAdapter()
             }
             SCP_TALES -> {
-
+                // 1021
+                pageType = 0
+                categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
+            }
+            SCP_TALES_CN -> {
+                // 1021
+                pageType = 0
+                categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
+            }
+            SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN -> {
+                pageType = 1
+                getScpList(categoryType)
+                initScpAdapter()
             }
         }
 
@@ -136,19 +174,8 @@ class CategoryActivity : AppCompatActivity() {
                 categoryAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         pageType = 1
-                        if (scpAdapter == null) {
-                            scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
-                            scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                                override fun onItemClick(view: View, position: Int) {
-                                    val intent = Intent()
-                                    intent.putExtra("link", scpList[position].link)
-                                    intent.setClass(this@CategoryActivity, WebActivity::class.java)
-                                    startActivity(intent)
-                                }
-                            }
-                        }
-                        rlScpList.adapter = scpAdapter
                         getScpList(position)
+                        initScpAdapter()
                     }
                 }
             } else {
@@ -157,16 +184,7 @@ class CategoryActivity : AppCompatActivity() {
             }
         } else {
             if (scpAdapter ==  null) {
-                scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
-                rlScpList.adapter = scpAdapter
-                scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                    override fun onItemClick(view: View, position: Int) {
-                        val intent = Intent()
-                        intent.putExtra("link", scpList[position].link)
-                        intent.setClass(this@CategoryActivity, WebActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
+                initScpAdapter()
             } else {
                 scpAdapter?.notifyDataSetChanged()
                 rlScpList.adapter = scpAdapter
@@ -398,6 +416,68 @@ class CategoryActivity : AppCompatActivity() {
                             scpAdapter?.notifyDataSetChanged()
                         }
                     }
+                }
+            }
+            SCP_TALES -> {
+                HttpManager.instance.getScpTales("{\"page_code\":\"${categoryList[position]}\"}") {
+                    if (it.isEmpty()) {
+                        Toast.makeText(this, "该项没有内容", LENGTH_SHORT).show()
+                        return@getScpTales
+                    }
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_TALES_CN -> {
+                HttpManager.instance.getCnScpTales("{\"page_code\":\"${categoryList[position]}\"}") {
+                    if (it.isEmpty()) {
+                        Toast.makeText(this, "该项没有内容", LENGTH_SHORT).show()
+                        return@getCnScpTales
+                    }
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_STORY_SERIES -> {
+                HttpManager.instance.getStorySeries {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_STORY_SERIES_CN -> {
+                HttpManager.instance.getCnStorySeries {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_SETTINGS -> {
+                HttpManager.instance.getSettings {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_SETTINGS_CN -> {
+                HttpManager.instance.getSettingsCn {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
         }

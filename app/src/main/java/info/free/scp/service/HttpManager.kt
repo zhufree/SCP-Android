@@ -170,6 +170,22 @@ class HttpManager {
                     }
                 })
     }
+    fun getContest(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getScpContest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+    fun getContestCn(updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getScpContestCn().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
 
     companion object {
         val instance = HttpManager()

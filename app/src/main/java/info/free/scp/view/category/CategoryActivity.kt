@@ -5,12 +5,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
+import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
+import android.view.View.VISIBLE
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
+import info.free.scp.SCPConstants.SCP_CONTEST
+import info.free.scp.SCPConstants.SCP_CONTEST_CN
 import info.free.scp.SCPConstants.SCP_SETTINGS
 import info.free.scp.SCPConstants.SCP_SETTINGS_CN
 import info.free.scp.SCPConstants.SCP_STORY_SERIES
@@ -38,6 +42,7 @@ class CategoryActivity : AppCompatActivity() {
     private var pageType = 0 //一级目录和二级目录
     private var categoryType = -1
     private var isCnPage = false // 是否是cn页面 归档内容部分用到
+    private val tag = "category"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,18 +91,21 @@ class CategoryActivity : AppCompatActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (pageType == 0 || categoryType == SERIES_ABOUT) {
+            Log.i(tag, "pageType = $pageType")
+            if (pageType == 0) {
                 finish()
             } else {
+                Log.i(tag, "回到上级目录，初始化数据")
                 pageType = 0
                 initData()
             }
         }
-        return super.onKeyDown(keyCode, event)
+        return false
     }
 
     private fun initScpAdapter() {
         if (scpAdapter == null) {
+            Log.i(tag, "初始化scpAdapter")
             scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
             scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
@@ -109,11 +117,15 @@ class CategoryActivity : AppCompatActivity() {
             }
             rlScpList.adapter = scpAdapter
             scpAdapter?.notifyDataSetChanged()
+        } else {
+            rlScpList.adapter = scpAdapter
+            scpAdapter?.notifyDataSetChanged()
         }
     }
 
     private fun initData() {
         categoryType  = intent.getIntExtra("type", -1)
+        Log.i(tag, "categoryType = $categoryType, pageType = $pageType")
         categoryList.clear()
         scpList.clear()
         // 一级目录
@@ -137,17 +149,6 @@ class CategoryActivity : AppCompatActivity() {
                 categoryList.addAll(arrayOf("搞笑SCP", "异常物品记录", "超常事件记录"))
                 categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "被归档的SCP", "废除SCP", "删除SCP"))
             }
-            SERIES_ABOUT -> {
-                if (PreferenceUtil.getInit()) {
-                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
-                } else {
-                    ScpDao.getInstance().initBasicInfo()
-                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
-                    PreferenceUtil.setInit()
-                }
-                pageType = 1
-                initScpAdapter()
-            }
             SCP_TALES -> {
                 // 1021
                 pageType = 0
@@ -160,7 +161,7 @@ class CategoryActivity : AppCompatActivity() {
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
             }
-            SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN -> {
+            SERIES_ABOUT, SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN, SCP_CONTEST, SCP_CONTEST_CN -> {
                 pageType = 1
                 getScpList(categoryType)
                 initScpAdapter()
@@ -173,9 +174,10 @@ class CategoryActivity : AppCompatActivity() {
                 rlScpList.adapter = categoryAdapter
                 categoryAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
+                        Log.i(tag, "onItemClick")
                         pageType = 1
-                        getScpList(position)
                         initScpAdapter()
+                        getScpList(position)
                     }
                 }
             } else {
@@ -183,12 +185,8 @@ class CategoryActivity : AppCompatActivity() {
                 rlScpList.adapter = categoryAdapter
             }
         } else {
-            if (scpAdapter ==  null) {
-                initScpAdapter()
-            } else {
-                scpAdapter?.notifyDataSetChanged()
-                rlScpList.adapter = scpAdapter
-            }
+            initScpAdapter()
+            getScpList(categoryType)
         }
     }
 
@@ -214,18 +212,16 @@ class CategoryActivity : AppCompatActivity() {
                         scp.index = start+index
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
-                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SERIES_CN -> {
-                val start = position
+                val start = if (position == 0) 0 else position*100 - 1
                 val limit = if (start == 0) 99 else 100
                 HttpManager.instance.getSeriesCnModel(start, limit) {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
-                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SERIES_STORY -> {
@@ -282,7 +278,7 @@ class CategoryActivity : AppCompatActivity() {
                     4 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getSecondStory (start, limit) {
+                        HttpManager.instance.getSecondStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -294,7 +290,7 @@ class CategoryActivity : AppCompatActivity() {
                     5 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getSecondStory (start, limit) {
+                        HttpManager.instance.getSecondStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -306,7 +302,7 @@ class CategoryActivity : AppCompatActivity() {
                     6 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getSecondStory (start, limit) {
+                        HttpManager.instance.getSecondStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -318,7 +314,7 @@ class CategoryActivity : AppCompatActivity() {
                     7 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getThirdStory (start, limit) {
+                        HttpManager.instance.getThirdStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -330,7 +326,7 @@ class CategoryActivity : AppCompatActivity() {
                     8 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getSecondStory (start, limit) {
+                        HttpManager.instance.getThirdStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -342,7 +338,7 @@ class CategoryActivity : AppCompatActivity() {
                     9 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getSecondStory (start, limit) {
+                        HttpManager.instance.getThirdStory(start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -350,6 +346,15 @@ class CategoryActivity : AppCompatActivity() {
                             scpAdapter?.notifyDataSetChanged()
                         }
                     }
+                }
+            }
+            SERIES_ABOUT -> {
+                if (PreferenceUtil.getInit()) {
+                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
+                } else {
+                    ScpDao.getInstance().initBasicInfo()
+                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
+                    PreferenceUtil.setInit()
                 }
             }
             SERIES_ARCHIVED -> {
@@ -416,6 +421,9 @@ class CategoryActivity : AppCompatActivity() {
                             scpAdapter?.notifyDataSetChanged()
                         }
                     }
+                    else -> {
+                        tv_develop_notice?.visibility = VISIBLE
+                    }
                 }
             }
             SCP_TALES -> {
@@ -459,7 +467,6 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
-                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_SETTINGS -> {
@@ -468,7 +475,6 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
-                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_SETTINGS_CN -> {
@@ -477,9 +483,25 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
-                    scpAdapter?.notifyDataSetChanged()
+                }
+            }
+            SCP_CONTEST -> {
+                HttpManager.instance.getContest {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
+                }
+            }
+            SCP_CONTEST_CN -> {
+                HttpManager.instance.getContestCn {
+                    scpList.addAll(it)
+                    for (scp in it) {
+                        ScpDao.getInstance().replaceScpModel(scp)
+                    }
                 }
             }
         }
+        scpAdapter?.notifyDataSetChanged()
     }
 }

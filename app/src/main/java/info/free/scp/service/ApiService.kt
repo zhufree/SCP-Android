@@ -158,6 +158,24 @@ interface ApiService {
     @GET("1/classes/ScpSettingCNModel")
     fun getCnScpSettings(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
+    // 征文 33
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ScpContestModel")
+    fun getScpContest(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    // 征文CN 15
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ScpContestCnModel")
+    fun getScpContestCn(): Observable<ApiBean.ApiListResponse<ScpModel>>
+
     // 添加数据，直接传json字符串
     @Headers(
             "Content-Type:application/json",

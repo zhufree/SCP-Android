@@ -19,8 +19,8 @@ object SCPConstants {
 //    const val SCP_INT = 8
     const val SCP_SETTINGS = 10
     const val SCP_SETTINGS_CN = 11
-    const val SCP_ESSAY_CONTEST = 12
-    const val SCP_ESSAY_CONTEST_CN = 13
+    const val SCP_CONTEST = 12
+    const val SCP_CONTEST_CN = 13
     const val SCP_EVENT = 14
     const val SCP_EVENT_CN = 15
     const val SCP_TALES_BY_TIME = 16

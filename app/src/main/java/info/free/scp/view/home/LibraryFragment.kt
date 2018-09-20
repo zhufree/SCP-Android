@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
-import info.free.scp.SCPConstants.SCP_ESSAY_CONTEST
-import info.free.scp.SCPConstants.SCP_ESSAY_CONTEST_CN
+import info.free.scp.SCPConstants.SCP_CONTEST
+import info.free.scp.SCPConstants.SCP_CONTEST_CN
 import info.free.scp.SCPConstants.SCP_EVENT
 import info.free.scp.SCPConstants.SCP_EVENT_CN
 import info.free.scp.SCPConstants.SCP_SETTINGS
@@ -76,7 +76,7 @@ class LibraryFragment : Fragment() {
             listener?.onCategoryClick(if (isCnPage) SCP_SETTINGS_CN else SCP_SETTINGS)
         }
         view?.tvEssayContest?.setOnClickListener {
-            listener?.onCategoryClick(if (isCnPage) SCP_ESSAY_CONTEST_CN else SCP_ESSAY_CONTEST)
+            listener?.onCategoryClick(if (isCnPage) SCP_CONTEST_CN else SCP_CONTEST)
         }
         view?.tvEventRecord?.setOnClickListener {
             listener?.onCategoryClick(if (isCnPage) SCP_EVENT_CN else SCP_EVENT)

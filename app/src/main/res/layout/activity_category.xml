@@ -26,4 +26,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
     </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/tv_develop_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="开发中..."
+        android:visibility="gone"
+        />
 </android.support.design.widget.CoordinatorLayout>

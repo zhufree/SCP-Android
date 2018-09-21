@@ -15,11 +15,13 @@ import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
 import info.free.scp.SCPConstants.SCP_CONTEST
 import info.free.scp.SCPConstants.SCP_CONTEST_CN
+import info.free.scp.SCPConstants.SCP_EVENT
 import info.free.scp.SCPConstants.SCP_SETTINGS
 import info.free.scp.SCPConstants.SCP_SETTINGS_CN
 import info.free.scp.SCPConstants.SCP_STORY_SERIES
 import info.free.scp.SCPConstants.SCP_STORY_SERIES_CN
 import info.free.scp.SCPConstants.SCP_TALES
+import info.free.scp.SCPConstants.SCP_TALES_BY_TIME
 import info.free.scp.SCPConstants.SCP_TALES_CN
 import info.free.scp.SCPConstants.SERIES
 import info.free.scp.SCPConstants.SERIES_ABOUT
@@ -30,6 +32,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.Toaster
 import info.free.scp.view.WebActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
@@ -42,6 +45,7 @@ class CategoryActivity : AppCompatActivity() {
     private var pageType = 0 //一级目录和二级目录
     private var categoryType = -1
     private var isCnPage = false // 是否是cn页面 归档内容部分用到
+    private var onlyOneLayer = false
     private val tag = "category"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +55,7 @@ class CategoryActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         toolbar.setNavigationOnClickListener {
-            if (pageType == 0 || categoryType == SERIES_ABOUT) {
+            if (pageType == 0 || onlyOneLayer) {
                 finish()
             } else {
                 pageType = 0
@@ -92,7 +96,7 @@ class CategoryActivity : AppCompatActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Log.i(tag, "pageType = $pageType")
-            if (pageType == 0) {
+            if (pageType == 0 || onlyOneLayer) {
                 finish()
             } else {
                 Log.i(tag, "回到上级目录，初始化数据")
@@ -161,10 +165,10 @@ class CategoryActivity : AppCompatActivity() {
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
             }
-            SERIES_ABOUT, SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN, SCP_CONTEST, SCP_CONTEST_CN -> {
+            SERIES_ABOUT, SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN,
+            SCP_CONTEST, SCP_CONTEST_CN, SCP_EVENT, SCP_TALES_BY_TIME -> {
                 pageType = 1
-                getScpList(categoryType)
-                initScpAdapter()
+                onlyOneLayer = true
             }
         }
 
@@ -185,8 +189,8 @@ class CategoryActivity : AppCompatActivity() {
                 rlScpList.adapter = categoryAdapter
             }
         } else {
+            getScpList(0)
             initScpAdapter()
-            getScpList(categoryType)
         }
     }
 
@@ -196,6 +200,7 @@ class CategoryActivity : AppCompatActivity() {
     }
 
     private fun getScpList(position: Int) {
+        Log.i("category", "加载scp列表")
         scpList.clear()
         when (categoryType) {
             SERIES -> {
@@ -212,6 +217,7 @@ class CategoryActivity : AppCompatActivity() {
                         scp.index = start+index
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SERIES_CN -> {
@@ -222,6 +228,7 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SERIES_STORY -> {
@@ -356,6 +363,7 @@ class CategoryActivity : AppCompatActivity() {
                     scpList.addAll(ScpDao.getInstance().getBasicInfo())
                     PreferenceUtil.setInit()
                 }
+                scpAdapter?.notifyDataSetChanged()
             }
             SERIES_ARCHIVED -> {
                 // 内容较少，直接全部加载
@@ -402,16 +410,6 @@ class CategoryActivity : AppCompatActivity() {
                         }
                     }
                     5 -> {
-                        // 已移除scp
-                        HttpManager.instance.getRemovedScp {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
-                    }
-                    6 -> {
                         // 废弃scp
                         HttpManager.instance.getDecommissionedScp {
                             scpList.addAll(it)
@@ -421,15 +419,26 @@ class CategoryActivity : AppCompatActivity() {
                             scpAdapter?.notifyDataSetChanged()
                         }
                     }
+                    6 -> {
+                        // 已移除scp
+                        HttpManager.instance.getRemovedScp {
+                            scpList.addAll(it)
+                            for (scp in it) {
+                                ScpDao.getInstance().replaceScpModel(scp)
+                            }
+                            scpAdapter?.notifyDataSetChanged()
+                        }
+                    }
                     else -> {
-                        tv_develop_notice?.visibility = VISIBLE
+                        Toaster.show("开发中...")
+
                     }
                 }
             }
             SCP_TALES -> {
                 HttpManager.instance.getScpTales("{\"page_code\":\"${categoryList[position]}\"}") {
                     if (it.isEmpty()) {
-                        Toast.makeText(this, "该项没有内容", LENGTH_SHORT).show()
+                        Toaster.show("该项没有内容")
                         return@getScpTales
                     }
                     scpList.addAll(it)
@@ -467,6 +476,7 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_SETTINGS -> {
@@ -475,6 +485,7 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_SETTINGS_CN -> {
@@ -483,6 +494,7 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_CONTEST -> {
@@ -491,6 +503,7 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
             SCP_CONTEST_CN -> {
@@ -499,9 +512,11 @@ class CategoryActivity : AppCompatActivity() {
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
+                    scpAdapter?.notifyDataSetChanged()
                 }
             }
+            SCP_EVENT -> { Toaster.show("开发中...") }
+            SCP_TALES_BY_TIME -> { Toaster.show("开发中...") }
         }
-        scpAdapter?.notifyDataSetChanged()
     }
 }

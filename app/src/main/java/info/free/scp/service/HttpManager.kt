@@ -139,7 +139,7 @@ class HttpManager {
                 })
     }
     fun getStorySeries(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getScpStorySeries().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        apiService.getStorySeries().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
@@ -155,7 +155,7 @@ class HttpManager {
                 })
     }
     fun getSettings(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getScpSettings().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        apiService.getSettings().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)

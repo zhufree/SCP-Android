@@ -80,7 +80,7 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/DecommissionedScpModel")
+    @GET("1/classes/DecommissionedScp")
     fun getDecommissionedScp(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
@@ -129,7 +129,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/SeriesArchiveModel")
-    fun getScpStorySeries(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getStorySeries(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 中国原创故事系列 60
     @Headers(
@@ -147,7 +147,7 @@ interface ApiService {
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/ScpSettingModel")
-    fun getScpSettings(): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getSettings(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 设定中心CN 11
     @Headers(

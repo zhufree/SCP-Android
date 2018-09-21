@@ -4,7 +4,6 @@ package info.free.scp.view.home
 import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,7 +13,6 @@ import info.free.scp.R
 import info.free.scp.SCPConstants.SCP_CONTEST
 import info.free.scp.SCPConstants.SCP_CONTEST_CN
 import info.free.scp.SCPConstants.SCP_EVENT
-import info.free.scp.SCPConstants.SCP_EVENT_CN
 import info.free.scp.SCPConstants.SCP_SETTINGS
 import info.free.scp.SCPConstants.SCP_SETTINGS_CN
 import info.free.scp.SCPConstants.SCP_STORY_SERIES
@@ -79,7 +77,7 @@ class LibraryFragment : Fragment() {
             listener?.onCategoryClick(if (isCnPage) SCP_CONTEST_CN else SCP_CONTEST)
         }
         view?.tvEventRecord?.setOnClickListener {
-            listener?.onCategoryClick(if (isCnPage) SCP_EVENT_CN else SCP_EVENT)
+            listener?.onCategoryClick(SCP_EVENT)
         }
         view?.tvMore?.setOnClickListener {
             if (isCnPage) {

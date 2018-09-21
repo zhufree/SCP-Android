@@ -17,5 +17,6 @@ data class ScpModel(@SerialName("objectId") val sId: String, var link: String, v
                     @Optional var updatedTime: String = "", @Optional var hasRead: Boolean = false,
                     @Optional var number: String = "", @Optional var type: Int = -1,
                     @Optional var index: Int = -1, @Optional var page_code: String = "",
-                    @Optional var created_time: String = "",
+                    @Optional var created_time: String = "", @Optional var contest_name: String = "",
+                    @Optional var contest_link: String = "",
                     val createdAt: String, val updatedAt: String)

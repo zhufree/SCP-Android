@@ -16,13 +16,13 @@
         android:background="#eee"
         android:gravity="center"
         android:text="@string/title_scp_tales"
-        app:layout_constraintBottom_toTopOf="@+id/tvStorySeries"
-        app:layout_constraintEnd_toStartOf="@id/tvSettings"
+        app:layout_constraintBottom_toTopOf="@+id/tvSettings"
+        app:layout_constraintEnd_toStartOf="@id/tvStorySeries"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvSettings"
+        android:id="@+id/tvStorySeries"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
@@ -39,7 +39,7 @@
 
 
     <TextView
-        android:id="@+id/tvStorySeries"
+        android:id="@+id/tvSettings"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
@@ -65,8 +65,8 @@
         android:text="@string/title_scp_essay"
         app:layout_constraintBottom_toTopOf="@+id/tvMore"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvStorySeries"
-        app:layout_constraintTop_toBottomOf="@id/tvSettings"
+        app:layout_constraintStart_toEndOf="@id/tvSettings"
+        app:layout_constraintTop_toBottomOf="@id/tvStorySeries"
         />
 
     <TextView
@@ -82,7 +82,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvMore"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvStorySeries" />
+        app:layout_constraintTop_toBottomOf="@id/tvSettings" />
 
     <TextView
         android:id="@+id/tvMore"

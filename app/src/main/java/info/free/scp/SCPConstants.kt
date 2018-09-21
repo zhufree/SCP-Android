@@ -2,6 +2,7 @@ package info.free.scp
 
 /**
  * Created by zhufree on 2018/8/22.
+ *
  */
 
 object SCPConstants {
@@ -22,8 +23,7 @@ object SCPConstants {
     const val SCP_CONTEST = 12
     const val SCP_CONTEST_CN = 13
     const val SCP_EVENT = 14
-    const val SCP_EVENT_CN = 15
-    const val SCP_TALES_BY_TIME = 16
+    const val SCP_TALES_BY_TIME = 15
 //    const val SCP_EXILED = 10
 
     const val BMOB_API_URL = "https://api.bmob.cn/"

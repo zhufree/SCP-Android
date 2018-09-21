@@ -13,6 +13,7 @@ import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
 import info.free.scp.SCPConstants.SERIES_CN
 import info.free.scp.SCPConstants.SERIES_STORY
+import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
 
@@ -23,7 +24,7 @@ import info.free.scp.view.home.HomeFragment.CategoryListener
  * create an instance of this fragment.
  * 首页，一级子页面是SCP系列和SCP图书馆两个
  */
-class SeriesFragment : Fragment() {
+class SeriesFragment : BaseFragment() {
     var listener: CategoryListener? = null
 
     // TODO: Rename and change types of parameters

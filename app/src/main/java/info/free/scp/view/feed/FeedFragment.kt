@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.view.base.BaseFragment
 
 
 /**
@@ -16,7 +17,7 @@ import info.free.scp.R
  * create an instance of this fragment.
  * 最新，包括最新，随机和评分三个部分
  */
-class FeedFragment : Fragment() {
+class FeedFragment : BaseFragment() {
     private var listener: CategoryListener? = null
 
     // TODO: Rename and change types of parameters

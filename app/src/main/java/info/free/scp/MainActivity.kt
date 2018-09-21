@@ -3,14 +3,13 @@ package info.free.scp
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.v7.app.AppCompatActivity
-import info.free.scp.SCPConstants.SERIES
+import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.category.CategoryActivity
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), HomeFragment.CategoryListener {
+class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
     private val homeFragment = HomeFragment.newInstance()
     private val feedFragment = FeedFragment.newInstance()
     private val aboutFragment = AboutFragment.newInstance()

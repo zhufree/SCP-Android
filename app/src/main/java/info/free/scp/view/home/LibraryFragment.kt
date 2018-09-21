@@ -21,6 +21,7 @@ import info.free.scp.SCPConstants.SCP_TALES
 import info.free.scp.SCPConstants.SCP_TALES_BY_TIME
 import info.free.scp.SCPConstants.SCP_TALES_CN
 import info.free.scp.ScpApplication
+import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library.view.*
@@ -31,7 +32,7 @@ import kotlinx.android.synthetic.main.fragment_library.view.*
  * create an instance of this fragment.
  * 首页，一级子页面是SCP系列和SCP图书馆两个
  */
-class LibraryFragment : Fragment() {
+class LibraryFragment : BaseFragment() {
     var listener: CategoryListener? = null
     private var isCnPage = false // 是否是cn页面
 

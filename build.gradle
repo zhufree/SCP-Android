@@ -10,6 +10,7 @@ buildscript {
         maven {
             url "https://kotlin.bintray.com/kotlinx"
         }
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
@@ -26,6 +27,7 @@ allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
     }
 }
 

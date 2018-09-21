@@ -34,10 +34,11 @@ import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.WebActivity
+import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
 
-class CategoryActivity : AppCompatActivity() {
+class CategoryActivity : BaseActivity() {
     private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null

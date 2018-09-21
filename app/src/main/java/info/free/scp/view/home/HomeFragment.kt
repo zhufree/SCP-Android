@@ -4,10 +4,13 @@ package info.free.scp.view.home
 import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.util.EventUtil
+import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
 
@@ -17,7 +20,7 @@ import kotlinx.android.synthetic.main.fragment_home.*
  * create an instance of this fragment.
  * 首页，一级子页面是SCP系列和SCP图书馆两个
  */
-class HomeFragment : Fragment() {
+class HomeFragment : BaseFragment() {
     private var listener: CategoryListener? = null
     private val seriesFragment = SeriesFragment.newInstance()
     private val libraryFragment = LibraryFragment.newInstance()
@@ -59,6 +62,18 @@ class HomeFragment : Fragment() {
         vpHome.adapter = todoViewPagerAdapter
         tabHome.setupWithViewPager(vpHome)
 
+        vpHome.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                EventUtil.onEvent(null, if (position == 0) EventUtil.switchToScpSeries
+                        else EventUtil.switchToScpLibrary)
+            }
+        })
         toolbar.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {

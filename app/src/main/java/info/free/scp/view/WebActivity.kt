@@ -1,15 +1,15 @@
 package info.free.scp.view
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View.GONE
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import kotlinx.android.synthetic.main.activity_web.*
 import info.free.scp.R
+import info.free.scp.view.base.BaseActivity
 
 
-class WebActivity : AppCompatActivity() {
+class WebActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import info.free.scp.view.base.BaseFragment
 
 
 /**
@@ -15,7 +16,7 @@ import android.view.ViewGroup
  * create an instance of this fragment.
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
-class AboutFragment : Fragment() {
+class AboutFragment : BaseFragment() {
     private var listener: CategoryListener? = null
 
     // TODO: Rename and change types of parameters

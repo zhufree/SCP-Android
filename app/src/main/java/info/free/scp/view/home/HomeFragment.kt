@@ -58,8 +58,8 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         seriesFragment.listener = listener
         libraryFragment.listener = listener
-        val todoViewPagerAdapter = HomeFragmentPager(fragmentManager, fragmentList, titleList)
-        vpHome.adapter = todoViewPagerAdapter
+        val scpPagerAdapter = HomeFragmentPager(childFragmentManager, fragmentList, titleList)
+        vpHome.adapter = scpPagerAdapter
         tabHome.setupWithViewPager(vpHome)
 
         vpHome.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -70,10 +70,11 @@ class HomeFragment : BaseFragment() {
             }
 
             override fun onPageSelected(position: Int) {
-                EventUtil.onEvent(null, if (position == 0) EventUtil.switchToScpSeries
-                        else EventUtil.switchToScpLibrary)
+                EventUtil.onEvent(null, if (position == 0) EventUtil.showScpSeries
+                        else EventUtil.showScpLibrary)
             }
         })
+        toolbar?.setTitle(R.string.app_name)
         toolbar.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         toolbar.setOnMenuItemClickListener{
             when (it.itemId) {

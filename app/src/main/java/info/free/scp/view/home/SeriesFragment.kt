@@ -13,6 +13,12 @@ import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
 import info.free.scp.SCPConstants.SERIES_CN
 import info.free.scp.SCPConstants.SERIES_STORY
+import info.free.scp.util.EventUtil
+import info.free.scp.util.EventUtil.clickAbout
+import info.free.scp.util.EventUtil.clickArchived
+import info.free.scp.util.EventUtil.clickSeries
+import info.free.scp.util.EventUtil.clickSeriesCn
+import info.free.scp.util.EventUtil.clickSeriesStory
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
@@ -40,6 +46,7 @@ class SeriesFragment : BaseFragment() {
     }
 
     override fun onAttach(context: Context?) {
+        mContext = context
         super.onAttach(context)
         if (context is CategoryListener) {
             listener = context
@@ -57,18 +64,23 @@ class SeriesFragment : BaseFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view?.tvScpSeries?.setOnClickListener {
+            EventUtil.onEvent(mContext, clickSeries)
             listener?.onCategoryClick(SERIES)
         }
         view?.tvSeriesCn?.setOnClickListener{
+            EventUtil.onEvent(mContext, clickSeriesCn)
             listener?.onCategoryClick(SERIES_CN)
         }
         view?.tvSeriesStory?.setOnClickListener{
+            EventUtil.onEvent(mContext, clickSeriesStory)
             listener?.onCategoryClick(SERIES_STORY)
         }
         view?.tvSeriesArchived?.setOnClickListener{
+            EventUtil.onEvent(mContext, clickArchived)
             listener?.onCategoryClick(SERIES_ARCHIVED)
         }
         view?.tvSeriesAbout?.setOnClickListener{
+            EventUtil.onEvent(mContext, clickAbout)
             listener?.onCategoryClick(SERIES_ABOUT)
         }
     }

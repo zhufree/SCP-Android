@@ -15,8 +15,8 @@ class ScpApplication : MultiDexApplication() {
     override fun onCreate() {
         super.onCreate()
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
-        UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, "defaultChannel", UMConfigure.DEVICE_TYPE_PHONE, "")
-        MobclickAgent.openActivityDurationTrack(false)
+        UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
+//        MobclickAgent.openActivityDurationTrack(false)
         UMConfigure.setLogEnabled(true)
         context = applicationContext
     }

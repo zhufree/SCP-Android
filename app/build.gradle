@@ -13,6 +13,7 @@ android {
         targetSdkVersion 27
         versionCode 4
         versionName "0.0.4"
+        flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -24,6 +25,18 @@ android {
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+    }
+
+    productFlavors {
+        Default {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "default"]
+        }
+        firim {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "firim"]
+        }
+        KuAn {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "KuAn"]
+        }
     }
 }
 

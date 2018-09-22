@@ -2,12 +2,16 @@ package info.free.scp
 
 
 import android.app.Fragment
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_about.*
 
 
 /**
@@ -17,7 +21,7 @@ import info.free.scp.view.base.BaseFragment
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
 class AboutFragment : BaseFragment() {
-    private var listener: CategoryListener? = null
+//    private var listener: CategoryListener? = null
 
     // TODO: Rename and change types of parameters
 //    private var mParam1: String? = null
@@ -31,28 +35,34 @@ class AboutFragment : BaseFragment() {
 //        }
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is CategoryListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
+//    override fun onAttach(context: Context?) {
+//        super.onAttach(context)
+//        if (context is CategoryListener) {
+//            listener = context
+//        } else {
+//            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
+//        }
+//    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_about, container, false)
     }
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tv_qq_group?.setOnLongClickListener {
+            val clipboardManager = mContext?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clipData = ClipData.newPlainText("qqGroup", "805194504")
+            clipboardManager?.primaryClip = clipData
+            Toaster.show("已复制到剪贴板")
+            true
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
     }
 
     companion object {

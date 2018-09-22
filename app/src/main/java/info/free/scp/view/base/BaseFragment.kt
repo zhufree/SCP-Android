@@ -22,4 +22,8 @@ abstract class BaseFragment : Fragment() {
 //        MobclickAgent.onPageEnd(this.javaClass.name)
     }
 
+    override fun onAttach(context: Context?) {
+        mContext = context
+        super.onAttach(context)
+    }
 } // Required empty public constructor

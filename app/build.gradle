@@ -37,6 +37,9 @@ android {
         KuAn {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "KuAn"]
         }
+        BaiduYun {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "BaiduYun"]
+        }
     }
 }
 

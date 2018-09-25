@@ -14,4 +14,7 @@ class ApiBean {
     data class UploadResponse(val filename: String, val url: String, val cdn: String)
     data class UpdateResponse(val updatedAt: String)
     data class DeleteResponse(val msg: String)
+    @Serializable
+    data class ConfigResponse(val key: String, val value: String, val createdAt: String,
+                              val updatedAt: String, val objectId: String)
 }

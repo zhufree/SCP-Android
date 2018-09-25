@@ -1,7 +1,6 @@
 package info.free.scp.view.category
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
@@ -9,7 +8,6 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
-import android.view.View.VISIBLE
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
@@ -129,7 +127,7 @@ class CategoryActivity : BaseActivity() {
     }
 
     private fun initData() {
-        categoryType  = intent.getIntExtra("type", -1)
+        categoryType  = intent.getIntExtra("saveType", -1)
         Log.i(tag, "categoryType = $categoryType, pageType = $pageType")
         categoryList.clear()
         scpList.clear()
@@ -210,11 +208,12 @@ class CategoryActivity : BaseActivity() {
                 val limit = if (start == 0) 499 else 500
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
                 scpAdapter?.notifyDataSetChanged()
-                HttpManager.instance.getScpSeriesModel(start, limit) {
+                HttpManager.instance.getSeries("{\"cn\":\"false\"}",
+                        start, limit) {
                     scpList.clear()
                     scpList.addAll(it)
                     for ((index, scp) in it.withIndex()) {
-                        scp.type = SERIES
+                        scp.saveType = SERIES
                         scp.index = start+index
                         ScpDao.getInstance().replaceScpModel(scp)
                     }
@@ -224,7 +223,8 @@ class CategoryActivity : BaseActivity() {
             SERIES_CN -> {
                 val start = if (position == 0) 0 else position*100 - 1
                 val limit = if (start == 0) 99 else 100
-                HttpManager.instance.getSeriesCnModel(start, limit) {
+                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
+                HttpManager.instance.getSeries("{\"cn\":\"true\"}",start, limit) {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -373,7 +373,7 @@ class CategoryActivity : BaseActivity() {
                         // 搞笑scp
                         if (isCnPage) {
                             // cn
-                            HttpManager.instance.getJokeCnModel {
+                            HttpManager.instance.getArchives("{\"cn\":\"true\", \"type\":\"joke\"}") {
                                 scpList.addAll(it)
                                 for (scp in it) {
                                     ScpDao.getInstance().replaceScpModel(scp)
@@ -381,7 +381,7 @@ class CategoryActivity : BaseActivity() {
                                 scpAdapter?.notifyDataSetChanged()
                             }
                         } else {
-                            HttpManager.instance.getJokeScp {
+                            HttpManager.instance.getArchives("{\"cn\":\"false\", \"type\":\"joke\"}") {
                                 scpList.addAll(it)
                                 for (scp in it) {
                                     ScpDao.getInstance().replaceScpModel(scp)
@@ -392,7 +392,7 @@ class CategoryActivity : BaseActivity() {
                     }
                     3 -> {
                         // 已解明scp
-                        HttpManager.instance.getExScp {
+                        HttpManager.instance.getArchives("{\"type\":\"ex\"}") {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -402,7 +402,7 @@ class CategoryActivity : BaseActivity() {
                     }
                     4 -> {
                         // 归档scp
-                        HttpManager.instance.getArchivedScp {
+                        HttpManager.instance.getArchives("{\"type\":\"archived\"}") {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -412,7 +412,7 @@ class CategoryActivity : BaseActivity() {
                     }
                     5 -> {
                         // 废弃scp
-                        HttpManager.instance.getDecommissionedScp {
+                        HttpManager.instance.getArchives("{\"type\":\"decommissioned\"}") {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -422,7 +422,7 @@ class CategoryActivity : BaseActivity() {
                     }
                     6 -> {
                         // 已移除scp
-                        HttpManager.instance.getRemovedScp {
+                        HttpManager.instance.getArchives("{\"type\":\"removed\"}") {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -432,7 +432,6 @@ class CategoryActivity : BaseActivity() {
                     }
                     else -> {
                         Toaster.show("开发中...")
-
                     }
                 }
             }

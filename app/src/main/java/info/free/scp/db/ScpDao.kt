@@ -68,7 +68,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
                 "", "", "", "", "", "",
                 "", false, "", SERIES_ABOUT, 0, "",
-                "","","", "", "")
+                "","","", "", "", "", "")
         replaceScpModel(basicScp)
         basicScp.link = "/object-classes"
         basicScp.title = "项目分级"
@@ -176,7 +176,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                        + ScpTable.TYPE + "=? AND " + ScpTable.INDEX + " BETWEEN ? AND ?;",
+                        + ScpTable.SAVE_TYPE + "=? AND " + ScpTable.INDEX + " BETWEEN ? AND ?;",
                         arrayOf(type.toString(), start.toString(), end.toString()))
                 with(cursor) {
                     this?.let {
@@ -277,8 +277,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.number.isNotEmpty()) {
             cv.put(ScpTable.NUMBER, model.updatedTime)
         }
-        if (model.type > -1) {
-            cv.put(ScpTable.TYPE, model.type)
+        if (model.saveType > -1) {
+            cv.put(ScpTable.SAVE_TYPE, model.saveType)
         }
         if (model.index > -1) {
             cv.put(ScpTable.INDEX, model.index)
@@ -302,9 +302,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.UPDATED_TIME),
                 getCursorInt(cursor, ScpTable.HAS_READ) == 1,
                 getCursorString(cursor, ScpTable.NUMBER),
-                getCursorInt(cursor, ScpTable.TYPE),
+                getCursorInt(cursor, ScpTable.SAVE_TYPE),
                 getCursorInt(cursor, ScpTable.INDEX),
-                "", "","","","","")
+                "", "","","","","", "","")
 
     }
 }

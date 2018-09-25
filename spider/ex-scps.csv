@@ -1,23 +1,24 @@
-title,link
-SCP-001-EX - 好孩子,/scp-001-ex
-SCP-067-EX - “Rurik旅店”,/scp-067-ex
-SCP-123-EX - 时有意外,/scp-123-ex
-SCP-711-EX - 来自未来现在的人,/scp-711-ex
-SCP-888-EX - dado的洗衣和美黑,/scp-888-ex
-SCP-920-EX - 邪恶印表机,/scp-920-ex
-SCP-1094-EX - 岩石和硬地之间,/scp-1094-ex
-SCP-1512-EX - 3D生物打印,/scp-1512-ex
-SCP-1763-EX - 如何写一篇SCP,/scp-1763-ex
-SCP-1841-EX - 李斯特狂,/scp-1841-ex
-SCP-1851-EX - 出逃狂,/scp-1851-ex
-SCP-1933-EX - ███████湖的怪兽,/scp-1933-ex
-SCP-1974-EX - 致幻骰子,/scp-1974-ex
-SCP-2600-EX - 白毛鳟鱼,/scp-2600-ex
-SCP-2700-EX - 我为爱所做的,/scp-2700-ex
-SCP-3000-EX - 被改造的病床,/scp-3000-ex
-SCP-4023-EX - 一种化合物,/scp-4023-ex
-SCP-5735-EX - "Mystery 32" (2104),/scp-5735-ex
-SCP-8900-EX - 天，蓝色的天,/scp-8900-ex
-SCP-CN-012-EX - 禺谷悬案,/scp-cn-012-ex
-SCP-CN-116-EX - 烨活的遗物,/scp-cn-116-ex
-SCP-CN-152-EX - 面具,/scp-cn-1952-ex
+title,link,cn,type
+SCP-001-EX - 好孩子,/scp-001-ex,false,ex
+SCP-002-EX - Lost it All,/scp-002-ex,false,ex
+SCP-067-EX - “Rurik旅店”,/scp-067-ex,false,ex
+SCP-123-EX - 时有意外,/scp-123-ex,false,ex
+SCP-711-EX - 来自未来现在的人,/scp-711-ex,false,ex
+SCP-888-EX - dado的洗衣和美黑,/scp-888-ex,false,ex
+SCP-920-EX - 邪恶印表机,/scp-920-ex,false,ex
+SCP-1094-EX - 岩石和硬地之间,/scp-1094-ex,false,ex
+SCP-1512-EX - 3D生物打印,/scp-1512-ex,false,ex
+SCP-1763-EX - 如何写一篇SCP,/scp-1763-ex,false,ex
+SCP-1841-EX - 李斯特狂,/scp-1841-ex,false,ex
+SCP-1851-EX - 出逃狂,/scp-1851-ex,false,ex
+SCP-1933-EX - ███████湖的怪兽,/scp-1933-ex,false,ex
+SCP-1974-EX - 致幻骰子,/scp-1974-ex,false,ex
+SCP-2600-EX - 白毛鳟鱼,/scp-2600-ex,false,ex
+SCP-2700-EX - 我为爱所做的,/scp-2700-ex,false,ex
+SCP-3000-EX - 被改造的病床,/scp-3000-ex,false,ex
+SCP-4023-EX - 一种化合物,/scp-4023-ex,false,ex
+SCP-5735-EX - “第32次神秘”（2104年）,/scp-5735-ex,false,ex
+SCP-8900-EX - 天，蓝色的天,/scp-8900-ex,false,ex
+SCP-CN-012-EX - 禺谷悬案,/scp-cn-012-ex,false,ex
+SCP-CN-116-EX - 烨活的遗物,/scp-cn-116-ex,false,ex
+SCP-CN-152-EX - 面具,/scp-cn-1952-ex,false,ex

@@ -13,12 +13,22 @@ object PreferenceUtil {
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context?.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
-    fun getInit(): Boolean {
+    fun getInitAboutData(): Boolean {
         val sp = getPrivateSharedPreference("init")
-        return sp?.getBoolean("init", false)?:false
+        return sp?.getBoolean("initAbout", false)?:false
     }
-    fun setInit() {
+    fun setInitAboutData() {
         val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putBoolean("init", true)?.apply()
+        sp?.edit()?.putBoolean("initAbout", true)?.apply()
+    }
+
+    fun getInitDataFinish(): Boolean {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getBoolean("initData", false)?:false
+    }
+
+    fun setInitDataFinish() {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putBoolean("initData", true)?.apply()
     }
 }

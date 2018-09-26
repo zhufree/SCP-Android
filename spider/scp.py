@@ -129,6 +129,7 @@ def get_removed_scp():
         article_list.append(new_article)
     write_to_csv(article_list, 'removed-scps.csv')
 
+# scp故事版
 def get_series_story():
     article_list = []
     story_count = 0
@@ -162,6 +163,23 @@ def get_series_story():
 
 def get_series_archived():
     article_list = []
+    for i in range(1,3):
+        doc = pq('http://scp-wiki-cn.wikidot.com/series-archive')
+        for tr in list(doc('div.list-pages-box tr').items())[1:]:
+            new_article = {}
+            tds = list(tr('td').items())
+            new_article['title'] = tds[0].text()
+            new_article['link'] = tds[0]('a').attr('href')
+            new_article['author'] = tds[1].text()
+            new_article['snippet'] = tds[2].text()
+            new_article['cn'] = 'false'
+            new_article['type'] = 'story_series'
+            print(new_article)
+            article_list.append(new_article)
+    write_series_to_csv(article_list, 'scp-story-series.csv')
+
+def get_series_archived_cn():
+    article_list = []
     # for i in range(1,3):
     doc = pq('http://scp-wiki-cn.wikidot.com/series-archive-cn')
     for tr in list(doc('div.list-pages-box tr').items())[1:]:
@@ -171,6 +189,8 @@ def get_series_archived():
         new_article['link'] = tds[0]('a').attr('href')
         new_article['author'] = tds[1].text()
         new_article['snippet'] = tds[2].text()
+        new_article['cn'] = 'true'
+        new_article['type'] = 'story_series'
         print(new_article)
         article_list.append(new_article)
     write_series_to_csv(article_list, 'scp-story-series-cn.csv')
@@ -347,9 +367,10 @@ def write_setting_to_csv(article_list, file_name):
 
 def write_series_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
-        f.write("title,link,author,snippet\n")
+        f.write("title,link,author,snippet,cn,type\n")
         for i in article_list:
-            concat_str = i['title'] + ',' + i['link'] + ','+ i['author'] + ',' + i['snippet']
+            concat_str = i['title'] + ',' + i['link'] + ','+ i['author'] + ',' + i['snippet'] \
+             + ','+ i['cn']+ ','+ i['type']
             f.write(concat_str.replace('\n', '') +'\n')
 
 def write_tales_to_csv(article_list, file_name):
@@ -378,7 +399,9 @@ def write_contest_to_csv(article_list, file_name):
 # get_series_story()
 # get_tales()
 # get_tales_cn()
-get_setting()
-get_setting_cn()
-get_contest()
-get_contest_cn()
+# get_setting()
+# get_setting_cn()
+# get_contest()
+# get_contest_cn()
+get_series_archived()
+get_series_archived_cn()

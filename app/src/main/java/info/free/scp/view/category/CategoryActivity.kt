@@ -207,30 +207,13 @@ class CategoryActivity : BaseActivity() {
                 val start = if (position == 0) 0 else position*500 - 1
                 val limit = if (start == 0) 499 else 500
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
-                scpAdapter?.notifyDataSetChanged()
-                HttpManager.instance.getSeries("{\"cn\":\"false\"}",
-                        start, limit) {
-                    scpList.clear()
-                    scpList.addAll(it)
-                    for ((index, scp) in it.withIndex()) {
-                        scp.saveType = SERIES
-                        scp.index = start+index
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
             }
             SERIES_CN -> {
                 val start = if (position == 0) 0 else position*100 - 1
                 val limit = if (start == 0) 99 else 100
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
-                HttpManager.instance.getSeries("{\"cn\":\"true\"}",start, limit) {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+                scpAdapter?.notifyDataSetChanged()
+
             }
             SERIES_STORY -> {
                 when (position) {
@@ -238,7 +221,7 @@ class CategoryActivity : BaseActivity() {
                     0 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getFirstStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -250,7 +233,7 @@ class CategoryActivity : BaseActivity() {
                     1 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getFirstStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -262,7 +245,7 @@ class CategoryActivity : BaseActivity() {
                     2 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getFirstStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -274,7 +257,7 @@ class CategoryActivity : BaseActivity() {
                     3 -> {
                         val start = 1499
                         val limit = 500
-                        HttpManager.instance.getFirstStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -286,7 +269,7 @@ class CategoryActivity : BaseActivity() {
                     4 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getSecondStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -298,7 +281,7 @@ class CategoryActivity : BaseActivity() {
                     5 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getSecondStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -310,7 +293,7 @@ class CategoryActivity : BaseActivity() {
                     6 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getSecondStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -322,7 +305,7 @@ class CategoryActivity : BaseActivity() {
                     7 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getThirdStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -334,7 +317,7 @@ class CategoryActivity : BaseActivity() {
                     8 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getThirdStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -346,7 +329,7 @@ class CategoryActivity : BaseActivity() {
                     9 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getThirdStory(start, limit) {
+                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
                             scpList.addAll(it)
                             for (scp in it) {
                                 ScpDao.getInstance().replaceScpModel(scp)
@@ -357,12 +340,12 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SERIES_ABOUT -> {
-                if (PreferenceUtil.getInit()) {
+                if (PreferenceUtil.getInitAboutData()) {
                     scpList.addAll(ScpDao.getInstance().getBasicInfo())
                 } else {
                     ScpDao.getInstance().initBasicInfo()
                     scpList.addAll(ScpDao.getInstance().getBasicInfo())
-                    PreferenceUtil.setInit()
+                    PreferenceUtil.setInitAboutData()
                 }
                 scpAdapter?.notifyDataSetChanged()
             }
@@ -436,10 +419,10 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_TALES -> {
-                HttpManager.instance.getScpTales("{\"page_code\":\"${categoryList[position]}\"}") {
+                HttpManager.instance.getTales("{\"cn\":\"false\", \"page_code\":\"${categoryList[position]}\"}") {
                     if (it.isEmpty()) {
                         Toaster.show("该项没有内容")
-                        return@getScpTales
+                        return@getTales
                     }
                     scpList.addAll(it)
                     for (scp in it) {
@@ -449,10 +432,10 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_TALES_CN -> {
-                HttpManager.instance.getCnScpTales("{\"page_code\":\"${categoryList[position]}\"}") {
+                HttpManager.instance.getTales("{\"cn\":\"true\", \"page_code\":\"${categoryList[position]}\"}") {
                     if (it.isEmpty()) {
                         Toast.makeText(this, "该项没有内容", LENGTH_SHORT).show()
-                        return@getCnScpTales
+                        return@getTales
                     }
                     scpList.addAll(it)
                     for (scp in it) {
@@ -462,7 +445,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_STORY_SERIES -> {
-                HttpManager.instance.getStorySeries {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"story_series\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -471,7 +454,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_STORY_SERIES_CN -> {
-                HttpManager.instance.getCnStorySeries {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"story_series\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -480,7 +463,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_SETTINGS -> {
-                HttpManager.instance.getSettings {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"setting\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -489,7 +472,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_SETTINGS_CN -> {
-                HttpManager.instance.getSettingsCn {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"setting\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -498,7 +481,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_CONTEST -> {
-                HttpManager.instance.getContest {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"contest\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -507,7 +490,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SCP_CONTEST_CN -> {
-                HttpManager.instance.getContestCn {
+                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"contest\"}") {
                     scpList.addAll(it)
                     for (scp in it) {
                         ScpDao.getInstance().replaceScpModel(scp)
@@ -518,5 +501,10 @@ class CategoryActivity : BaseActivity() {
             SCP_EVENT -> { Toaster.show("开发中...") }
             SCP_TALES_BY_TIME -> { Toaster.show("开发中...") }
         }
+        if (scpList.size == 0) {
+            Toaster.show("该页没有内容或数据初始化未完成，请稍等")
+        }
+        scpAdapter?.notifyDataSetChanged()
+
     }
 }

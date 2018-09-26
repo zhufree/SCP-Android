@@ -65,10 +65,11 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun initBasicInfo() {
-        val basicScp = ScpModel("", "/security-clearance-levels", "安保许可等级",
-                "", "", "", "", "", "",
-                "", false, "", SERIES_ABOUT, 0, "",
-                "","","", "", "", "", "")
+        val basicScp = ScpModel("","", "",
+                "/security-clearance-levels", "安保许可等级", "", false,
+                SERIES_ABOUT, "", "", "",
+                "", "", "", 0, "", "",
+                "","","about", "")
         replaceScpModel(basicScp)
         basicScp.link = "/object-classes"
         basicScp.title = "项目分级"
@@ -271,11 +272,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.createdTime.isNotEmpty()) {
             cv.put(ScpTable.CREATED_TIME, model.createdTime)
         }
-        if (model.updatedTime.isNotEmpty()) {
-            cv.put(ScpTable.UPDATED_TIME, model.updatedTime)
-        }
         if (model.number.isNotEmpty()) {
-            cv.put(ScpTable.NUMBER, model.updatedTime)
+            cv.put(ScpTable.NUMBER, model.number)
         }
         if (model.saveType > -1) {
             cv.put(ScpTable.SAVE_TYPE, model.saveType)
@@ -291,20 +289,25 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * cursor转model取出
      */
     private fun extractScp(cursor: Cursor): ScpModel {
-        return ScpModel("", getCursorString(cursor, ScpTable.LINK),
+        return ScpModel("","", "",
+                getCursorString(cursor, ScpTable.LINK),
                 getCursorString(cursor, ScpTable.TITLE),
                 getCursorString(cursor, ScpTable.DETAIL_HTML),
+                getCursorInt(cursor, ScpTable.HAS_READ) == 1,
+                getCursorInt(cursor, ScpTable.SAVE_TYPE),
+                getCursorString(cursor, ScpTable.AUTHOR),
                 getCursorString(cursor, ScpTable.SUB_TEXT),
                 getCursorString(cursor, ScpTable.SNIPPET),
                 getCursorString(cursor, ScpTable.DESC),
-                getCursorString(cursor, ScpTable.AUTHOR),
-                getCursorString(cursor, ScpTable.CREATED_TIME),
-                getCursorString(cursor, ScpTable.UPDATED_TIME),
-                getCursorInt(cursor, ScpTable.HAS_READ) == 1,
                 getCursorString(cursor, ScpTable.NUMBER),
-                getCursorInt(cursor, ScpTable.SAVE_TYPE),
+                "",
                 getCursorInt(cursor, ScpTable.INDEX),
-                "", "","","","","", "","")
+                "",
+                getCursorString(cursor, ScpTable.CREATED_TIME),
+                "", "",
+                "",
+                ""
+        )
 
     }
 }

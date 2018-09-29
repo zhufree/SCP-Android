@@ -22,9 +22,19 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/SeriesModel")
+    @GET("1/classes/ScpModel")
     fun getSeries(@Query("where") where: String,
                   @Query("skip") skip: Int,
+                  @Query("limit") limit: Int)
+            : Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ScpModel")
+    fun getAllScp(@Query("skip") skip: Int,
                   @Query("limit") limit: Int)
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
@@ -34,7 +44,7 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ArchivesModel")
+    @GET("1/classes/ScpModel")
     fun getArchives(@Query("where") where: String): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // SCP故事版，带123查询
@@ -43,7 +53,7 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/StoryModel")
+    @GET("1/classes/ScpModel")
     fun getStory(@Query("where") where: String, @Query("skip") skip: Int, @Query("limit") limit: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
@@ -51,7 +61,7 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/TalesModel")
+    @GET("1/classes/ScpModel")
     fun getTales(@Query("where") where: String): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // 故事系列，征文，设定中心
@@ -60,53 +70,8 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ContestAndSettings")
+    @GET("1/classes/ScpModel")
     fun getLibraryItem(@Query("where") where: String): Observable<ApiBean.ApiListResponse<ScpModel>>
-
-    // 中国原创故事系列 60
-    @Headers(
-            "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
-    )
-    @GET("1/classes/StorySeriesCnModel")
-    fun getCnStorySeries(): Observable<ApiBean.ApiListResponse<ScpModel>>
-
-    // 设定中心 30
-    @Headers(
-            "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
-    )
-    @GET("1/classes/ScpSettingModel")
-    fun getSettings(): Observable<ApiBean.ApiListResponse<ScpModel>>
-
-    // 设定中心CN 11
-    @Headers(
-            "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
-    )
-    @GET("1/classes/ScpSettingCNModel")
-    fun getCnScpSettings(): Observable<ApiBean.ApiListResponse<ScpModel>>
-
-    // 征文 33
-    @Headers(
-            "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
-    )
-    @GET("1/classes/ScpContestModel")
-    fun getScpContest(): Observable<ApiBean.ApiListResponse<ScpModel>>
-
-    // 征文CN 15
-    @Headers(
-            "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
-    )
-    @GET("1/classes/ScpContestCnModel")
-    fun getScpContestCn(): Observable<ApiBean.ApiListResponse<ScpModel>>
 
     @Headers(
             "Content-Type:application/json",

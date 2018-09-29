@@ -1,18 +1,26 @@
 package info.free.scp
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.util.Log
 import info.free.scp.service.HttpManager
+import info.free.scp.service.InitDataService
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v4.content.LocalBroadcastManager
+import android.content.IntentFilter
+
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
     private var currentFragment: BaseFragment? = null
@@ -20,6 +28,18 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
     private val feedFragment = FeedFragment.newInstance()
     private val aboutFragment = AboutFragment.newInstance()
     private var updateChecked = false
+
+    var progressDialog: ProgressDialog? = null
+
+    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var mBroadcastReceiver = object: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val progress = intent?.getIntExtra("progress", 0) ?: 0
+            progressDialog?.progress = progress
+        }
+    }
+
+    val INIT_PROGRESS = "initProgress"
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = fragmentManager.beginTransaction()
@@ -57,6 +77,20 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(INIT_PROGRESS)
+        mLocalBroadcastManager?.registerReceiver(mBroadcastReceiver, intentFilter)
+        // 启动数据加载service
+        if (!PreferenceUtil.getInitDataFinish()) {
+            val intent = Intent(this, InitDataService::class.java)
+            startService(intent)
+            progressDialog = ProgressDialog(this)
+            progressDialog?.max = 100
+            progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            progressDialog?.setMessage("数据初始化中")
+            progressDialog?.show()
+        }
         setContentView(R.layout.activity_main)
         val transaction = fragmentManager.beginTransaction()
         transaction.add(R.id.flMainContainer, homeFragment)

@@ -22,11 +22,7 @@ class ScpApplication : MultiDexApplication() {
 //        MobclickAgent.openActivityDurationTrack(false)
         UMConfigure.setLogEnabled(true)
 
-        // 启动数据加载service
-        if (!PreferenceUtil.getInitDataFinish()) {
-            val intent = Intent(this, InitDataService::class.java)
-            startService(intent)
-        }
+
         context = applicationContext
     }
     companion object {

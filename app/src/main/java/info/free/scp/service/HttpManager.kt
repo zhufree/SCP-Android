@@ -39,6 +39,14 @@ class HttpManager {
                 })
     }
 //
+    fun getAllScp(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        apiService.getAllScp(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
     fun getSeries(where: String, skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
         apiService.getSeries(where, skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
@@ -75,46 +83,6 @@ class HttpManager {
     }
     fun getLibraryItem(where: String, updateView: (eventList: List<ScpModel>) -> Unit) {
         apiService.getLibraryItem(where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getCnStorySeries(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getCnStorySeries().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getSettings(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getSettings().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getSettingsCn(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getCnScpSettings().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getContest(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getScpContest().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getContestCn(updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getScpContestCn().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)

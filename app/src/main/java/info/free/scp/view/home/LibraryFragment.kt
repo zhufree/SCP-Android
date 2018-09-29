@@ -10,16 +10,16 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
-import info.free.scp.SCPConstants.SCP_CONTEST
-import info.free.scp.SCPConstants.SCP_CONTEST_CN
-import info.free.scp.SCPConstants.SCP_EVENT
-import info.free.scp.SCPConstants.SCP_SETTINGS
-import info.free.scp.SCPConstants.SCP_SETTINGS_CN
-import info.free.scp.SCPConstants.SCP_STORY_SERIES
-import info.free.scp.SCPConstants.SCP_STORY_SERIES_CN
-import info.free.scp.SCPConstants.SCP_TALES
-import info.free.scp.SCPConstants.SCP_TALES_BY_TIME
-import info.free.scp.SCPConstants.SCP_TALES_CN
+import info.free.scp.SCPConstants.CONTEST
+import info.free.scp.SCPConstants.CONTEST_CN
+import info.free.scp.SCPConstants.EVENT
+import info.free.scp.SCPConstants.SETTINGS
+import info.free.scp.SCPConstants.SETTINGS_CN
+import info.free.scp.SCPConstants.STORY_SERIES
+import info.free.scp.SCPConstants.STORY_SERIES_CN
+import info.free.scp.SCPConstants.TALES
+import info.free.scp.SCPConstants.TALES_BY_TIME
+import info.free.scp.SCPConstants.TALES_CN
 import info.free.scp.ScpApplication
 import info.free.scp.util.EventUtil
 import info.free.scp.view.base.BaseFragment
@@ -70,47 +70,47 @@ class LibraryFragment : BaseFragment() {
         view?.tvScpTales?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickTalesCn)
-                listener?.onCategoryClick(SCP_TALES_CN)
+                listener?.onCategoryClick(TALES_CN)
             } else {
                 EventUtil.onEvent(mContext, EventUtil.clickTales)
-                listener?.onCategoryClick(SCP_TALES)
+                listener?.onCategoryClick(TALES)
             }
         }
         view?.tvStorySeries?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickStoryCn)
-                listener?.onCategoryClick(SCP_STORY_SERIES_CN)
+                listener?.onCategoryClick(STORY_SERIES_CN)
             } else {
                 EventUtil.onEvent(mContext, EventUtil.clickStory)
-                listener?.onCategoryClick(SCP_STORY_SERIES)
+                listener?.onCategoryClick(STORY_SERIES)
             }
         }
         view?.tvSettings?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickSettingsCn)
-                listener?.onCategoryClick(SCP_SETTINGS_CN)
+                listener?.onCategoryClick(SETTINGS_CN)
             } else {
                 EventUtil.onEvent(mContext, EventUtil.clickSettings)
-                listener?.onCategoryClick(SCP_SETTINGS)
+                listener?.onCategoryClick(SETTINGS)
             }
         }
         view?.tvEssayContest?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickContestCn)
-                listener?.onCategoryClick(SCP_CONTEST_CN)
+                listener?.onCategoryClick(CONTEST_CN)
             } else {
                 EventUtil.onEvent(mContext, EventUtil.clickContest)
-                listener?.onCategoryClick(SCP_CONTEST)
+                listener?.onCategoryClick(CONTEST)
             }
         }
         view?.tvEventRecord?.setOnClickListener {
             EventUtil.onEvent(mContext, EventUtil.clickEvent)
-            listener?.onCategoryClick(SCP_EVENT)
+            listener?.onCategoryClick(EVENT)
         }
         view?.tvMore?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickTalesCnByTime)
-                listener?.onCategoryClick(SCP_TALES_BY_TIME)
+                listener?.onCategoryClick(TALES_BY_TIME)
             } else {
                 Toast.makeText(ScpApplication.context, "更多功能敬请期待", LENGTH_SHORT).show()
             }

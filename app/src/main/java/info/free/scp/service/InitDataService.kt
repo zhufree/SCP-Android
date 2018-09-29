@@ -1,47 +1,112 @@
 package info.free.scp.service
 
-import android.app.Service
+import android.app.IntentService
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import info.free.scp.SCPConstants
+import info.free.scp.bean.ScpModel
+import info.free.scp.util.PreferenceUtil
+import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.db.ScpDao
 
-class InitDataService : Service() {
+
+class InitDataService : IntentService("initDataService") {
+    val INIT_PROGRESS = "initProgress"
+
+    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+
+    var scpModels: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    var requestCount = 0 // 10+10+4+3+3+6+27+27+6=
+        set(value) {
+            Log.i("loading", "requestCount = $value")
+            field = value
+            sendThreadStatus(4*(value-1))
+            if (value == 26) {
+                ScpDao.getInstance().insertData(scpModels)
+                PreferenceUtil.setInitDataFinish()
+                sendThreadStatus(100)
+            }
+        }
 
     override fun onCreate() {
         super.onCreate()
-        for (i in 0 .. 10) {
-            // 0-499,500-999
-            Log.i("loading", "i = $i")
-            HttpManager.instance.getSeries("{\"cn\":\"false\"}",
-                    i*500, 500) {
-                for ((index, scp) in it.withIndex()) {
-                    scp.saveType = SCPConstants.SERIES
-                    scp.index = i*500 + index
-                    ScpDao.getInstance().replaceScpModel(scp)
+        // 0-499,500-999
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+    }
+
+    private fun sendThreadStatus(progress: Int) {
+        val intent = Intent(INIT_PROGRESS)
+        intent.putExtra("progress", progress)
+        mLocalBroadcastManager?.sendBroadcast(intent)
+    }
+
+
+    override fun onHandleIntent(intent: Intent?) {
+        getAllScpList(0)
+    }
+
+    private fun getAllScpList(i: Int) {
+        HttpManager.instance.getAllScp(i*500, 500) {
+            for ((index, scp) in it.withIndex()) {
+                when (scp.requestType) {
+                    "series" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_SERIES_CN
+                        else SCPConstants.SAVE_SERIES
+                    }
+                    "joke" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_JOKE_CN
+                        else SCPConstants.SAVE_JOKE
+                    }
+                    "archived" -> {
+                        scp.saveType = SCPConstants.SAVE_ARCHIVED
+                    }
+                    "ex" -> {
+                        scp.saveType = SCPConstants.SAVE_EX
+                    }
+                    "decommissioned" -> {
+                        scp.saveType = SCPConstants.SAVE_DECOMMISSIONED
+                    }
+                    "removed" -> {
+                        scp.saveType = SCPConstants.SAVE_REMOVED
+                    }
+                    "story" -> {
+                        when (scp.storyNum) {
+                            "1" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_1
+                            "2" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_2
+                            "3" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_3
+                        }
+                    }
+                    "story_series" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_STORY_SERIES_CN
+                        else SCPConstants.SAVE_STORY_SERIES
+                    }
+                    "tale" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_TALES_CN_PREFIX + scp.pageCode
+                        else SCPConstants.SAVE_TALES_PREFIX + scp.pageCode
+                    }
+                    "setting" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_SETTINGS_CN
+                        else SCPConstants.SAVE_SETTINGS
+                    }
+                    "contest" -> {
+                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_CONTEST_CN
+                        else SCPConstants.SAVE_CONTEST
+                    }
                 }
+                scp.index = i*500 + index
+                Log.i("loading", "${scp.saveType} index = ${scp.index}")
             }
-            HttpManager.instance.getSeries("{\"cn\":\"true\"}",
-                    i*100, 100) {
-                for ((index, scp) in it.withIndex()) {
-                    scp.saveType = SCPConstants.SERIES
-                    scp.index = i*100 + index
-                    Log.i("loading", "index = ${scp.index}")
-                    ScpDao.getInstance().replaceScpModel(scp)
-                }
-            }
-        }
-        for (i in 0 .. 5) {
-            HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
-                scpList.addAll(it)
-                for (scp in it) {
-                    ScpDao.getInstance().replaceScpModel(scp)
-                }
-                scpAdapter?.notifyDataSetChanged()
+            scpModels.addAll(it)
+            Log.i("loading", "i = $i, size = ${scpModels.size}")
+            requestCount += 1
+            val next = i + 1
+            if (next < 26) {
+                getAllScpList(next)
             }
         }
     }
+
 
     override fun onBind(intent: Intent): IBinder? {
         return null

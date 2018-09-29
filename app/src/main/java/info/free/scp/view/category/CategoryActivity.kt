@@ -8,19 +8,36 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
-import info.free.scp.SCPConstants.SCP_CONTEST
-import info.free.scp.SCPConstants.SCP_CONTEST_CN
-import info.free.scp.SCPConstants.SCP_EVENT
-import info.free.scp.SCPConstants.SCP_SETTINGS
-import info.free.scp.SCPConstants.SCP_SETTINGS_CN
-import info.free.scp.SCPConstants.SCP_STORY_SERIES
-import info.free.scp.SCPConstants.SCP_STORY_SERIES_CN
-import info.free.scp.SCPConstants.SCP_TALES
-import info.free.scp.SCPConstants.SCP_TALES_BY_TIME
-import info.free.scp.SCPConstants.SCP_TALES_CN
+import info.free.scp.SCPConstants.CONTEST
+import info.free.scp.SCPConstants.CONTEST_CN
+import info.free.scp.SCPConstants.EVENT
+import info.free.scp.SCPConstants.SAVE_CONTEST
+import info.free.scp.SCPConstants.SAVE_CONTEST_CN
+import info.free.scp.SCPConstants.SAVE_SERIES
+import info.free.scp.SCPConstants.SAVE_ARCHIVED
+import info.free.scp.SCPConstants.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.SAVE_DECOMMISSIONED
+import info.free.scp.SCPConstants.SAVE_EX
+import info.free.scp.SCPConstants.SAVE_JOKE
+import info.free.scp.SCPConstants.SAVE_JOKE_CN
+import info.free.scp.SCPConstants.SAVE_REMOVED
+import info.free.scp.SCPConstants.SAVE_SERIES_STORY_1
+import info.free.scp.SCPConstants.SAVE_SERIES_STORY_2
+import info.free.scp.SCPConstants.SAVE_SERIES_STORY_3
+import info.free.scp.SCPConstants.SAVE_SETTINGS
+import info.free.scp.SCPConstants.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.SAVE_STORY_SERIES
+import info.free.scp.SCPConstants.SAVE_STORY_SERIES_CN
+import info.free.scp.SCPConstants.SAVE_TALES_CN_PREFIX
+import info.free.scp.SCPConstants.SAVE_TALES_PREFIX
+import info.free.scp.SCPConstants.SETTINGS
+import info.free.scp.SCPConstants.SETTINGS_CN
+import info.free.scp.SCPConstants.STORY_SERIES
+import info.free.scp.SCPConstants.STORY_SERIES_CN
+import info.free.scp.SCPConstants.TALES
+import info.free.scp.SCPConstants.TALES_BY_TIME
+import info.free.scp.SCPConstants.TALES_CN
 import info.free.scp.SCPConstants.SERIES
 import info.free.scp.SCPConstants.SERIES_ABOUT
 import info.free.scp.SCPConstants.SERIES_ARCHIVED
@@ -28,7 +45,6 @@ import info.free.scp.SCPConstants.SERIES_CN
 import info.free.scp.SCPConstants.SERIES_STORY
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
-import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.WebActivity
@@ -152,20 +168,20 @@ class CategoryActivity : BaseActivity() {
                 categoryList.addAll(arrayOf("搞笑SCP", "异常物品记录", "超常事件记录"))
                 categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "被归档的SCP", "废除SCP", "删除SCP"))
             }
-            SCP_TALES -> {
+            TALES -> {
                 // 1021
                 pageType = 0
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
             }
-            SCP_TALES_CN -> {
+            TALES_CN -> {
                 // 1021
                 pageType = 0
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
             }
-            SERIES_ABOUT, SCP_STORY_SERIES, SCP_STORY_SERIES_CN, SCP_SETTINGS, SCP_SETTINGS_CN,
-            SCP_CONTEST, SCP_CONTEST_CN, SCP_EVENT, SCP_TALES_BY_TIME -> {
+            SERIES_ABOUT, STORY_SERIES, STORY_SERIES_CN, SETTINGS, SETTINGS_CN,
+            CONTEST, CONTEST_CN, EVENT, TALES_BY_TIME -> {
                 pageType = 1
                 onlyOneLayer = true
             }
@@ -204,15 +220,14 @@ class CategoryActivity : BaseActivity() {
         when (categoryType) {
             SERIES -> {
                 // 0,499,999
-                val start = if (position == 0) 0 else position*500 - 1
-                val limit = if (start == 0) 499 else 500
-                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
+                val start = if (position == 0) 0 else position*500
+                val limit = 500
+                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES, start, limit))
             }
             SERIES_CN -> {
                 val start = if (position == 0) 0 else position*100 - 1
                 val limit = if (start == 0) 99 else 100
-                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(categoryType, start, limit))
-                scpAdapter?.notifyDataSetChanged()
+                scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_CN, start, limit))
 
             }
             SERIES_STORY -> {
@@ -221,121 +236,61 @@ class CategoryActivity : BaseActivity() {
                     0 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版1 500~999
                     1 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版1 1000~1499
                     2 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版1 1500~1808
                     3 -> {
                         val start = 1499
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"1\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版2 1~499
                     4 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
                     }
                     // 故事版2 500~999
                     5 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
                     }
                     // 故事版2 1000~1193
                     6 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"2\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
                     }
                     // 故事版3 1~499
                     7 -> {
                         val start = 0
                         val limit = 499
-                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
                     }
                     // 故事版3 500~999
                     8 -> {
                         val start = 499
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
                     }
                     // 故事版3 1000~1211
                     9 -> {
                         val start = 999
                         val limit = 500
-                        HttpManager.instance.getStory("{\"story_num\":\"3\"}",start, limit) {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
                     }
                 }
             }
@@ -347,7 +302,6 @@ class CategoryActivity : BaseActivity() {
                     scpList.addAll(ScpDao.getInstance().getBasicInfo())
                     PreferenceUtil.setInitAboutData()
                 }
-                scpAdapter?.notifyDataSetChanged()
             }
             SERIES_ARCHIVED -> {
                 // 内容较少，直接全部加载
@@ -356,155 +310,63 @@ class CategoryActivity : BaseActivity() {
                         // 搞笑scp
                         if (isCnPage) {
                             // cn
-                            HttpManager.instance.getArchives("{\"cn\":\"true\", \"type\":\"joke\"}") {
-                                scpList.addAll(it)
-                                for (scp in it) {
-                                    ScpDao.getInstance().replaceScpModel(scp)
-                                }
-                                scpAdapter?.notifyDataSetChanged()
-                            }
+                            scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_JOKE_CN))
+
                         } else {
-                            HttpManager.instance.getArchives("{\"cn\":\"false\", \"type\":\"joke\"}") {
-                                scpList.addAll(it)
-                                for (scp in it) {
-                                    ScpDao.getInstance().replaceScpModel(scp)
-                                }
-                                scpAdapter?.notifyDataSetChanged()
-                            }
+                            scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_JOKE))
                         }
                     }
                     3 -> {
                         // 已解明scp
-                        HttpManager.instance.getArchives("{\"type\":\"ex\"}") {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_EX))
                     }
                     4 -> {
                         // 归档scp
-                        HttpManager.instance.getArchives("{\"type\":\"archived\"}") {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_ARCHIVED))
                     }
                     5 -> {
                         // 废弃scp
-                        HttpManager.instance.getArchives("{\"type\":\"decommissioned\"}") {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_DECOMMISSIONED))
                     }
                     6 -> {
                         // 已移除scp
-                        HttpManager.instance.getArchives("{\"type\":\"removed\"}") {
-                            scpList.addAll(it)
-                            for (scp in it) {
-                                ScpDao.getInstance().replaceScpModel(scp)
-                            }
-                            scpAdapter?.notifyDataSetChanged()
-                        }
+                        scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_REMOVED))
                     }
                     else -> {
                         Toaster.show("开发中...")
                     }
                 }
             }
-            SCP_TALES -> {
-                HttpManager.instance.getTales("{\"cn\":\"false\", \"page_code\":\"${categoryList[position]}\"}") {
-                    if (it.isEmpty()) {
-                        Toaster.show("该项没有内容")
-                        return@getTales
-                    }
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            TALES -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_TALES_PREFIX + categoryList[position]))
             }
-            SCP_TALES_CN -> {
-                HttpManager.instance.getTales("{\"cn\":\"true\", \"page_code\":\"${categoryList[position]}\"}") {
-                    if (it.isEmpty()) {
-                        Toast.makeText(this, "该项没有内容", LENGTH_SHORT).show()
-                        return@getTales
-                    }
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            TALES_CN -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_TALES_CN_PREFIX + categoryList[position]))
             }
-            SCP_STORY_SERIES -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"story_series\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            STORY_SERIES -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_STORY_SERIES))
             }
-            SCP_STORY_SERIES_CN -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"story_series\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            STORY_SERIES_CN -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_STORY_SERIES_CN))
             }
-            SCP_SETTINGS -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"setting\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            SETTINGS -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_SETTINGS))
             }
-            SCP_SETTINGS_CN -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"setting\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            SETTINGS_CN -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_SETTINGS_CN))
             }
-            SCP_CONTEST -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"false\", \"type\":\"contest\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            CONTEST -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_CONTEST))
             }
-            SCP_CONTEST_CN -> {
-                HttpManager.instance.getLibraryItem("{\"cn\":\"true\", \"type\":\"contest\"}") {
-                    scpList.addAll(it)
-                    for (scp in it) {
-                        ScpDao.getInstance().replaceScpModel(scp)
-                    }
-                    scpAdapter?.notifyDataSetChanged()
-                }
+            CONTEST_CN -> {
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_CONTEST_CN))
             }
-            SCP_EVENT -> { Toaster.show("开发中...") }
-            SCP_TALES_BY_TIME -> { Toaster.show("开发中...") }
+            EVENT -> { Toaster.show("开发中...") }
+            TALES_BY_TIME -> { Toaster.show("开发中...") }
         }
         if (scpList.size == 0) {
             Toaster.show("该页没有内容或数据初始化未完成，请稍等")
         }
         scpAdapter?.notifyDataSetChanged()
-
     }
 }

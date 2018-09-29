@@ -148,6 +148,7 @@ def get_series_story():
                     new_sub_article['title'] = sub_li.text()
                     new_sub_article['number'] = str(story_count) + "-" + str(sub_article_count)
                     new_sub_article['story_num'] = str(i)
+                    new_sub_article['type'] = 'story'
                     sub_article_count += 1
                     print(new_sub_article)
                     article_list.append(new_sub_article)
@@ -155,6 +156,7 @@ def get_series_story():
                 new_article['number'] = str(story_count)
             new_article['title'] = story_li.remove('ul').text()
             new_article['story_num'] = str(i)
+            new_article['type'] = 'story'
             story_count += 1
             print(new_article)
             article_list.append(new_article)
@@ -210,6 +212,7 @@ def get_tales():
             new_article['created_time'] = tds[2].text()
             new_article['page_code'] = letter_list[i]
             new_article['cn'] = 'false'
+            new_article['type'] = 'tale'
             print(new_article)
             article_list.append(new_article)
     write_tales_to_csv(article_list, 'scp-tales.csv')
@@ -229,6 +232,7 @@ def get_tales_cn():
             new_article['created_time'] = tds[2].text()
             new_article['page_code'] = letter_list[i]
             new_article['cn'] = 'true'
+            new_article['type'] = 'tale'
             print(new_article)
             article_list.append(new_article)
     write_tales_to_csv(article_list, 'scp-tales-cn.csv')
@@ -353,9 +357,9 @@ def write_to_csv(article_list, file_name):
 
 def write_series_story_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
-        f.write("title,link,story_num,number\n")
+        f.write("title,link,story_num,number,type\n")
         for i in article_list:
-            f.write(i['title'].replace(',', '，') + ',' + i['link'] + ',' + i['story_num'] + ',' + i['number'] + '\n')
+            f.write(i['title'].replace(',', '，') + ',' + i['link'] + ',' + i['story_num'] + ',' + i['number'] + ',' + i['type']+'\n')
 
 def write_setting_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
@@ -375,9 +379,10 @@ def write_series_to_csv(article_list, file_name):
 
 def write_tales_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8') as f:
-        f.write("title,link,author,created_time,page_code,cn\n")
+        f.write("title,link,author,created_time,page_code,cn,type\n")
         for i in article_list:
-            concat_str = i['title'].replace(',', '，') + ',' + i['link'] + ','+ i['author'] + ','  + i['created_time'].replace(',', '，') + ',' + i['page_code'] + ',' + i['cn']
+            concat_str = i['title'].replace(',', '，') + ',' + i['link'] + ','+ i['author'] + ',' \
+             + i['created_time'].replace(',', '，') + ',' + i['page_code'] + ',' + i['cn'] + ',' + i['type']
             f.write(concat_str.replace('\n', '') +'\n')
 
 def write_contest_to_csv(article_list, file_name):
@@ -396,12 +401,12 @@ def write_contest_to_csv(article_list, file_name):
 # get_ex_scp()
 # get_decommissioned_scps()
 # get_removed_scp()
-# get_series_story()
-# get_tales()
-# get_tales_cn()
+get_series_story()
+get_tales()
+get_tales_cn()
 # get_setting()
 # get_setting_cn()
 # get_contest()
 # get_contest_cn()
-get_series_archived()
-get_series_archived_cn()
+# get_series_archived()
+# get_series_archived_cn()

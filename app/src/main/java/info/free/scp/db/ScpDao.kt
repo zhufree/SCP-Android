@@ -17,8 +17,8 @@ import java.util.*
  */
 
 
-const val DB_NAME = "shelf_info.db"
-const val DB_VERSION = 2
+const val DB_NAME = "scp_info.db"
+const val DB_VERSION = 1
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
 
@@ -101,25 +101,25 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     fun getBasicInfo(): MutableList<ScpModel> {
         val basicList = emptyList<ScpModel>().toMutableList()
-        getScpModelById("/security-clearance-levels")?.let {
+        getScpModelByLink("/security-clearance-levels")?.let {
             basicList.add(it)
         }
-        getScpModelById("/object-classes")?.let {
+        getScpModelByLink("/object-classes")?.let {
             basicList.add(it)
         }
-        getScpModelById("/secure-facilities-locations")?.let {
+        getScpModelByLink("/secure-facilities-locations")?.let {
             basicList.add(it)
         }
-        getScpModelById("/task-forces")?.let {
+        getScpModelByLink("/task-forces")?.let {
             basicList.add(it)
         }
-        getScpModelById("/log-of-anomalous-items")?.let {
+        getScpModelByLink("/log-of-anomalous-items")?.let {
             basicList.add(it)
         }
-        getScpModelById("/log-of-extranormal-events")?.let {
+        getScpModelByLink("/log-of-extranormal-events")?.let {
             basicList.add(it)
         }
-        getScpModelById("/secure-facilities-locations-cn")?.let {
+        getScpModelByLink("/secure-facilities-locations-cn")?.let {
             basicList.add(it)
         }
         return basicList
@@ -134,7 +134,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
 //            for (model in models) {
 //                val cv = packScp(model)
-//                if (getScpModelById(model.sId) == null) {
+//                if (getScpModelByLink(model.sId) == null) {
 //
 //                    // 如果之前没有，直接存储
 //                    db.insert(ScpTable.TABLE_NAME, null, cv)
@@ -188,7 +188,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             val cv = packScp(model)
-            if (getScpModelById(model.link) == null) {
+            if (getScpModelByLink(model.link) == null) {
                 // 如果之前没有，直接存储
                 db.insert(ScpTable.TABLE_NAME, null, cv)
             } else {
@@ -200,16 +200,16 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         } finally {
             db.endTransaction()
         }
-        return getScpModelById(model.link)
+        return getScpModelByLink(model.link)
     }
 
-    fun getScpModelById(id: String?): ScpModel? {
-        if (id == null) {
+    fun getScpModelByLink(link: String?): ScpModel? {
+        if (link == null) {
             return null
         }
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.ID + "=?", arrayOf(id))
+                    + ScpTable.LINK + "=?", arrayOf(link))
             var scpModel: ScpModel? = null
             if (cursor != null) {
                 if (cursor.moveToFirst()) {

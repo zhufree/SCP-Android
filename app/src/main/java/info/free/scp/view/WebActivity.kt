@@ -1,6 +1,7 @@
 package info.free.scp.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -28,6 +29,9 @@ class WebActivity : BaseActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
+                Log.i("web", url)
+                view?.evaluateJavascript("document.getElementById('content-wrap').removeChild(document.getElementById('side-bar'));") {
+                }
             }
         }
     }

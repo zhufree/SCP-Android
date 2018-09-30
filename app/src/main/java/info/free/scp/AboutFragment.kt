@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.fragment_about.*
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
 class AboutFragment : BaseFragment() {
-//    private var listener: CategoryListener? = null
+    private var listener: AboutListener? = null
 
     // TODO: Rename and change types of parameters
 //    private var mParam1: String? = null
@@ -35,14 +35,14 @@ class AboutFragment : BaseFragment() {
 //        }
     }
 
-//    override fun onAttach(context: Context?) {
-//        super.onAttach(context)
-//        if (context is CategoryListener) {
-//            listener = context
-//        } else {
-//            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
-//        }
-//    }
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        if (context is AboutListener) {
+            listener = context
+        } else {
+            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -59,10 +59,14 @@ class AboutFragment : BaseFragment() {
             Toaster.show("已复制到剪贴板")
             true
         }
+        tv_init_data?.setOnClickListener {
+            listener?.onInitDataClick()
+        }
     }
 
     override fun onDetach() {
         super.onDetach()
+        listener = null
     }
 
     companion object {
@@ -91,8 +95,8 @@ class AboutFragment : BaseFragment() {
         }
     }
 
-    interface CategoryListener {
-        fun onCategoryClick(type: Int)
+    interface AboutListener {
+        fun onInitDataClick()
     }
 
 } // Required empty public constructor

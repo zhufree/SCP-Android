@@ -159,9 +159,9 @@ class CategoryActivity : BaseActivity() {
             }
             SERIES_STORY -> {
                 pageType = 0
-                categoryList.addAll(arrayOf("SCP系列1故事版1~499","SCP系列1故事版500~999","SCP系列1故事版1000~1499",
-                        "SCP系列1故事版1499~1808", "SCP系列2故事版1~499", "SCP系列2故事版500~999", "SCP系列2故事版1000~1193",
-                        "SCP系列3故事版1~499","SCP系列3故事版500~999","SCP系列3故事版1000~1211"))
+                categoryList.addAll(arrayOf("SCP系列1故事版1~500","SCP系列1故事版501~1000","SCP系列1故事版1001~1500",
+                        "SCP系列1故事版1501~1808", "SCP系列2故事版1~500", "SCP系列2故事版501~1000", "SCP系列2故事版1001~1193",
+                        "SCP系列3故事版1~500","SCP系列3故事版501~1000","SCP系列3故事版1000~1211"))
             }
             SERIES_ARCHIVED -> {
                 pageType = 0

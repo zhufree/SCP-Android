@@ -22,7 +22,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.content.IntentFilter
 
 
-class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
+class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragment.AboutListener {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
     private val feedFragment = FeedFragment.newInstance()
@@ -36,6 +36,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
         override fun onReceive(context: Context?, intent: Intent?) {
             val progress = intent?.getIntExtra("progress", 0) ?: 0
             progressDialog?.progress = progress
+            if (progress == 90) {
+                progressDialog?.setMessage("写入数据库中")
+            }
+            if (progress == 100) {
+                progressDialog?.dismiss()
+            }
         }
     }
 
@@ -81,16 +87,9 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
         val intentFilter = IntentFilter()
         intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mBroadcastReceiver, intentFilter)
-        // 启动数据加载service
-        if (!PreferenceUtil.getInitDataFinish()) {
-            val intent = Intent(this, InitDataService::class.java)
-            startService(intent)
-            progressDialog = ProgressDialog(this)
-            progressDialog?.max = 100
-            progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            progressDialog?.setMessage("数据初始化中")
-            progressDialog?.show()
-        }
+        // 启动数据加载
+        checkInitData()
+
         setContentView(R.layout.activity_main)
         val transaction = fragmentManager.beginTransaction()
         transaction.add(R.id.flMainContainer, homeFragment)
@@ -105,6 +104,45 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
             updateChecked = true
             checkUpdate()
         }
+    }
+
+    private fun checkInitData() {
+        if (!PreferenceUtil.getInitDataFinish()) {
+            if (enabledWifi()) {
+                initCategoryData()
+            } else if (enabledNetwork()){
+                AlertDialog.Builder(this)
+                        .setTitle("数据初始化")
+                        .setMessage("检测到你没有开启wifi，是否允许请求网络初始化数据？" +
+                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
+                        .setPositiveButton("确定") { _, _ ->
+                            initCategoryData()
+                        }
+                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                        .create().show()
+            } else {
+                AlertDialog.Builder(this)
+                        .setTitle("数据初始化")
+                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
+                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
+                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss()}
+                        .create().show()
+            }
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private fun initCategoryData() {
+        val intent = Intent(this, InitDataService::class.java)
+        startService(intent)
+        progressDialog = ProgressDialog(this)
+        progressDialog?.max = 100
+        progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+        progressDialog?.setMessage("加载数据中")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
     }
 
     /**
@@ -150,5 +188,9 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener {
         intent.putExtra("saveType", type)
         intent.setClass(this, CategoryActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun onInitDataClick() {
+        checkInitData()
     }
 }

@@ -36,7 +36,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         override fun onReceive(context: Context?, intent: Intent?) {
             val progress = intent?.getIntExtra("progress", 0) ?: 0
             progressDialog?.progress = progress
-            if (progress == 90) {
+            if (progress == 92) {
                 progressDialog?.setMessage("写入数据库中")
             }
             if (progress == 100) {
@@ -77,7 +77,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 currentFragment = aboutFragment
             }
         }
-        transaction?.commitAllowingStateLoss()
+        transaction?.commit()
         true
     }
 
@@ -94,16 +94,24 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         val transaction = fragmentManager.beginTransaction()
         transaction.add(R.id.flMainContainer, homeFragment)
         currentFragment = homeFragment
-        transaction.commitAllowingStateLoss()
+        transaction.commit()
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     override fun onResume() {
         super.onResume()
-        if (!updateChecked) {
+        if (!updateChecked && enabledNetwork()) {
             updateChecked = true
             checkUpdate()
         }
+    }
+
+    /**
+     * 检测版本更新后新加载的数据，每个版本不同
+     */
+    private fun addTempData() {
+        val currentVersionCode = BuildConfig.VERSION_CODE
+
     }
 
     private fun checkInitData() {
@@ -153,6 +161,8 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         var newVersionCode = 0
         var updateDesc: String? = ""
         var updateLink: String? = ""
+        var needUpdateData = false
+        var remoteDbVersion = -1
         HttpManager.instance.getAppConfig {
             for (config in it) {
                 if (config.key == "version") {
@@ -163,6 +173,14 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 }
                 if (config.key == "update_link") {
                     updateLink = config.value
+                }
+                // 当前版本需要更新数据
+                if (config.key == "need_update_data") {
+                    needUpdateData= config.value.toBoolean()
+                }
+                // 数据版本，变化时需要重新初始化数据
+                if (config.key == "db_version") {
+                    remoteDbVersion = config.value.toInt()
                 }
             }
             if (currentVersionCode < newVersionCode) {
@@ -179,6 +197,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         }
                         .setNegativeButton("暂不升级") { dialog, _ -> dialog.dismiss() }
                         .create().show()
+            }
+            if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString()) && needUpdateData) {
+
+            }
+            if (remoteDbVersion > PreferenceUtil.getLocalDbVersion()) {
+                initCategoryData()
             }
         }
     }

@@ -31,4 +31,27 @@ object PreferenceUtil {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean("initData", true)?.apply()
     }
+
+    /**
+     * 检测当前版本是不是第一次启动
+     */
+    fun getFirstOpenCurrentVersion(versionCode: String): Boolean {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getBoolean(versionCode, true)?:true
+    }
+
+    fun setFirstOpenCurrentVersion(versionCode: String) {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putBoolean(versionCode, true)?.apply()
+    }
+
+    fun getLocalDbVersion(): Int {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getInt("dbVersion", 1)?:1
+    }
+
+    fun setLocalDbVersion(version: Int) {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putInt("dbVersion", version)?.apply()
+    }
 }

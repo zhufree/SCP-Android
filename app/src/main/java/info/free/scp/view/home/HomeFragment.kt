@@ -59,10 +59,10 @@ class HomeFragment : BaseFragment() {
         seriesFragment.listener = listener
         libraryFragment.listener = listener
         val scpPagerAdapter = HomeFragmentPager(childFragmentManager, fragmentList, titleList)
-        vpHome.adapter = scpPagerAdapter
-        tabHome.setupWithViewPager(vpHome)
+        vpHome?.adapter = scpPagerAdapter
+        tabHome?.setupWithViewPager(vpHome)
 
-        vpHome.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        vpHome?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(state: Int) {
             }
 
@@ -75,8 +75,8 @@ class HomeFragment : BaseFragment() {
             }
         })
         toolbar?.setTitle(R.string.app_name)
-        toolbar.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
-        toolbar.setOnMenuItemClickListener{
+        toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
+        toolbar?.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.cn_page -> {
                     libraryFragment.changePage()

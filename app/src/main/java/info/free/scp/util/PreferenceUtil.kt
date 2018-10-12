@@ -31,6 +31,15 @@ object PreferenceUtil {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean("initData", true)?.apply()
     }
+    fun getDetailDataFinish(): Boolean {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getBoolean("detailData", false)?:false
+    }
+
+    fun setDetailDataFinish() {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putBoolean("detailData", true)?.apply()
+    }
 
     /**
      * 检测当前版本是不是第一次启动

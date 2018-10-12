@@ -12,12 +12,14 @@ import info.free.scp.R
 import info.free.scp.SCPConstants.CONTEST
 import info.free.scp.SCPConstants.CONTEST_CN
 import info.free.scp.SCPConstants.EVENT
+import info.free.scp.SCPConstants.SAVE_ABOUT
 import info.free.scp.SCPConstants.SAVE_CONTEST
 import info.free.scp.SCPConstants.SAVE_CONTEST_CN
 import info.free.scp.SCPConstants.SAVE_SERIES
 import info.free.scp.SCPConstants.SAVE_ARCHIVED
 import info.free.scp.SCPConstants.SAVE_SERIES_CN
 import info.free.scp.SCPConstants.SAVE_DECOMMISSIONED
+import info.free.scp.SCPConstants.SAVE_EVENT
 import info.free.scp.SCPConstants.SAVE_EX
 import info.free.scp.SCPConstants.SAVE_JOKE
 import info.free.scp.SCPConstants.SAVE_JOKE_CN
@@ -29,6 +31,7 @@ import info.free.scp.SCPConstants.SAVE_SETTINGS
 import info.free.scp.SCPConstants.SAVE_SETTINGS_CN
 import info.free.scp.SCPConstants.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.SAVE_STORY_SERIES_CN
+import info.free.scp.SCPConstants.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.SAVE_TALES_CN_PREFIX
 import info.free.scp.SCPConstants.SAVE_TALES_PREFIX
 import info.free.scp.SCPConstants.SETTINGS
@@ -45,9 +48,8 @@ import info.free.scp.SCPConstants.SERIES_CN
 import info.free.scp.SCPConstants.SERIES_STORY
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
-import info.free.scp.view.WebActivity
+import info.free.scp.view.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
@@ -63,13 +65,16 @@ class CategoryActivity : BaseActivity() {
     private var onlyOneLayer = false
     private val tag = "category"
 
+    private val eventScpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
-        setSupportActionBar(toolbar)
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        toolbar.setNavigationOnClickListener {
+        setSupportActionBar(category_toolbar)
+        category_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        category_toolbar.setNavigationOnClickListener {
             if (pageType == 0 || onlyOneLayer) {
                 finish()
             } else {
@@ -83,8 +88,8 @@ class CategoryActivity : BaseActivity() {
 
         initData()
 
-        toolbar.inflateMenu(R.menu.series_category_menu) //设置右上角的填充菜单
-        toolbar.setOnMenuItemClickListener{
+        category_toolbar.inflateMenu(R.menu.series_category_menu) //设置右上角的填充菜单
+        category_toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.reverse -> {
                     when (pageType) {
@@ -130,7 +135,8 @@ class CategoryActivity : BaseActivity() {
                 override fun onItemClick(view: View, position: Int) {
                     val intent = Intent()
                     intent.putExtra("link", scpList[position].link)
-                    intent.setClass(this@CategoryActivity, WebActivity::class.java)
+                    intent.putExtra("sId", scpList[position].sId)
+                    intent.setClass(this@CategoryActivity, DetailActivity::class.java)
                     startActivity(intent)
                 }
             }
@@ -165,7 +171,7 @@ class CategoryActivity : BaseActivity() {
             }
             SERIES_ARCHIVED -> {
                 pageType = 0
-                categoryList.addAll(arrayOf("搞笑SCP", "异常物品记录", "超常事件记录"))
+                categoryList.addAll(arrayOf("搞笑SCP"))
                 categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "被归档的SCP", "废除SCP", "删除SCP"))
             }
             TALES -> {
@@ -180,8 +186,14 @@ class CategoryActivity : BaseActivity() {
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
             }
+            EVENT -> {
+                categoryList.addAll(arrayOf("实验记录","探索报告","事故/事件报告", "访谈记录", "独立补充材料"))
+            }
+            TALES_BY_TIME -> {
+                categoryList.addAll(arrayOf("2014","2015","2016", "2017", "2018"))
+            }
             SERIES_ABOUT, STORY_SERIES, STORY_SERIES_CN, SETTINGS, SETTINGS_CN,
-            CONTEST, CONTEST_CN, EVENT, TALES_BY_TIME -> {
+            CONTEST, CONTEST_CN -> {
                 pageType = 1
                 onlyOneLayer = true
             }
@@ -295,13 +307,7 @@ class CategoryActivity : BaseActivity() {
                 }
             }
             SERIES_ABOUT -> {
-                if (PreferenceUtil.getInitAboutData()) {
-                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
-                } else {
-                    ScpDao.getInstance().initBasicInfo()
-                    scpList.addAll(ScpDao.getInstance().getBasicInfo())
-                    PreferenceUtil.setInitAboutData()
-                }
+                scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_ABOUT))
             }
             SERIES_ARCHIVED -> {
                 // 内容较少，直接全部加载
@@ -361,11 +367,54 @@ class CategoryActivity : BaseActivity() {
             CONTEST_CN -> {
                 scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_CONTEST_CN))
             }
-            EVENT -> { Toaster.show("开发中...") }
-            TALES_BY_TIME -> { Toaster.show("开发中...") }
+            EVENT -> {
+                if (eventScpList.isEmpty()) {
+                    eventScpList.addAll(ScpDao.getInstance().getScpByType(SAVE_EVENT))
+                }
+                when (position) {
+                    0 -> {
+                        scpList.addAll(eventScpList.filter { it.evenType == "lab_record" })
+                    }
+                    1 -> {
+                        scpList.addAll(eventScpList.filter { it.evenType == "discovery_report" })
+                    }
+                    2 -> {
+                        scpList.addAll(eventScpList.filter { it.evenType == "event_report" })
+                    }
+                    3 -> {
+                        scpList.addAll(eventScpList.filter { it.evenType == "interview" })
+                    }
+                    4 -> {
+                        scpList.addAll(eventScpList.filter { it.evenType == "addon" })
+                    }
+                }
+            }
+            TALES_BY_TIME -> {
+                if (taleTimeList.isEmpty()) {
+                    taleTimeList.addAll(ScpDao.getInstance().getScpByType(SAVE_TALES_BY_TIME))
+                }
+                when (position) {
+                    0 -> {
+                        scpList.addAll(taleTimeList.filter { it.month.startsWith("2018") })
+                    }
+                    1 -> {
+                        scpList.addAll(taleTimeList.filter { it.month.startsWith("2017") })
+                    }
+                    2 -> {
+                        scpList.addAll(taleTimeList.filter { it.month.startsWith("2016") })
+                    }
+                    3 -> {
+                        scpList.addAll(taleTimeList.filter { it.month.startsWith("2015") })
+                    }
+                    4 -> {
+                        scpList.addAll(taleTimeList.filter { it.month.startsWith("2014") })
+                    }
+                }
+
+            }
         }
         if (scpList.size == 0) {
-            Toaster.show("该页没有内容或数据初始化未完成，请稍等")
+            Toaster.show("该页没有内容或数据初始化未完成")
         }
         scpAdapter?.notifyDataSetChanged()
     }

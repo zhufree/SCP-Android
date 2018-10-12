@@ -17,12 +17,12 @@ class InitDataService : IntentService("initDataService") {
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
 
     var scpModels: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    var requestCount = 0 // 10+10+4+3+3+6+27+27+6=
+    var requestCount = 0
         set(value) {
             Log.i("loading", "requestCount = $value")
             field = value
-            sendThreadStatus(4*(value-1))
-            if (value == 26) {
+            sendThreadStatus(4*(value-3))
+            if (value == 28) {
                 ScpDao.getInstance().insertData(scpModels)
                 PreferenceUtil.setInitDataFinish()
                 sendThreadStatus(100)
@@ -93,6 +93,15 @@ class InitDataService : IntentService("initDataService") {
                         scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_CONTEST_CN
                         else SCPConstants.SAVE_CONTEST
                     }
+                    "event" -> {
+                        scp.saveType = SCPConstants.SAVE_EVENT
+                    }
+                    "tale_by_time" -> {
+                        scp.saveType = SCPConstants.SAVE_TALES_BY_TIME
+                    }
+                    "about" -> {
+                        scp.saveType = SCPConstants.SAVE_ABOUT
+                    }
                 }
                 scp.index = i*500 + index
                 Log.i("loading", "${scp.saveType} index = ${scp.index}")
@@ -101,7 +110,7 @@ class InitDataService : IntentService("initDataService") {
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1
             val next = i + 1
-            if (next < 26) {
+            if (next < 28) {
                 getAllScpList(next)
             }
         }

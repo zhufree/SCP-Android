@@ -486,7 +486,7 @@ def thread_get_event_record(i):
             except:
                 new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
             print(new_article['event_type'] + ' ' + new_article['link'])
-        article_list.append(new_article)
+            article_list.append(new_article)
     write_to_csv(article_list, 'event-scps-' + str(i) + '.csv', ['link', 'title', 'type', 'event_type', 'detail'])
 
 # 合并文件，把前缀相同的文件合并成一个
@@ -501,6 +501,19 @@ def merge_files(file_name_list, file_prefix):
         f.write(append_str)
     
 
+def merge_all_file():
+    # merge_files(['archives/archives-archived-scp.csv','archives/archives-decommissioned-scp.csv',\
+    #     'archives/archives-ex-scp.csv', 'archives/archives-removed-scp.csv', \
+    #     'archives/archives-joke-scp.csv', 'archives/archives-joke-scp-cn.csv'
+    #     ], 'archives/archives')
+    # merge_files(['series/scp-series-1.csv','series/scp-series-2.csv','series/scp-series-3.csv',\
+    #     'series/scp-series-4.csv','series/scp-series-5.csv','series/scp-series-cn.csv'], 'series/series')
+    # merge_files(['series-story/series-story-1.csv','series-story/series-story-2.csv','series-story/series-story-3.csv'], 'series-story/series-story')
+    merge_files(['library/contest.csv','library/contest-cn.csv'], 'library/contest')
+    merge_files(['library/event-scps-1.csv','library/event-scps-2.csv','library/event-scps-3.csv',\
+        'library/event-scps-4.csv','library/event-scps-5.csv'], 'library/event')
+    merge_files(['library/setting-scp.csv','library/setting-scp-cn.csv'], 'library/setting')
+    merge_files(['story-series/story-series-1.csv','story-series/story-series-2.csv','story-series/story-series-cn.csv'], 'story-series/story-series')
 
 # 写入数据时把所有,替换成^，取数据时再转换回来
 def write_to_csv(article_list, file_name, headers):
@@ -515,8 +528,9 @@ if __name__ == '__main__':
     # get_series_cn()
     # get_archives()
     # get_series_story()
-    get_tales()
+    # get_tales()
     # get_tales_cn()
     # get_tales_cn_by_time()
     # get_others()
-    # get_events()
+    get_events()
+    # merge_all_file()

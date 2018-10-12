@@ -74,9 +74,9 @@ class HomeFragment : BaseFragment() {
                         else EventUtil.showScpLibrary)
             }
         })
-        toolbar?.setTitle(R.string.app_name)
-        toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
-        toolbar?.setOnMenuItemClickListener{
+        category_toolbar?.setTitle(R.string.app_name)
+        category_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
+        category_toolbar?.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.cn_page -> {
                     libraryFragment.changePage()

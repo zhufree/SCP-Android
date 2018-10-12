@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/switch_read_mode"
+        android:title="切换阅读模式"
+        android:icon="@drawable/ic_swap_vert_white_24dp"
+        app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/report"
+        android:title="反馈问题"
+        app:showAsAction="collapseActionView"/>
+</menu>

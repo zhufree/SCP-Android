@@ -47,48 +47,7 @@ class HttpManager {
                     }
                 })
     }
-    fun getSeries(where: String, skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getSeries(where, skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
 
-    fun getArchives(where: String, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getArchives(where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getStory(where: String, skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getStory(where, skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getTales(where: String, updateView: (eventList: List<ScpModel>) -> Unit) {
-        Log.i("tales", where)
-        apiService.getTales(where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
-    fun getLibraryItem(where: String, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getLibraryItem(where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
-                        updateView(t.results)
-                    }
-                })
-    }
 
     companion object {
         val instance = HttpManager()

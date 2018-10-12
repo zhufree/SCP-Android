@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.free.scp.view.DetailActivity">
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/ablToolbarWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/detail_toolbar"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/ToolbarPopupTheme">
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.constraint.ConstraintLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_scrollFlags = "scroll|enterAlways"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <WebView
+
+            android:id="@+id/webView"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+        </WebView>
+
+        <ProgressBar
+            android:id="@+id/pbLoading"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:progressDrawable="@color/colorPrimary"/>
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

@@ -12,7 +12,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/AppTheme.AppBarOverlay">
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/category_toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
             android:background="@color/colorPrimary"

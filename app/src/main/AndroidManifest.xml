@@ -32,13 +32,13 @@
         <activity
             android:name=".view.category.CategoryActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity android:name=".view.WebActivity" />
+        <activity android:name=".view.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
 
         <service
             android:name=".service.InitDataService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true"/>
     </application>
 
 </manifest>

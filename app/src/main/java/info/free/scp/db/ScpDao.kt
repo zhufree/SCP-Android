@@ -14,6 +14,8 @@ import java.util.*
 /**
  * Created by zhufree on 2018/8/27.
  * 数据库管理
+ * 每次更新数据源时要删掉表重建
+ * 所以已读数据需要单独建表存
  */
 
 
@@ -31,39 +33,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             db?.execSQL(ScpTable.dropScpTableSQL)
             // 先这么处理，回头改成添加字段啥的更新
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
-            //检测新加的表字段是否存在，如果不存在的话添加Alter
-            val columnNameList = getColumnNameList(db, ScpTable.TABLE_NAME)
-//            if (columnNameList != null) {
-//            //先暂时使用这种方式进行判断
-//                if (!columnNameList.contains(ScpTable.NUMBER)) {
-//                    val sql = createAddAlterSql(ScpTable.TABLE_NAME, "${ScpTable.FIRST_ARTICLE_ID} INTEGER default -1")
-//                    if (!Tools.StringIsEmpty(sql)) {
-//                        db?.execSQL(sql)
-//                    }
-//                }
-//            }
         }
-    }
-
-    private fun getColumnNameList(db: SQLiteDatabase?, tableName: String): ArrayList<String> {
-        val sql = "PRAGMA table_info('$tableName');"
-        var cursor: Cursor? = null
-        val columnNameList = ArrayList<String>()
-        db?.use {
-            cursor = it.rawQuery(sql, null)
-            cursor?.use {
-                val columnNames = cursor?.columnNames
-                val count = cursor?.columnCount
-                while (cursor?.moveToNext() == true) {
-                    val columnName = getCursorString(cursor, "name")
-                    if (columnName.isNotEmpty()) {
-                        columnNameList.add(columnName)
-                    }
-                }
-            }
-        }
-
-        return columnNameList
     }
 
     fun initBasicInfo() {
@@ -132,18 +102,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val db = writableDatabase
         db.beginTransaction()
         try {
-//            for (model in models) {
-//                val cv = packScp(model)
-//                if (getScpModelByLink(model.sId) == null) {
-//
-//                    // 如果之前没有，直接存储
-//                    db.insert(ScpTable.TABLE_NAME, null, cv)
-//                } else {
-//                    // 如果之前有了，更新字段，阅读的信息只有新数据> 0时才会更新，所以不会覆盖
-//                    db.update(ScpTable.TABLE_NAME, cv, ScpTable.ID + "=?",
-//                            arrayOf(model.sId))
-//                }
-//            }
             db.createStatement(models)
             db.setTransactionSuccessful()
         } finally {
@@ -171,6 +129,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             stmt.bindString(15, model.contestLink)
             stmt.bindString(16, model.createdTime)
             stmt.bindLong(17, model.index.toLong())
+            stmt.bindString(18, model.evenType)
+            stmt.bindString(19, model.month)
             Log.i("loading", "sid = ${model.sId}")
             stmt.execute()
             stmt.clearBindings()
@@ -210,6 +170,27 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                     + ScpTable.LINK + "=?", arrayOf(link))
+            var scpModel: ScpModel? = null
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    scpModel = extractScp(cursor)
+                }
+                cursor.close()
+            }
+            return scpModel
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+    fun getScpModelById(id: String?): ScpModel? {
+        if (id == null) {
+            return null
+        }
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                    + ScpTable.ID + "=?", arrayOf(id))
             var scpModel: ScpModel? = null
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -306,7 +287,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * 工具方法封装一下
      */
     private fun getCursorString(cursor: Cursor?, columnIndex: String): String {
-        return if (cursor?.getColumnIndex(columnIndex)?.compareTo(0) == 1) {
+        return if (cursor?.getColumnIndex(columnIndex)?.compareTo(-1) == 1) {
             cursor.getString(cursor.getColumnIndex(columnIndex)) ?: ""
         } else {
             ""
@@ -375,6 +356,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.index > -1) {
             cv.put(ScpTable.INDEX, model.index)
         }
+        if (model.evenType.isNotEmpty()) {
+            cv.put(ScpTable.EVENT_TYPE, model.evenType)
+        }
+        if (model.month.isNotEmpty()) {
+            cv.put(ScpTable.MONTH, model.month)
+        }
         return cv
     }
 
@@ -400,8 +387,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.CONTEST_NAME),
                 getCursorString(cursor, ScpTable.CONTEST_LINK),
-                "",
-                ""
+                "", "",
+                getCursorString(cursor, ScpTable.EVENT_TYPE),
+                getCursorString(cursor, ScpTable.MONTH)
         )
 
     }

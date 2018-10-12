@@ -106,14 +106,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
-    /**
-     * 检测版本更新后新加载的数据，每个版本不同
-     */
-    private fun addTempData() {
-        val currentVersionCode = BuildConfig.VERSION_CODE
-
-    }
-
     private fun checkInitData() {
         if (!PreferenceUtil.getInitDataFinish()) {
             if (enabledWifi()) {

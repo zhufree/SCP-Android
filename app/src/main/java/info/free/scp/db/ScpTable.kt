@@ -24,6 +24,8 @@ object ScpTable {
     const val CONTEST_LINK = "contestLink"
     const val SAVE_TYPE = "saveType"
     const val INDEX = "index_"
+    const val EVENT_TYPE = "eventType"
+    const val MONTH = "month"
 
     const val CREATE_TABLE_SQL = "create table IF NOT EXISTS $TABLE_NAME (" +
             "$ID VARCHAR PRIMARY KEY, " +
@@ -35,13 +37,15 @@ object ScpTable {
             "$PAGE_CODE VARCHAR, " +
             "$CONTEST_NAME VARCHAR, $CONTEST_LINK VARCHAR," +
             "$CREATED_TIME VARCHAR, " +
-            "$INDEX INTEGER)"
+            "$INDEX INTEGER, " +
+            "$EVENT_TYPE VARCHAR, $MONTH VARCHAR" +
+            ")"
 
     const val INSERT_SQL = "INSERT INTO $TABLE_NAME (" +
             "$ID , $LINK , $TITLE , $DETAIL_HTML ,$HAS_READ , $SAVE_TYPE," +
             "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , $NUMBER , $STORY_NUMBER , " +
             "$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK , $CREATED_TIME , " +
-            "$INDEX) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            "$INDEX, $EVENT_TYPE, $MONTH) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
     const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME ; "
 }

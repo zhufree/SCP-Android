@@ -509,11 +509,11 @@ def merge_all_file():
     # merge_files(['series/scp-series-1.csv','series/scp-series-2.csv','series/scp-series-3.csv',\
     #     'series/scp-series-4.csv','series/scp-series-5.csv','series/scp-series-cn.csv'], 'series/series')
     # merge_files(['series-story/series-story-1.csv','series-story/series-story-2.csv','series-story/series-story-3.csv'], 'series-story/series-story')
-    merge_files(['library/contest.csv','library/contest-cn.csv'], 'library/contest')
+    # merge_files(['library/contest.csv','library/contest-cn.csv'], 'library/contest')
     merge_files(['library/event-scps-1.csv','library/event-scps-2.csv','library/event-scps-3.csv',\
         'library/event-scps-4.csv','library/event-scps-5.csv'], 'library/event')
-    merge_files(['library/setting-scp.csv','library/setting-scp-cn.csv'], 'library/setting')
-    merge_files(['story-series/story-series-1.csv','story-series/story-series-2.csv','story-series/story-series-cn.csv'], 'story-series/story-series')
+    # merge_files(['library/setting-scp.csv','library/setting-scp-cn.csv'], 'library/setting')
+    # merge_files(['story-series/story-series-1.csv','story-series/story-series-2.csv','story-series/story-series-cn.csv'], 'story-series/story-series')
 
 # 写入数据时把所有,替换成^，取数据时再转换回来
 def write_to_csv(article_list, file_name, headers):
@@ -532,5 +532,5 @@ if __name__ == '__main__':
     # get_tales_cn()
     # get_tales_cn_by_time()
     # get_others()
-    get_events()
-    # merge_all_file()
+    # get_events()
+    merge_all_file()

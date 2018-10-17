@@ -11,7 +11,7 @@ import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.db.ScpDao
 
 
-class InitDataService : IntentService("initDataService") {
+class InitCategoryService : IntentService("initDataService") {
     val INIT_PROGRESS = "initProgress"
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
@@ -21,9 +21,9 @@ class InitDataService : IntentService("initDataService") {
         set(value) {
             Log.i("loading", "requestCount = $value")
             field = value
-            sendThreadStatus(4*(value-3))
-            if (value == 28) {
-                ScpDao.getInstance().insertData(scpModels)
+            sendThreadStatus(3*value)
+            if (value == 29) {
+                ScpDao.getInstance().insertCategoryData(scpModels)
                 PreferenceUtil.setInitDataFinish()
                 sendThreadStatus(100)
             }
@@ -110,7 +110,7 @@ class InitDataService : IntentService("initDataService") {
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1
             val next = i + 1
-            if (next < 28) {
+            if (next < 29) {
                 getAllScpList(next)
             }
         }

@@ -31,14 +31,14 @@ object PreferenceUtil {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean("initData", true)?.apply()
     }
-    fun getDetailDataFinish(): Boolean {
+    fun getDetailDataLoadCount(): Int {
         val sp = getPrivateSharedPreference("init")
-        return sp?.getBoolean("detailData", false)?:false
+        return sp?.getInt("detailData", 0)?:0
     }
 
-    fun setDetailDataFinish() {
+    fun addDetailDataLoadCount() {
         val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putBoolean("detailData", true)?.apply()
+        sp?.edit()?.putInt("detailData", getDetailDataLoadCount()+1)?.apply()
     }
 
     /**

@@ -8,7 +8,6 @@ import android.util.Log
 import info.free.scp.SCPConstants.SAVE_ABOUT
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
-import java.util.*
 
 
 /**
@@ -26,6 +25,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(ScpTable.CREATE_TABLE_SQL)
+        db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -33,69 +33,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             db?.execSQL(ScpTable.dropScpTableSQL)
             // 先这么处理，回头改成添加字段啥的更新
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
+            db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
         }
     }
 
-    fun initBasicInfo() {
-        val basicScp = ScpModel("","", "",
-                "/security-clearance-levels", "安保许可等级", "", 0,
-                SAVE_ABOUT, "", "", "",
-                "", "", "", 0, "", "",
-                "","","about", "")
-        replaceScpModel(basicScp)
-        basicScp.link = "/object-classes"
-        basicScp.title = "项目分级"
-        basicScp.index = 1
-        replaceScpModel(basicScp)
-        basicScp.link = "/secure-facilities-locations"
-        basicScp.title = "安保设施地点"
-        basicScp.index = 2
-        replaceScpModel(basicScp)
-        basicScp.link = "/task-forces"
-        basicScp.title = "机动特遣队"
-        basicScp.index = 3
-        replaceScpModel(basicScp)
-        basicScp.link = "/log-of-anomalous-items"
-        basicScp.title = "异常项目记录"
-        basicScp.index = 4
-        replaceScpModel(basicScp)
-        basicScp.link = "/log-of-extranormal-events"
-        basicScp.title = "超常事件记录"
-        basicScp.index = 5
-        replaceScpModel(basicScp)
-        basicScp.link = "/secure-facilities-locations-cn"
-        basicScp.title = "安保设施地点(CN)"
-        basicScp.index = 6
-        replaceScpModel(basicScp)
-    }
 
-    fun getBasicInfo(): MutableList<ScpModel> {
-        val basicList = emptyList<ScpModel>().toMutableList()
-        getScpModelByLink("/security-clearance-levels")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/object-classes")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/secure-facilities-locations")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/task-forces")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/log-of-anomalous-items")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/log-of-extranormal-events")?.let {
-            basicList.add(it)
-        }
-        getScpModelByLink("/secure-facilities-locations-cn")?.let {
-            basicList.add(it)
-        }
-        return basicList
-    }
-
-    fun insertData(models: List<ScpModel>) {
+    fun insertCategoryData(models: List<ScpModel>) {
         if (models.isEmpty()) {
             return
         }
@@ -109,8 +52,22 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
     }
 
+    fun insertDetailData(models: List<ScpModel>) {
+        if (models.isEmpty()) {
+            return
+        }
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            db.createDetailStatement(models)
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
     private fun SQLiteDatabase.createStatement(models: List<ScpModel>) {
-        val stmt = compileStatement(ScpTable.INSERT_SQL)
+        val stmt = compileStatement(ScpTable.INSERT_SCP_SQL)
         for (model in models) {
             stmt.bindString(1, model.sId)
             stmt.bindString(2, model.link)
@@ -131,6 +88,17 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             stmt.bindLong(17, model.index.toLong())
             stmt.bindString(18, model.evenType)
             stmt.bindString(19, model.month)
+            Log.i("loading", "sid = ${model.sId}")
+            stmt.execute()
+            stmt.clearBindings()
+        }
+    }
+
+    private fun SQLiteDatabase.createDetailStatement(models: List<ScpModel>) {
+        val stmt = compileStatement(ScpTable.INSERT_DETAIL_SQL)
+        for (model in models) {
+            stmt.bindString(1, model.sId)
+            stmt.bindString(2, model.detailHtml)
             Log.i("loading", "sid = ${model.sId}")
             stmt.execute()
             stmt.clearBindings()
@@ -272,6 +240,25 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return null
     }
 
+    fun getDetailById(id: String): String {
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.DETAIL_HTML
+                    + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
+                    + ScpTable.ID + "=? ", arrayOf(id))
+            var detailString = ""
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    detailString = getCursorString(cursor, ScpTable.DETAIL_HTML)
+                }
+                cursor.close()
+            }
+            return detailString
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
 
     companion object {
         private var scpDao: ScpDao? = ScpDao()
@@ -372,8 +359,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return ScpModel(getCursorString(cursor, ScpTable.ID),
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),
-                getCursorString(cursor, ScpTable.TITLE),
-                getCursorString(cursor, ScpTable.DETAIL_HTML),
+                getCursorString(cursor, ScpTable.TITLE), "",
+                // 正文数据量太大，先不取出来，点击时再从数据库拿
+                // getCursorString(cursor, ScpTable.DETAIL_HTML),
                 getCursorInt(cursor, ScpTable.HAS_READ),
                 getCursorString(cursor, ScpTable.SAVE_TYPE),
                 getCursorString(cursor, ScpTable.AUTHOR),

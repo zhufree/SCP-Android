@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ScpModel(@SerialName("objectId") val sId: String,
                     val createdAt: String, val updatedAt: String,  // Bmob自带字段
-                    var link: String, var title: String, // 都有的
+                    @Optional var link: String = "", @Optional var title: String = "", // 都有的
                     @Optional @SerialName("detail") var detailHtml: String = "", // 预留保存正文
                     @Optional var hasRead: Int = 0, // 预留记录是否读过
                     @Optional var saveType: String = "", // 本地存储用

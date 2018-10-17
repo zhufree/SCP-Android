@@ -1,12 +1,9 @@
 package info.free.scp
 
 import android.content.Context
-import android.content.Intent
 import android.support.multidex.MultiDexApplication
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
-import info.free.scp.service.InitDataService
-import info.free.scp.util.PreferenceUtil
 
 /**
  * Created by zhufree on 2018/8/27.

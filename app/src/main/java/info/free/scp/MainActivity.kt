@@ -10,7 +10,7 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.util.Log
 import info.free.scp.service.HttpManager
-import info.free.scp.service.InitDataService
+import info.free.scp.service.InitCategoryService
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
@@ -20,6 +20,10 @@ import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import android.support.v4.content.LocalBroadcastManager
 import android.content.IntentFilter
+import android.support.design.widget.Snackbar
+import android.support.design.widget.Snackbar.LENGTH_SHORT
+import info.free.scp.service.InitDetailService
+import info.free.scp.util.Toaster
 
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragment.AboutListener {
@@ -32,11 +36,11 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     var progressDialog: ProgressDialog? = null
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var mBroadcastReceiver = object: BroadcastReceiver(){
+    private var mInitCategoryReceiver = object: BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             val progress = intent?.getIntExtra("progress", 0) ?: 0
             progressDialog?.progress = progress
-            if (progress == 92) {
+            if (progress > 80) {
                 progressDialog?.setMessage("写入数据库中")
             }
             if (progress == 100) {
@@ -45,7 +49,15 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
+    private var mDetailReceiver = object: BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            Snackbar.make(container, "你已获得正文奖励", LENGTH_SHORT)
+            Toaster.show("你已获得正文奖励")
+        }
+    }
+
     val INIT_PROGRESS = "initProgress"
+    val LOAD_DETAIL_FINISH = "loadDetailFinish"
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = fragmentManager.beginTransaction()
@@ -86,7 +98,8 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
         val intentFilter = IntentFilter()
         intentFilter.addAction(INIT_PROGRESS)
-        mLocalBroadcastManager?.registerReceiver(mBroadcastReceiver, intentFilter)
+        mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver, intentFilter)
+        mLocalBroadcastManager?.registerReceiver(mDetailReceiver, IntentFilter(LOAD_DETAIL_FINISH))
         // 启动数据加载
         checkInitData()
 
@@ -129,20 +142,30 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .create().show()
             }
         }
+
+        if (PreferenceUtil.getDetailDataLoadCount() < 29) {
+            // 初始化正文数据
+            initDetailData()
+        }
     }
 
     /**
      * 初始化数据
      */
     private fun initCategoryData() {
-        val intent = Intent(this, InitDataService::class.java)
+        val intent = Intent(this, InitCategoryService::class.java)
         startService(intent)
         progressDialog = ProgressDialog(this)
         progressDialog?.max = 100
         progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog?.setMessage("加载数据中")
+        progressDialog?.setMessage("与基金会通信中")
         progressDialog?.setCancelable(false)
         progressDialog?.show()
+    }
+
+    private fun initDetailData() {
+        val intent = Intent(this, InitDetailService::class.java)
+        startService(intent)
     }
 
     /**

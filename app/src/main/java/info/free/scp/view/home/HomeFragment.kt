@@ -27,7 +27,6 @@ class HomeFragment : BaseFragment() {
     private var fragmentList = arrayOf(seriesFragment, libraryFragment).toList()
     private var titleList = arrayOf("SCP系列", "SCP图书馆").toList()
 
-    // TODO: Rename and change types of parameters
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
@@ -93,7 +92,6 @@ class HomeFragment : BaseFragment() {
     }
 
     companion object {
-        // TODO: Rename parameter arguments, choose names that match
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 //        private val LISTENER = "listener"
 //        private val ARG_PARAM2 = "param2"
@@ -106,7 +104,6 @@ class HomeFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-        // TODO: Rename and change types and number of parameters
 //        fun newInstance(param1: String, param2: String): HomeFragment {
         fun newInstance(): HomeFragment {
             val fragment = HomeFragment()

@@ -1,18 +1,31 @@
 package info.free.scp.view
 
+import android.app.AlertDialog
+import android.content.DialogInterface.BUTTON_POSITIVE
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.umeng.analytics.MobclickAgent
 import kotlinx.android.synthetic.main.activity_detail.*
 import info.free.scp.R
+import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.view.base.BaseActivity
+import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class DetailActivity : BaseActivity() {
+
+    private var readMode = 0
+    private var url = ""
+    private var sId = ""
+    private var scp: ScpModel? = null
+    private var detailHtml = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,26 +38,46 @@ class DetailActivity : BaseActivity() {
         detail_toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.switch_read_mode -> {
-                    // TODO 切换阅读模式
+                    if (readMode == 0) {
+                        readMode = 1
+                        webView.loadUrl("http://scp-wiki-cn.wikidot.com$url")
+                    } else {
+                        readMode = 0
+                        webView.loadData(detailHtml, "text/html", null)
+                    }
                 }
-                R.id.cn_page -> {
-                    // TODO 反馈问题
+                R.id.report -> {
+                    val reportView = LayoutInflater.from(this@DetailActivity)
+                            .inflate(R.layout.layout_dialog_report, null)
+                    val reportDialog = AlertDialog.Builder(this@DetailActivity)
+                            .setTitle("反馈问题")
+                            .setView(reportView)
+                            .setPositiveButton("OK") { _, _ -> }
+                            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                            .create()
+                    reportDialog.show()
+                    reportDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
+                        val reportString = reportView.et_report.text.toString()
+                        Log.i("report", reportString)
+                        MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
+                        reportDialog.dismiss()
+                    }
                 }
             }
             true
         }
         
-        val url = intent.getStringExtra("link")
-        val sId = intent.getStringExtra("sId")
-        val scp = ScpDao.getInstance().getScpModelById(sId)
+        url = intent.getStringExtra("link")
+        sId = intent.getStringExtra("sId")
+        scp = ScpDao.getInstance().getScpModelById(sId)
 
         scp?.let {
-            Log.i("detail", scp.detailHtml)
-            if (it.detailHtml.contains("该页面尚无内容")) {
+            detailHtml = ScpDao.getInstance().getDetailById(it.sId)
+            if (detailHtml.contains("该页面尚无内容") || detailHtml.isEmpty()) {
                 webView.loadUrl("http://scp-wiki-cn.wikidot.com$url") //可以使用本地文件 file:///android_asset/xyz.html
             } else {
                 pbLoading.visibility = GONE
-                webView.loadData(it.detailHtml, "text/html", null)
+                webView.loadData(detailHtml, "text/html", null)
             }
         }
 
@@ -58,9 +91,6 @@ class DetailActivity : BaseActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
-                Log.i("web", url)
-                view?.evaluateJavascript("document.getElementById('content-wrap').removeChild(document.getElementById('side-bar'));") {
-                }
             }
         }
     }

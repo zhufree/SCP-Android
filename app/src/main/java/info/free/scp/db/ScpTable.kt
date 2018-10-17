@@ -7,6 +7,7 @@ package info.free.scp.db
 
 object ScpTable {
     const val TABLE_NAME = "ScpTable"
+    const val DETAIL_TABLE_NAME = "DetailTable"
     const val ID = "sId"
     const val LINK = "link"
     const val TITLE = "title"
@@ -41,11 +42,18 @@ object ScpTable {
             "$EVENT_TYPE VARCHAR, $MONTH VARCHAR" +
             ")"
 
-    const val INSERT_SQL = "INSERT INTO $TABLE_NAME (" +
+    const val CREATE_DETAIL_TABLE_SQL = "create table IF NOT EXISTS $DETAIL_TABLE_NAME (" +
+            "$ID VARCHAR PRIMARY KEY, $DETAIL_HTML VARCHAR)"
+
+    const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +
             "$ID , $LINK , $TITLE , $DETAIL_HTML ,$HAS_READ , $SAVE_TYPE," +
             "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , $NUMBER , $STORY_NUMBER , " +
             "$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK , $CREATED_TIME , " +
             "$INDEX, $EVENT_TYPE, $MONTH) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
-    const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME ; "
+    const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
+            "$ID, $DETAIL_HTML) VALUES (?,?)"
+
+    const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME ; " +
+            "DROP TABLE IF EXISTS $DETAIL_TABLE_NAME ; "
 }

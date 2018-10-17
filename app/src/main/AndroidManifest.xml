@@ -36,7 +36,11 @@
         <activity android:name=".view.base.BaseActivity" />
 
         <service
-            android:name=".service.InitDataService"
+            android:name=".service.InitCategoryService"
+            android:enabled="true"
+            android:exported="true"/>
+        <service
+            android:name=".service.InitDetailService"
             android:enabled="true"
             android:exported="true"/>
     </application>

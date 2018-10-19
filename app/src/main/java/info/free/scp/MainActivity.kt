@@ -139,16 +139,39 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
      */
     private fun checkInitData() {
         if (!PreferenceUtil.getInitDataFinish()) {
-            if (enabledWifi()) {
+            // 目录和正文都没加载
+            if (enabledNetwork()){
                 ScpDao.getInstance().resetDb()
                 initCategoryData()
+                if (enabledWifi()) {
+                    initDetailData()
+                } else if (enabledNetwork()){
+                    AlertDialog.Builder(this)
+                            .setTitle("数据初始化")
+                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                            .setPositiveButton("确定") { _, _ ->
+                                initDetailData()
+                            }
+                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                            .create().show()
+                }
+            } else {
+                AlertDialog.Builder(this)
+                        .setTitle("数据初始化")
+                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
+                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
+                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss()}
+                        .create().show()
+            }
+        } else if (PreferenceUtil.getDetailDataLoadCount() < 29) {
+            // 正文没有加载完
+            if (enabledWifi()) {
+                initDetailData()
             } else if (enabledNetwork()){
                 AlertDialog.Builder(this)
                         .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启wifi，是否允许请求网络初始化数据（正文数据加载可能消耗上百M流量）？" +
-                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
+                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
                         .setPositiveButton("确定") { _, _ ->
-                            initCategoryData()
                             initDetailData()
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
@@ -161,10 +184,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .setPositiveButton("确定") { dialog, _ -> dialog.dismiss()}
                         .create().show()
             }
-        }
-        if (PreferenceUtil.getDetailDataLoadCount() < 29 && enabledWifi()) {
-            // 初始化正文数据
-            initDetailData()
         }
     }
 

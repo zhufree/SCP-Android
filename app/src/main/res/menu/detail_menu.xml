@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/switch_read_mode"
-        android:title="切换阅读模式"
+        android:title="@string/online_mode"
         android:icon="@drawable/ic_swap_vert_white_24dp"
         app:showAsAction="collapseActionView"/>
     <item

@@ -33,4 +33,7 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="download_detail_service">下载正文</string>
+
+    <string name="offline_mode">切换离线模式</string>
+    <string name="online_mode">切换网页模式</string>
 </resources>

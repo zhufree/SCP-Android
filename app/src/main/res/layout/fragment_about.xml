@@ -27,6 +27,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:textColor="@color/textColor"
         android:text="@string/contact_qq_group"
         app:layout_constraintBottom_toTopOf="@+id/tv_user_notice"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,6 +41,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
+        android:textColor="@color/textColor"
         android:text="@string/user_notice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,6 +53,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/tv_init_data"
         android:layout_marginBottom="16dp"
+        android:textColor="@color/textColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -63,7 +66,8 @@
         android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="初始化数据"
-        android:background="#eee"
+        android:textColor="@color/textColor"
+        android:background="@color/itemBg"
         app:layout_constraintBottom_toTopOf="@+id/tv_reset_data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -76,8 +80,9 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:gravity="center"
+        android:textColor="@color/textColor"
         android:text="清空并重新加载数据"
-        android:background="#eee"
+        android:background="@color/itemBg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

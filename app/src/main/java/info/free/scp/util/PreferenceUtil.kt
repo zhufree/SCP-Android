@@ -27,7 +27,7 @@ object PreferenceUtil {
         return sp?.getBoolean("initData", false)?:false
     }
 
-    fun setInitDataFinish() {
+    fun setInitDataFinish(finish: Boolean) {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean("initData", true)?.apply()
     }
@@ -40,6 +40,12 @@ object PreferenceUtil {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putInt("detailData", getDetailDataLoadCount()+1)?.apply()
     }
+
+    fun resetDetailDataLoadCount() {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putInt("detailData", 0)?.apply()
+    }
+
 
     /**
      * 检测当前版本是不是第一次启动
@@ -62,5 +68,27 @@ object PreferenceUtil {
     fun setLocalDbVersion(version: Int) {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putInt("dbVersion", version)?.apply()
+    }
+
+    /**
+     * 存储当前正在更新的数据库版本
+     */
+    fun setTempUpdateDbVersion(version: Int) {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putInt("tempUpdateDb", version)?.apply()
+    }
+
+    fun getTempUpdateDbVersion(): Int {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getInt("tempUpdateDb", 0)?:0
+    }
+
+    fun getShownDetailNotice(): Boolean {
+        val sp = getPrivateSharedPreference("init")
+        return sp?.getBoolean("shownDetailNotice", false)?:false
+    }
+    fun setShownDetailNotice() {
+        val sp = getPrivateSharedPreference("init")
+        sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
     }
 }

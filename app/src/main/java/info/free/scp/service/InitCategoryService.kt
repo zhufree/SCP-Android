@@ -24,7 +24,7 @@ class InitCategoryService : IntentService("initDataService") {
             sendThreadStatus(3*value)
             if (value == 29) {
                 ScpDao.getInstance().insertCategoryData(scpModels)
-                PreferenceUtil.setInitDataFinish()
+                PreferenceUtil.setInitDataFinish(true)
                 sendThreadStatus(100)
             }
         }

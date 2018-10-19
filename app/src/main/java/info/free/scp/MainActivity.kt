@@ -22,6 +22,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.content.IntentFilter
 import android.support.design.widget.Snackbar
 import android.support.design.widget.Snackbar.LENGTH_SHORT
+import info.free.scp.db.ScpDao
 import info.free.scp.service.InitDetailService
 import info.free.scp.util.Toaster
 
@@ -32,6 +33,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     private val feedFragment = FeedFragment.newInstance()
     private val aboutFragment = AboutFragment.newInstance()
     private var updateChecked = false
+    var remoteDbVersion = -1
 
     var progressDialog: ProgressDialog? = null
 
@@ -45,19 +47,32 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
             }
             if (progress == 100) {
                 progressDialog?.dismiss()
+                AlertDialog.Builder(this@MainActivity)
+                        .setTitle("Notice")
+                        .setMessage("基金会传递的目录信息已接收完毕，由于正文大小较大，传输过程可能会持续很长影响" +
+                                "阅读体验，因此将在使用过程中在后台加载（且仅在wifi打开时），具体进度可查看通知栏，" +
+                                "在所有数据传输完毕之后将可以离线浏览所有目录下的正文。\n加载过程请尽量将app保持" +
+                                "开启状态，同时手机至少保留120M存储空间。")
+                        .setPositiveButton("OK") { dialog, _ ->dialog.dismiss() }
+                        .create().show()
             }
         }
     }
 
     private var mDetailReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            Snackbar.make(container, "你已获得正文奖励", LENGTH_SHORT)
-            Toaster.show("你已获得正文奖励")
+            Toaster.show("正文已全部传输完毕！")
+            val tempUpdateDbVersion = PreferenceUtil.getTempUpdateDbVersion()
+            if (tempUpdateDbVersion > 0) {
+                PreferenceUtil.setLocalDbVersion(tempUpdateDbVersion)
+                PreferenceUtil.setTempUpdateDbVersion(-1)
+            }
         }
     }
 
     val INIT_PROGRESS = "initProgress"
     val LOAD_DETAIL_FINISH = "loadDetailFinish"
+    val currentVersionCode = BuildConfig.VERSION_CODE
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = fragmentManager.beginTransaction()
@@ -100,8 +115,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver, intentFilter)
         mLocalBroadcastManager?.registerReceiver(mDetailReceiver, IntentFilter(LOAD_DETAIL_FINISH))
-        // 启动数据加载
-        checkInitData()
 
         setContentView(R.layout.activity_main)
         val transaction = fragmentManager.beginTransaction()
@@ -119,17 +132,24 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
+    /**
+     * 数据初始化入口
+     * 1.为了防止与后台数据库检测自动更新同时调用导致数据加载重复，确定没有版本更新才检测数据更新，否则先更新版本
+     * 2.点击按钮手动检测时调用
+     */
     private fun checkInitData() {
         if (!PreferenceUtil.getInitDataFinish()) {
             if (enabledWifi()) {
+                ScpDao.getInstance().resetDb()
                 initCategoryData()
             } else if (enabledNetwork()){
                 AlertDialog.Builder(this)
                         .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启wifi，是否允许请求网络初始化数据？" +
+                        .setMessage("检测到你没有开启wifi，是否允许请求网络初始化数据（正文数据加载可能消耗上百M流量）？" +
                                 "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
                         .setPositiveButton("确定") { _, _ ->
                             initCategoryData()
+                            initDetailData()
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                         .create().show()
@@ -142,8 +162,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .create().show()
             }
         }
-
-        if (PreferenceUtil.getDetailDataLoadCount() < 29) {
+        if (PreferenceUtil.getDetailDataLoadCount() < 29 && enabledWifi()) {
             // 初始化正文数据
             initDetailData()
         }
@@ -172,12 +191,9 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
      * 检查更新信息
      */
     private fun checkUpdate() {
-        val currentVersionCode = BuildConfig.VERSION_CODE
         var newVersionCode = 0
         var updateDesc: String? = ""
         var updateLink: String? = ""
-        var needUpdateData = false
-        var remoteDbVersion = -1
         HttpManager.instance.getAppConfig {
             for (config in it) {
                 if (config.key == "version") {
@@ -188,10 +204,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 }
                 if (config.key == "update_link") {
                     updateLink = config.value
-                }
-                // 当前版本需要更新数据
-                if (config.key == "need_update_data") {
-                    needUpdateData= config.value.toBoolean()
                 }
                 // 数据版本，变化时需要重新初始化数据
                 if (config.key == "db_version") {
@@ -212,12 +224,23 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         }
                         .setNegativeButton("暂不升级") { dialog, _ -> dialog.dismiss() }
                         .create().show()
+                return@getAppConfig
             }
-            if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString()) && needUpdateData) {
-
-            }
-            if (remoteDbVersion > PreferenceUtil.getLocalDbVersion()) {
+            // 数据库更新了，有可能上次更新没有完成用户就退出了，用temp version判断一下
+            if (remoteDbVersion > PreferenceUtil.getLocalDbVersion()
+                    && remoteDbVersion > PreferenceUtil.getTempUpdateDbVersion()) {
+                Log.i("db", "remote = $remoteDbVersion")
+                PreferenceUtil.setTempUpdateDbVersion(remoteDbVersion)
+                // 标记位初始化
+                PreferenceUtil.setInitDataFinish(false)
+                PreferenceUtil.resetDetailDataLoadCount()
+                // 清空数据库
+                ScpDao.getInstance().resetDb()
+                // 重新加载
                 initCategoryData()
+                initDetailData()
+            } else {
+                checkInitData()
             }
         }
     }
@@ -231,5 +254,16 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 
     override fun onInitDataClick() {
         checkInitData()
+    }
+
+    override fun onResetDataClick() {
+        // 标记位初始化
+        PreferenceUtil.setInitDataFinish(false)
+        PreferenceUtil.resetDetailDataLoadCount()
+        // 清空数据库
+        ScpDao.getInstance().resetDb()
+        // 重新加载
+        initCategoryData()
+        initDetailData()
     }
 }

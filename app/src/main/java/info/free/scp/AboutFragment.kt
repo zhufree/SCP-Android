@@ -1,6 +1,8 @@
 package info.free.scp
 
 
+import android.app.Activity
+import android.app.AlertDialog
 import android.app.Fragment
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -51,6 +53,7 @@ class AboutFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
         tv_qq_group?.setOnLongClickListener {
             val clipboardManager = mContext?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             val clipData = ClipData.newPlainText("qqGroup", "805194504")
@@ -60,6 +63,17 @@ class AboutFragment : BaseFragment() {
         }
         tv_init_data?.setOnClickListener {
             listener?.onInitDataClick()
+        }
+        tv_reset_data?.setOnClickListener {
+            AlertDialog.Builder(activity)
+                    .setTitle("注意")
+                    .setMessage("改选项将删除所有目录及正文数据并重新加载，是否确定？")
+                    .setPositiveButton("确定") { dialog, _ ->
+                        listener?.onResetDataClick()
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                    .create().show()
         }
     }
 
@@ -94,6 +108,7 @@ class AboutFragment : BaseFragment() {
 
     interface AboutListener {
         fun onInitDataClick()
+        fun onResetDataClick()
     }
 
 } // Required empty public constructor

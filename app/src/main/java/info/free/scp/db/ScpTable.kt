@@ -54,6 +54,7 @@ object ScpTable {
     const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
             "$ID, $DETAIL_HTML) VALUES (?,?)"
 
-    const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME ; " +
-            "DROP TABLE IF EXISTS $DETAIL_TABLE_NAME ; "
+    const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME"
+
+    const val dropDetailTableSQL = "DROP TABLE IF EXISTS $DETAIL_TABLE_NAME"
 }

@@ -37,6 +37,14 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
     }
 
+    fun resetDb() {
+        val db = writableDatabase
+        db?.execSQL(ScpTable.dropScpTableSQL)
+        db?.execSQL(ScpTable.dropDetailTableSQL)
+        // 先这么处理，回头改成添加字段啥的更新
+        db?.execSQL(ScpTable.CREATE_TABLE_SQL)
+        db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
+    }
 
     fun insertCategoryData(models: List<ScpModel>) {
         if (models.isEmpty()) {

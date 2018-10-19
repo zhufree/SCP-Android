@@ -32,4 +32,5 @@
         目录不会实时更新，可能两周或者一个月更新一次，但以后会开发查看最新条目的功能以满足这个需求；\n </string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="download_detail_service">下载正文</string>
 </resources>

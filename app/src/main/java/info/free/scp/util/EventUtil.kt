@@ -28,6 +28,12 @@ object EventUtil {
     const val clickContestCn = "event_15"
     const val clickEvent = "event_16"
     const val clickTalesCnByTime = "event_17"
+    const val clickAboutApp = "event_18"
+    const val clickAboutMe = "event_19"
+    const val clickChangeTheme = "event_20"
+    const val clickInitData = "event_21"
+    const val clickResetData = "event_22"
+    const val clickChangeReadMode = "event_23"
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)

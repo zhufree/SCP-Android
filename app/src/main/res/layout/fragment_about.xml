@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.home.HomeFragment">
+    tools:context="info.free.scp.view.home.HomeFragment"
+    android:background="?attr/containerBg">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
@@ -11,79 +12,94 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/AppTheme.AppBarOverlay">
         <android.support.v7.widget.Toolbar
-            android:id="@+id/category_toolbar"
+            android:id="@+id/about_toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="?attr/toolbarBg"
             app:popupTheme="@style/ToolbarPopupTheme">
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
+
+
     <TextView
-        android:id="@+id/tv_qq_group"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:id="@+id/tv_about_app"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/textColor"
-        android:text="@string/contact_qq_group"
-        app:layout_constraintBottom_toTopOf="@+id/tv_user_notice"
+        android:layout_marginTop="32dp"
+        android:background="?attr/itemBg"
+        android:gravity="center"
+        android:text="关于app"
+        android:textColor="?attr/darkText"
+        app:layout_constraintBottom_toTopOf="@id/tv_about_developer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ablToolbarWrapper" />
 
     <TextView
-        android:id="@+id/tv_user_notice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/tv_about_developer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:textColor="@color/textColor"
-        android:text="@string/user_notice"
+        android:layout_marginTop="8dp"
+        android:background="?attr/itemBg"
+        android:gravity="center"
+        android:text="关于开发者"
+        android:textColor="?attr/darkText"
+        app:layout_constraintBottom_toTopOf="@id/tv_change_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_qq_group" />
-
+        app:layout_constraintTop_toBottomOf="@+id/tv_about_app" />
     <TextView
-        android:id="@+id/tv_version"
+        android:id="@+id/tv_change_theme"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/tv_init_data"
+        app:layout_constraintBottom_toTopOf="@id/tv_init_data"
+        app:layout_constraintTop_toBottomOf="@+id/tv_about_developer"
         android:layout_marginBottom="16dp"
-        android:textColor="@color/textColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:textColor="?attr/darkText"
+        android:background="?attr/itemBg"
+        android:text="切换夜间模式"/>
 
     <TextView
         android:id="@+id/tv_init_data"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:gravity="center"
         android:text="初始化数据"
-        android:textColor="@color/textColor"
-        android:background="@color/itemBg"
+        android:textColor="?attr/darkText"
+        android:background="?attr/itemBg"
         app:layout_constraintBottom_toTopOf="@+id/tv_reset_data"
+        app:layout_constraintTop_toBottomOf="@id/tv_change_theme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_reset_data"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="50dp"
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:gravity="center"
-        android:textColor="@color/textColor"
+        android:textColor="?attr/darkText"
         android:text="清空并重新加载数据"
-        android:background="@color/itemBg"
+        android:background="?attr/itemBg"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_init_data"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

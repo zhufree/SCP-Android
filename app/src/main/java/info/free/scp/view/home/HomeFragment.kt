@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -84,6 +85,13 @@ class HomeFragment : BaseFragment() {
             true
         }
 
+    }
+
+    fun refreshTheme() {
+        tabHome?.setBackgroundColor(ThemeUtil.containerBg)
+        category_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        seriesFragment.refreshTheme()
+        libraryFragment.refreshTheme()
     }
 
     override fun onDetach() {

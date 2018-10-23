@@ -38,11 +38,14 @@
         <service
             android:name=".service.InitCategoryService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".service.InitDetailService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+
+        <activity android:name=".view.about.AboutAppActivity" />
+        <activity android:name=".view.about.AboutMeActivity"></activity>
     </application>
 
 </manifest>

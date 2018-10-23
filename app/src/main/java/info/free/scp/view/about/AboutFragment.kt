@@ -1,16 +1,20 @@
-package info.free.scp
+package info.free.scp.view.about
 
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Fragment
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import info.free.scp.BuildConfig
+import info.free.scp.R
+import info.free.scp.util.EventUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
@@ -53,15 +57,25 @@ class AboutFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
-        tv_qq_group?.setOnLongClickListener {
-            val clipboardManager = mContext?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            val clipData = ClipData.newPlainText("qqGroup", "805194504")
-            clipboardManager?.primaryClip = clipData
-            Toaster.show("已复制到剪贴板")
-            true
+        about_toolbar?.setTitle(R.string.app_name)
+
+        tv_about_app?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickAboutApp)
+            activity.startActivity(Intent(activity, AboutAppActivity::class.java))
+        }
+        tv_about_developer?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickAboutMe)
+            activity.startActivity(Intent(activity, AboutMeActivity::class.java))
+        }
+        tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "白天模式" else "夜间模式"
+
+        tv_change_theme?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickChangeTheme)
+            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
+            tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "白天模式" else "夜间模式"
         }
         tv_init_data?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickInitData)
             listener?.onInitDataClick()
         }
         tv_reset_data?.setOnClickListener {
@@ -69,12 +83,28 @@ class AboutFragment : BaseFragment() {
                     .setTitle("注意")
                     .setMessage("改选项将删除所有目录及正文数据并重新加载，是否确定？")
                     .setPositiveButton("确定") { dialog, _ ->
+                        EventUtil.onEvent(activity, EventUtil.clickResetData)
                         listener?.onResetDataClick()
                         dialog.dismiss()
                     }
                     .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                     .create().show()
         }
+    }
+
+    fun refreshTheme() {
+        view?.setBackgroundColor(ThemeUtil.containerBg)
+        about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        tv_about_app?.setTextColor(ThemeUtil.darkText)
+        tv_about_app?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_about_developer?.setTextColor(ThemeUtil.darkText)
+        tv_about_developer?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_change_theme?.setTextColor(ThemeUtil.darkText)
+        tv_change_theme?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_init_data?.setTextColor(ThemeUtil.darkText)
+        tv_init_data?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_reset_data?.setTextColor(ThemeUtil.darkText)
+        tv_reset_data?.setBackgroundColor(ThemeUtil.itemBg)
     }
 
     override fun onDetach() {

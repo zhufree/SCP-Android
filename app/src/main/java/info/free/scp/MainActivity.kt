@@ -5,26 +5,29 @@ import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import info.free.scp.SCPConstants.ACTION_CHANGE_THEME
+import info.free.scp.SCPConstants.INIT_PROGRESS
+import info.free.scp.SCPConstants.LOAD_DETAIL_FINISH
+import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
+import info.free.scp.service.InitDetailService
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Toaster
+import info.free.scp.view.about.AboutFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import android.support.v4.content.LocalBroadcastManager
-import android.content.IntentFilter
-import android.support.design.widget.Snackbar
-import android.support.design.widget.Snackbar.LENGTH_SHORT
-import info.free.scp.db.ScpDao
-import info.free.scp.service.InitDetailService
-import info.free.scp.util.Toaster
 
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragment.AboutListener {
@@ -38,7 +41,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     var progressDialog: ProgressDialog? = null
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var mInitCategoryReceiver = object: BroadcastReceiver(){
+    private var mInitCategoryReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val progress = intent?.getIntExtra("progress", 0) ?: 0
             progressDialog?.progress = progress
@@ -53,13 +56,13 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                                 "阅读体验，因此将在使用过程中在后台加载（且仅在wifi打开时），具体进度可查看通知栏，" +
                                 "在所有数据传输完毕之后将可以离线浏览所有目录下的正文。\n加载过程请尽量将app保持" +
                                 "开启状态，同时手机至少保留120M存储空间。")
-                        .setPositiveButton("OK") { dialog, _ ->dialog.dismiss() }
+                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
                         .create().show()
             }
         }
     }
 
-    private var mDetailReceiver = object: BroadcastReceiver() {
+    private var mDetailReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Toaster.show("正文已全部传输完毕！")
             val tempUpdateDbVersion = PreferenceUtil.getTempUpdateDbVersion()
@@ -70,8 +73,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
-    val INIT_PROGRESS = "initProgress"
-    val LOAD_DETAIL_FINISH = "loadDetailFinish"
+    private var themeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            refreshTheme()
+        }
+    }
+
     val currentVersionCode = BuildConfig.VERSION_CODE
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -86,15 +93,15 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 }
                 currentFragment = homeFragment
             }
-//            R.id.navigation_feed -> {
-//                if (feedFragment.isAdded) {
-//                    transaction.show(feedFragment)
-//                } else {
-//                    transaction.add(R.id.flMainContainer, feedFragment)
-//                }
-//                currentFragment = feedFragment
-//                return@OnNavigationItemSelectedListener true
-//            }
+        //            R.id.navigation_feed -> {
+        //                if (feedFragment.isAdded) {
+        //                    transaction.show(feedFragment)
+        //                } else {
+        //                    transaction.add(R.id.flMainContainer, feedFragment)
+        //                }
+        //                currentFragment = feedFragment
+        //                return@OnNavigationItemSelectedListener true
+        //            }
             R.id.navigation_about -> {
                 if (aboutFragment.isAdded) {
                     transaction.show(aboutFragment)
@@ -115,6 +122,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver, intentFilter)
         mLocalBroadcastManager?.registerReceiver(mDetailReceiver, IntentFilter(LOAD_DETAIL_FINISH))
+        mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
 
         setContentView(R.layout.activity_main)
         val transaction = fragmentManager.beginTransaction()
@@ -140,12 +148,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     private fun checkInitData() {
         if (!PreferenceUtil.getInitDataFinish()) {
             // 目录和正文都没加载
-            if (enabledNetwork()){
+            if (enabledNetwork()) {
                 ScpDao.getInstance().resetDb()
                 initCategoryData()
                 if (enabledWifi()) {
                     initDetailData()
-                } else if (enabledNetwork()){
+                } else if (enabledNetwork()) {
                     AlertDialog.Builder(this)
                             .setTitle("数据初始化")
                             .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
@@ -160,14 +168,14 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .setTitle("数据初始化")
                         .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
                                 "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
-                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss()}
+                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
                         .create().show()
             }
         } else if (PreferenceUtil.getDetailDataLoadCount() < 29) {
             // 正文没有加载完
             if (enabledWifi()) {
                 initDetailData()
-            } else if (enabledNetwork()){
+            } else if (enabledNetwork()) {
                 AlertDialog.Builder(this)
                         .setTitle("数据初始化")
                         .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
@@ -181,7 +189,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .setTitle("数据初始化")
                         .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
                                 "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
-                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss()}
+                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
                         .create().show()
             }
         }
@@ -262,6 +270,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 checkInitData()
             }
         }
+    }
+
+    fun refreshTheme() {
+        navigation.setBackgroundColor(ThemeUtil.containerBg)
+        homeFragment.refreshTheme()
+        aboutFragment.refreshTheme()
     }
 
     override fun onCategoryClick(type: Int) {

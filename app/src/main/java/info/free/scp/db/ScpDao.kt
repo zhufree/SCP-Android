@@ -236,7 +236,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             var shelfModel: ScpModel? = null
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    //                    shelfModel = extractScpModel(cursor)
+                    // shelfModel = extractScpModel(cursor)
                 }
                 cursor.close()
             }
@@ -260,7 +260,28 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 }
                 cursor.close()
             }
-            return detailString
+            return detailString.replace("href=\"/",
+                    "href=\"http://scp-wiki-cn.wikidot.com/")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return ""
+    }
+
+    fun getDetailByLink(link: String): String {
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.ID
+                    + " FROM " + ScpTable.TABLE_NAME + " WHERE "
+                    + ScpTable.LINK + "=? ", arrayOf(link))
+            var detailString = ""
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    val id = getCursorString(cursor, ScpTable.ID)
+                    detailString = getDetailById(id)
+                }
+                cursor.close()
+            }
+            return detailString.replace("href=\"/", "href=\"http://scp-wiki-cn.wikidot.com/")
         } catch (e: Exception) {
             e.printStackTrace()
         }

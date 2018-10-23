@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.category.CategoryActivity">
+    tools:context="info.free.scp.view.category.CategoryActivity"
+    android:background="?attr/containerBg">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
@@ -15,7 +16,7 @@
             android:id="@+id/category_toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="?attr/toolbarBg"
             app:popupTheme="@style/ToolbarPopupTheme">
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

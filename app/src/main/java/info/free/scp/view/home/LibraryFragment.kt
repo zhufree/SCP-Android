@@ -22,6 +22,7 @@ import info.free.scp.SCPConstants.TALES_BY_TIME
 import info.free.scp.SCPConstants.TALES_CN
 import info.free.scp.ScpApplication
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_library.*
@@ -119,20 +120,36 @@ class LibraryFragment : BaseFragment() {
     fun changePage() {
         isCnPage = !isCnPage
         if (isCnPage) {
-            tvScpTales.setText(R.string.title_scp_tales_cn)
-            tvSettings.setText(R.string.title_scp_settings_cn)
-            tvStorySeries.setText(R.string.title_scp_story_series_cn)
-            tvEssayContest.setText(R.string.title_scp_essay_cn)
-            tvEventRecord.setText(R.string.title_scp_event)
-            tvMore.setText(R.string.title_scp_story_by_time)
+            tvScpTales?.setText(R.string.title_scp_tales_cn)
+            tvSettings?.setText(R.string.title_scp_settings_cn)
+            tvStorySeries?.setText(R.string.title_scp_story_series_cn)
+            tvEssayContest?.setText(R.string.title_scp_essay_cn)
+            tvEventRecord?.setText(R.string.title_scp_event)
+            tvMore?.setText(R.string.title_scp_story_by_time)
         } else {
-            tvScpTales.setText(R.string.title_scp_tales)
-            tvSettings.setText(R.string.title_scp_settings)
-            tvStorySeries.setText(R.string.title_scp_story_series)
-            tvEssayContest.setText(R.string.title_scp_essay)
-            tvEventRecord.setText(R.string.title_scp_event)
-            tvMore.setText(R.string.title_more_function)
+            tvScpTales?.setText(R.string.title_scp_tales)
+            tvSettings?.setText(R.string.title_scp_settings)
+            tvStorySeries?.setText(R.string.title_scp_story_series)
+            tvEssayContest?.setText(R.string.title_scp_essay)
+            tvEventRecord?.setText(R.string.title_scp_event)
+            tvMore?.setText(R.string.title_more_function)
         }
+    }
+
+    fun refreshTheme() {
+        view?.setBackgroundColor(ThemeUtil.containerBg)
+        tvScpTales?.setTextColor(ThemeUtil.darkText)
+        tvScpTales?.setBackgroundColor(ThemeUtil.itemBg)
+        tvSettings?.setTextColor(ThemeUtil.darkText)
+        tvSettings?.setBackgroundColor(ThemeUtil.itemBg)
+        tvStorySeries?.setTextColor(ThemeUtil.darkText)
+        tvStorySeries?.setBackgroundColor(ThemeUtil.itemBg)
+        tvEssayContest?.setTextColor(ThemeUtil.darkText)
+        tvEssayContest?.setBackgroundColor(ThemeUtil.itemBg)
+        tvEventRecord?.setTextColor(ThemeUtil.darkText)
+        tvEventRecord?.setBackgroundColor(ThemeUtil.itemBg)
+        tvMore?.setTextColor(ThemeUtil.darkText)
+        tvMore?.setBackgroundColor(ThemeUtil.itemBg)
     }
 
     override fun onDetach() {

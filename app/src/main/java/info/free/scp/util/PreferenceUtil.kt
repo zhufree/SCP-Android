@@ -14,8 +14,7 @@ object PreferenceUtil {
         return ScpApplication.context?.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
     fun getInitAboutData(): Boolean {
-        val sp = getPrivateSharedPreference("init")
-        return sp?.getBoolean("initAbout", false)?:false
+        return getBooleanValue("init", "initAbout")
     }
     fun setInitAboutData() {
         val sp = getPrivateSharedPreference("init")
@@ -23,22 +22,18 @@ object PreferenceUtil {
     }
 
     fun getInitDataFinish(): Boolean {
-        val sp = getPrivateSharedPreference("init")
-        return sp?.getBoolean("initData", false)?:false
+        return getBooleanValue("init", "initData")
     }
 
     fun setInitDataFinish(finish: Boolean) {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putBoolean("initData", true)?.apply()
+        setBooleanValue("init", "initData", finish)
     }
     fun getDetailDataLoadCount(): Int {
-        val sp = getPrivateSharedPreference("init")
-        return sp?.getInt("detailData", 0)?:0
+        return getIntValue("init", "detailData")
     }
 
     fun addDetailDataLoadCount() {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putInt("detailData", getDetailDataLoadCount()+1)?.apply()
+        setIntValue("init", "detailData", getDetailDataLoadCount() +1)
     }
 
     fun resetDetailDataLoadCount() {
@@ -90,5 +85,34 @@ object PreferenceUtil {
     fun setShownDetailNotice() {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
+    }
+
+    /**
+     * 主题相关
+     */
+    fun getCurrentTheme(): Int{
+        return getIntValue("theme", "currentTheme")
+    }
+
+    fun setCurrentTheme(theme: Int) {
+        setIntValue("theme", "currentTheme", theme)
+    }
+
+    private fun getBooleanValue(spName: String, key: String): Boolean {
+        val sp = getPrivateSharedPreference(spName)
+        return sp?.getBoolean(key, false)?:false
+    }
+    private fun setBooleanValue(spName: String, key: String, value: Boolean) {
+        val sp = getPrivateSharedPreference(spName)
+        sp?.edit()?.putBoolean(key, value)?.apply()
+    }
+    private fun getIntValue(spName: String, key: String): Int {
+        val sp = getPrivateSharedPreference(spName)
+        return sp?.getInt(key, 0)?:0
+    }
+
+    private fun setIntValue(spName: String, key: String, value: Int) {
+        val sp = getPrivateSharedPreference(spName)
+        sp?.edit()?.putInt(key, value)?.apply()
     }
 }

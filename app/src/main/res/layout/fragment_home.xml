@@ -14,7 +14,7 @@
             android:id="@+id/category_toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
-            android:background="@color/colorPrimary"
+            android:background="?attr/toolbarBg"
             app:popupTheme="@style/ToolbarPopupTheme">
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
@@ -25,6 +25,9 @@
         android:id="@+id/tabHome"
         android:layout_width="match_parent"
         android:layout_height="44dp"
+        android:background="?attr/containerBg"
+        app:tabTextColor="?attr/darkText"
+        app:tabSelectedTextColor="?attr/lightText"
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"/>
 
     <android.support.v4.view.ViewPager

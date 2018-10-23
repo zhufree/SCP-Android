@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import info.free.scp.util.ThemeUtil
 
 /**
  * Created by zhufree on 2018/8/27.
@@ -19,6 +20,7 @@ class ScpApplication : MultiDexApplication() {
 //        MobclickAgent.openActivityDurationTrack(false)
         UMConfigure.setLogEnabled(true)
 
+        ThemeUtil.setTheme(this)
 
         context = applicationContext
     }

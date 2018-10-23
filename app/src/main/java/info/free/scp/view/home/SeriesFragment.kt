@@ -19,9 +19,11 @@ import info.free.scp.util.EventUtil.clickArchived
 import info.free.scp.util.EventUtil.clickSeries
 import info.free.scp.util.EventUtil.clickSeriesCn
 import info.free.scp.util.EventUtil.clickSeriesStory
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
+import kotlinx.android.synthetic.main.fragment_series.*
 
 
 /**
@@ -62,26 +64,40 @@ class SeriesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.tvScpSeries?.setOnClickListener {
+        tvScpSeries?.setOnClickListener {
             EventUtil.onEvent(mContext, clickSeries)
             listener?.onCategoryClick(SERIES)
         }
-        view?.tvSeriesCn?.setOnClickListener{
+        tvSeriesCn?.setOnClickListener{
             EventUtil.onEvent(mContext, clickSeriesCn)
             listener?.onCategoryClick(SERIES_CN)
         }
-        view?.tvSeriesStory?.setOnClickListener{
+        tvSeriesStory?.setOnClickListener{
             EventUtil.onEvent(mContext, clickSeriesStory)
             listener?.onCategoryClick(SERIES_STORY)
         }
-        view?.tvSeriesArchived?.setOnClickListener{
+        tvSeriesArchived?.setOnClickListener{
             EventUtil.onEvent(mContext, clickArchived)
             listener?.onCategoryClick(SERIES_ARCHIVED)
         }
-        view?.tvSeriesAbout?.setOnClickListener{
+        tvSeriesAbout?.setOnClickListener{
             EventUtil.onEvent(mContext, clickAbout)
             listener?.onCategoryClick(SERIES_ABOUT)
         }
+    }
+
+    fun refreshTheme() {
+        view?.setBackgroundColor(ThemeUtil.containerBg)
+        tvScpSeries?.setTextColor(ThemeUtil.darkText)
+        tvScpSeries?.setBackgroundColor(ThemeUtil.itemBg)
+        tvSeriesCn?.setTextColor(ThemeUtil.darkText)
+        tvSeriesCn?.setBackgroundColor(ThemeUtil.itemBg)
+        tvSeriesStory?.setTextColor(ThemeUtil.darkText)
+        tvSeriesStory?.setBackgroundColor(ThemeUtil.itemBg)
+        tvSeriesArchived?.setTextColor(ThemeUtil.darkText)
+        tvSeriesArchived?.setBackgroundColor(ThemeUtil.itemBg)
+        tvSeriesAbout?.setTextColor(ThemeUtil.darkText)
+        tvSeriesAbout?.setBackgroundColor(ThemeUtil.itemBg)
     }
 
     override fun onDetach() {

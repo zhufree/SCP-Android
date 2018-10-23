@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="toolbarBg" format = "color"/>
+    <attr name="containerBg" format = "color"/>
+    <attr name="itemBg" format = "color"/>
+    <attr name="darkText" format = "color"/>
+    <attr name="lightText" format = "color"/>
+</resources>

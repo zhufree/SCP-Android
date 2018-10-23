@@ -49,4 +49,9 @@ object SCPConstants {
     const val SAVE_TALES_BY_TIME = "talesByTime"
 
     const val BMOB_API_URL = "https://api.bmob.cn/"
+
+    // 广播类型
+    const val INIT_PROGRESS = "initProgress"
+    const val LOAD_DETAIL_FINISH = "loadDetailFinish"
+    const val ACTION_CHANGE_THEME = "changeTheme"
 }

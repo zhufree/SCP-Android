@@ -5,10 +5,14 @@
     <item
         android:id="@+id/switch_read_mode"
         android:title="@string/online_mode"
-        android:icon="@drawable/ic_swap_vert_white_24dp"
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/report"
         android:title="反馈问题"
         app:showAsAction="collapseActionView"/>
+
+    <item android:id="@+id/like"
+        android:title="收藏"
+        android:icon="@drawable/ic_star_border_white_24dp"
+        app:showAsAction="ifRoom"/>
 </menu>

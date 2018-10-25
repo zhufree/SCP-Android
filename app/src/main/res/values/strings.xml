@@ -28,9 +28,11 @@
     <string name="title_scp_int">SCP国际</string>
 
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
-    <string name="user_notice">目录不会实时更新，可能两周或者一个月更新一次，但以后会开发查看最新条目的功能以满足这个需求；\n
-        0.0.6版本更新：\n1.修复了oppor9s等机型无法启动的bug；\n添加目录内容，文档总数达到14000篇（包括[禁止访问]的内容）；\n
-        离线阅读功能完成；\n添加夜间模式；</string>
+    <string name="user_notice">目录不会实时更新，可能两周或者一个月更新一次，但以后会开发查看最新条目的功能以满足这个需求；\n\n
+        0.0.6版本更新：\n1.修复了oppor9s等机型无法启动的bug；\n2.添加目录内容，文档总数达到14000篇（包括[禁止访问]的内容）；\n
+        3.离线阅读功能完成；\n4.添加夜间模式；\n下版本预计添加功能：\n1.关键词检索；\n2.随机文档等\n\n
+        PS：因为不想涉及版权问题，换了一个自己瞎几把画的logo，希望不要介意它这么丑，已经找人帮忙设计了新logo，下次更新时换上\n\n
+        PPS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="download_detail_service">下载正文</string>

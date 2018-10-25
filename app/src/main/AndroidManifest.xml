@@ -45,7 +45,8 @@
             android:exported="true" />
 
         <activity android:name=".view.about.AboutAppActivity" />
-        <activity android:name=".view.about.AboutMeActivity"></activity>
+        <activity android:name=".view.about.AboutMeActivity" />
+        <activity android:name=".view.search.SearchActivity"></activity>
     </application>
 
 </manifest>

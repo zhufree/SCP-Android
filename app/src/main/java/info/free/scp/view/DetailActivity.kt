@@ -40,18 +40,27 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
 
-        url = intent.getStringExtra("link")
-        // 有些不是以/开头的而是完整链接
-        url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
-        sId = intent.getStringExtra("sId")
-        scp = ScpDao.getInstance().getScpModelById(sId)
-
         webView.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
         webView.setBackgroundColor(ThemeUtil.containerBg)
         currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
 
+        url = intent.getStringExtra("link")?:""
+        // 有些不是以/开头的而是完整链接
+        if (url.isEmpty()) {
+            // 随机文档
+            scp =ScpDao.getInstance().getRandomScp()
+        } else {
+            url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
+            sId = intent.getStringExtra("sId")
+            scp = ScpDao.getInstance().getScpModelById(sId)
+        }
+
+
         scp?.let {
+            if (it.like == 1){
+                detail_toolbar?.menu?.getItem(2)?.setIcon(R.drawable.ic_star_white_24dp)
+            }
             detailHtml = ScpDao.getInstance().getDetailById(it.sId)
             if (detailHtml.isEmpty()) {
                 webView.loadUrl(url) //可以使用本地文件 file:///android_asset/xyz.html
@@ -143,6 +152,14 @@ class DetailActivity : BaseActivity() {
                         Log.i("report", reportString)
                         MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
                         reportDialog.dismiss()
+                    }
+                }
+                R.id.like -> {
+                    scp?.let {s ->
+                        s.like = if (s.like == 1) 0 else 1
+                        ScpDao.getInstance().insertLikeAndReadInfo(s)
+                        it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
+                        else R.drawable.ic_star_border_white_24dp)
                     }
                 }
             }

@@ -5,16 +5,16 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import info.free.scp.SCPConstants.SAVE_ABOUT
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
+import java.util.*
 
 
 /**
  * Created by zhufree on 2018/8/27.
  * 数据库管理
  * 每次更新数据源时要删掉表重建
- * 所以已读数据需要单独建表存
+ * 所以已读数据和收藏需要单独建表存，以link为主键（存储时主键可能重复需要注意），存储时更新到总表中
  */
 
 
@@ -31,9 +31,11 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         if (oldVersion != newVersion) {
             db?.execSQL(ScpTable.dropScpTableSQL)
+            db?.execSQL(ScpTable.dropDetailTableSQL)
             // 先这么处理，回头改成添加字段啥的更新
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
             db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
+            db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
         }
     }
 
@@ -68,6 +70,18 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             db.createDetailStatement(models)
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+    }
+
+    fun insertLikeAndReadInfo(model: ScpModel) {
+        val db = writableDatabase
+        db.beginTransaction()
+        try {
+            replaceLikeInfo(model)
+            replaceScpModel(model)
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -112,6 +126,30 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             stmt.clearBindings()
         }
     }
+
+    private fun replaceLikeInfo(model: ScpModel) {
+        val db = writableDatabase
+        val cv = ContentValues()
+        if (model.link.isNotEmpty()) {
+            cv.put(ScpTable.LINK, model.link)
+        }
+        if (model.title.isNotEmpty()) {
+            cv.put(ScpTable.TITLE, model.title)
+        }
+        cv.put(ScpTable.HAS_READ, model.hasRead)
+        cv.put(ScpTable.LINK, model.like)
+        db.beginTransaction()
+        try {
+            if (getLikeInfoByLink(model.link)) {
+                db.update(ScpTable.LIKE_AND_READ_TABLE_NAME, cv, ScpTable.LINK + "=?",
+                        arrayOf(model.link))
+            } else {
+                db.insert(ScpTable.LIKE_AND_READ_TABLE_NAME, null, cv)
+            }
+        } finally {
+            db.endTransaction()
+        }
+    }
     /**
      * 网络请求到数据时保存一次
      * 返回更新后的model
@@ -124,13 +162,13 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             val cv = packScp(model)
-            if (getScpModelByLink(model.link) == null) {
+            if (getScpModelById(model.sId) == null) {
                 // 如果之前没有，直接存储
                 db.insert(ScpTable.TABLE_NAME, null, cv)
             } else {
                 // 如果之前有了，更新字段，阅读的信息只有新数据> 0时才会更新，所以不会覆盖
-                db.update(ScpTable.TABLE_NAME, cv, ScpTable.LINK + "=?",
-                        arrayOf(model.link))
+                db.update(ScpTable.TABLE_NAME, cv, ScpTable.ID + "=?",
+                        arrayOf(model.sId))
             }
             db.setTransactionSuccessful()
         } finally {
@@ -160,6 +198,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
         return null
     }
+
     fun getScpModelById(id: String?): ScpModel? {
         if (id == null) {
             return null
@@ -288,6 +327,67 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return ""
     }
 
+    fun searchScpByKeyword(keyword: String): MutableList<ScpModel>{
+        val resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.TITLE + " LIKE ?;",
+                        arrayOf("%$keyword%"))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
+                }
+                return resultList
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
+    fun getRandomScp(): ScpModel? {
+        val randomIndex = Random().nextInt(14002)
+        var scpModel: ScpModel? = null
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                    + ScpTable.INDEX + "=? ", arrayOf(randomIndex.toString()))
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    val sId = getCursorString(cursor, ScpTable.ID)
+                    Log.i("random", sId)
+                    val detailHtml = getDetailById(sId)
+                    scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty()) getRandomScp() else extractScp(cursor)
+                }
+                cursor.close()
+            }
+            return scpModel
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return scpModel
+    }
+
+    fun getLikeInfoByLink(link: String): Boolean {
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME
+                    + " WHERE " + ScpTable.LINK + "=?", arrayOf(link))
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    return true
+                }
+                cursor.close()
+            }
+            return false
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return false
+    }
 
     companion object {
         private var scpDao: ScpDao? = ScpDao()
@@ -335,6 +435,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             cv.put(ScpTable.DETAIL_HTML, model.detailHtml)
         }
         cv.put(ScpTable.HAS_READ, model.hasRead)
+        cv.put(ScpTable.LINK, model.like)
 
         if (model.subtext.isNotEmpty()) {
             cv.put(ScpTable.SUB_TEXT, model.subtext)
@@ -392,6 +493,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 // getCursorString(cursor, ScpTable.DETAIL_HTML),
                 getCursorInt(cursor, ScpTable.HAS_READ),
+                getCursorInt(cursor, ScpTable.LIKE),
                 getCursorString(cursor, ScpTable.SAVE_TYPE),
                 getCursorString(cursor, ScpTable.AUTHOR),
                 getCursorString(cursor, ScpTable.SUB_TEXT),

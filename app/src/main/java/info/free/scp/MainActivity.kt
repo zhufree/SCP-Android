@@ -11,9 +11,9 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
-import info.free.scp.SCPConstants.ACTION_CHANGE_THEME
-import info.free.scp.SCPConstants.INIT_PROGRESS
-import info.free.scp.SCPConstants.LOAD_DETAIL_FINISH
+import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
+import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
+import info.free.scp.SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService

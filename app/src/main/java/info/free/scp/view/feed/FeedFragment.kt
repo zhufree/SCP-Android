@@ -23,14 +23,6 @@ class FeedFragment : BaseFragment() {
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        if (arguments != null) {
-//            mParam1 = arguments!!.getString(ARG_PARAM1)
-//            mParam2 = arguments!!.getString(ARG_PARAM2)
-//        }
-    }
-
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is CategoryListener) {
@@ -44,10 +36,6 @@ class FeedFragment : BaseFragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home, container, false)
-    }
-
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDetach() {

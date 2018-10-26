@@ -51,7 +51,14 @@ object SCPConstants {
     const val BMOB_API_URL = "https://api.bmob.cn/"
 
     // 广播类型
-    const val INIT_PROGRESS = "initProgress"
-    const val LOAD_DETAIL_FINISH = "loadDetailFinish"
-    const val ACTION_CHANGE_THEME = "changeTheme"
+    object BroadCastAction {
+        const val INIT_PROGRESS = "initProgress"
+        const val LOAD_DETAIL_FINISH = "loadDetailFinish"
+        const val ACTION_CHANGE_THEME = "changeTheme"
+    }
+
+    // RequestCode
+    object RequestCode {
+        const val CATEGORY_TO_DETAIL = 0
+    }
 }

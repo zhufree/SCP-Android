@@ -46,7 +46,8 @@
 
         <activity android:name=".view.about.AboutAppActivity" />
         <activity android:name=".view.about.AboutMeActivity" />
-        <activity android:name=".view.search.SearchActivity"></activity>
+        <activity android:name=".view.search.SearchActivity" />
+        <activity android:name=".view.about.LikeActivity"></activity>
     </application>
 
 </manifest>

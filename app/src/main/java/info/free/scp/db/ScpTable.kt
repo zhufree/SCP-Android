@@ -42,7 +42,8 @@ object ScpTable {
             "$CONTEST_NAME VARCHAR, $CONTEST_LINK VARCHAR," +
             "$CREATED_TIME VARCHAR, " +
             "$INDEX INTEGER, " +
-            "$EVENT_TYPE VARCHAR, $MONTH VARCHAR" +
+            "$EVENT_TYPE VARCHAR, $MONTH VARCHAR, " +
+            "$LIKE INTEGER" +
             ")"
 
     const val CREATE_DETAIL_TABLE_SQL = "create table IF NOT EXISTS $DETAIL_TABLE_NAME (" +
@@ -55,13 +56,13 @@ object ScpTable {
             "$ID , $LINK , $TITLE , $DETAIL_HTML ,$HAS_READ , $SAVE_TYPE," +
             "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , $NUMBER , $STORY_NUMBER , " +
             "$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK , $CREATED_TIME , " +
-            "$INDEX, $EVENT_TYPE, $MONTH) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            "$INDEX, $EVENT_TYPE, $MONTH, $LIKE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
 
     const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
             "$ID, $DETAIL_HTML) VALUES (?,?)"
 
     const val INSERT_LIKE_SQL = "INSERT INTO $LIKE_AND_READ_TABLE_NAME (" +
-            "$LINK, $TITLE, $LINK, $HAS_READ) VALUES (?,?,?,?)"
+            "$LINK, $TITLE, $LIKE, $HAS_READ) VALUES (?,?,?,?)"
 
     const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME"
 

@@ -32,14 +32,6 @@ class AboutFragment : BaseFragment() {
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        if (arguments != null) {
-//            mParam1 = arguments!!.getString(ARG_PARAM1)
-//            mParam2 = arguments!!.getString(ARG_PARAM2)
-//        }
-    }
-
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         if (context is AboutListener) {
@@ -58,6 +50,10 @@ class AboutFragment : BaseFragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         about_toolbar?.setTitle(R.string.app_name)
+
+        tv_like_list?.setOnClickListener {
+            activity.startActivity(Intent(activity, LikeActivity::class.java))
+        }
 
         tv_about_app?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickAboutApp)
@@ -95,6 +91,8 @@ class AboutFragment : BaseFragment() {
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
         about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        tv_like_list?.setTextColor(ThemeUtil.darkText)
+        tv_like_list?.setBackgroundColor(ThemeUtil.itemBg)
         tv_about_app?.setTextColor(ThemeUtil.darkText)
         tv_about_app?.setBackgroundColor(ThemeUtil.itemBg)
         tv_about_developer?.setTextColor(ThemeUtil.darkText)

@@ -26,6 +26,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(ScpTable.CREATE_TABLE_SQL)
         db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
+        db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -56,6 +57,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             db.createStatement(models)
+            // TODO 遍历收藏表把数据同步一下
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -137,7 +139,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             cv.put(ScpTable.TITLE, model.title)
         }
         cv.put(ScpTable.HAS_READ, model.hasRead)
-        cv.put(ScpTable.LINK, model.like)
+        cv.put(ScpTable.LIKE, model.like)
         db.beginTransaction()
         try {
             if (getLikeInfoByLink(model.link)) {
@@ -146,6 +148,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             } else {
                 db.insert(ScpTable.LIKE_AND_READ_TABLE_NAME, null, cv)
             }
+            db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
         }
@@ -372,6 +375,29 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return scpModel
     }
 
+    fun getLikeScps(): MutableList<ScpModel> {
+        val resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
+                        + ScpTable.LIKE + "=?;",
+                        arrayOf("1"))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
+                }
+                return resultList
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
     fun getLikeInfoByLink(link: String): Boolean {
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME
@@ -435,7 +461,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             cv.put(ScpTable.DETAIL_HTML, model.detailHtml)
         }
         cv.put(ScpTable.HAS_READ, model.hasRead)
-        cv.put(ScpTable.LINK, model.like)
+        cv.put(ScpTable.LIKE, model.like)
 
         if (model.subtext.isNotEmpty()) {
             cv.put(ScpTable.SUB_TEXT, model.subtext)

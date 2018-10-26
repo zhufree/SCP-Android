@@ -8,11 +8,11 @@ import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
+import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.db.ScpDao
 
 
 class InitCategoryService : IntentService("initDataService") {
-    val INIT_PROGRESS = "initProgress"
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
 

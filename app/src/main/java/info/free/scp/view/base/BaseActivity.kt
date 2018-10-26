@@ -3,6 +3,7 @@ package info.free.scp.view.base
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.support.v7.app.AppCompatActivity
@@ -46,7 +47,7 @@ open class BaseActivity : AppCompatActivity() {
      */
     fun Activity.enabledNetwork(): Boolean {
         val cManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return cManager?.activeNetworkInfo != null && cManager?.activeNetworkInfo.isAvailable
+        return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
     }
 
     fun Activity.toActivity(activity: Class<*>, intent: Intent) {

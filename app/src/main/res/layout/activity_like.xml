@@ -4,27 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.category.CategoryActivity"
+    tools:context="info.free.scp.view.about.LikeActivity"
     android:background="?attr/containerBg">
+
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/AppTheme.AppBarOverlay">
+
         <android.support.v7.widget.Toolbar
-            android:id="@+id/category_toolbar"
-            android:layout_height="?attr/actionBarSize"
+            android:id="@+id/like_toolbar"
             android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbarBg"
+            app:title="收藏列表"
             app:popupTheme="@style/ToolbarPopupTheme">
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_like"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_scrollFlags = "scroll|enterAlways"
-        android:id="@+id/rv_scp_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="match_parent"/>
 </android.support.design.widget.CoordinatorLayout>

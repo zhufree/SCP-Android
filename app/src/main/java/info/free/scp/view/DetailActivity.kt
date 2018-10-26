@@ -2,6 +2,7 @@ package info.free.scp.view
 
 import android.app.AlertDialog
 import android.content.DialogInterface.BUTTON_POSITIVE
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
@@ -58,9 +60,7 @@ class DetailActivity : BaseActivity() {
 
 
         scp?.let {
-            if (it.like == 1){
-                detail_toolbar?.menu?.getItem(2)?.setIcon(R.drawable.ic_star_white_24dp)
-            }
+            invalidateOptionsMenu()
             detailHtml = ScpDao.getInstance().getDetailById(it.sId)
             if (detailHtml.isEmpty()) {
                 webView.loadUrl(url) //可以使用本地文件 file:///android_asset/xyz.html
@@ -171,5 +171,23 @@ class DetailActivity : BaseActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)
         return true
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        scp?.let {
+            if (it.like == 1){
+                val menuItem =  menu?.getItem(2)
+                menuItem?.setIcon(R.drawable.ic_star_white_24dp)
+            }
+        }
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+
+    override fun finish() {
+        val intent = Intent()
+        intent.putExtra("like", scp?.like?:0)
+        setResult(SCPConstants.RequestCode.CATEGORY_TO_DETAIL, intent)
+        super.finish()
     }
 }

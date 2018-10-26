@@ -12,16 +12,6 @@ abstract class BaseFragment : Fragment() {
     var mContext : Context? = null
 
 
-    override fun onResume() {
-        super.onResume()
-//        MobclickAgent.onPageStart(this.javaClass.name) //统计页面，"MainScreen"为页面名称，可自定义
-    }
-
-    override fun onPause() {
-        super.onPause()
-//        MobclickAgent.onPageEnd(this.javaClass.name)
-    }
-
     override fun onAttach(context: Context?) {
         mContext = context
         super.onAttach(context)

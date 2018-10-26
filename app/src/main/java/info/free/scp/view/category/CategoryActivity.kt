@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.View
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.CONTEST
 import info.free.scp.SCPConstants.CONTEST_CN
 import info.free.scp.SCPConstants.EVENT
@@ -64,6 +65,8 @@ class CategoryActivity : BaseActivity() {
     private var isCnPage = false // 是否是cn页面 归档内容部分用到
     private var onlyOneLayer = false
     private val tag = "category"
+    private var currentScpPosition = -1
+    private var currentCategoryPosition = -1
 
     private val eventScpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
@@ -84,7 +87,7 @@ class CategoryActivity : BaseActivity() {
         }
 
         val lm = LinearLayoutManager(this, VERTICAL, false)
-        rlScpList.layoutManager = lm
+        rv_scp_list.layoutManager = lm
 
         initData()
 
@@ -110,7 +113,24 @@ class CategoryActivity : BaseActivity() {
             }
             true
         }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        if (pageType == 1) {
+            rv_scp_list?.scrollToPosition(currentScpPosition)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SCPConstants.RequestCode.CATEGORY_TO_DETAIL) {
+            data?.let {
+                val like = it.getIntExtra("like", 0)
+                scpList[currentScpPosition].like = like
+                scpAdapter?.notifyDataSetChanged()
+            }
+        }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -133,17 +153,18 @@ class CategoryActivity : BaseActivity() {
             scpAdapter = ScpAdapter(this@CategoryActivity, scpList)
             scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
+                    currentScpPosition = position
                     val intent = Intent()
                     intent.putExtra("link", scpList[position].link)
                     intent.putExtra("sId", scpList[position].sId)
                     intent.setClass(this@CategoryActivity, DetailActivity::class.java)
-                    startActivity(intent)
+                    startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                 }
             }
-            rlScpList.adapter = scpAdapter
+            rv_scp_list.adapter = scpAdapter
             scpAdapter?.notifyDataSetChanged()
         } else {
-            rlScpList.adapter = scpAdapter
+            rv_scp_list.adapter = scpAdapter
             scpAdapter?.notifyDataSetChanged()
         }
     }
@@ -202,18 +223,22 @@ class CategoryActivity : BaseActivity() {
         if (pageType == 0) {
             if (categoryAdapter == null) {
                 categoryAdapter = CategoryAdapter(this, categoryType, categoryList)
-                rlScpList.adapter = categoryAdapter
+                rv_scp_list.adapter = categoryAdapter
                 categoryAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         Log.i(tag, "onItemClick")
                         pageType = 1
+                        currentCategoryPosition = position
                         initScpAdapter()
                         getScpList(position)
                     }
                 }
             } else {
                 categoryAdapter?.notifyDataSetChanged()
-                rlScpList.adapter = categoryAdapter
+                rv_scp_list.adapter = categoryAdapter
+                if (currentCategoryPosition > 0) {
+                    rv_scp_list?.scrollToPosition(currentCategoryPosition)
+                }
             }
         } else {
             getScpList(0)

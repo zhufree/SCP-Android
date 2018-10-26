@@ -7,7 +7,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.R
-import info.free.scp.SCPConstants.ACTION_CHANGE_THEME
+import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
 import info.free.scp.ScpApplication
 
 /**

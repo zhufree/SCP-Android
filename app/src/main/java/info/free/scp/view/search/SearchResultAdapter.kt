@@ -12,8 +12,8 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
-class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel>)
-    : BaseAdapter<SearchHolder, ScpModel>(mContext, dataList) {
+class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
+    : BaseAdapter<SearchHolder, ScpModel?>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_search, parent, false)
@@ -25,6 +25,6 @@ class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel>)
 
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         holder.itemView.tag = position
-        holder.setData(dataList[position].title)
+        holder.setData(dataList[position]?.title)
     }
 }

@@ -50,7 +50,7 @@ import info.free.scp.SCPConstants.SERIES_STORY
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.Toaster
-import info.free.scp.view.DetailActivity
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
@@ -126,8 +126,8 @@ class CategoryActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SCPConstants.RequestCode.CATEGORY_TO_DETAIL) {
             data?.let {
-                val like = it.getIntExtra("like", 0)
-                scpList[currentScpPosition].like = like
+                scpList[currentScpPosition].like = it.getIntExtra("like", 0)
+                scpList[currentScpPosition].hasRead = it.getIntExtra("hasRead", 0)
                 scpAdapter?.notifyDataSetChanged()
             }
         }

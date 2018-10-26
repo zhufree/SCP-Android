@@ -75,6 +75,7 @@ object PrivateConstants {
 - [x] 收藏
 - [ ] 读过
 - [ ] 正文阅读滑动到底部时弹出上下篇
+- [ ] 分享
 
 
 # 后续

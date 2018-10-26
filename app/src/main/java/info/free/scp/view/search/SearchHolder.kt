@@ -11,7 +11,7 @@ import kotlinx.android.synthetic.main.item_search.view.*
 
 class SearchHolder(view: View) : RecyclerView.ViewHolder(view){
 
-    fun setData(title: String) {
+    fun setData(title: String?) {
         itemView?.tv_search_title?.text = title
     }
 }

@@ -3,14 +3,12 @@ package info.free.scp.view.base
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.util.ThemeUtil
-import info.free.scp.view.DetailActivity
 
 
 open class BaseActivity : AppCompatActivity() {

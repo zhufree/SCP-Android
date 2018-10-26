@@ -271,25 +271,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    private fun getScpInfoByLink(name: String): ScpModel? {
-        try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.LINK + "=? ", arrayOf(name))
-            var shelfModel: ScpModel? = null
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    // shelfModel = extractScpModel(cursor)
-                }
-                cursor.close()
-            }
-            return shelfModel
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return null
-    }
-
     fun getDetailById(id: String): String {
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.DETAIL_HTML
@@ -375,8 +356,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return scpModel
     }
 
-    fun getLikeScps(): MutableList<ScpModel> {
-        val resultList = emptyList<ScpModel>().toMutableList()
+    fun getLikeScpList(): MutableList<ScpModel?> {
+        val resultList = emptyList<ScpModel?>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
@@ -385,7 +366,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
-                            resultList.add(extractScp(it))
+                            resultList.add(getScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
                         }
                     }
                 }
@@ -413,6 +394,41 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             e.printStackTrace()
         }
         return false
+    }
+
+    fun getNextScp(index: Int): ScpModel? {
+        var scpModel: ScpModel? = null
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                    + ScpTable.INDEX + "=? ", arrayOf("${index+1}"))
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    scpModel = extractScp(cursor)
+                }
+                cursor.close()
+            }
+            return scpModel
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return scpModel
+    }
+    fun getPreviewScp(index: Int): ScpModel? {
+        var scpModel: ScpModel? = null
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                    + ScpTable.INDEX + "=? ", arrayOf("${index-1}"))
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    scpModel = extractScp(cursor)
+                }
+                cursor.close()
+            }
+            return scpModel
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return scpModel
     }
 
     companion object {

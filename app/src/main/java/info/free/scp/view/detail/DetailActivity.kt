@@ -1,5 +1,7 @@
-package info.free.scp.view
+package info.free.scp.view.detail
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
 import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
@@ -25,7 +27,7 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
-class DetailActivity : BaseActivity() {
+class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
     private var readMode = 0 // 0 离线 1 网页
     private var url = ""
@@ -41,17 +43,19 @@ class DetailActivity : BaseActivity() {
         setContentView(R.layout.activity_detail)
 
         initToolbar()
+        initSwitchBtn()
 
-        webView.setBackgroundColor(0) // 设置背景色
+        webView?.mListener = this
+        webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
-        webView.setBackgroundColor(ThemeUtil.containerBg)
+        webView?.setBackgroundColor(ThemeUtil.containerBg)
         currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
 
-        url = intent.getStringExtra("link")?:""
+        url = intent.getStringExtra("link") ?: ""
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 随机文档
-            scp =ScpDao.getInstance().getRandomScp()
+            scp = ScpDao.getInstance().getRandomScp()
         } else {
             url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
             sId = intent.getStringExtra("sId")
@@ -59,17 +63,7 @@ class DetailActivity : BaseActivity() {
         }
 
 
-        scp?.let {
-            invalidateOptionsMenu()
-            detailHtml = ScpDao.getInstance().getDetailById(it.sId)
-            if (detailHtml.isEmpty()) {
-                webView.loadUrl(url) //可以使用本地文件 file:///android_asset/xyz.html
-            } else {
-                pbLoading.visibility = GONE
-                webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
-                        "text/html", "utf-8", null)
-            }
-        }
+        setData(scp)
         webView.requestFocus()
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
@@ -112,12 +106,30 @@ class DetailActivity : BaseActivity() {
 
     }
 
+    private fun setData(scp: ScpModel?) {
+        scp?.let {
+            invalidateOptionsMenu()
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+            detail_toolbar?.title = scp.title
+            detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
+            if (detailHtml.isEmpty()) {
+                webView.loadUrl(url) //可以使用本地文件 file:///android_asset/xyz.html
+            } else {
+                pbLoading.visibility = GONE
+                webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                        "text/html", "utf-8", null)
+            }
+            webView?.scrollTo(0, 0)
+            hideSwitchBtn()
+        }
+    }
+
     private fun initToolbar() {
         setSupportActionBar(detail_toolbar)
-        detail_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        detail_toolbar.setNavigationOnClickListener { finish() }
-        detail_toolbar.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
-        detail_toolbar.setOnMenuItemClickListener {
+        detail_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        detail_toolbar?.setNavigationOnClickListener { finish() }
+        detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
+        detail_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
                     EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
@@ -155,7 +167,7 @@ class DetailActivity : BaseActivity() {
                     }
                 }
                 R.id.like -> {
-                    scp?.let {s ->
+                    scp?.let { s ->
                         s.like = if (s.like == 1) 0 else 1
                         ScpDao.getInstance().insertLikeAndReadInfo(s)
                         it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
@@ -167,6 +179,38 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    private fun initSwitchBtn() {
+        tv_preview?.setOnClickListener {
+            scp?.let { s ->
+                when (s.index) {
+                    0 -> Toaster.show("已经是第一篇了")
+                    else -> {
+                        scp = ScpDao.getInstance().getPreviewScp(s.index)
+                        setData(scp)
+                    }
+                }
+            }
+
+        }
+        tv_next?.setOnClickListener {
+            scp?.let { s ->
+                when(s.index) {
+                    14001 -> Toaster.show("已经是最后一篇了")
+                    else -> {
+                        scp = ScpDao.getInstance().getNextScp(s.index)
+                        setData(scp)
+                    }
+                }
+            }
+        }
+        tv_random?.setOnClickListener {
+            scp?.let { s ->
+                scp = ScpDao.getInstance().getNextScp(s.index)
+                setData(scp)
+            }
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)
@@ -175,18 +219,67 @@ class DetailActivity : BaseActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         scp?.let {
-            if (it.like == 1){
-                val menuItem =  menu?.getItem(2)
+            if (it.like == 1) {
+                val menuItem = menu?.getItem(2)
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
         }
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onScrollToBottom() {
+        scp?.let {
+            it.hasRead = 1
+            ScpDao.getInstance().insertLikeAndReadInfo(it)
+        }
+        showSwitchBtn()
+    }
+
+    private fun hideSwitchBtn() {
+        Log.i("detail", "hideSwitchBtn()")
+        tv_preview?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_preview?.visibility = GONE
+            }
+        })?.start()
+        tv_next?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_next?.visibility = GONE
+            }
+        })?.start()
+        tv_random?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_random?.visibility = GONE
+            }
+        })?.start()
+    }
+
+    private fun showSwitchBtn() {
+        Log.i("detail", "showSwitchBtn()")
+        tv_preview?.visibility = VISIBLE
+        tv_next?.visibility = VISIBLE
+        tv_random?.visibility = VISIBLE
+        tv_preview?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_preview?.visibility = VISIBLE
+            }
+        })?.start()
+        tv_next?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_next?.visibility = VISIBLE
+            }
+        })?.start()
+        tv_random?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator?) {
+                tv_random?.visibility = VISIBLE
+            }
+        })?.start()
+    }
 
     override fun finish() {
         val intent = Intent()
-        intent.putExtra("like", scp?.like?:0)
+        intent.putExtra("like", scp?.like ?: 0)
+        intent.putExtra("hasRead", scp?.hasRead ?: 0)
         setResult(SCPConstants.RequestCode.CATEGORY_TO_DETAIL, intent)
         super.finish()
     }

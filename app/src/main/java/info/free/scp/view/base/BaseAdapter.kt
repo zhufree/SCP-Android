@@ -14,7 +14,7 @@ import android.view.View
  * 继承时要指定
  */
 
-abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any>(context: Context?, val dataList: MutableList<T>)
+abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
     : RecyclerView.Adapter<H>(),
         View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null

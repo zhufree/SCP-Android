@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.DetailActivity">
+    tools:context="info.free.scp.view.detail.DetailActivity">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
@@ -26,11 +26,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/containerBg">
-        <WebView
+        <info.free.scp.view.detail.DetailWebView
             android:id="@+id/webView"
             android:layout_height="match_parent"
             android:layout_width="match_parent">
-        </WebView>
+        </info.free.scp.view.detail.DetailWebView>
 
         <ProgressBar
             android:id="@+id/pbLoading"
@@ -42,6 +42,53 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:progressDrawable="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/tv_preview"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginBottom="64dp"
+            android:layout_marginStart="16dp"
+            android:text="上一篇"
+            android:gravity="center"
+            android:background="?attr/itemBg"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="gone"
+            android:alpha="0"/>
+        <TextView
+            android:id="@+id/tv_next"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="下一篇"
+            android:gravity="center"
+            android:background="?attr/itemBg"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            android:layout_marginBottom="64dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            android:alpha="0"/>
+        <TextView
+            android:id="@+id/tv_random"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:text="随机"
+            android:gravity="center"
+            android:background="?attr/itemBg"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            android:visibility="gone"
+            android:alpha="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tv_next"
+            app:layout_constraintBottom_toBottomOf="@id/tv_next"
+            />
     </android.support.constraint.ConstraintLayout>
 
 </android.support.design.widget.CoordinatorLayout>

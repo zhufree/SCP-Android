@@ -39,7 +39,8 @@
                 android:src="@drawable/ic_search_white_24dp"
                 android:background="@null"
                 android:layout_gravity="end"
-                android:layout_marginEnd="16dp"/>
+                android:layout_marginEnd="16dp"
+                android:contentDescription="TODO" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
     <android.support.v7.widget.RecyclerView

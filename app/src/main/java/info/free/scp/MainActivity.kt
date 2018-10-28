@@ -25,7 +25,6 @@ import info.free.scp.view.about.AboutFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
-import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -33,10 +32,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragment.AboutListener {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
-    private val feedFragment = FeedFragment.newInstance()
+//    private val feedFragment = FeedFragment.newInstance()
     private val aboutFragment = AboutFragment.newInstance()
-    private var updateChecked = false
-    var remoteDbVersion = -1
+    private var remoteDbVersion = -1
 
     var progressDialog: ProgressDialog? = null
 
@@ -79,7 +77,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
-    val currentVersionCode = BuildConfig.VERSION_CODE
+    private val currentVersionCode = BuildConfig.VERSION_CODE
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = fragmentManager.beginTransaction()
@@ -125,19 +123,34 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
 
         setContentView(R.layout.activity_main)
+        savedInstanceState?.let {
+            currentFragment = fragmentManager.getFragment(savedInstanceState, "currentFragment") as BaseFragment
+        }
+
         val transaction = fragmentManager.beginTransaction()
-        transaction.add(R.id.flMainContainer, homeFragment)
-        currentFragment = homeFragment
+        if (currentFragment != null) {
+            transaction.add(R.id.flMainContainer, currentFragment)
+        } else {
+            transaction.add(R.id.flMainContainer, homeFragment)
+            currentFragment = homeFragment
+        }
         transaction.commit()
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     override fun onResume() {
         super.onResume()
-        if (!updateChecked && enabledNetwork()) {
-            updateChecked = true
+        if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
+            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             checkUpdate()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        currentFragment?.let {
+            fragmentManager.putFragment(outState, "currentFragment", it)
+        }
+        super.onSaveInstanceState(outState)
     }
 
     /**

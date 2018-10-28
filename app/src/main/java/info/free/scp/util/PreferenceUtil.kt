@@ -3,6 +3,7 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import info.free.scp.ScpApplication
+import java.util.*
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -13,14 +14,6 @@ object PreferenceUtil {
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context?.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
-    fun getInitAboutData(): Boolean {
-        return getBooleanValue("init", "initAbout")
-    }
-    fun setInitAboutData() {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putBoolean("initAbout", true)?.apply()
-    }
-
     fun getInitDataFinish(): Boolean {
         return getBooleanValue("init", "initData")
     }
@@ -98,6 +91,23 @@ object PreferenceUtil {
         setIntValue("theme", "currentTheme", theme)
     }
 
+
+    /**
+     * 检测更新，一天只检测一次
+     */
+    fun setLastCheckUpdateTime(time: Long) {
+        setLongValue("update", "lastCheckUpdateTime", time)
+    }
+
+    fun checkNeedShowUpdateNotice(): Boolean {
+        val lastTime = getLongValue("update", "lastCheckUpdateTime")
+        val cal = Calendar.getInstance()
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0)
+        val beginOfDate = cal.timeInMillis
+        return lastTime < beginOfDate
+    }
+
     private fun getBooleanValue(spName: String, key: String): Boolean {
         val sp = getPrivateSharedPreference(spName)
         return sp?.getBoolean(key, false)?:false
@@ -114,5 +124,15 @@ object PreferenceUtil {
     private fun setIntValue(spName: String, key: String, value: Int) {
         val sp = getPrivateSharedPreference(spName)
         sp?.edit()?.putInt(key, value)?.apply()
+    }
+
+    private fun getLongValue(spName: String, key: String): Long {
+        val sp = getPrivateSharedPreference(spName)
+        return sp?.getLong(key, 0L)?:0L
+    }
+
+    private fun setLongValue(spName: String, key: String, value: Long) {
+        val sp = getPrivateSharedPreference(spName)
+        sp?.edit()?.putLong(key, value)?.apply()
     }
 }

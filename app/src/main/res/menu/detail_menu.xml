@@ -8,11 +8,19 @@
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/report"
-        android:title="反馈问题"
+        android:title="@string/menu_report"
+        app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/open_in_browser"
+        android:title="@string/menu_open_in_browser"
+        app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/copy_link"
+        android:title="@string/menu_copy_link"
         app:showAsAction="collapseActionView"/>
 
     <item android:id="@+id/like"
-        android:title="收藏"
+        android:title="@string/menu_like"
         android:icon="@drawable/ic_star_border_white_24dp"
         app:showAsAction="ifRoom"/>
 </menu>

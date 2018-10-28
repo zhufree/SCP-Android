@@ -8,7 +8,7 @@ import info.free.scp.util.ThemeUtil
 
 /**
  * Created by zhufree on 2018/8/27.
- *
+ * 自定义application
  */
 
 class ScpApplication : MultiDexApplication() {

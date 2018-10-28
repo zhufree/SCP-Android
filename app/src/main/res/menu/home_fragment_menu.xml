@@ -4,17 +4,17 @@
 
     <item
         android:id="@+id/cn_page"
-        android:title="cn"
+        android:title="@string/menu_cn"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/search"
-        android:title="search"
+        android:title="@string/menu_search"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/random_article"
-        android:title="random"
+        android:title="@string/menu_random"
         android:icon="@drawable/ic_autorenew_white_24dp"
         app:showAsAction="ifRoom"/>
 </menu>

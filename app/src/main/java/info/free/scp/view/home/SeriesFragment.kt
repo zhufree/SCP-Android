@@ -8,11 +8,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants.SERIES
-import info.free.scp.SCPConstants.SERIES_ABOUT
-import info.free.scp.SCPConstants.SERIES_ARCHIVED
-import info.free.scp.SCPConstants.SERIES_CN
-import info.free.scp.SCPConstants.SERIES_STORY
+import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.Category.SERIES_ABOUT
+import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
+import info.free.scp.SCPConstants.Category.SERIES_CN
+import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickAbout
 import info.free.scp.util.EventUtil.clickArchived

@@ -2,8 +2,8 @@ package info.free.scp.view.category
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import info.free.scp.SCPConstants.SERIES
-import info.free.scp.SCPConstants.SERIES_CN
+import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.Category.SERIES_CN
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**

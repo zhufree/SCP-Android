@@ -3,9 +3,14 @@ package info.free.scp.view.detail
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -95,8 +100,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                     .setMessage("1.右上角菜单可以切换网络阅读和离线阅读模式（如果本地数据没有加载完成则离线模式可能不可用）\n" +
                             "2.所有显示尚无内容的即表示在网上是404状态，即禁止访问，可能存在数据更新不及时的情况，所以也可以切换阅读模式看原网页\n" +
                             "3.文档数量较多，如果发现有疏漏，如文不对题等，可右上角菜单选择反馈问题\n" +
-                            "4.图片依然需要网络才能显示出来，另有一些网页上依赖代码等复杂的文章，请切换跳转网页查看\n" +
-                            "5.底部的切换上下章的链接暂时不能使用，以后会开发相关功能")
+                            "4.图片依然需要网络才能显示出来，另有一些网页上依赖代码等复杂的文章，请切换跳转网页查看\n")
                     .setPositiveButton("OK") { dialog, _ ->
                         PreferenceUtil.setShownDetailNotice()
                         dialog.dismiss()
@@ -113,14 +117,17 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             detail_toolbar?.title = scp.title
             detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
             if (detailHtml.isEmpty()) {
-                webView.loadUrl(url) //可以使用本地文件 file:///android_asset/xyz.html
+                webView.loadUrl(url)
             } else {
                 pbLoading.visibility = GONE
                 webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                         "text/html", "utf-8", null)
             }
-            webView?.scrollTo(0, 0)
             hideSwitchBtn()
+            Handler().postDelayed({
+                webView?.scrollTo(0, 0)
+            }, 500)
+
         }
     }
 
@@ -166,6 +173,23 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                         reportDialog.dismiss()
                     }
                 }
+                R.id.open_in_browser -> {
+                    scp?.let {
+                        val openIntent = Intent()
+                        openIntent.action = "android.intent.action.VIEW"
+                        val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + it.link)
+                        openIntent.data = openUrl
+                        startActivity(openIntent)
+                    }
+                }
+                R.id.copy_link -> {
+                    scp?.let {
+                        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                        val clipData = ClipData.newPlainText("scp_link", SCPConstants.SCP_SITE_URL + it.link)
+                        clipboardManager?.primaryClip = clipData
+                        Toaster.show("已复制到剪贴板")
+                    }
+                }
                 R.id.like -> {
                     scp?.let { s ->
                         s.like = if (s.like == 1) 0 else 1
@@ -205,7 +229,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
         }
         tv_random?.setOnClickListener {
             scp?.let { s ->
-                scp = ScpDao.getInstance().getNextScp(s.index)
+                scp = ScpDao.getInstance().getRandomScp()
                 setData(scp)
             }
         }
@@ -229,10 +253,16 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
     override fun onScrollToBottom() {
         scp?.let {
-            it.hasRead = 1
-            ScpDao.getInstance().insertLikeAndReadInfo(it)
+            if (it.hasRead == 0) {
+                it.hasRead = 1
+                ScpDao.getInstance().insertLikeAndReadInfo(it)
+            }
         }
         showSwitchBtn()
+    }
+
+    override fun onScrollUp() {
+        hideSwitchBtn()
     }
 
     private fun hideSwitchBtn() {

@@ -10,43 +10,43 @@ import android.view.Menu
 import android.view.View
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.CONTEST
-import info.free.scp.SCPConstants.CONTEST_CN
-import info.free.scp.SCPConstants.EVENT
-import info.free.scp.SCPConstants.SAVE_ABOUT
-import info.free.scp.SCPConstants.SAVE_CONTEST
-import info.free.scp.SCPConstants.SAVE_CONTEST_CN
-import info.free.scp.SCPConstants.SAVE_SERIES
-import info.free.scp.SCPConstants.SAVE_ARCHIVED
-import info.free.scp.SCPConstants.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.SAVE_DECOMMISSIONED
-import info.free.scp.SCPConstants.SAVE_EVENT
-import info.free.scp.SCPConstants.SAVE_EX
-import info.free.scp.SCPConstants.SAVE_JOKE
-import info.free.scp.SCPConstants.SAVE_JOKE_CN
-import info.free.scp.SCPConstants.SAVE_REMOVED
-import info.free.scp.SCPConstants.SAVE_SERIES_STORY_1
-import info.free.scp.SCPConstants.SAVE_SERIES_STORY_2
-import info.free.scp.SCPConstants.SAVE_SERIES_STORY_3
-import info.free.scp.SCPConstants.SAVE_SETTINGS
-import info.free.scp.SCPConstants.SAVE_SETTINGS_CN
-import info.free.scp.SCPConstants.SAVE_STORY_SERIES
-import info.free.scp.SCPConstants.SAVE_STORY_SERIES_CN
-import info.free.scp.SCPConstants.SAVE_TALES_BY_TIME
-import info.free.scp.SCPConstants.SAVE_TALES_CN_PREFIX
-import info.free.scp.SCPConstants.SAVE_TALES_PREFIX
-import info.free.scp.SCPConstants.SETTINGS
-import info.free.scp.SCPConstants.SETTINGS_CN
-import info.free.scp.SCPConstants.STORY_SERIES
-import info.free.scp.SCPConstants.STORY_SERIES_CN
-import info.free.scp.SCPConstants.TALES
-import info.free.scp.SCPConstants.TALES_BY_TIME
-import info.free.scp.SCPConstants.TALES_CN
-import info.free.scp.SCPConstants.SERIES
-import info.free.scp.SCPConstants.SERIES_ABOUT
-import info.free.scp.SCPConstants.SERIES_ARCHIVED
-import info.free.scp.SCPConstants.SERIES_CN
-import info.free.scp.SCPConstants.SERIES_STORY
+import info.free.scp.SCPConstants.Category.CONTEST
+import info.free.scp.SCPConstants.Category.CONTEST_CN
+import info.free.scp.SCPConstants.Category.EVENT
+import info.free.scp.SCPConstants.SaveType.SAVE_ABOUT
+import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST
+import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES
+import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_DECOMMISSIONED
+import info.free.scp.SCPConstants.SaveType.SAVE_EVENT
+import info.free.scp.SCPConstants.SaveType.SAVE_EX
+import info.free.scp.SCPConstants.SaveType.SAVE_JOKE
+import info.free.scp.SCPConstants.SaveType.SAVE_JOKE_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_REMOVED
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_1
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_2
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_3
+import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS
+import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES
+import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_BY_TIME
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_PREFIX
+import info.free.scp.SCPConstants.Category.SETTINGS
+import info.free.scp.SCPConstants.Category.SETTINGS_CN
+import info.free.scp.SCPConstants.Category.STORY_SERIES
+import info.free.scp.SCPConstants.Category.STORY_SERIES_CN
+import info.free.scp.SCPConstants.Category.TALES
+import info.free.scp.SCPConstants.Category.TALES_BY_TIME
+import info.free.scp.SCPConstants.Category.TALES_CN
+import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.Category.SERIES_ABOUT
+import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
+import info.free.scp.SCPConstants.Category.SERIES_CN
+import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.Toaster
@@ -91,7 +91,7 @@ class CategoryActivity : BaseActivity() {
 
         initData()
 
-        category_toolbar.inflateMenu(R.menu.series_category_menu) //设置右上角的填充菜单
+        category_toolbar.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
         category_toolbar.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.reverse -> {
@@ -118,6 +118,7 @@ class CategoryActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         if (pageType == 1) {
+            getScpList(currentCategoryPosition)
             rv_scp_list?.scrollToPosition(currentScpPosition)
         }
     }
@@ -247,7 +248,7 @@ class CategoryActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.series_category_menu, menu)
+        menuInflater.inflate(R.menu.category_menu, menu)
         return true
     }
 

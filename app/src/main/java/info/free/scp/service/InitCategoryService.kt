@@ -9,6 +9,28 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
+import info.free.scp.SCPConstants.SaveType.SAVE_ABOUT
+import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
+import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST
+import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_DECOMMISSIONED
+import info.free.scp.SCPConstants.SaveType.SAVE_EVENT
+import info.free.scp.SCPConstants.SaveType.SAVE_EX
+import info.free.scp.SCPConstants.SaveType.SAVE_JOKE
+import info.free.scp.SCPConstants.SaveType.SAVE_JOKE_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_REMOVED
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_1
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_2
+import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_3
+import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS
+import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES
+import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES_CN
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_BY_TIME
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
+import info.free.scp.SCPConstants.SaveType.SAVE_TALES_PREFIX
 import info.free.scp.db.ScpDao
 
 
@@ -51,56 +73,56 @@ class InitCategoryService : IntentService("initDataService") {
             for ((index, scp) in it.withIndex()) {
                 when (scp.requestType) {
                     "series" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_SERIES_CN
-                        else SCPConstants.SAVE_SERIES
+                        scp.saveType = if (scp.cn == "true") SAVE_SERIES_CN
+                        else SAVE_SERIES
                     }
                     "joke" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_JOKE_CN
-                        else SCPConstants.SAVE_JOKE
+                        scp.saveType = if (scp.cn == "true") SAVE_JOKE_CN
+                        else SAVE_JOKE
                     }
                     "archived" -> {
-                        scp.saveType = SCPConstants.SAVE_ARCHIVED
+                        scp.saveType = SAVE_ARCHIVED
                     }
                     "ex" -> {
-                        scp.saveType = SCPConstants.SAVE_EX
+                        scp.saveType = SAVE_EX
                     }
                     "decommissioned" -> {
-                        scp.saveType = SCPConstants.SAVE_DECOMMISSIONED
+                        scp.saveType = SAVE_DECOMMISSIONED
                     }
                     "removed" -> {
-                        scp.saveType = SCPConstants.SAVE_REMOVED
+                        scp.saveType = SAVE_REMOVED
                     }
                     "story" -> {
                         when (scp.storyNum) {
-                            "1" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_1
-                            "2" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_2
-                            "3" -> scp.saveType = SCPConstants.SAVE_SERIES_STORY_3
+                            "1" -> scp.saveType = SAVE_SERIES_STORY_1
+                            "2" -> scp.saveType = SAVE_SERIES_STORY_2
+                            "3" -> scp.saveType = SAVE_SERIES_STORY_3
                         }
                     }
                     "story_series" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_STORY_SERIES_CN
-                        else SCPConstants.SAVE_STORY_SERIES
+                        scp.saveType = if (scp.cn == "true") SAVE_STORY_SERIES_CN
+                        else SAVE_STORY_SERIES
                     }
                     "tale" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_TALES_CN_PREFIX + scp.pageCode
-                        else SCPConstants.SAVE_TALES_PREFIX + scp.pageCode
+                        scp.saveType = if (scp.cn == "true") SAVE_TALES_CN_PREFIX + scp.pageCode
+                        else SAVE_TALES_PREFIX + scp.pageCode
                     }
                     "setting" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_SETTINGS_CN
-                        else SCPConstants.SAVE_SETTINGS
+                        scp.saveType = if (scp.cn == "true") SAVE_SETTINGS_CN
+                        else SAVE_SETTINGS
                     }
                     "contest" -> {
-                        scp.saveType = if (scp.cn == "true") SCPConstants.SAVE_CONTEST_CN
-                        else SCPConstants.SAVE_CONTEST
+                        scp.saveType = if (scp.cn == "true") SAVE_CONTEST_CN
+                        else SAVE_CONTEST
                     }
                     "event" -> {
-                        scp.saveType = SCPConstants.SAVE_EVENT
+                        scp.saveType = SAVE_EVENT
                     }
                     "tale_by_time" -> {
-                        scp.saveType = SCPConstants.SAVE_TALES_BY_TIME
+                        scp.saveType = SAVE_TALES_BY_TIME
                     }
                     "about" -> {
-                        scp.saveType = SCPConstants.SAVE_ABOUT
+                        scp.saveType = SAVE_ABOUT
                     }
                 }
                 scp.index = i*500 + index

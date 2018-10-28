@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
+import info.free.scp.util.Toaster
 import java.util.*
 
 
@@ -41,12 +42,13 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun resetDb() {
-        val db = writableDatabase
-        db?.execSQL(ScpTable.dropScpTableSQL)
-        db?.execSQL(ScpTable.dropDetailTableSQL)
-        // 先这么处理，回头改成添加字段啥的更新
-        db?.execSQL(ScpTable.CREATE_TABLE_SQL)
-        db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
+        with(writableDatabase) {
+            this?.execSQL(ScpTable.dropScpTableSQL)
+            this?.execSQL(ScpTable.dropDetailTableSQL)
+            // 先这么处理，回头改成添加字段啥的更新
+            this?.execSQL(ScpTable.CREATE_TABLE_SQL)
+            this?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
+        }
     }
 
     fun insertCategoryData(models: List<ScpModel>) {
@@ -57,10 +59,29 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db.beginTransaction()
         try {
             db.createStatement(models)
-            // TODO 遍历收藏表把数据同步一下
+            syncLikeInfo()
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
+        }
+    }
+
+    private fun syncLikeInfo() {
+        val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME, null)
+        with(cursor) {
+            this?.let {
+                while (it.moveToNext()) {
+                    val link = getCursorString(cursor, ScpTable.LINK)
+                    val like = getCursorInt(cursor, ScpTable.LIKE)
+                    val hasRead = getCursorInt(cursor, ScpTable.HAS_READ)
+                    val scpModels = getScpModelByLink(link)
+                    scpModels.forEach { scp ->
+                        scp?.like = like
+                        scp?.hasRead = hasRead
+                        replaceScpModel(scp)
+                    }
+                }
+            }
         }
     }
 
@@ -119,13 +140,17 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     private fun SQLiteDatabase.createDetailStatement(models: List<ScpModel>) {
-        val stmt = compileStatement(ScpTable.INSERT_DETAIL_SQL)
-        for (model in models) {
-            stmt.bindString(1, model.sId)
-            stmt.bindString(2, model.detailHtml)
-            Log.i("loading", "sid = ${model.sId}")
-            stmt.execute()
-            stmt.clearBindings()
+        try {
+            val stmt = compileStatement(ScpTable.INSERT_DETAIL_SQL)
+            for (model in models) {
+                stmt.bindString(1, model.sId)
+                stmt.bindString(2, model.detailHtml)
+                Log.i("loading", "sid = ${model.sId}")
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        } catch (e: Exception) {
+            Toaster.showLongX("插入数据时发生错误，请在【其他】页面选择重新初始化数据并尽量打开app等待正文传输完成")
         }
     }
 
@@ -157,9 +182,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * 网络请求到数据时保存一次
      * 返回更新后的model
      */
-    fun replaceScpModel(model: ScpModel?): ScpModel? {
+    private fun replaceScpModel(model: ScpModel?) {
         if (model == null || model.link.isEmpty()) {
-            return null
+            return
         }
         val db = writableDatabase
         db.beginTransaction()
@@ -177,29 +202,41 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         } finally {
             db.endTransaction()
         }
-        return getScpModelByLink(model.link)
     }
 
-    fun getScpModelByLink(link: String?): ScpModel? {
+    /**
+     * 通过链接获取scpModel，可能不止一个
+     */
+    private fun getScpModelByLink(link: String?): MutableList<ScpModel?> {
+        val resultList = emptyList<ScpModel?>().toMutableList()
         if (link == null) {
-            return null
+            return resultList
         }
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.LINK + "=?", arrayOf(link))
-            var scpModel: ScpModel? = null
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    scpModel = extractScp(cursor)
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.LINK + "=?", arrayOf(link))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
                 }
-                cursor.close()
+                return resultList
             }
-            return scpModel
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return null
+        return resultList
+    }
+
+    /**
+     * 收藏列表只展示一个
+     */
+    private fun getOneScpModelByLink(link: String): ScpModel? {
+        return getScpModelByLink(link)[0]
     }
 
     fun getScpModelById(id: String?): ScpModel? {
@@ -207,17 +244,19 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             return null
         }
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.ID + "=?", arrayOf(id))
-            var scpModel: ScpModel? = null
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    scpModel = extractScp(cursor)
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.ID + "=?", arrayOf(id))
+                var scpModel: ScpModel? = null
+                with(cursor) {
+                    this?.let {
+                        if (it.moveToFirst()) {
+                            scpModel = extractScp(it)
+                        }
+                    }
                 }
-                cursor.close()
+                return scpModel
             }
-            return scpModel
-
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -273,18 +312,21 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     fun getDetailById(id: String): String {
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.DETAIL_HTML
-                    + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
-                    + ScpTable.ID + "=? ", arrayOf(id))
-            var detailString = ""
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    detailString = getCursorString(cursor, ScpTable.DETAIL_HTML)
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT " + ScpTable.DETAIL_HTML
+                        + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
+                        + ScpTable.ID + "=? ", arrayOf(id))
+                var detailString = ""
+                cursor?.let {
+                    with(it) {
+                        if (cursor.moveToFirst()) {
+                            detailString = getCursorString(cursor, ScpTable.DETAIL_HTML)
+                        }
+                    }
                 }
-                cursor.close()
+                return detailString.replace("href=\"/",
+                        "href=\"http://scp-wiki-cn.wikidot.com/")
             }
-            return detailString.replace("href=\"/",
-                    "href=\"http://scp-wiki-cn.wikidot.com/")
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -366,7 +408,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
-                            resultList.add(getScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
+                            resultList.add(getOneScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
                         }
                     }
                 }
@@ -379,7 +421,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    fun getLikeInfoByLink(link: String): Boolean {
+    private fun getLikeInfoByLink(link: String): Boolean {
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME
                     + " WHERE " + ScpTable.LINK + "=?", arrayOf(link))

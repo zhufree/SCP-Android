@@ -16,6 +16,7 @@ class DetailWebView : WebView {
     var mListener: WebScrollListener? = null
 
     var hasTouchEnd = false
+    var isMovingUp = false
 
     constructor(context: Context) : super(context) {
         onCreate(context)
@@ -31,10 +32,17 @@ class DetailWebView : WebView {
 
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         if (computeVerticalScrollRange > 0) {
-            if (computeVerticalScrollRange - t < 2000 && !hasTouchEnd) {
+            if (oldt < t && computeVerticalScrollRange - t < 2000 && !hasTouchEnd) {
+                // 向下滑且距离到了
                 Log.i("detail", "已读完")
                 hasTouchEnd = true
+                isMovingUp = false
                 mListener?.onScrollToBottom()
+            } else if (oldt > t && computeVerticalScrollRange - t > 2000 && !isMovingUp) {
+                // 向上滑且距离大于4000
+                hasTouchEnd = false
+                isMovingUp = true
+                mListener?.onScrollUp()
             }
         } else {
             computeVerticalScrollRange = computeVerticalScrollRange()
@@ -44,5 +52,6 @@ class DetailWebView : WebView {
 
     interface WebScrollListener {
         fun onScrollToBottom()
+        fun onScrollUp()
     }
 }

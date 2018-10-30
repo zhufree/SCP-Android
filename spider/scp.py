@@ -1,12 +1,25 @@
 # coding: utf-8
 
-from pyquery import PyQuery as pq
+# from pyquery import PyQuery as pq
 import csv
 import multiprocessing
-
+import os
 spider_header = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
 
+def get_detail(new_article):
+    try:
+        if 'http://scp-wiki-cn.wikidot.com' in new_article['link']:
+            new_article['link'] = new_article['link'][30:]
+        detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
+        new_article['not_found'] = "false"
+        new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
+            .replace('  ', '').replace('\n', '') \
+            .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
+    except:
+        new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
+        new_article['not_found'] = "true"
+        
 # scp系列
 def thread_get_series(i):
     article_list = []
@@ -35,7 +48,7 @@ def thread_get_series(i):
             print(new_article['type'] + link)
             article_list.append(new_article)
 
-    write_to_csv(article_list, 'series-' + str(i) + '.csv')
+    write_to_csv(article_list, 'scps/series-' + str(i) + '.csv')
 
 # scpCn系列，抓一次，无多线程
 def get_series_cn():
@@ -61,7 +74,7 @@ def get_series_cn():
                 new_article['not_found'] = "true"
             print(new_article['type'] + link)
             article_list.append(new_article)
-    write_to_csv(article_list, 'series-cn.csv')
+    write_to_csv(article_list, 'scps/series-cn.csv')
 
 # 归档信息
 def thread_get_archives(doc_link, pq_path, cn, archives_type):
@@ -87,9 +100,9 @@ def thread_get_archives(doc_link, pq_path, cn, archives_type):
         print(new_article['type'] + link)
         article_list.append(new_article)
     if cn == 'true':
-        write_to_csv(article_list, 'archives-'+ archives_type + '-cn.csv')
+        write_to_csv(article_list, 'scps/archives-'+ archives_type + '-cn.csv')
     else:
-        write_to_csv(article_list, 'archives-'+ archives_type + '.csv')
+        write_to_csv(article_list, 'scps/archives-'+ archives_type + '.csv')
 
 # 故事版
 def thread_get_story(i):
@@ -140,7 +153,7 @@ def thread_get_story(i):
         article_list.append(new_article)
         story_count += 1
 
-    write_to_csv(article_list, 'series-story-'+str(i) + '.csv')
+    write_to_csv(article_list, 'scps/series-story-'+str(i) + '.csv')
 
 # 故事系列
 def thread_get_story_series(cn, i):
@@ -170,9 +183,9 @@ def thread_get_story_series(cn, i):
         print(new_article['type'] +' ' + new_article['link'])
         article_list.append(new_article)
     if cn == 'true':
-        write_to_csv(article_list, 'story-series-cn.csv')
+        write_to_csv(article_list, 'scps/story-series-cn.csv')
     else:
-        write_to_csv(article_list, 'story-series-' + str(i) + '.csv')
+        write_to_csv(article_list, 'scps/story-series-' + str(i) + '.csv')
 
 # 基金会故事
 def thread_get_tales(cn):
@@ -206,9 +219,9 @@ def thread_get_tales(cn):
             print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
     if cn == 'true':
-        write_to_csv(article_list, 'tales-cn.csv')
+        write_to_csv(article_list, 'scps/tales-cn.csv')
     else:
-        write_to_csv(article_list, 'tales.csv')
+        write_to_csv(article_list, 'scps/tales.csv')
 
 # 中国原创故事ByTime
 def get_tales_cn_by_time():
@@ -239,7 +252,7 @@ def get_tales_cn_by_time():
                 new_article['not_found'] = "true"
             print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'tales-cn-by-time.csv')
+    write_to_csv(article_list, 'scps/tales-cn-by-time.csv')
 
 # 设定中心
 def thread_get_setting(cn):
@@ -269,9 +282,9 @@ def thread_get_setting(cn):
         print(new_article['type'] +' ' + new_article['link'])
         article_list.append(new_article)
     if cn == 'true':
-        write_to_csv(article_list, 'setting-cn.csv')
+        write_to_csv(article_list, 'scps/setting-cn.csv')
     else:
-        write_to_csv(article_list, 'setting.csv')
+        write_to_csv(article_list, 'scps/setting.csv')
 
 # 征文竞赛
 def get_contest():
@@ -353,7 +366,7 @@ def get_contest():
             if new_article['link'] != None:
                 print(new_article['type'] +' ' + new_article['link'])
                 article_list.append(new_article)
-    write_to_csv(article_list, 'contest.csv')
+    write_to_csv(article_list, 'scps/contest.csv')
 
 # 中国分部竞赛
 def get_contest_cn():
@@ -384,7 +397,7 @@ def get_contest_cn():
                 new_article['not_found'] = "true"
             print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'contest-cn.csv')
+    write_to_csv(article_list, 'scps/contest-cn.csv')
 
 # 事故记录
 def thread_get_event_record(i):
@@ -420,7 +433,7 @@ def thread_get_event_record(i):
                 new_article['not_found'] = "true"
             print(new_article['event_type'] + ' ' + new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'event-scps-' + str(i) + '.csv')
+    write_to_csv(article_list, 'scps/event-scps-' + str(i) + '.csv')
 
 def get_archives():
     thread_joke_cn = multiprocessing.Process(target=thread_get_archives, args=('http://scp-wiki-cn.wikidot.com/joke-scps-cn',\
@@ -522,20 +535,14 @@ def merge_files(file_name_list, file_prefix):
     
 
 def merge_all_file():
-    # merge_files(['archives/archives-archived-scp.csv','archives/archives-decommissioned-scp.csv',\
-    #     'archives/archives-ex-scp.csv', 'archives/archives-removed-scp.csv', \
-    #     'archives/archives-joke-scp.csv', 'archives/archives-joke-scp-cn.csv'
-    #     ], 'archives/archives')
-    # merge_files(['series/scp-series-1.csv','series/scp-series-2.csv','series/scp-series-3.csv',\
-    #     'series/scp-series-4.csv','series/scp-series-5.csv','series/scp-series-cn.csv'], 'series/series')
-    # merge_files(['series-story/series-story-1.csv','series-story/series-story-2.csv','series-story/series-story-3.csv'], 'series-story/series-story')
-    # merge_files(['library/contest.csv','library/contest-cn.csv'], 'library/contest')
-    merge_files(['library/event-scps-1.csv','library/event-scps-2.csv','library/event-scps-3.csv',\
-        'library/event-scps-4.csv','library/event-scps-5.csv'], 'library/event')
-    # merge_files(['library/setting-scp.csv','library/setting-scp-cn.csv'], 'library/setting')
-    # merge_files(['story-series/story-series-1.csv','story-series/story-series-2.csv','story-series/story-series-cn.csv'], 'story-series/story-series')
+    files = ['scps/' + name for name in os.listdir('scps/')]
+    print(files)
+    merge_files(files[0:13], 'scp-1') # 7m
+    merge_files(files[13:19], 'scp-2') # 40m
+    merge_files(files[19:27], 'scp-3') # 31m
+    merge_files(files[27:], 'scp-4') # 31m
 
-# 写入数据时把所有,替换成^，取数据时再转换回来
+
 def write_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8', newline='') as f:
         # 统一header，方便后续合并文件一起上传
@@ -548,7 +555,7 @@ def write_to_csv(article_list, file_name):
 
 if __name__ == '__main__':
     # get_series()
-    get_series_cn()
+    # get_series_cn()
     # get_archives()
     # get_series_story()
     # get_tales()
@@ -556,4 +563,4 @@ if __name__ == '__main__':
     # get_tales_cn_by_time()
     # get_others()
     # get_events()
-    # merge_all_file()
+    merge_all_file()

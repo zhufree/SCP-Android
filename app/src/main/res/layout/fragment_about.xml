@@ -112,7 +112,7 @@
         android:layout_marginStart="16dp"
         android:gravity="center"
         android:textColor="?attr/darkText"
-        android:text="清空并重新加载数据"
+        android:text="重新同步云端数据"
         android:background="?attr/itemBg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_init_data"

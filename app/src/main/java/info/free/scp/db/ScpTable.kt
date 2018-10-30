@@ -28,6 +28,7 @@ object ScpTable {
     const val INDEX = "index_"
     const val EVENT_TYPE = "eventType"
     const val MONTH = "month"
+    const val NOT_FOUND = "notFound"
 
     const val LIKE = "like"
 
@@ -43,7 +44,7 @@ object ScpTable {
             "$CREATED_TIME VARCHAR, " +
             "$INDEX INTEGER, " +
             "$EVENT_TYPE VARCHAR, $MONTH VARCHAR, " +
-            "$LIKE INTEGER" +
+            "$LIKE INTEGER, $NOT_FOUND VARCHAR" +
             ")"
 
     const val CREATE_DETAIL_TABLE_SQL = "create table IF NOT EXISTS $DETAIL_TABLE_NAME (" +
@@ -56,7 +57,9 @@ object ScpTable {
             "$ID , $LINK , $TITLE , $DETAIL_HTML ,$HAS_READ , $SAVE_TYPE," +
             "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , $NUMBER , $STORY_NUMBER , " +
             "$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK , $CREATED_TIME , " +
-            "$INDEX, $EVENT_TYPE, $MONTH, $LIKE) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+            "$INDEX, $EVENT_TYPE, $MONTH, $LIKE, $NOT_FOUND) " +
+            "VALUES (?,?,?,?,?,?,?,?,?,?," +
+            "?,?,?,?,?,?,?,?,?,?,?)"
 
     const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
             "$ID, $DETAIL_HTML) VALUES (?,?)"

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import info.free.scp.ScpApplication
 import java.util.*
+import java.util.Calendar.YEAR
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -56,6 +57,7 @@ object PreferenceUtil {
     fun setLocalDbVersion(version: Int) {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putInt("dbVersion", version)?.apply()
+        setLastUpdateDbTime()
     }
 
     /**
@@ -108,6 +110,24 @@ object PreferenceUtil {
         return lastTime < beginOfDate
     }
 
+    fun setLastUpdateDbTime() {
+        setLongValue("update", "lastUpdateDbTime", System.currentTimeMillis())
+    }
+
+    fun getLastUpdateDbTime(): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = getLongValue("update", "lastUpdateDbTime")
+        return if (calendar.get(YEAR) == 1970) "无" else calendar.time.toString()
+    }
+
+    fun setServerLastUpdateTime(time: String) {
+        setStringValue("update", "serverLastUpdateTime", time)
+    }
+
+    fun getServerLastUpdateTime(): String {
+        return getStringValue("update", "serverLastUpdateTime")
+    }
+
     private fun getBooleanValue(spName: String, key: String): Boolean {
         val sp = getPrivateSharedPreference(spName)
         return sp?.getBoolean(key, false)?:false
@@ -134,5 +154,14 @@ object PreferenceUtil {
     private fun setLongValue(spName: String, key: String, value: Long) {
         val sp = getPrivateSharedPreference(spName)
         sp?.edit()?.putLong(key, value)?.apply()
+    }
+    private fun getStringValue(spName: String, key: String): String {
+        val sp = getPrivateSharedPreference(spName)
+        return sp?.getString(key, "")?:""
+    }
+
+    private fun setStringValue(spName: String, key: String, value: String) {
+        val sp = getPrivateSharedPreference(spName)
+        sp?.edit()?.putString(key, value)?.apply()
     }
 }

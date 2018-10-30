@@ -141,9 +141,11 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     override fun onResume() {
         super.onResume()
         if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
+            Log.i("scp", "checkUpdate()")
             PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             checkUpdate()
         }
+        checkDetailInitDetailData()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -184,7 +186,13 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
                         .create().show()
             }
-        } else if (PreferenceUtil.getDetailDataLoadCount() < 29) {
+        } else {
+            checkDetailInitDetailData()
+        }
+    }
+
+    private fun checkDetailInitDetailData() {
+        if (PreferenceUtil.getDetailDataLoadCount() < 29) {
             // 正文没有加载完
             if (enabledWifi()) {
                 initDetailData()
@@ -248,6 +256,10 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 // 数据版本，变化时需要重新初始化数据
                 if (config.key == "db_version") {
                     remoteDbVersion = config.value.toInt()
+                }
+                // 上次数据更新时间
+                if (config.key == "db_last_update_time") {
+                    PreferenceUtil.setServerLastUpdateTime(config.value)
                 }
             }
             if (currentVersionCode < newVersionCode) {

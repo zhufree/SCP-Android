@@ -15,7 +15,8 @@ import kotlinx.android.synthetic.main.item_category.view.*
 class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
 
     fun setData(model: ScpModel) {
-        itemView?.tvScpTitle?.text = model.title
+        itemView?.tvScpTitle?.text = if (model.notFound == "true" && !model.title.contains("拒绝访问"))
+            "${model.title}[禁止访问]" else model.title
         itemView?.iv_like_star?.visibility = if (model.like == 1) VISIBLE else GONE
         itemView?.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
     }

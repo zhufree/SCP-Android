@@ -20,7 +20,7 @@ import java.util.*
 
 
 const val DB_NAME = "scp_info.db"
-const val DB_VERSION = 1
+const val DB_VERSION = 3
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
 
@@ -34,7 +34,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (oldVersion != newVersion) {
             db?.execSQL(ScpTable.dropScpTableSQL)
             db?.execSQL(ScpTable.dropDetailTableSQL)
-            // 先这么处理，回头改成添加字段啥的更新
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
             db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
             db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
@@ -133,6 +132,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             stmt.bindLong(17, model.index.toLong())
             stmt.bindString(18, model.evenType)
             stmt.bindString(19, model.month)
+            stmt.bindString(21, model.notFound)
             Log.i("loading", "sid = ${model.sId}")
             stmt.execute()
             stmt.clearBindings()
@@ -563,6 +563,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.month.isNotEmpty()) {
             cv.put(ScpTable.MONTH, model.month)
         }
+        if (model.notFound.isNotEmpty()) {
+            cv.put(ScpTable.NOT_FOUND, model.notFound)
+        }
         return cv
     }
 
@@ -574,6 +577,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),
                 getCursorString(cursor, ScpTable.TITLE), "",
+                getCursorString(cursor, ScpTable.NOT_FOUND),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 // getCursorString(cursor, ScpTable.DETAIL_HTML),
                 getCursorInt(cursor, ScpTable.HAS_READ),

@@ -8,14 +8,29 @@
     android:background="?attr/containerBg">
 
     <ImageView
+        android:id="@+id/iv_about_me"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginTop="32dp"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/img_jike_card"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/app_name"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_donation"
+        android:layout_width="100dp"
+        android:layout_height="0dp"
+        android:text="捐赠开发者"
+        android:background="?attr/itemBg"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/iv_about_me"
+        android:layout_marginTop="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 </android.support.constraint.ConstraintLayout>

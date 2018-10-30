@@ -14,6 +14,7 @@ data class ScpModel(@SerialName("objectId") val sId: String,
                     val createdAt: String, val updatedAt: String,  // Bmob自带字段
                     @Optional var link: String = "", @Optional var title: String = "", // 都有的
                     @Optional @SerialName("detail") var detailHtml: String = "", // 预留保存正文
+                    @Optional @SerialName("not_found") var notFound: String = "",
                     @Optional var hasRead: Int = 0, @Optional var like: Int = 0, // 预留：读过，收藏
                     @Optional var saveType: String = "", // 本地存储用
                     @Optional var author: String = "", // 部分有的

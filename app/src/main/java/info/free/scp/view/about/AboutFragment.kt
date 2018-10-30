@@ -77,7 +77,7 @@ class AboutFragment : BaseFragment() {
         tv_reset_data?.setOnClickListener {
             AlertDialog.Builder(activity)
                     .setTitle("注意")
-                    .setMessage("改选项将删除所有目录及正文数据并重新加载，是否确定？")
+                    .setMessage("该选项将删除所有目录及正文数据并重新加载，是否确定？")
                     .setPositiveButton("确定") { dialog, _ ->
                         EventUtil.onEvent(activity, EventUtil.clickResetData)
                         listener?.onResetDataClick()

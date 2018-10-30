@@ -21,7 +21,7 @@ object Toaster {
     }
 
     fun showLong(message: String, len: Int = LENGTH_LONG, context: Context? = ScpApplication.context) {
-        if (toast != null) {
+        if (toast == null) {
             toast = Toast.makeText(context, message, len)
         } else {
             toast?.duration = LENGTH_LONG

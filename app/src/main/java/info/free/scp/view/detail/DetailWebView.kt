@@ -12,7 +12,7 @@ import android.webkit.WebView
 
 class DetailWebView : WebView {
     private var mContext: Context? = null
-    private var computeVerticalScrollRange = -1
+    var computeVerticalScrollRange = -1
     var mListener: WebScrollListener? = null
 
     var hasTouchEnd = false

@@ -15,11 +15,11 @@ object PreferenceUtil {
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context?.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
-    fun getInitDataFinish(): Boolean {
+    fun getInitCategoryFinish(): Boolean {
         return getBooleanValue("init", "initData")
     }
 
-    fun setInitDataFinish(finish: Boolean) {
+    fun setInitCategoryFinish(finish: Boolean) {
         setBooleanValue("init", "initData", finish)
     }
     fun getDetailDataLoadCount(): Int {
@@ -46,7 +46,7 @@ object PreferenceUtil {
 
     fun setFirstOpenCurrentVersion(versionCode: String) {
         val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putBoolean(versionCode, true)?.apply()
+        sp?.edit()?.putBoolean(versionCode, false)?.apply()
     }
 
     fun getLocalDbVersion(): Int {
@@ -95,7 +95,7 @@ object PreferenceUtil {
 
 
     /**
-     * 检测更新，一天只检测一次
+     * 检测更新，一天只检测一次，重新安装后要重置
      */
     fun setLastCheckUpdateTime(time: Long) {
         setLongValue("update", "lastCheckUpdateTime", time)

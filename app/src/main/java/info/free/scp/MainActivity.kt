@@ -35,8 +35,10 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 //    private val feedFragment = FeedFragment.newInstance()
     private val aboutFragment = AboutFragment.newInstance()
     private var remoteDbVersion = -1
+    private var isDownloadingDetail = false
 
     var progressDialog: ProgressDialog? = null
+    private val currentVersionCode = BuildConfig.VERSION_CODE
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
     private var mInitCategoryReceiver = object : BroadcastReceiver() {
@@ -63,6 +65,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     private var mDetailReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             Toaster.show("正文已全部传输完毕！")
+            isDownloadingDetail = false
             val tempUpdateDbVersion = PreferenceUtil.getTempUpdateDbVersion()
             if (tempUpdateDbVersion > 0) {
                 PreferenceUtil.setLocalDbVersion(tempUpdateDbVersion)
@@ -77,7 +80,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
-    private val currentVersionCode = BuildConfig.VERSION_CODE
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = fragmentManager.beginTransaction()
@@ -140,12 +142,25 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 
     override fun onResume() {
         super.onResume()
+        // 第一次启动app，把检测更新时间重置，再检测一次更新
+        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
+            PreferenceUtil.setLastCheckUpdateTime(0)
+            PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
+            if (currentVersionCode == 7) {
+                onResetDataClick()
+                return
+            }
+        }
+        // 普通情况下一天检测一次更新
         if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
             Log.i("scp", "checkUpdate()")
             PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             checkUpdate()
         }
-        checkDetailInitDetailData()
+        // 正文要每次启动都检测
+        if (!isDownloadingDetail) {
+            checkInitDetailData()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -161,7 +176,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
      * 2.点击按钮手动检测时调用
      */
     private fun checkInitData() {
-        if (!PreferenceUtil.getInitDataFinish()) {
+        if (!PreferenceUtil.getInitCategoryFinish()) {
             // 目录和正文都没加载
             if (enabledNetwork()) {
                 ScpDao.getInstance().resetDb()
@@ -187,11 +202,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .create().show()
             }
         } else {
-            checkDetailInitDetailData()
+            // 目录加载了，检测正文是否下完
+            checkInitDetailData()
         }
     }
 
-    private fun checkDetailInitDetailData() {
+    private fun checkInitDetailData() {
         if (PreferenceUtil.getDetailDataLoadCount() < 29) {
             // 正文没有加载完
             if (enabledWifi()) {
@@ -205,14 +221,8 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                         .create().show()
-            } else {
-                AlertDialog.Builder(this)
-                        .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
-                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
-                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
             }
+            // 如果没网就不管了，下次再下
         }
     }
 
@@ -233,6 +243,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     private fun initDetailData() {
         val intent = Intent(this, InitDetailService::class.java)
         startService(intent)
+        isDownloadingDetail = true
     }
 
     /**
@@ -278,22 +289,24 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                         .create().show()
                 return@getAppConfig
             }
+            // 显示更新就不检查数据，更新完毕后再检测数据更新
+            checkInitData()
             // 数据库更新了，有可能上次更新没有完成用户就退出了，用temp version判断一下
-            if (remoteDbVersion > PreferenceUtil.getLocalDbVersion()
-                    && remoteDbVersion > PreferenceUtil.getTempUpdateDbVersion()) {
-                Log.i("db", "remote = $remoteDbVersion")
-                PreferenceUtil.setTempUpdateDbVersion(remoteDbVersion)
-                // 标记位初始化
-                PreferenceUtil.setInitDataFinish(false)
-                PreferenceUtil.resetDetailDataLoadCount()
-                // 清空数据库
-                ScpDao.getInstance().resetDb()
-                // 重新加载
-                initCategoryData()
-                initDetailData()
-            } else {
-                checkInitData()
-            }
+//            if (remoteDbVersion > PreferenceUtil.getLocalDbVersion()
+//                    && remoteDbVersion > PreferenceUtil.getTempUpdateDbVersion()) {
+//                Log.i("db", "remote = $remoteDbVersion")
+//                PreferenceUtil.setTempUpdateDbVersion(remoteDbVersion)
+//                // 标记位初始化
+//                PreferenceUtil.setInitCategoryFinish(false)
+//                PreferenceUtil.resetDetailDataLoadCount()
+//                // 清空数据库
+//                ScpDao.getInstance().resetDb()
+//                // 重新加载
+//                initCategoryData()
+//                initDetailData()
+//            } else {
+//                checkInitData()
+//            }
         }
     }
 
@@ -315,9 +328,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     }
 
     override fun onResetDataClick() {
-        // 标记位初始化
-        PreferenceUtil.setInitDataFinish(false)
-        PreferenceUtil.resetDetailDataLoadCount()
         // 清空数据库
         ScpDao.getInstance().resetDb()
         // 重新加载

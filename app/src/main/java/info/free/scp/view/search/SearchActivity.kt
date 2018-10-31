@@ -8,6 +8,7 @@ import android.view.View
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
+import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
@@ -30,6 +31,7 @@ class SearchActivity : BaseActivity() {
             if (keyword.isEmpty()) {
                 Toaster.show("请输入正确的关键词")
             } else {
+                EventUtil.onEvent(this, EventUtil.doSearch)
                 resultList.clear()
                 resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
                 Log.i("search", resultList.size.toString())

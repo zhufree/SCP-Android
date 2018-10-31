@@ -34,8 +34,24 @@ object EventUtil {
     const val clickInitData = "event_21"
     const val clickResetData = "event_22"
     const val clickChangeReadMode = "event_23"
+    const val clickSearch = "event_24"
+    const val doSearch = "event_25"
+    const val clickRandom = "event_26"
+    const val clickLastArticle = "event_27"
+    const val clickNextArticle = "event_28"
+    const val clickArticleRandom = "event_29"
+    const val clickDonation = "event_30"
+    const val clickDetail = "event_31"
+    const val finishDetail = "event_32"
+    const val clickLike = "event_33"
+    const val clickLikeList = "event_34"
+    const val clickOpenInBrowser = "event_35"
+    const val clickCopyLink = "event_36"
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)
+    }
+    fun onEvent(context: Context? = ScpApplication.context, event: String, arg: String) {
+        MobclickAgent.onEvent(context, event, arg)
     }
 }

@@ -52,6 +52,7 @@ class AboutFragment : BaseFragment() {
         about_toolbar?.setTitle(R.string.app_name)
 
         tv_like_list?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickLikeList)
             activity.startActivity(Intent(activity, LikeActivity::class.java))
         }
 

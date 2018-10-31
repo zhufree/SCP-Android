@@ -5,8 +5,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import com.umeng.analytics.MobclickAgent
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import java.util.*
 
@@ -41,6 +43,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun resetDb() {
+        PreferenceUtil.setInitCategoryFinish(false)
+        PreferenceUtil.resetDetailDataLoadCount()
         with(writableDatabase) {
             this?.execSQL(ScpTable.dropScpTableSQL)
             this?.execSQL(ScpTable.dropDetailTableSQL)
@@ -150,7 +154,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 stmt.clearBindings()
             }
         } catch (e: Exception) {
-            Toaster.showLongX("插入数据时发生错误，请在【其他】页面选择重新初始化数据并尽量打开app等待正文传输完成")
+            Log.i("detail", e.message)
+            MobclickAgent.reportError(ScpApplication.context, e.message)
         }
     }
 

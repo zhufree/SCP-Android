@@ -23,4 +23,7 @@ abstract class BaseObserver<T> : Observer<T> {
     override fun onError(e: Throwable) {
         Log.i("observer", e.localizedMessage)
     }
+
+    open fun onFail() {
+    }
 }

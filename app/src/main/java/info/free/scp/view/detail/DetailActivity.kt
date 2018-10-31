@@ -124,6 +124,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                         "text/html", "utf-8", null)
             }
             hideSwitchBtn()
+            webView?.computeVerticalScrollRange = 0
             Handler().postDelayed({
                 webView?.scrollTo(0, 0)
             }, 500)
@@ -175,6 +176,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 }
                 R.id.open_in_browser -> {
                     scp?.let {
+                        EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, it.link)
                         val openIntent = Intent()
                         openIntent.action = "android.intent.action.VIEW"
                         val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + it.link)
@@ -184,6 +186,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 }
                 R.id.copy_link -> {
                     scp?.let {
+                        EventUtil.onEvent(this, EventUtil.clickCopyLink, it.link)
                         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                         val clipData = ClipData.newPlainText("scp_link", SCPConstants.SCP_SITE_URL + it.link)
                         clipboardManager?.primaryClip = clipData
@@ -192,6 +195,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 }
                 R.id.like -> {
                     scp?.let { s ->
+                        EventUtil.onEvent(this, EventUtil.clickLike, s.link)
                         s.like = if (s.like == 1) 0 else 1
                         ScpDao.getInstance().insertLikeAndReadInfo(s)
                         it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
@@ -205,6 +209,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
     private fun initSwitchBtn() {
         tv_preview?.setOnClickListener {
+            EventUtil.onEvent(this, EventUtil.clickLastArticle)
             scp?.let { s ->
                 when (s.index) {
                     0 -> Toaster.show("已经是第一篇了")
@@ -217,6 +222,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
         }
         tv_next?.setOnClickListener {
+            EventUtil.onEvent(this, EventUtil.clickNextArticle)
             scp?.let { s ->
                 when(s.index) {
                     14001 -> Toaster.show("已经是最后一篇了")
@@ -228,10 +234,9 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             }
         }
         tv_random?.setOnClickListener {
-            scp?.let { s ->
-                scp = ScpDao.getInstance().getRandomScp()
-                setData(scp)
-            }
+            EventUtil.onEvent(this, EventUtil.clickArticleRandom)
+            scp = ScpDao.getInstance().getRandomScp()
+            setData(scp)
         }
     }
 
@@ -254,6 +259,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     override fun onScrollToBottom() {
         scp?.let {
             if (it.hasRead == 0) {
+                EventUtil.onEvent(this, EventUtil.finishDetail)
                 it.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(it)
             }

@@ -12,6 +12,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Handler
+import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
 
 
@@ -22,6 +23,7 @@ class AboutMeActivity : BaseActivity() {
         setContentView(R.layout.activity_about_me)
 
         tv_donation?.setOnClickListener {
+            EventUtil.onEvent(this, EventUtil.clickDonation)
             Utils.saveBitmapFile((resources.getDrawable(R.drawable.img_donation) as BitmapDrawable).bitmap)
             Toaster.showLong("正在跳转到微信扫一扫，请从相册选取赞赏二维码随意打赏", context = this)
             Handler().postDelayed({startWechatScan(this)}, 1000)

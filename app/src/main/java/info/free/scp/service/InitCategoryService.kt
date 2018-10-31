@@ -4,7 +4,6 @@ import android.app.IntentService
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
@@ -46,7 +45,7 @@ class InitCategoryService : IntentService("initDataService") {
             sendThreadStatus(3*value)
             if (value == 29) {
                 ScpDao.getInstance().insertCategoryData(scpModels)
-                PreferenceUtil.setInitDataFinish(true)
+                PreferenceUtil.setInitCategoryFinish(true)
                 sendThreadStatus(100)
             }
         }

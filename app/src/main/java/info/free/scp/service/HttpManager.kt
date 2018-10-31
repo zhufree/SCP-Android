@@ -45,6 +45,10 @@ class HttpManager {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
                     }
+
+                    override fun onFail() {
+                        updateView(emptyList())
+                    }
                 })
     }
 

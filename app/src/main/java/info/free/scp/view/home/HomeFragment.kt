@@ -77,10 +77,11 @@ class HomeFragment : BaseFragment() {
                     libraryFragment.changePage()
                 }
                 R.id.search -> {
+                    EventUtil.onEvent(activity, EventUtil.clickSearch)
                     activity.startActivity(Intent(activity, SearchActivity::class.java))
                 }
                 R.id.random_article -> {
-                    // TODO 随机文档
+                    EventUtil.onEvent(activity, EventUtil.clickRandom)
                     activity.startActivity(Intent(activity, DetailActivity::class.java))
                 }
             }

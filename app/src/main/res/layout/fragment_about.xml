@@ -48,7 +48,7 @@
         android:layout_marginTop="8dp"
         android:background="?attr/itemBg"
         android:gravity="center"
-        android:text="关于app"
+        android:text="app使用说明（重要）"
         android:textColor="?attr/darkText"
         app:layout_constraintBottom_toTopOf="@id/tv_about_developer"
         app:layout_constraintEnd_toEndOf="parent"

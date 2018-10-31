@@ -70,18 +70,20 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     private fun syncLikeInfo() {
-        val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME, null)
-        with(cursor) {
-            this?.let {
-                while (it.moveToNext()) {
-                    val link = getCursorString(cursor, ScpTable.LINK)
-                    val like = getCursorInt(cursor, ScpTable.LIKE)
-                    val hasRead = getCursorInt(cursor, ScpTable.HAS_READ)
-                    val scpModels = getScpModelByLink(link)
-                    scpModels.forEach { scp ->
-                        scp?.like = like
-                        scp?.hasRead = hasRead
-                        replaceScpModel(scp)
+        with(readableDatabase) {
+            val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME, null)
+            with(cursor) {
+                this?.let {
+                    while (it.moveToNext()) {
+                        val link = getCursorString(cursor, ScpTable.LINK)
+                        val like = getCursorInt(cursor, ScpTable.LIKE)
+                        val hasRead = getCursorInt(cursor, ScpTable.HAS_READ)
+                        val scpModels = getScpModelByLink(link)
+                        scpModels.forEach { scp ->
+                            scp?.like = like
+                            scp?.hasRead = hasRead
+                            replaceScpModel(scp)
+                        }
                     }
                 }
             }
@@ -115,31 +117,34 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     private fun SQLiteDatabase.createStatement(models: List<ScpModel>) {
-        val stmt = compileStatement(ScpTable.INSERT_SCP_SQL)
-        for (model in models) {
-            stmt.bindString(1, model.sId)
-            stmt.bindString(2, model.link)
-            stmt.bindString(3, model.title)
-            stmt.bindString(4, model.detailHtml)
-            stmt.bindLong(5, model.hasRead.toLong())
-            stmt.bindString(6, model.saveType)
-            stmt.bindString(7, model.subtext)
-            stmt.bindString(8, model.snippet)
-            stmt.bindString(9, model.desc)
-            stmt.bindString(10, model.author)
-            stmt.bindString(11, model.number)
-            stmt.bindString(12, model.storyNum)
-            stmt.bindString(13, model.pageCode)
-            stmt.bindString(14, model.contestName)
-            stmt.bindString(15, model.contestLink)
-            stmt.bindString(16, model.createdTime)
-            stmt.bindLong(17, model.index.toLong())
-            stmt.bindString(18, model.evenType)
-            stmt.bindString(19, model.month)
-            stmt.bindString(21, model.notFound)
-            Log.i("loading", "sid = ${model.sId}")
-            stmt.execute()
-            stmt.clearBindings()
+        try {
+            val stmt = compileStatement(ScpTable.INSERT_SCP_SQL)
+            for (model in models) {
+                stmt.bindString(1, model.sId)
+                stmt.bindString(2, model.link)
+                stmt.bindString(3, model.title)
+                stmt.bindString(4, model.detailHtml)
+                stmt.bindLong(5, model.hasRead.toLong())
+                stmt.bindString(6, model.saveType)
+                stmt.bindString(7, model.subtext)
+                stmt.bindString(8, model.snippet)
+                stmt.bindString(9, model.desc)
+                stmt.bindString(10, model.author)
+                stmt.bindString(11, model.number)
+                stmt.bindString(12, model.storyNum)
+                stmt.bindString(13, model.pageCode)
+                stmt.bindString(14, model.contestName)
+                stmt.bindString(15, model.contestLink)
+                stmt.bindString(16, model.createdTime)
+                stmt.bindLong(17, model.index.toLong())
+                stmt.bindString(18, model.evenType)
+                stmt.bindString(19, model.month)
+                stmt.bindString(21, model.notFound)
+                Log.i("loading", "sid = ${model.sId}")
+                stmt.execute()
+                stmt.clearBindings()
+            }
+        } catch (e: Exception) {
         }
     }
 
@@ -155,7 +160,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             }
         } catch (e: Exception) {
             Log.i("detail", e.message)
-            MobclickAgent.reportError(ScpApplication.context, e.message)
         }
     }
 

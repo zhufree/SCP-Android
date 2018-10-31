@@ -50,6 +50,7 @@ import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
@@ -157,6 +158,7 @@ class CategoryActivity : BaseActivity() {
                 override fun onItemClick(view: View, position: Int) {
                     currentScpPosition = position
                     EventUtil.onEvent(this@CategoryActivity, EventUtil.clickDetail, scpList[position].link)
+                    PreferenceUtil.addPoints(2)
                     val intent = Intent()
                     intent.putExtra("link", scpList[position].link)
                     intent.putExtra("sId", scpList[position].sId)

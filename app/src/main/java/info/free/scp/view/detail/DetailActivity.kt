@@ -141,6 +141,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
                     EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
+                    PreferenceUtil.addPoints(1)
                     if (readMode == 0) {
                         if (enabledNetwork()) {
                             pbLoading.visibility = VISIBLE
@@ -177,6 +178,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 R.id.open_in_browser -> {
                     scp?.let {
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, it.link)
+                        PreferenceUtil.addPoints(1)
                         val openIntent = Intent()
                         openIntent.action = "android.intent.action.VIEW"
                         val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + it.link)
@@ -196,6 +198,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 R.id.like -> {
                     scp?.let { s ->
                         EventUtil.onEvent(this, EventUtil.clickLike, s.link)
+                        PreferenceUtil.addPoints(2)
                         s.like = if (s.like == 1) 0 else 1
                         ScpDao.getInstance().insertLikeAndReadInfo(s)
                         it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
@@ -210,6 +213,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     private fun initSwitchBtn() {
         tv_preview?.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickLastArticle)
+            PreferenceUtil.addPoints(1)
             scp?.let { s ->
                 when (s.index) {
                     0 -> Toaster.show("已经是第一篇了")
@@ -223,6 +227,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
         }
         tv_next?.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickNextArticle)
+            PreferenceUtil.addPoints(1)
             scp?.let { s ->
                 when(s.index) {
                     14001 -> Toaster.show("已经是最后一篇了")
@@ -235,6 +240,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
         }
         tv_random?.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickArticleRandom)
+            PreferenceUtil.addPoints(1)
             scp = ScpDao.getInstance().getRandomScp()
             setData(scp)
         }
@@ -260,6 +266,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
         scp?.let {
             if (it.hasRead == 0) {
                 EventUtil.onEvent(this, EventUtil.finishDetail)
+                PreferenceUtil.addPoints(5)
                 it.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(it)
             }

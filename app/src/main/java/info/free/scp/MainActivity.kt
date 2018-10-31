@@ -53,7 +53,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
                 AlertDialog.Builder(this@MainActivity)
                         .setTitle("Notice")
                         .setMessage("基金会传递的目录信息已接收完毕，由于正文大小较大，传输过程可能会持续很长影响" +
-                                "阅读体验，因此将在使用过程中在后台加载（且仅在wifi打开时），具体进度可查看通知栏，" +
+                                "阅读体验，因此将在使用过程中在后台加载，具体进度可查看通知栏，" +
                                 "在所有数据传输完毕之后将可以离线浏览所有目录下的正文。\n加载过程请尽量将app保持" +
                                 "开启状态，同时手机至少保留120M存储空间。")
                         .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
@@ -66,11 +66,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         override fun onReceive(context: Context?, intent: Intent?) {
             Toaster.show("正文已全部传输完毕！")
             isDownloadingDetail = false
-            val tempUpdateDbVersion = PreferenceUtil.getTempUpdateDbVersion()
-            if (tempUpdateDbVersion > 0) {
-                PreferenceUtil.setLocalDbVersion(tempUpdateDbVersion)
-                PreferenceUtil.setTempUpdateDbVersion(-1)
-            }
+            PreferenceUtil.setLastUpdateDbTime()
+//            val tempUpdateDbVersion = PreferenceUtil.getTempUpdateDbVersion()
+//            if (tempUpdateDbVersion > 0) {
+//                PreferenceUtil.setLocalDbVersion(tempUpdateDbVersion)
+//                PreferenceUtil.setTempUpdateDbVersion(-1)
+//            }
         }
     }
 
@@ -131,7 +132,11 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 
         val transaction = fragmentManager.beginTransaction()
         if (currentFragment != null) {
-            transaction.add(R.id.flMainContainer, currentFragment)
+            if (currentFragment?.isAdded == true) {
+                transaction.show(currentFragment)
+            } else {
+                transaction.add(R.id.flMainContainer, currentFragment)
+            }
         } else {
             transaction.add(R.id.flMainContainer, homeFragment)
             currentFragment = homeFragment
@@ -153,6 +158,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
         // 普通情况下一天检测一次更新
         if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
+            PreferenceUtil.addPoints(1)
             Log.i("scp", "checkUpdate()")
             PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             checkUpdate()

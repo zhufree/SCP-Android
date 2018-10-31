@@ -110,6 +110,9 @@ object PreferenceUtil {
         return lastTime < beginOfDate
     }
 
+    /**
+     * 数据更新时间相关
+     */
     fun setLastUpdateDbTime() {
         setLongValue("update", "lastUpdateDbTime", System.currentTimeMillis())
     }
@@ -128,6 +131,20 @@ object PreferenceUtil {
         return getStringValue("update", "serverLastUpdateTime")
     }
 
+    /**
+     * 积分系统
+     */
+    fun addPoints(point: Int) {
+        setIntValue("level", "point", getPoint() + point)
+    }
+
+    fun getPoint(): Int {
+        return getIntValue("level", "point")
+    }
+
+    /**
+     * 工具方法
+     */
     private fun getBooleanValue(spName: String, key: String): Boolean {
         val sp = getPrivateSharedPreference(spName)
         return sp?.getBoolean(key, false)?:false

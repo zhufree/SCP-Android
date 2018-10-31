@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.search.SearchActivity
@@ -82,6 +83,7 @@ class HomeFragment : BaseFragment() {
                 }
                 R.id.random_article -> {
                     EventUtil.onEvent(activity, EventUtil.clickRandom)
+                    PreferenceUtil.addPoints(2)
                     activity.startActivity(Intent(activity, DetailActivity::class.java))
                 }
             }

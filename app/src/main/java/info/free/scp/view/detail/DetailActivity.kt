@@ -124,10 +124,10 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                         "text/html", "utf-8", null)
             }
             hideSwitchBtn()
-            webView?.computeVerticalScrollRange = 0
+            webView?.reset()
             Handler().postDelayed({
                 webView?.scrollTo(0, 0)
-            }, 500)
+            }, 1000)
 
         }
     }

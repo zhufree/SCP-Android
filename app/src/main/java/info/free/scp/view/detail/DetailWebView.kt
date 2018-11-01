@@ -30,6 +30,12 @@ class DetailWebView : WebView {
         mContext = context
     }
 
+    fun reset() {
+        computeVerticalScrollRange = 0
+        hasTouchEnd = false
+        isMovingUp = false
+    }
+
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         if (computeVerticalScrollRange > 0) {
             if (oldt < t && computeVerticalScrollRange - t < 2000 && !hasTouchEnd) {

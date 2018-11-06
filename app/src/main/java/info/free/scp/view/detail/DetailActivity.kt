@@ -11,6 +11,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -43,6 +44,10 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
     private var currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
 
+    var computeVerticalScrollRange = -1
+    var hasTouchEnd = false
+    var isMovingUp = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -67,12 +72,33 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             scp = ScpDao.getInstance().getScpModelById(sId)
         }
 
+        nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, x: Int, y: Int, oldX: Int,
+                                                     oldY: Int  ->
+            Log.i("detail", "$oldX, $oldY, $x, $y")
+            Log.i("detail", "$computeVerticalScrollRange")
+            if (computeVerticalScrollRange > 0) {
+                if (oldY < y && computeVerticalScrollRange - y < 3000 && !hasTouchEnd) {
+                    // 向下滑且距离到了
+                    Log.i("detail", "已读完")
+                    hasTouchEnd = true
+                    isMovingUp = false
+                    onScrollToBottom()
+                } else if (oldY > y && computeVerticalScrollRange - y > 3000 && !isMovingUp) {
+                    // 向上滑且距离大于4000
+                    hasTouchEnd = false
+                    isMovingUp = true
+                    onScrollUp()
+                }
+            } else {
+                computeVerticalScrollRange = webView?.computeVerticalScrollRange?:0
+            }
+        }
 
         setData(scp)
-        webView.requestFocus()
+        webView?.requestFocus()
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
-        webView.webViewClient = object : WebViewClient() {
+        webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
                 if (readMode == 1) {
                     view.loadUrl(url)
@@ -81,9 +107,9 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
                         detailHtml = ScpDao.getInstance().getDetailByLink(postString.toString())
-                        webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                        webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                                 "text/html", "utf-8", null)
-                        webView.scrollTo(0, 0)
+                        webView?.scrollTo(0, 0)
                     }
                 }
                 return true
@@ -110,6 +136,12 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
     }
 
+    fun reset() {
+        computeVerticalScrollRange = 0
+        hasTouchEnd = false
+        isMovingUp = false
+    }
+
     private fun setData(scp: ScpModel?) {
         scp?.let {
             invalidateOptionsMenu()
@@ -125,6 +157,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             }
 //            hideSwitchBtn()
             webView?.reset()
+//            webView?.scrollTo(0, 0)
             Handler().postDelayed({
                 webView?.scrollTo(0, 0)
             }, 1000)
@@ -147,14 +180,14 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                             pbLoading.visibility = VISIBLE
                             readMode = 1
                             it.setTitle(R.string.offline_mode)
-                            webView.loadUrl(url)
+                            webView?.loadUrl(url)
                         } else {
                             Toaster.show("请先开启网络")
                         }
                     } else {
                         readMode = 0
                         it.setTitle(R.string.online_mode)
-                        webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                        webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                                 "text/html", "utf-8", null)
                     }
                 }
@@ -271,11 +304,9 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 //                ScpDao.getInstance().insertLikeAndReadInfo(it)
 //            }
 //        }
-//        showSwitchBtn()
     }
 
     override fun onScrollUp() {
-//        hideSwitchBtn()
     }
 
     override fun toNextArticle() {
@@ -285,47 +316,6 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     }
 
     override fun toRandomArticle() {
-    }
-
-    private fun hideSwitchBtn() {
-        Log.i("detail", "hideSwitchBtn()")
-        tv_preview?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_preview?.visibility = GONE
-            }
-        })?.start()
-        tv_next?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_next?.visibility = GONE
-            }
-        })?.start()
-        tv_random?.animate()?.alpha(0f)?.setDuration(500)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_random?.visibility = GONE
-            }
-        })?.start()
-    }
-
-    private fun showSwitchBtn() {
-        Log.i("detail", "showSwitchBtn()")
-        tv_preview?.visibility = VISIBLE
-        tv_next?.visibility = VISIBLE
-        tv_random?.visibility = VISIBLE
-        tv_preview?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_preview?.visibility = VISIBLE
-            }
-        })?.start()
-        tv_next?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_next?.visibility = VISIBLE
-            }
-        })?.start()
-        tv_random?.animate()?.alpha(1f)?.setDuration(1000)?.setListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
-                tv_random?.visibility = VISIBLE
-            }
-        })?.start()
     }
 
     override fun finish() {

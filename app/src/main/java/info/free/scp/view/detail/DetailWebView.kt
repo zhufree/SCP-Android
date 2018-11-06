@@ -16,6 +16,7 @@ import kotlin.math.abs
 class DetailWebView : WebView {
     private var mContext: Context? = null
     var computeVerticalScrollRange = -1
+        get() = computeVerticalScrollRange()
     var mListener: WebScrollListener? = null
 
     var hasTouchEnd = false
@@ -69,7 +70,7 @@ class DetailWebView : WebView {
                 lastY = ev.y
             }
             ACTION_MOVE -> {
-                Log.i("detail", "x = ${ev.x} , y = ${ev.y}")
+//                Log.i("detail", "x = ${ev.x} , y = ${ev.y}")
                 val dx = ev.x - lastX
                 val dy = ev.y - lastY
                 if (abs(dx) > abs(dy)) {

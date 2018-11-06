@@ -1,6 +1,7 @@
 package info.free.scp.service
 
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
+//import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ApiBean
 import info.free.scp.bean.ScpModel
@@ -21,10 +22,12 @@ class HttpManager {
     private val TAG = javaClass.name
 
     val contentType = MediaType.parse("application/json")!!
+    val json = JSON
     private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SCPConstants.BMOB_API_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(serializationConverterFactory(contentType, JSON))
+//            .addConverterFactory(serializationConverterFactory(contentType, JSON))
+            .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
             .build()
     private val apiService = retrofit.create(ApiService::class.java)
 

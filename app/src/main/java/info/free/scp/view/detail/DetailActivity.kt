@@ -123,7 +123,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                         "text/html", "utf-8", null)
             }
-            hideSwitchBtn()
+//            hideSwitchBtn()
             webView?.reset()
             Handler().postDelayed({
                 webView?.scrollTo(0, 0)
@@ -263,19 +263,28 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     }
 
     override fun onScrollToBottom() {
-        scp?.let {
-            if (it.hasRead == 0) {
-                EventUtil.onEvent(this, EventUtil.finishDetail)
-                PreferenceUtil.addPoints(5)
-                it.hasRead = 1
-                ScpDao.getInstance().insertLikeAndReadInfo(it)
-            }
-        }
-        showSwitchBtn()
+//        scp?.let {
+//            if (it.hasRead == 0) {
+//                EventUtil.onEvent(this, EventUtil.finishDetail)
+//                PreferenceUtil.addPoints(5)
+//                it.hasRead = 1
+//                ScpDao.getInstance().insertLikeAndReadInfo(it)
+//            }
+//        }
+//        showSwitchBtn()
     }
 
     override fun onScrollUp() {
-        hideSwitchBtn()
+//        hideSwitchBtn()
+    }
+
+    override fun toNextArticle() {
+    }
+
+    override fun toLastArticle() {
+    }
+
+    override fun toRandomArticle() {
     }
 
     private fun hideSwitchBtn() {

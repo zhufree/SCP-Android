@@ -56,6 +56,8 @@ import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_category.*
+import kotlin.math.max
+import kotlin.math.min
 
 class CategoryActivity : BaseActivity() {
     private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
@@ -94,7 +96,7 @@ class CategoryActivity : BaseActivity() {
         initData()
 
         category_toolbar.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
-        category_toolbar.setOnMenuItemClickListener{
+        category_toolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
                     when (pageType) {
@@ -102,7 +104,7 @@ class CategoryActivity : BaseActivity() {
                             categoryList.reverse()
                             categoryAdapter?.notifyDataSetChanged()
                         }
-                        1-> {
+                        1 -> {
                             scpList.reverse()
                             scpAdapter?.notifyDataSetChanged()
                         }
@@ -175,7 +177,7 @@ class CategoryActivity : BaseActivity() {
     }
 
     private fun initData() {
-        categoryType  = intent.getIntExtra("saveType", -1)
+        categoryType = intent.getIntExtra("saveType", -1)
         Log.i(tag, "categoryType = $categoryType, pageType = $pageType")
         categoryList.clear()
         scpList.clear()
@@ -183,17 +185,20 @@ class CategoryActivity : BaseActivity() {
         when (categoryType) {
             SERIES -> {
                 pageType = 0
-                categoryList.addAll(arrayOf(0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500))
+                categoryList.addAll((0 until 25).map { it*200 })
             }
             SERIES_CN -> {
                 pageType = 0
-                categoryList.addAll(arrayOf(0, 100, 200, 300, 400, 500, 600, 700, 800, 900))
+                categoryList.addAll((0 until 9).map { it*100 })
             }
             SERIES_STORY -> {
                 pageType = 0
-                categoryList.addAll(arrayOf("SCP系列1故事版1~500","SCP系列1故事版501~1000","SCP系列1故事版1001~1500",
+                categoryList.addAll(arrayOf("SCP系列1故事版1~500", "SCP系列1故事版501~1000", "SCP系列1故事版1001~1500",
                         "SCP系列1故事版1501~1808", "SCP系列2故事版1~500", "SCP系列2故事版501~1000", "SCP系列2故事版1001~1193",
-                        "SCP系列3故事版1~500","SCP系列3故事版501~1000","SCP系列3故事版1000~1211"))
+                        "SCP系列3故事版1~500", "SCP系列3故事版501~1000", "SCP系列3故事版1000~1211"))
+                categoryList.addAll((0 until 9).map { "SCP系列1故事版${it*200 + 1}~${min(it*200+200, 1808)}" })
+                categoryList.addAll((0 until 6).map { "SCP系列2故事版${it*200 + 1}~${min(it*200+200, 1193)}" })
+                categoryList.addAll((0 until 7).map { "SCP系列3故事版${it*200 + 1}~${min(it*200+200, 1211)}" })
             }
             SERIES_ARCHIVED -> {
                 pageType = 0
@@ -204,19 +209,19 @@ class CategoryActivity : BaseActivity() {
                 // 1021
                 pageType = 0
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
+                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9"))
             }
             TALES_CN -> {
                 // 1021
                 pageType = 0
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y","Z", "0-9"))
+                        "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9"))
             }
             EVENT -> {
-                categoryList.addAll(arrayOf("实验记录","探索报告","事故/事件报告", "访谈记录", "独立补充材料"))
+                categoryList.addAll(arrayOf("实验记录", "探索报告", "事故/事件报告", "访谈记录", "独立补充材料"))
             }
             TALES_BY_TIME -> {
-                categoryList.addAll(arrayOf("2014","2015","2016", "2017", "2018"))
+                categoryList.addAll(arrayOf("2014", "2015", "2016", "2017", "2018"))
             }
             SERIES_ABOUT, STORY_SERIES, STORY_SERIES_CN, SETTINGS, SETTINGS_CN,
             CONTEST, CONTEST_CN -> {
@@ -262,12 +267,12 @@ class CategoryActivity : BaseActivity() {
         when (categoryType) {
             SERIES -> {
                 // 0,499,999
-                val start = if (position == 0) 0 else position*500
-                val limit = 500
+                val start = if (position == 0) 0 else position * 200
+                val limit = 200
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES, start, limit))
             }
             SERIES_CN -> {
-                val start = if (position == 0) 0 else position*100 - 1
+                val start = if (position == 0) 0 else position * 100 - 1
                 val limit = if (start == 0) 99 else 100
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_CN, start, limit))
 
@@ -275,63 +280,23 @@ class CategoryActivity : BaseActivity() {
             SERIES_STORY -> {
                 when (position) {
                     // 故事版1~499
-                    0 -> {
-                        val start = 0
-                        val limit = 499
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
-                    }
-                    // 故事版1 500~999
-                    1 -> {
-                        val start = 499
-                        val limit = 500
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
-                    }
-                    // 故事版1 1000~1499
-                    2 -> {
-                        val start = 999
-                        val limit = 500
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
-                    }
-                    // 故事版1 1500~1808
-                    3 -> {
-                        val start = 1499
-                        val limit = 500
+                    in 0 until 9 -> {
+                        val start = if (position == 0) 0 else position * 200
+                        val limit = 200
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版2 1~499
-                    4 -> {
-                        val start = 0
-                        val limit = 499
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
-                    }
-                    // 故事版2 500~999
-                    5 -> {
-                        val start = 499
-                        val limit = 500
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
-                    }
-                    // 故事版2 1000~1193
-                    6 -> {
-                        val start = 999
-                        val limit = 500
+                    in 9 until 15 -> {
+                        val subPosition = position - 9
+                        val start = if (subPosition == 0) 0 else subPosition * 200
+                        val limit = 200
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
                     }
                     // 故事版3 1~499
-                    7 -> {
-                        val start = 0
-                        val limit = 499
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
-                    }
-                    // 故事版3 500~999
-                    8 -> {
-                        val start = 499
-                        val limit = 500
-                        scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
-                    }
-                    // 故事版3 1000~1211
-                    9 -> {
-                        val start = 999
-                        val limit = 500
+                    in 15 until 22 -> {
+                        val subPosition = position - 15
+                        val start = if (subPosition == 0) 0 else subPosition * 200
+                        val limit = 200
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
                     }
                 }

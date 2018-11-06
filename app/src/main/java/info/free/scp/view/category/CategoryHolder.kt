@@ -17,7 +17,7 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
         when (type) {
             SERIES -> {
                 val start = data as Int
-                itemView.tvScpTitle.text = "SCP系列${start+1}~${start+500}"
+                itemView.tvScpTitle.text = "SCP系列${start+1}~${start+200}"
             }
             SERIES_CN -> {
                 val start = data as Int

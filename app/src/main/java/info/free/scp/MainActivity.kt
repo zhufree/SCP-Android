@@ -337,7 +337,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         // 清空数据库
         ScpDao.getInstance().resetDb()
         // 重新加载
-        initCategoryData()
-        initDetailData()
+        checkInitData()
     }
 }

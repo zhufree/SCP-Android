@@ -3,7 +3,10 @@ package info.free.scp.view.detail
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MotionEvent
+import android.view.MotionEvent.*
 import android.webkit.WebView
+import kotlin.math.abs
 
 /**
  * Created by zhufree on 2018/10/26.
@@ -17,6 +20,9 @@ class DetailWebView : WebView {
 
     var hasTouchEnd = false
     var isMovingUp = false
+
+    var lastX = 0f
+    var lastY = 0f
 
     constructor(context: Context) : super(context) {
         onCreate(context)
@@ -56,8 +62,44 @@ class DetailWebView : WebView {
         super.onScrollChanged(l, t, oldl, oldt)
     }
 
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        when (ev.action) {
+            ACTION_DOWN -> {
+                lastX = ev.x
+                lastY = ev.y
+            }
+            ACTION_MOVE -> {
+                Log.i("detail", "x = ${ev.x} , y = ${ev.y}")
+                val dx = ev.x - lastX
+                val dy = ev.y - lastY
+                if (abs(dx) > abs(dy)) {
+//                    animate().translationX(dx).setDuration(500).start()
+//                    left +=  dx.toInt()
+                } else if (hasTouchEnd) {
+//                    animate().translationX(dy).setDuration(500).start()
+//                    top += dy.toInt()
+                }
+            }
+            ACTION_UP -> {
+                val dx = ev.x - lastX
+                val dy = ev.y - lastY
+                if (abs(dx) > abs(dy)) {
+//                    if (dx > 300) mListener?.toLastArticle() else mListener?.toNextArticle()
+                } else {
+//                    if (dy > 300) mListener?.toRandomArticle()
+                }
+//                animate().translationX(0f).setDuration(500).start()
+//                animate().translationY(0f).setDuration(500).start()
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
     interface WebScrollListener {
         fun onScrollToBottom()
         fun onScrollUp()
+        fun toNextArticle()
+        fun toLastArticle()
+        fun toRandomArticle()
     }
 }

@@ -57,9 +57,9 @@ class LibraryFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_library, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view?.tvScpTales?.setOnClickListener {
+        view.tvScpTales?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickTalesCn)
                 listener?.onCategoryClick(TALES_CN)
@@ -68,7 +68,7 @@ class LibraryFragment : BaseFragment() {
                 listener?.onCategoryClick(TALES)
             }
         }
-        view?.tvStorySeries?.setOnClickListener {
+        view.tvStorySeries?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickStoryCn)
                 listener?.onCategoryClick(STORY_SERIES_CN)
@@ -77,7 +77,7 @@ class LibraryFragment : BaseFragment() {
                 listener?.onCategoryClick(STORY_SERIES)
             }
         }
-        view?.tvSettings?.setOnClickListener {
+        view.tvSettings?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickSettingsCn)
                 listener?.onCategoryClick(SETTINGS_CN)
@@ -86,7 +86,7 @@ class LibraryFragment : BaseFragment() {
                 listener?.onCategoryClick(SETTINGS)
             }
         }
-        view?.tvEssayContest?.setOnClickListener {
+        view.tvEssayContest?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickContestCn)
                 listener?.onCategoryClick(CONTEST_CN)
@@ -95,11 +95,11 @@ class LibraryFragment : BaseFragment() {
                 listener?.onCategoryClick(CONTEST)
             }
         }
-        view?.tvEventRecord?.setOnClickListener {
+        view.tvEventRecord?.setOnClickListener {
             EventUtil.onEvent(mContext, EventUtil.clickEvent)
             listener?.onCategoryClick(EVENT)
         }
-        view?.tvMore?.setOnClickListener {
+        view.tvMore?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickTalesCnByTime)
                 listener?.onCategoryClick(TALES_BY_TIME)

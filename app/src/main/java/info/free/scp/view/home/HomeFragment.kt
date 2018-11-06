@@ -50,7 +50,7 @@ class HomeFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         seriesFragment.listener = listener
         libraryFragment.listener = listener
@@ -79,12 +79,12 @@ class HomeFragment : BaseFragment() {
                 }
                 R.id.search -> {
                     EventUtil.onEvent(activity, EventUtil.clickSearch)
-                    activity.startActivity(Intent(activity, SearchActivity::class.java))
+                    activity?.startActivity(Intent(activity, SearchActivity::class.java))
                 }
                 R.id.random_article -> {
                     EventUtil.onEvent(activity, EventUtil.clickRandom)
                     PreferenceUtil.addPoints(2)
-                    activity.startActivity(Intent(activity, DetailActivity::class.java))
+                    activity?.startActivity(Intent(activity, DetailActivity::class.java))
                 }
             }
             true

@@ -127,17 +127,6 @@ class CategoryActivity : BaseActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SCPConstants.RequestCode.CATEGORY_TO_DETAIL) {
-            data?.let {
-                scpList[currentScpPosition].like = it.getIntExtra("like", 0)
-                scpList[currentScpPosition].hasRead = it.getIntExtra("hasRead", 0)
-                scpAdapter?.notifyDataSetChanged()
-            }
-        }
-    }
-
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             Log.i(tag, "pageType = $pageType")

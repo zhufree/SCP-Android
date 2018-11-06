@@ -11,6 +11,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaScannerConnection
+import android.net.Uri
+import android.os.Environment
 import android.os.Handler
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -26,7 +29,11 @@ class AboutMeActivity : BaseActivity() {
         tv_donation?.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
             PreferenceUtil.addPoints(2)
-            Utils.saveBitmapFile((resources.getDrawable(R.drawable.img_donation) as BitmapDrawable).bitmap)
+            Utils.saveBitmapFile((resources.getDrawable(R.drawable.img_donation) as BitmapDrawable)
+                    .bitmap, "scp_donation")
+            MediaScannerConnection.scanFile(this, arrayOf(Environment
+                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/scp_donation.jpg"),
+                    null, null)
             Toaster.showLong("正在跳转到微信扫一扫，请从相册选取赞赏二维码随意打赏", context = this)
             Handler().postDelayed({startWechatScan(this)}, 1000)
         }

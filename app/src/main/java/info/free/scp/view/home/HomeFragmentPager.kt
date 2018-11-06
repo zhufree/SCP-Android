@@ -1,8 +1,8 @@
 package info.free.scp.view.home
 
-import android.app.Fragment
-import android.app.FragmentManager
-import info.free.scp.view.FragmentPagerAdapter
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 
 /**
  * Created by zhufree on 2018/8/28.

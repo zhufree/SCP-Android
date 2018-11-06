@@ -24,16 +24,13 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
-import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Toaster
+import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
-class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
+class DetailActivity : BaseActivity() {
 
     private var readMode = 0 // 0 离线 1 网页
     private var url = ""
@@ -43,19 +40,21 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
     private val nightTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#a0a0a0;}</style>"
     private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
     private var currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
-
-    var computeVerticalScrollRange = -1
-    var hasTouchEnd = false
-    var isMovingUp = false
+    private var screenHeight = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        screenHeight = Utils.getScreenHeight(this)
 
         initToolbar()
         initSwitchBtn()
 
-        webView?.mListener = this
+        nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
+                                                     _: Int  ->
+            checkHasRead()
+        }
+
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
         webView?.setBackgroundColor(ThemeUtil.containerBg)
@@ -72,28 +71,6 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             scp = ScpDao.getInstance().getScpModelById(sId)
         }
 
-        nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, x: Int, y: Int, oldX: Int,
-                                                     oldY: Int  ->
-            Log.i("detail", "$oldX, $oldY, $x, $y")
-            Log.i("detail", "$computeVerticalScrollRange")
-            if (computeVerticalScrollRange > 0) {
-                if (oldY < y && computeVerticalScrollRange - y < 3000 && !hasTouchEnd) {
-                    // 向下滑且距离到了
-                    Log.i("detail", "已读完")
-                    hasTouchEnd = true
-                    isMovingUp = false
-                    onScrollToBottom()
-                } else if (oldY > y && computeVerticalScrollRange - y > 3000 && !isMovingUp) {
-                    // 向上滑且距离大于4000
-                    hasTouchEnd = false
-                    isMovingUp = true
-                    onScrollUp()
-                }
-            } else {
-                computeVerticalScrollRange = webView?.computeVerticalScrollRange?:0
-            }
-        }
-
         setData(scp)
         webView?.requestFocus()
 
@@ -106,10 +83,11 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                     if (url.startsWith("http://scp-wiki-cn.wikidot.com/")) {
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
-                        detailHtml = ScpDao.getInstance().getDetailByLink(postString.toString())
-                        webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
-                                "text/html", "utf-8", null)
-                        webView?.scrollTo(0, 0)
+                        val scpList = ScpDao.getInstance().getScpModelByLink(postString.toString())
+                        if (scpList.isNotEmpty()) {
+                            scp = scpList[0]
+                            setData(scp)
+                        }
                     }
                 }
                 return true
@@ -117,6 +95,10 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
+                // 判断切换按钮是否可见，如果可以，说明篇幅较短，视为已读
+                Handler().postDelayed({
+                    checkHasRead()
+                }, 2000)
             }
         }
 
@@ -136,15 +118,27 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
 
     }
 
-    fun reset() {
-        computeVerticalScrollRange = 0
-        hasTouchEnd = false
-        isMovingUp = false
+    private fun checkHasRead() {
+        scp?.let {
+            if (it.hasRead == 0) {
+                val location = IntArray(2)
+                tv_preview?.getLocationOnScreen(location)
+                if (location[1] < screenHeight) {
+                    EventUtil.onEvent(this, EventUtil.finishDetail)
+                    PreferenceUtil.addPoints(5)
+                    it.hasRead = 1
+                    Log.i("detail", "已读完")
+                    ScpDao.getInstance().insertLikeAndReadInfo(it)
+                }
+            }
+        }
     }
 
     private fun setData(scp: ScpModel?) {
         scp?.let {
+            // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
+            // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
             detail_toolbar?.title = scp.title
             detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
@@ -155,11 +149,8 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                 webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                         "text/html", "utf-8", null)
             }
-//            hideSwitchBtn()
-            webView?.reset()
-//            webView?.scrollTo(0, 0)
             Handler().postDelayed({
-                webView?.scrollTo(0, 0)
+                nsv_web_wrapper?.scrollTo(0, 0)
             }, 1000)
 
         }
@@ -171,65 +162,61 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
         detail_toolbar?.setNavigationOnClickListener { finish() }
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.switch_read_mode -> {
-                    EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
-                    PreferenceUtil.addPoints(1)
-                    if (readMode == 0) {
-                        if (enabledNetwork()) {
-                            pbLoading.visibility = VISIBLE
-                            readMode = 1
-                            it.setTitle(R.string.offline_mode)
-                            webView?.loadUrl(url)
+            scp?.let {s ->
+                when (it.itemId) {
+                    R.id.switch_read_mode -> {
+                        EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
+                        PreferenceUtil.addPoints(1)
+                        if (readMode == 0) {
+                            if (enabledNetwork()) {
+                                pbLoading.visibility = VISIBLE
+                                readMode = 1
+                                it.setTitle(R.string.offline_mode)
+                                webView?.loadUrl(url)
+                            } else {
+                                Toaster.show("请先开启网络")
+                            }
                         } else {
-                            Toaster.show("请先开启网络")
+                            readMode = 0
+                            it.setTitle(R.string.online_mode)
+                            webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                                    "text/html", "utf-8", null)
                         }
-                    } else {
-                        readMode = 0
-                        it.setTitle(R.string.online_mode)
-                        webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
-                                "text/html", "utf-8", null)
                     }
-                }
-                R.id.report -> {
-                    val reportView = LayoutInflater.from(this@DetailActivity)
-                            .inflate(R.layout.layout_dialog_report, null)
-                    val reportDialog = AlertDialog.Builder(this@DetailActivity)
-                            .setTitle("反馈问题")
-                            .setView(reportView)
-                            .setPositiveButton("OK") { _, _ -> }
-                            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                            .create()
-                    reportDialog.show()
-                    reportDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-                        val reportString = reportView.et_report.text.toString()
-                        Log.i("report", reportString)
-                        MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
-                        reportDialog.dismiss()
+                    R.id.report -> {
+                        val reportView = LayoutInflater.from(this@DetailActivity)
+                                .inflate(R.layout.layout_dialog_report, null)
+                        val reportDialog = AlertDialog.Builder(this@DetailActivity)
+                                .setTitle("反馈问题")
+                                .setView(reportView)
+                                .setPositiveButton("OK") { _, _ -> }
+                                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                                .create()
+                        reportDialog.show()
+                        reportDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
+                            val reportString = reportView.et_report.text.toString()
+                            Log.i("report", reportString)
+                            MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
+                            reportDialog.dismiss()
+                        }
                     }
-                }
-                R.id.open_in_browser -> {
-                    scp?.let {
-                        EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, it.link)
+                    R.id.open_in_browser -> {
+                        EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
                         PreferenceUtil.addPoints(1)
                         val openIntent = Intent()
                         openIntent.action = "android.intent.action.VIEW"
-                        val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + it.link)
+                        val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + s.link)
                         openIntent.data = openUrl
                         startActivity(openIntent)
                     }
-                }
-                R.id.copy_link -> {
-                    scp?.let {
-                        EventUtil.onEvent(this, EventUtil.clickCopyLink, it.link)
+                    R.id.copy_link -> {
+                        EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
                         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clipData = ClipData.newPlainText("scp_link", SCPConstants.SCP_SITE_URL + it.link)
+                        val clipData = ClipData.newPlainText("scp_link", SCPConstants.SCP_SITE_URL + s.link)
                         clipboardManager?.primaryClip = clipData
                         Toaster.show("已复制到剪贴板")
                     }
-                }
-                R.id.like -> {
-                    scp?.let { s ->
+                    R.id.like -> {
                         EventUtil.onEvent(this, EventUtil.clickLike, s.link)
                         PreferenceUtil.addPoints(2)
                         s.like = if (s.like == 1) 0 else 1
@@ -237,6 +224,7 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
                         it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
                         else R.drawable.ic_star_border_white_24dp)
                     }
+                    else -> {}
                 }
             }
             true
@@ -293,36 +281,5 @@ class DetailActivity : BaseActivity(), DetailWebView.WebScrollListener {
             }
         }
         return super.onPrepareOptionsMenu(menu)
-    }
-
-    override fun onScrollToBottom() {
-//        scp?.let {
-//            if (it.hasRead == 0) {
-//                EventUtil.onEvent(this, EventUtil.finishDetail)
-//                PreferenceUtil.addPoints(5)
-//                it.hasRead = 1
-//                ScpDao.getInstance().insertLikeAndReadInfo(it)
-//            }
-//        }
-    }
-
-    override fun onScrollUp() {
-    }
-
-    override fun toNextArticle() {
-    }
-
-    override fun toLastArticle() {
-    }
-
-    override fun toRandomArticle() {
-    }
-
-    override fun finish() {
-        val intent = Intent()
-        intent.putExtra("like", scp?.like ?: 0)
-        intent.putExtra("hasRead", scp?.hasRead ?: 0)
-        setResult(SCPConstants.RequestCode.CATEGORY_TO_DETAIL, intent)
-        super.finish()
     }
 }

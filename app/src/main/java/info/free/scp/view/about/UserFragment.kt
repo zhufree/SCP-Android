@@ -3,30 +3,26 @@ package info.free.scp.view.about
 
 import android.app.AlertDialog
 import android.app.Fragment
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.util.EventUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
 
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AboutFragment.newInstance] factory method to
+ * Use the [UserFragment.newInstance] factory method to
  * create an instance of this fragment.
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
-class AboutFragment : BaseFragment() {
+class UserFragment : BaseFragment() {
     private var listener: AboutListener? = null
 
 //    private var mParam1: String? = null
@@ -47,22 +43,22 @@ class AboutFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_about, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         about_toolbar?.setTitle(R.string.app_name)
 
         tv_like_list?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickLikeList)
-            activity.startActivity(Intent(activity, LikeActivity::class.java))
+            activity?.startActivity(Intent(activity, LikeActivity::class.java))
         }
 
         tv_about_app?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickAboutApp)
-            activity.startActivity(Intent(activity, AboutAppActivity::class.java))
+            activity?.startActivity(Intent(activity, AboutAppActivity::class.java))
         }
         tv_about_developer?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickAboutMe)
-            activity.startActivity(Intent(activity, AboutMeActivity::class.java))
+            activity?.startActivity(Intent(activity, AboutMeActivity::class.java))
         }
         tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "白天模式" else "夜间模式"
 
@@ -125,8 +121,8 @@ class AboutFragment : BaseFragment() {
          * @return A new instance of fragment HomeFragment.
          */
 //        fun newInstance(param1: String, param2: String): HomeFragment {
-        fun newInstance(): AboutFragment {
-            val fragment = AboutFragment()
+        fun newInstance(): UserFragment {
+            val fragment = UserFragment()
 //            val args = Bundle()
 //            args.putString(ARG_PARAM1, param1)
 //            args.putString(ARG_PARAM2, param2)

@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
@@ -21,7 +22,7 @@ import info.free.scp.service.InitDetailService
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
-import info.free.scp.view.about.AboutFragment
+import info.free.scp.view.about.UserFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
@@ -29,11 +30,11 @@ import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragment.AboutListener {
+class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
 //    private val feedFragment = FeedFragment.newInstance()
-    private val aboutFragment = AboutFragment.newInstance()
+    private val aboutFragment = UserFragment.newInstance()
     private var remoteDbVersion = -1
     private var isDownloadingDetail = false
 
@@ -83,8 +84,8 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        val transaction = fragmentManager.beginTransaction()
-        transaction?.hide(currentFragment)
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.hide(currentFragment as Fragment)
         when (item.itemId) {
             R.id.navigation_home -> {
                 if (homeFragment.isAdded) {
@@ -127,15 +128,15 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
 
         setContentView(R.layout.activity_main)
         savedInstanceState?.let {
-            currentFragment = fragmentManager.getFragment(savedInstanceState, "currentFragment") as BaseFragment
+            currentFragment = supportFragmentManager.getFragment(savedInstanceState, "currentFragment") as BaseFragment
         }
 
-        val transaction = fragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
         if (currentFragment != null) {
             if (currentFragment?.isAdded == true) {
-                transaction.show(currentFragment)
+                transaction.show(currentFragment as Fragment)
             } else {
-                transaction.add(R.id.flMainContainer, currentFragment)
+                transaction.add(R.id.flMainContainer, currentFragment as Fragment)
             }
         } else {
             transaction.add(R.id.flMainContainer, homeFragment)
@@ -169,9 +170,9 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         currentFragment?.let {
-            fragmentManager.putFragment(outState, "currentFragment", it)
+            supportFragmentManager.putFragment(outState, "currentFragment", it)
         }
         super.onSaveInstanceState(outState)
     }
@@ -323,6 +324,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, AboutFragmen
     }
 
     override fun onCategoryClick(type: Int) {
+        Toaster.show("jump")
         val intent = Intent()
         intent.putExtra("saveType", type)
         intent.setClass(this, CategoryActivity::class.java)

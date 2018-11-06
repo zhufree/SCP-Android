@@ -1,5 +1,6 @@
 package info.free.scp.util
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
@@ -14,25 +15,42 @@ import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import android.util.DisplayMetrics
+
+
+
 
 object Utils {
+
+    /**
+     * 获取屏幕宽高
+     */
+    fun getScreenHeight(context: Activity): Int {
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.heightPixels
+    }
+    fun getScreenWidth(context: Activity): Int {
+        val metric = DisplayMetrics()
+        context.windowManager.defaultDisplay.getMetrics(metric)
+        return metric.widthPixels
+    }
     /**
      * bitmap保存为一个文件
      * @param bitmap bitmap对象
      * @return 文件对象
      */
-    fun saveBitmapFile(bitmap: Bitmap): File {
-        val filePath = getAlbumStorageDir("SCP").path + "/img_donation"
+    fun saveBitmapFile(bitmap: Bitmap, filename:String): File {
+        val filePath = getAlbumStorageDir("").path + "/$filename"
         val file = File("$filePath.jpg")
         try {
             val outputStream = BufferedOutputStream(FileOutputStream(file))
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
             outputStream.flush()
             outputStream.close()
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
         return file
     }
 

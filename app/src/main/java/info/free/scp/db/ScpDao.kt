@@ -216,7 +216,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     /**
      * 通过链接获取scpModel，可能不止一个
      */
-    private fun getScpModelByLink(link: String?): MutableList<ScpModel?> {
+    fun getScpModelByLink(link: String?): MutableList<ScpModel?> {
         val resultList = emptyList<ScpModel?>().toMutableList()
         if (link == null) {
             return resultList
@@ -396,7 +396,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                     val sId = getCursorString(cursor, ScpTable.ID)
                     Log.i("random", sId)
                     val detailHtml = getDetailById(sId)
-                    scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty()) getRandomScp() else extractScp(cursor)
+                    scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
+                        getRandomScp() else extractScp(cursor)
                 }
                 cursor.close()
             }

@@ -20,6 +20,7 @@ import info.free.scp.util.EventUtil.clickSeries
 import info.free.scp.util.EventUtil.clickSeriesCn
 import info.free.scp.util.EventUtil.clickSeriesStory
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
@@ -54,9 +55,10 @@ class SeriesFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_series, container, false)
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tvScpSeries?.setOnClickListener {
+            Toaster.show("click")
             EventUtil.onEvent(mContext, clickSeries)
             listener?.onCategoryClick(SERIES)
         }

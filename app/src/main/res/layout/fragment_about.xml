@@ -35,7 +35,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:src="@drawable/ic_launcher"
+                android:scaleType="centerCrop"
                 android:layout_marginTop="36dp"/>
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/iv_user_head"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="18sp"
+                android:textColor="?attr/darkText"/>
+            <TextView
+                android:id="@+id/tv_data_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tv_nickname"
+                android:layout_marginTop="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="15sp"
+                android:textColor="?attr/lightText"/>
 
             <TextView
                 android:id="@+id/tv_like_list"
@@ -52,7 +74,7 @@
                 app:layout_constraintBottom_toTopOf="@id/tv_about_app"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_user_head"/>
+                app:layout_constraintTop_toBottomOf="@id/tv_data_desc"/>
 
             <TextView
                 android:id="@+id/tv_about_app"

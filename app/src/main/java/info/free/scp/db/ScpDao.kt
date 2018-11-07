@@ -483,6 +483,47 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return scpModel
     }
 
+    fun getLikeCount(): Int {
+        var count = 0
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT COUNT(*) FROM "
+                    + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
+                    + ScpTable.LIKE + "=? ", arrayOf("1"))
+            with (cursor) {
+                this?.let {
+                    if (it.moveToFirst()) {
+                        count = it.getInt(0)
+                    }
+                }
+
+            }
+            return count
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return count
+    }
+
+    fun getReadCount(): Int {
+        var count = 0
+        try {
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT COUNT(*) FROM "
+                    + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
+                    + ScpTable.HAS_READ + "=? ", arrayOf("1"))
+            with (cursor) {
+                this?.let {
+                    if (it.moveToFirst()) {
+                        count = it.getInt(0)
+                    }
+                }
+            }
+            return count
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return count
+    }
+
     companion object {
         private var scpDao: ScpDao? = ScpDao()
         fun getInstance(): ScpDao {

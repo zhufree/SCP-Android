@@ -2,16 +2,15 @@ package info.free.scp
 
 import android.app.AlertDialog
 import android.app.ProgressDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
+import android.view.LayoutInflater
+import com.umeng.analytics.MobclickAgent
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH
@@ -28,6 +27,7 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
@@ -144,6 +144,21 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         }
         transaction.commit()
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()) {
+            val inputView = LayoutInflater.from(this).inflate(R.layout.layout_dialog_report, null)
+            val nameInputDialog = AlertDialog.Builder(this)
+                    .setTitle("欢迎来到SCP基金会，调查员，请输入你的名字")
+                    .setView(inputView)
+                    .setPositiveButton("OK") { _, _ -> }
+                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                    .create()
+            nameInputDialog.show()
+            nameInputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+                PreferenceUtil.saveNickname(inputView.et_report.text.toString())
+                nameInputDialog.dismiss()
+            }
+        }
     }
 
     override fun onResume() {

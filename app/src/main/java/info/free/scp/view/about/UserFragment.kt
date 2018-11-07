@@ -1,19 +1,27 @@
 package info.free.scp.view.about
 
 
+import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.app.Fragment
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
+import java.io.File
+import kotlin.random.Random
 
 
 /**
@@ -43,10 +51,51 @@ class UserFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_about, container, false)
     }
 
+    private fun getRank(point: Int): String {
+        Log.i("point", "point = $point")
+        return when {
+            point < 100 -> {
+                "E-"
+            }
+            point < 300 -> {
+                "D-"
+            }
+            point < 600 -> {
+                "C-"
+            }
+            point < 1000 -> {
+                "B-"
+            }
+            point < 1500 -> {
+                "A-"
+            }
+            point < 2000 -> {
+                "研究员"
+            }
+            else -> {
+                "收容专家"
+            }
+        } + Random(1).nextInt(600)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         about_toolbar?.setTitle(R.string.app_name)
+        tv_nickname?.text = "${getRank(PreferenceUtil.getPoint())}：${PreferenceUtil.getNickname()}"
+        tv_data_desc?.text = "已阅读${ScpDao.getInstance().getReadCount()}篇文档    " +
+                "已收藏${ScpDao.getInstance().getLikeCount()}篇文档"
 
+        iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
+                + "/scp_user_head.jpg"))
+        iv_user_head.setOnClickListener {
+            val intent = Intent()
+            /* 开启Pictures画面Type设定为image */
+            intent.type = "image/*"
+            /* 使用Intent.ACTION_GET_CONTENT这个Action */
+            intent.action = Intent.ACTION_GET_CONTENT
+            /* 取得相片后返回本画面 */
+            startActivityForResult(intent, 1)
+        }
         tv_like_list?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickLikeList)
             activity?.startActivity(Intent(activity, LikeActivity::class.java))
@@ -100,6 +149,26 @@ class UserFragment : BaseFragment() {
         tv_init_data?.setBackgroundColor(ThemeUtil.itemBg)
         tv_reset_data?.setTextColor(ThemeUtil.darkText)
         tv_reset_data?.setBackgroundColor(ThemeUtil.itemBg)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK && data != null) {
+            val uri = data.data
+            if (uri != null) {
+                try {
+                    val file = Utils.getFileByUri(uri, context!!)
+                    file?.let{
+                        Utils.save(it, "scp_user_head")
+                        iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(file.path))
+                    }
+                } catch (e: Exception) {
+                    Log.e("Exception", e.message, e)
+                }
+
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+        Log.i("user", "requestCode = $requestCode")
     }
 
     override fun onDetach() {

@@ -16,6 +16,9 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import android.util.DisplayMetrics
+import android.content.Context.MODE_PRIVATE
+
+
 
 
 
@@ -54,7 +57,19 @@ object Utils {
         return file
     }
 
-    private fun getAlbumStorageDir(albumName: String): File {
+    fun save(file: File, filename: String) {
+        val filePath = getAlbumStorageDir("SCP").path + "/$filename"
+        val newFile = File("$filePath.jpg")
+        try {
+            val outputStream = BufferedOutputStream(FileOutputStream(newFile))
+            outputStream.write(file.readBytes())
+            outputStream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getAlbumStorageDir(albumName: String): File {
         // Get the directory for the user's public pictures directory.
         val file = File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), albumName)

@@ -142,6 +142,14 @@ object PreferenceUtil {
         return getIntValue("level", "point")
     }
 
+    fun getNickname(): String {
+        return getStringValue("level", "nickname")
+    }
+
+    fun saveNickname(name: String) {
+        setStringValue("level", "nickname", name)
+    }
+
     /**
      * 工具方法
      */

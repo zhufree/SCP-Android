@@ -524,36 +524,35 @@ class Logger(object):
 
 
         
-def get_detail_by_link(link, total_link_list, total_category_list):
-    try:
-        if 'http://scp-wiki-cn.wikidot.com' in link:
-            link = link[30:]
-        detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
-        detail_dom = list(detail_doc('div#page-content').items())[0]
-        for category in total_category_list:
-            if category['link'] == link:
-                category['not_found'] = "false"
-                category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
-        a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
-        for a in a_in_detail.items():
-            href = a.attr('href')
-            
-            if href.startswith('/') and href not in total_link_list:
-                    print('new link = ' + href)
-                    new_found_link_list.append(href)
-                    title = a.text()
-                    new_category = {
-                        'title': title,
-                        'link': href,
-                        'type': 'none'
-                    }
-                    new_found_category_list.append(new_category)
-    except:
-        print('404')
-        for category in total_category_list:
-            if category['link'] == link:
-                category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                category['not_found'] = "true"
+def get_detail_by_link(link_list, total_link_list, total_category_list):
+    for link in link_list:
+        try:
+            if 'http://scp-wiki-cn.wikidot.com' in link:
+                link = link[30:]
+            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
+            detail_dom = list(detail_doc('div#page-content').items())[0]
+            for category in total_category_list:
+                if category['link'] == link:
+                    category['not_found'] = "false"
+                    category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
+            a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
+            for a in a_in_detail.items():
+                href = a.attr('href')
+                if href.startswith('/') and href not in total_link_list:
+                        print(href)
+                        new_found_link_list.append(href)
+                        title = a.text()
+                        new_category = {
+                            'title': title,
+                            'link': href,
+                            'type': 'none'
+                        }
+                        new_found_category_list.append(new_category)
+        except:
+            for category in total_category_list:
+                if category['link'] == link:
+                    category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
+                    category['not_found'] = "true"
 
 def get_list_from_file():
     with open("category_list.txt", 'r') as f:
@@ -565,7 +564,7 @@ def get_list_from_file():
         return real_list
 
 def get_category_from_file():
-    with open("scp-category-merge.csv", 'r', encoding='utf-8', newline='') as f:
+    with open("scp-category-new-1.csv", 'r', encoding='utf-8', newline='') as f:
         # 统一header，方便后续合并文件一起上传
         reader = csv.DictReader(f)
         category_list = [dict(order_dict) for order_dict in reader]
@@ -576,13 +575,15 @@ def get_detail_order():
     total_category_list = get_category_from_file()
     print('real list size:' + str(len(total_link_list)))
     print('category list size:' + str(len(total_category_list)))
-    for link in total_link_list:
-        print(link)
-        get_detail_by_link(link, total_link_list, total_category_list)
+    # for link in total_link_list:
+    #     print(link)
+    #     get_detail_by_link(link, total_link_list, total_category_list)
+
     sys.stdout = Logger("new_found_link.txt")
-    print(new_found_link_list)
-    write_to_csv(new_found_category_list, "new_found_category.csv")
-    write_to_csv(total_category_list, "scp-category-new.csv")
+    get_detail_by_link(total_link_list[1000:2000], total_link_list, total_category_list)
+
+    write_to_csv(new_found_category_list, "new-found-category-2.csv")
+    write_to_csv(total_category_list, "scp-category-new-2.csv")
 
 
 if __name__ == '__main__':

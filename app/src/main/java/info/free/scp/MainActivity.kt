@@ -157,7 +157,22 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
             nameInputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 PreferenceUtil.saveNickname(inputView.et_report.text.toString())
                 nameInputDialog.dismiss()
+                checkJob()
             }
+        }
+        checkJob()
+    }
+
+    private fun checkJob() {
+        if (PreferenceUtil.getNickname().isNotEmpty() && PreferenceUtil.getJob().isEmpty()) {
+            val jobList = arrayOf("外勤特工","机动特遣队作业员","收容专家","研究员","安全人员","战术反应人员")
+            AlertDialog.Builder(this)
+                    .setTitle("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业")
+                    .setItems(jobList){ dialog, which ->
+                        PreferenceUtil.setJob(jobList[which])
+                        dialog.dismiss()
+                    }
+                    .create().show()
         }
     }
 

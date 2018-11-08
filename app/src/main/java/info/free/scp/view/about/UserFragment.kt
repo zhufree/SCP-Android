@@ -55,27 +55,27 @@ class UserFragment : BaseFragment() {
         Log.i("point", "point = $point")
         return when {
             point < 100 -> {
-                "E-"
+                PreferenceUtil.getJobNameByLevel(0)
             }
-            point < 300 -> {
-                "D-"
+            point < 500 -> {
+                PreferenceUtil.getJobNameByLevel(1)
             }
-            point < 600 -> {
-                "C-"
-            }
-            point < 1000 -> {
-                "B-"
-            }
-            point < 1500 -> {
-                "A-"
+            point < 1200 -> {
+                PreferenceUtil.getJobNameByLevel(2)
             }
             point < 2000 -> {
-                "研究员"
+                "C级" + PreferenceUtil.getJobNameByLevel(3)
+            }
+            point < 3000 -> {
+                "B级" + PreferenceUtil.getJobNameByLevel(4)
+            }
+            point < 6000 -> {
+                "A级" + PreferenceUtil.getJobNameByLevel(5)
             }
             else -> {
-                "收容专家"
+                PreferenceUtil.getJobNameByLevel(0)
             }
-        } + Random(1).nextInt(600)
+        } + Random(5).nextInt(600)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -1,24 +1,35 @@
 # coding: utf-8
 
-# from pyquery import PyQuery as pq
+from pyquery import PyQuery as pq
 import csv
 import multiprocessing
 import os
+import sys
 spider_header = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
 
-def get_detail(new_article):
+new_found_link_list = [] # 从正文抓到的所有新link
+new_found_category_list = [] # 从正文抓到的所有新文章
+
+# 抓取所有目录信息之后，把所有链接保存到列表，然后遍历链接抓正文，对于正文中的链接，如果再列表里就不抓，否则就再抓一篇
+# 抓取正文内容方法，顺便如果正文中有别的链接也抓下来
+def get_detail(new_article, article_list):
     try:
         if 'http://scp-wiki-cn.wikidot.com' in new_article['link']:
             new_article['link'] = new_article['link'][30:]
         detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
         new_article['not_found'] = "false"
-        new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-            .replace('  ', '').replace('\n', '') \
-            .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
+        detail_dom = list(detail_doc('div#page-content').items())[0]
+        new_article['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
+        a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
+        for a in a_in_detail.items():
+            href = a.attr('href')
+            if "/" in href:
+                print(href)
     except:
         new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
         new_article['not_found'] = "true"
+
         
 # scp系列
 def thread_get_series(i):
@@ -36,16 +47,8 @@ def thread_get_series(i):
                 'cn': 'false',
                 'type': 'series'
             }
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
-                new_article['not_found'] = "false"
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] + link)
+            link_list.append(link)
+            # print(new_article['type'] + link)
             article_list.append(new_article)
 
     write_to_csv(article_list, 'scps/series-' + str(i) + '.csv')
@@ -63,16 +66,8 @@ def get_series_cn():
                 'cn': 'true',
                 'type': 'series'
             }
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
-                new_article['not_found'] = "false"
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] + link)
+            link_list.append(link)
+            # print(new_article['type'] + link)
             article_list.append(new_article)
     write_to_csv(article_list, 'scps/series-cn.csv')
 
@@ -88,16 +83,8 @@ def thread_get_archives(doc_link, pq_path, cn, archives_type):
             'cn': cn,
             'type': archives_type
         }
-        try:
-            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
-            new_article['not_found'] = "false"
-            new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                .replace('  ', '').replace('\n', '') \
-                .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-        except:
-            new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-            new_article['not_found'] = "true"
-        print(new_article['type'] + link)
+        link_list.append(link)
+        # print(new_article['type'] + link)
         article_list.append(new_article)
     if cn == 'true':
         write_to_csv(article_list, 'scps/archives-'+ archives_type + '-cn.csv')
@@ -123,16 +110,8 @@ def thread_get_story(i):
                 new_sub_article['number'] = str(story_count) + "-" + str(sub_article_count)
                 new_sub_article['story_num'] = str(i)
                 new_sub_article['type'] = 'story'
-                try:
-                    detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_sub_article['link'])
-                    new_sub_article['not_found'] = "false"
-                    new_sub_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                        .replace('  ', '').replace('\n', '') \
-                        .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                except:
-                    new_sub_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                    new_sub_article['not_found'] = "true"
-                print(new_sub_article['type'] + new_sub_article['link'])
+                link_list.append(new_sub_article['link'])
+                # print(new_sub_article['type'] + new_sub_article['link'])
                 article_list.append(new_sub_article)
                 sub_article_count += 1
         else:
@@ -140,16 +119,8 @@ def thread_get_story(i):
         new_article['title'] = story_li.remove('ul').text()
         new_article['story_num'] = str(i)
         new_article['type'] = 'story'
-        try:
-            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-            new_article['not_found'] = "false"
-            new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                .replace('  ', '').replace('\n', '') \
-                .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-        except:
-            new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-            new_article['not_found'] = "true"
-        print(new_article['type'] + new_article['link'])
+        link_list.append(new_article['link'])
+        # print(new_article['type'] + new_article['link'])
         article_list.append(new_article)
         story_count += 1
 
@@ -171,16 +142,8 @@ def thread_get_story_series(cn, i):
         new_article['snippet'] = tds[2].text()
         new_article['cn'] = cn
         new_article['type'] = 'story_series'
-        try:
-            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-            new_article['not_found'] = "false"
-            new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                .replace('  ', '').replace('\n', '') \
-                .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-        except:
-            new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-            new_article['not_found'] = "true"
-        print(new_article['type'] +' ' + new_article['link'])
+        link_list.append(new_article['link'])
+        # print(new_article['type'] +' ' + new_article['link'])
         article_list.append(new_article)
     if cn == 'true':
         write_to_csv(article_list, 'scps/story-series-cn.csv')
@@ -207,16 +170,8 @@ def thread_get_tales(cn):
             new_article['page_code'] = letter_list[i]
             new_article['cn'] = cn
             new_article['type'] = 'tale'
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['not_found'] = "false"
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] +' ' + new_article['link'])
+            link_list.append(new_article['link'])
+            # print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
     if cn == 'true':
         write_to_csv(article_list, 'scps/tales-cn.csv')
@@ -241,16 +196,8 @@ def get_tales_cn_by_time():
                 'type': 'tale_by_time',
                 'month': current_month
             }
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['not_found'] = "false"
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] +' ' + new_article['link'])
+            link_list.append(new_article['link'])
+            # print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
     write_to_csv(article_list, 'scps/tales-cn-by-time.csv')
 
@@ -270,16 +217,8 @@ def thread_get_setting(cn):
         new_article['subtext'] = div('div.canon-snippet-subtext').text()
         new_article['cn'] = cn
         new_article['type'] = 'setting'
-        try:
-            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-            new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                .replace('  ', '').replace('\n', '') \
-                .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-            new_article['not_found'] = "false"
-        except:
-            new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-            new_article['not_found'] = "true"
-        print(new_article['type'] +' ' + new_article['link'])
+        link_list.append(new_article['link'])
+        # print(new_article['type'] +' ' + new_article['link'])
         article_list.append(new_article)
     if cn == 'true':
         write_to_csv(article_list, 'scps/setting-cn.csv')
@@ -322,26 +261,13 @@ def get_contest():
             new_article['type'] = 'contest'
             new_plus_article['cn'] = 'false'
             new_plus_article['type'] = 'contest'
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                new_article['not_found'] = "false"
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] +' ' + new_article['link'])
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_plus_article['link'])
-                new_plus_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                new_plus_article['not_found'] = "false"
-            except:
-                new_plus_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_plus_article['not_found'] = "true"
-            print(new_plus_article['type'] +' ' + new_plus_article['link'])
+
+            link_list.append(new_article['link'])
+            link_list.append(new_plus_article['link'])
+
+            # print(new_article['type'] +' ' + new_article['link'])
+            
+            # print(new_plus_article['type'] +' ' + new_plus_article['link'])
             if new_article['link'] != None:
                 article_list.append(new_article)
             if new_plus_article['link'] != None:
@@ -354,16 +280,9 @@ def get_contest():
             new_article['contest_link'] = current_contest_link
             new_article['cn'] = 'false'
             new_article['type'] = 'contest'
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                new_article['not_found'] = "false"
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
+            
             if new_article['link'] != None:
+                link_list.append(new_article['link'])
                 print(new_article['type'] +' ' + new_article['link'])
                 article_list.append(new_article)
     write_to_csv(article_list, 'scps/contest.csv')
@@ -386,16 +305,8 @@ def get_contest_cn():
             new_article['contest_link'] = h3('span>a').attr('href')
             new_article['cn'] = 'true'
             new_article['type'] = 'contest'
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                new_article['not_found'] = "false"
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['type'] +' ' + new_article['link'])
+            link_list.append(new_article['link'])
+            # print(new_article['type'] +' ' + new_article['link'])
             article_list.append(new_article)
     write_to_csv(article_list, 'scps/contest-cn.csv')
 
@@ -422,16 +333,8 @@ def thread_get_event_record(i):
                 new_article['event_type'] = 'interview'
             elif j == 4:
                 new_article['event_type'] = 'addon'
-            try:
-                detail_doc = pq('http://scp-wiki-cn.wikidot.com' + new_article['link'])
-                new_article['detail'] = list(detail_doc('div#page-content').items())[0].html() \
-                    .replace('  ', '').replace('\n', '') \
-                    .replace('style="display: none;"', '').replace('style="display:none"', '').replace('style="display:none;', '')
-                new_article['not_found'] = "false"
-            except:
-                new_article['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                new_article['not_found'] = "true"
-            print(new_article['event_type'] + ' ' + new_article['link'])
+            link_list.append(new_article['link'])
+            # print(new_article['event_type'] + ' ' + new_article['link'])
             article_list.append(new_article)
     write_to_csv(article_list, 'scps/event-scps-' + str(i) + '.csv')
 
@@ -522,6 +425,59 @@ def get_events():
         thread_event.start()
         thread_event.join()
 
+# 旧spider
+def run_old_spider():
+    get_archives()
+    get_series()
+    get_series_cn()
+    get_series_story()
+    get_tales()
+    get_events()
+    get_others()
+
+# 新spider先不爬正文，储存基本信息和链接，链接去重后挨个抓正文，
+# 正文中有的链接再存储一遍，和之前的链接列表对比再次去重抓取
+def run_category_spider():
+    for i in range(1, 6):
+        thread_get_series(i)
+    get_series_cn()
+    for i in range(1, 4):
+        thread_get_story(i)
+    thread_get_tales('false')
+    thread_get_tales('true')
+    # 故事系列
+    thread_get_story_series('true', 0,)
+    thread_get_story_series('false', 1,)
+    thread_get_story_series('false', 2,)
+    # 设定
+    thread_get_setting('false')
+    thread_get_setting('true')
+    
+    # 中国原创故事和contest独立
+    get_tales_cn_by_time()
+    get_contest()
+    get_contest_cn()
+    for i in range(1, 6):
+        thread_get_event_record(i)
+
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps-cn',\
+        'div.content-panel>ul>li', 'true', 'joke',)
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps',\
+        'div.content-panel>ul>li', 'false', 'joke',)
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/archived-scps',\
+        'div#page-content div.content-panel ul li', 'false', 'archived',)
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-ex',\
+        'div.content-panel>ul>li', 'false', 'ex',)
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/decommissioned-scps-arc',\
+        'div.content-panel>ul>li', 'false', 'decommissioned',)
+    thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-removed',\
+        'div.content-panel>ul>li', 'false', 'removed',)
+
+    sys.stdout = Logger()
+    print(link_list)
+
+
+
 # 合并文件，把前缀相同的文件合并成一个
 def merge_files(file_name_list, file_prefix):
     with open(file_name_list[0], 'r+', encoding='utf-8') as f:
@@ -537,10 +493,11 @@ def merge_files(file_name_list, file_prefix):
 def merge_all_file():
     files = ['scps/' + name for name in os.listdir('scps/')]
     print(files)
-    merge_files(files[0:13], 'scp-1') # 7m
-    merge_files(files[13:19], 'scp-2') # 40m
-    merge_files(files[19:27], 'scp-3') # 31m
-    merge_files(files[27:], 'scp-4') # 31m
+    # merge_files(files[0:13], 'scp-1') # 7m
+    # merge_files(files[13:19], 'scp-2') # 40m
+    # merge_files(files[19:27], 'scp-3') # 31m
+    # merge_files(files[27:], 'scp-4') # 31m
+    merge_files(files, 'scp-category') # 31m
 
 
 def write_to_csv(article_list, file_name):
@@ -553,14 +510,86 @@ def write_to_csv(article_list, file_name):
         writer.writerows(article_list)
 
 
+class Logger(object):
+    def __init__(self, filename="category_list.txt"):
+        self.terminal = sys.stdout
+        self.log = open(filename, "a")
+ 
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+ 
+    def flush(self):
+        pass
+
+
+        
+def get_detail_by_link(link, total_link_list, total_category_list):
+    try:
+        if 'http://scp-wiki-cn.wikidot.com' in link:
+            link = link[30:]
+        detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
+        detail_dom = list(detail_doc('div#page-content').items())[0]
+        for category in total_category_list:
+            if category['link'] == link:
+                category['not_found'] = "false"
+                category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
+        a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
+        for a in a_in_detail.items():
+            href = a.attr('href')
+            
+            if href.startswith('/') and href not in total_link_list:
+                    print('new link = ' + href)
+                    new_found_link_list.append(href)
+                    title = a.text()
+                    new_category = {
+                        'title': title,
+                        'link': href,
+                        'type': 'none'
+                    }
+                    new_found_category_list.append(new_category)
+    except:
+        print('404')
+        for category in total_category_list:
+            if category['link'] == link:
+                category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
+                category['not_found'] = "true"
+
+def get_list_from_file():
+    with open("category_list.txt", 'r') as f:
+        link_list = list(f.read()[2:-2].split("\', \'"))
+        real_list = []
+        for link in link_list:
+            if link not in real_list:
+                real_list.append(link)
+        return real_list
+
+def get_category_from_file():
+    with open("scp-category-merge.csv", 'r', encoding='utf-8', newline='') as f:
+        # 统一header，方便后续合并文件一起上传
+        reader = csv.DictReader(f)
+        category_list = [dict(order_dict) for order_dict in reader]
+        return category_list
+
+def get_detail_order():
+    total_link_list = get_list_from_file() # 去重
+    total_category_list = get_category_from_file()
+    print('real list size:' + str(len(total_link_list)))
+    print('category list size:' + str(len(total_category_list)))
+    for link in total_link_list:
+        print(link)
+        get_detail_by_link(link, total_link_list, total_category_list)
+    sys.stdout = Logger("new_found_link.txt")
+    print(new_found_link_list)
+    write_to_csv(new_found_category_list, "new_found_category.csv")
+    write_to_csv(total_category_list, "scp-category-new.csv")
+
+
 if __name__ == '__main__':
-    # get_series()
-    # get_series_cn()
-    # get_archives()
-    # get_series_story()
-    # get_tales()
-    # get_tales_cn()
-    # get_tales_cn_by_time()
-    # get_others()
-    # get_events()
-    merge_all_file()
+    # test
+    # run_category_spider()
+    # merge_all_file()
+    # get_list_from_file()
+    # get_category_from_file()
+    get_detail_order()
+    

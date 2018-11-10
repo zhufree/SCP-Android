@@ -7,6 +7,10 @@
         android:title="@string/online_mode"
         app:showAsAction="collapseActionView"/>
     <item
+        android:id="@+id/show_secret_content"
+        android:title="@string/show_secret_content"
+        app:showAsAction="collapseActionView"/>
+    <item
         android:id="@+id/report"
         android:title="@string/menu_report"
         app:showAsAction="collapseActionView"/>

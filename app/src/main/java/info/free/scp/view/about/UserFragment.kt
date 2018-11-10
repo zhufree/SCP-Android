@@ -7,6 +7,7 @@ import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,7 +21,6 @@ import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
-import java.io.File
 import kotlin.random.Random
 
 
@@ -132,11 +132,22 @@ class UserFragment : BaseFragment() {
                     .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                     .create().show()
         }
+        tv_query_enter?.setOnClickListener {
+            if (PreferenceUtil.getQueryLink().isNotEmpty()) {
+                val queryIntent = Intent()
+                queryIntent.action = "android.intent.action.VIEW"
+                val updateUrl = Uri.parse(PreferenceUtil.getQueryLink())
+                queryIntent.data = updateUrl
+                startActivity(queryIntent)
+            }
+        }
     }
 
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
         about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        tv_nickname?.setTextColor(ThemeUtil.darkText)
+        tv_data_desc?.setTextColor(ThemeUtil.lightText)
         tv_like_list?.setTextColor(ThemeUtil.darkText)
         tv_like_list?.setBackgroundColor(ThemeUtil.itemBg)
         tv_about_app?.setTextColor(ThemeUtil.darkText)

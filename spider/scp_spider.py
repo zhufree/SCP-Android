@@ -5,9 +5,12 @@ import csv
 import multiprocessing
 import os
 import sys
+from scp_file_handler import *
+
 spider_header = {
     'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36'}
 
+link_list = []
 new_found_link_list = [] # 从正文抓到的所有新link
 new_found_category_list = [] # 从正文抓到的所有新文章
 
@@ -47,11 +50,12 @@ def thread_get_series(i):
                 'cn': 'false',
                 'type': 'series'
             }
-            link_list.append(link)
-            # print(new_article['type'] + link)
+            # link_list.append(link)
+            print(link)
             article_list.append(new_article)
 
-    write_to_csv(article_list, 'scps/series-' + str(i) + '.csv')
+    return article_list
+    # write_to_csv(article_list, 'scps/series-' + str(i) + '.csv')
 
 # scpCn系列，抓一次，无多线程
 def get_series_cn():
@@ -66,10 +70,11 @@ def get_series_cn():
                 'cn': 'true',
                 'type': 'series'
             }
-            link_list.append(link)
-            # print(new_article['type'] + link)
+            # link_list.append(link)
+            print(link)
             article_list.append(new_article)
-    write_to_csv(article_list, 'scps/series-cn.csv')
+    return article_list
+    # write_to_csv(article_list, 'scps/series-cn.csv')
 
 # 归档信息
 def thread_get_archives(doc_link, pq_path, cn, archives_type):
@@ -83,13 +88,14 @@ def thread_get_archives(doc_link, pq_path, cn, archives_type):
             'cn': cn,
             'type': archives_type
         }
-        link_list.append(link)
-        # print(new_article['type'] + link)
+        # link_list.append(link)
+        print(link)
         article_list.append(new_article)
-    if cn == 'true':
-        write_to_csv(article_list, 'scps/archives-'+ archives_type + '-cn.csv')
-    else:
-        write_to_csv(article_list, 'scps/archives-'+ archives_type + '.csv')
+    return article_list
+    # if cn == 'true':
+    #     write_to_csv(article_list, 'scps/archives-'+ archives_type + '-cn.csv')
+    # else:
+    #     write_to_csv(article_list, 'scps/archives-'+ archives_type + '.csv')
 
 # 故事版
 def thread_get_story(i):
@@ -110,8 +116,8 @@ def thread_get_story(i):
                 new_sub_article['number'] = str(story_count) + "-" + str(sub_article_count)
                 new_sub_article['story_num'] = str(i)
                 new_sub_article['type'] = 'story'
-                link_list.append(new_sub_article['link'])
-                # print(new_sub_article['type'] + new_sub_article['link'])
+                # link_list.append(new_sub_article['link'])
+                print(new_sub_article['link'])
                 article_list.append(new_sub_article)
                 sub_article_count += 1
         else:
@@ -119,12 +125,12 @@ def thread_get_story(i):
         new_article['title'] = story_li.remove('ul').text()
         new_article['story_num'] = str(i)
         new_article['type'] = 'story'
-        link_list.append(new_article['link'])
-        # print(new_article['type'] + new_article['link'])
+        # link_list.append(new_article['link'])
+        print(new_article['link'])
         article_list.append(new_article)
         story_count += 1
-
-    write_to_csv(article_list, 'scps/series-story-'+str(i) + '.csv')
+    return article_list
+    # write_to_csv(article_list, 'scps/series-story-'+str(i) + '.csv')
 
 # 故事系列
 def thread_get_story_series(cn, i):
@@ -142,13 +148,14 @@ def thread_get_story_series(cn, i):
         new_article['snippet'] = tds[2].text()
         new_article['cn'] = cn
         new_article['type'] = 'story_series'
-        link_list.append(new_article['link'])
-        # print(new_article['type'] +' ' + new_article['link'])
+        # link_list.append(new_article['link'])
+        print(new_article['link'])
         article_list.append(new_article)
-    if cn == 'true':
-        write_to_csv(article_list, 'scps/story-series-cn.csv')
-    else:
-        write_to_csv(article_list, 'scps/story-series-' + str(i) + '.csv')
+    # if cn == 'true':
+    #     write_to_csv(article_list, 'scps/story-series-cn.csv')
+    # else:
+    #     write_to_csv(article_list, 'scps/story-series-' + str(i) + '.csv')
+    return article_list
 
 # 基金会故事
 def thread_get_tales(cn):
@@ -170,13 +177,14 @@ def thread_get_tales(cn):
             new_article['page_code'] = letter_list[i]
             new_article['cn'] = cn
             new_article['type'] = 'tale'
-            link_list.append(new_article['link'])
-            # print(new_article['type'] +' ' + new_article['link'])
+            # link_list.append(new_article['link'])
+            print(new_article['link'])
             article_list.append(new_article)
-    if cn == 'true':
-        write_to_csv(article_list, 'scps/tales-cn.csv')
-    else:
-        write_to_csv(article_list, 'scps/tales.csv')
+    # if cn == 'true':
+    #     write_to_csv(article_list, 'scps/tales-cn.csv')
+    # else:
+    #     write_to_csv(article_list, 'scps/tales.csv')
+    return article_list
 
 # 中国原创故事ByTime
 def get_tales_cn_by_time():
@@ -184,7 +192,6 @@ def get_tales_cn_by_time():
     doc = pq('http://scp-wiki-cn.wikidot.com/tales-cn-by-create-time', headers=spider_header)
     for month_div in doc('div#page-content .section').items():
         current_month = month_div('h3').text()
-        print('current_month = ' + current_month)
         for trs in month_div('div.list-pages-box tr').items():
             tds = list(trs('td').items())
             new_article = {
@@ -196,10 +203,11 @@ def get_tales_cn_by_time():
                 'type': 'tale_by_time',
                 'month': current_month
             }
-            link_list.append(new_article['link'])
-            # print(new_article['type'] +' ' + new_article['link'])
+            # link_list.append(new_article['link'])
+            print(new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'scps/tales-cn-by-time.csv')
+    # write_to_csv(article_list, 'scps/tales-cn-by-time.csv')
+    return article_list
 
 # 设定中心
 def thread_get_setting(cn):
@@ -217,13 +225,14 @@ def thread_get_setting(cn):
         new_article['subtext'] = div('div.canon-snippet-subtext').text()
         new_article['cn'] = cn
         new_article['type'] = 'setting'
-        link_list.append(new_article['link'])
-        # print(new_article['type'] +' ' + new_article['link'])
+        # link_list.append(new_article['link'])
+        print(new_article['link'])
         article_list.append(new_article)
-    if cn == 'true':
-        write_to_csv(article_list, 'scps/setting-cn.csv')
-    else:
-        write_to_csv(article_list, 'scps/setting.csv')
+    # if cn == 'true':
+    #     write_to_csv(article_list, 'scps/setting-cn.csv')
+    # else:
+    #     write_to_csv(article_list, 'scps/setting.csv')
+    return article_list
 
 # 征文竞赛
 def get_contest():
@@ -262,15 +271,14 @@ def get_contest():
             new_plus_article['cn'] = 'false'
             new_plus_article['type'] = 'contest'
 
-            link_list.append(new_article['link'])
-            link_list.append(new_plus_article['link'])
+            # link_list.append(new_article['link'])
+            # link_list.append(new_plus_article['link'])
 
-            # print(new_article['type'] +' ' + new_article['link'])
-            
-            # print(new_plus_article['type'] +' ' + new_plus_article['link'])
             if new_article['link'] != None:
+                print(new_article['link'])
                 article_list.append(new_article)
             if new_plus_article['link'] != None:
+                print(new_plus_article['link'])
                 article_list.append(new_plus_article)
         else:
             new_article['title'] = tds[2].text()
@@ -282,10 +290,11 @@ def get_contest():
             new_article['type'] = 'contest'
             
             if new_article['link'] != None:
-                link_list.append(new_article['link'])
-                print(new_article['type'] +' ' + new_article['link'])
+                # link_list.append(new_article['link'])
+                print(new_article['link'])
                 article_list.append(new_article)
-    write_to_csv(article_list, 'scps/contest.csv')
+    # write_to_csv(article_list, 'scps/contest.csv')
+    return article_list
 
 # 中国分部竞赛
 def get_contest_cn():
@@ -305,10 +314,11 @@ def get_contest_cn():
             new_article['contest_link'] = h3('span>a').attr('href')
             new_article['cn'] = 'true'
             new_article['type'] = 'contest'
-            link_list.append(new_article['link'])
-            # print(new_article['type'] +' ' + new_article['link'])
+            # link_list.append(new_article['link'])
+            print(new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'scps/contest-cn.csv')
+    # write_to_csv(article_list, 'scps/contest-cn.csv')
+    return article_list
 
 # 事故记录
 def thread_get_event_record(i):
@@ -333,10 +343,11 @@ def thread_get_event_record(i):
                 new_article['event_type'] = 'interview'
             elif j == 4:
                 new_article['event_type'] = 'addon'
-            link_list.append(new_article['link'])
-            # print(new_article['event_type'] + ' ' + new_article['link'])
+            # link_list.append(new_article['link'])
+            print(new_article['link'])
             article_list.append(new_article)
-    write_to_csv(article_list, 'scps/event-scps-' + str(i) + '.csv')
+    # write_to_csv(article_list, 'scps/event-scps-' + str(i) + '.csv')
+    return article_list
 
 def get_archives():
     thread_joke_cn = multiprocessing.Process(target=thread_get_archives, args=('http://scp-wiki-cn.wikidot.com/joke-scps-cn',\
@@ -425,7 +436,7 @@ def get_events():
         thread_event.start()
         thread_event.join()
 
-# 旧spider
+# 旧spider，抓取所有目录及正文
 def run_old_spider():
     get_archives()
     get_series()
@@ -438,80 +449,48 @@ def run_old_spider():
 # 新spider先不爬正文，储存基本信息和链接，链接去重后挨个抓正文，
 # 正文中有的链接再存储一遍，和之前的链接列表对比再次去重抓取
 def run_category_spider():
+    total_scp_list = []
+    sys.stdout = Logger("category_list.txt")
     for i in range(1, 6):
-        thread_get_series(i)
-    get_series_cn()
+        total_scp_list = total_scp_list + thread_get_series(i)
+    total_scp_list = total_scp_list + get_series_cn()
     for i in range(1, 4):
-        thread_get_story(i)
-    thread_get_tales('false')
-    thread_get_tales('true')
+        total_scp_list = total_scp_list + thread_get_story(i)
+    total_scp_list = total_scp_list + thread_get_tales('false')
+    total_scp_list = total_scp_list + thread_get_tales('true')
     # 故事系列
-    thread_get_story_series('true', 0,)
-    thread_get_story_series('false', 1,)
-    thread_get_story_series('false', 2,)
+    total_scp_list = total_scp_list + thread_get_story_series('true', 0,)
+    total_scp_list = total_scp_list + thread_get_story_series('false', 1,)
+    total_scp_list = total_scp_list + thread_get_story_series('false', 2,)
     # 设定
-    thread_get_setting('false')
-    thread_get_setting('true')
+    total_scp_list = total_scp_list + thread_get_setting('false')
+    total_scp_list = total_scp_list + thread_get_setting('true')
     
     # 中国原创故事和contest独立
-    get_tales_cn_by_time()
-    get_contest()
-    get_contest_cn()
+    total_scp_list = total_scp_list + get_tales_cn_by_time()
+    total_scp_list = total_scp_list + get_contest()
+    total_scp_list = total_scp_list + get_contest_cn()
     for i in range(1, 6):
-        thread_get_event_record(i)
+        total_scp_list = total_scp_list + thread_get_event_record(i)
 
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps-cn',\
-        'div.content-panel>ul>li', 'true', 'joke',)
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps',\
-        'div.content-panel>ul>li', 'false', 'joke',)
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/archived-scps',\
-        'div#page-content div.content-panel ul li', 'false', 'archived',)
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-ex',\
-        'div.content-panel>ul>li', 'false', 'ex',)
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/decommissioned-scps-arc',\
-        'div.content-panel>ul>li', 'false', 'decommissioned',)
-    thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-removed',\
-        'div.content-panel>ul>li', 'false', 'removed',)
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps-cn',\
+        'div.content-panel>ul>li', 'true', 'joke')
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/joke-scps',\
+        'div.content-panel>ul>li', 'false', 'joke')
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/archived-scps',\
+        'div#page-content div.content-panel ul li', 'false', 'archived')
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-ex',\
+        'div.content-panel>ul>li', 'false', 'ex')
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/decommissioned-scps-arc',\
+        'div.content-panel>ul>li', 'false', 'decommissioned')
+    total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-removed',\
+        'div.content-panel>ul>li', 'false', 'removed')
 
-    sys.stdout = Logger()
-    print(link_list)
-
-
-
-# 合并文件，把前缀相同的文件合并成一个
-def merge_files(file_name_list, file_prefix):
-    with open(file_name_list[0], 'r+', encoding='utf-8') as f:
-        append_str = f.read()
-    for i in range(1, len(file_name_list)):
-        with open(file_name_list[i], 'r+', encoding='utf-8') as f:
-            next(f)
-            append_str += f.read()
-    with open(file_prefix + '-merge.csv', 'w+', encoding='utf-8') as f:
-        f.write(append_str)
-    
-
-def merge_all_file():
-    files = ['scps/' + name for name in os.listdir('scps/')]
-    print(files)
-    # merge_files(files[0:13], 'scp-1') # 7m
-    # merge_files(files[13:19], 'scp-2') # 40m
-    # merge_files(files[19:27], 'scp-3') # 31m
-    # merge_files(files[27:], 'scp-4') # 31m
-    merge_files(files, 'scp-category') # 31m
-
-
-def write_to_csv(article_list, file_name):
-    with open(file_name, 'w+', encoding='utf-8', newline='') as f:
-        # 统一header，方便后续合并文件一起上传
-        writer = csv.DictWriter(f, ['link', 'title', 'type', 'detail', 'cn', 'not_found', \
-            'author', 'desc', 'snippet', 'subtext', 'contest_name', 'contest_link', \
-            'created_time', 'month', 'event_type', 'page_code', 'number', 'story_num'])
-        writer.writeheader()
-        writer.writerows(article_list)
+    write_to_csv(total_scp_list, "scp-inital.csv")
 
 
 class Logger(object):
-    def __init__(self, filename="category_list.txt"):
+    def __init__(self, filename="default_log.txt"):
         self.terminal = sys.stdout
         self.log = open(filename, "a")
  
@@ -522,53 +501,49 @@ class Logger(object):
     def flush(self):
         pass
 
-
-        
-def get_detail_by_link(link_list, total_link_list, total_category_list):
-    for link in link_list:
-        try:
-            if 'http://scp-wiki-cn.wikidot.com' in link:
-                link = link[30:]
+# 根据链接抓取内容，更新到category文件中，同时把正文中新出现的链接记录下来
+def get_detail_by_link(link, total_link_list, total_category_list, new_link):
+    try:
+        print(link)
+        if 'http://scp-wiki-cn.wikidot.com' in link:
+            detail_doc = pq(link)
+        else:
             detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
-            detail_dom = list(detail_doc('div#page-content').items())[0]
-            for category in total_category_list:
-                if category['link'] == link:
-                    category['not_found'] = "false"
-                    category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
-            a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
-            for a in a_in_detail.items():
-                href = a.attr('href')
-                if href.startswith('/') and href not in total_link_list:
-                        print(href)
-                        new_found_link_list.append(href)
-                        title = a.text()
-                        new_category = {
-                            'title': title,
-                            'link': href,
-                            'type': 'none'
-                        }
-                        new_found_category_list.append(new_category)
-        except:
-            for category in total_category_list:
-                if category['link'] == link:
-                    category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
-                    category['not_found'] = "true"
+        detail_dom = list(detail_doc('div#page-content').items())[0]
+        for category in total_category_list:
+            if category['link'] == link:
+                category['not_found'] = "false"
+                category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
+        a_in_detail = detail_dom.remove('.footer-wikiwalk-nav')('a')
+        if len(list(a_in_detail.items())) > 30:
+            return
+        for a in a_in_detail.items():
+            href = a.attr('href')
+            if href.startswith('/') and href not in total_link_list:
+                print('new link = ' + href)
+                new_link.append(href)
+                new_found_link_list.append(href)
+                title = a.text()
+                new_category = {
+                    'title': title,
+                    'link': href,
+                    'type': 'none'
+                }
+                new_found_category_list.append(new_category)
+    except:
+        for category in total_category_list:
+            if category['link'] == link:
+                category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
+                category['not_found'] = "true"
 
-def get_list_from_file():
-    with open("category_list.txt", 'r') as f:
-        link_list = list(f.read()[2:-2].split("\', \'"))
-        real_list = []
-        for link in link_list:
-            if link not in real_list:
-                real_list.append(link)
-        return real_list
-
-def get_category_from_file():
-    with open("scp-category-new-1.csv", 'r', encoding='utf-8', newline='') as f:
-        # 统一header，方便后续合并文件一起上传
-        reader = csv.DictReader(f)
-        category_list = [dict(order_dict) for order_dict in reader]
-        return category_list
+# 链接列表遍历
+def get_detail_by_link_list(link_list, total_link_list, total_category_list):
+    new_link = []
+    for link in link_list:
+        get_detail_by_link(link, total_link_list, total_category_list, new_link)
+    sys.stdout = Logger("new_found_link_1.txt")
+    for l in new_link:
+        print(l)
 
 def get_detail_order():
     total_link_list = get_list_from_file() # 去重
@@ -587,10 +562,21 @@ def get_detail_order():
 
 
 if __name__ == '__main__':
+    # new spider
+    run_category_spider()
+    # get_detail_order()
     # test
     # run_category_spider()
     # merge_all_file()
     # get_list_from_file()
     # get_category_from_file()
-    get_detail_order()
+    # get_detail_order()
+    # new_found_category_list = get_not_found_category_from_file('scp-category-new-1.csv')
+    # total_link_list = get_list_from_file('final_new_found_link.txt')
+    # total_category_list = get_category_from_file()
+    # print('not found category list size:' + str(len(new_found_category_list)))
+    # sys.stdout = Logger("new_found_link.txt")
+    # get_detail_by_link([no_found['link'] for no_found in new_found_category_list], total_link_list, total_category_list)
+    # write_to_csv(new_found_category_list, "new-found-category-9.csv")
+    # write_to_csv(total_category_list, "scp-category-new-9.csv")
     

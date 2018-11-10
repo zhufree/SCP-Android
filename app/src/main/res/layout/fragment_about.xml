@@ -35,7 +35,8 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"/>
             <ImageView
                 android:id="@+id/iv_user_head"
                 android:layout_width="100dp"
@@ -92,7 +93,6 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:background="?attr/itemBg"
                 android:gravity="center"
                 android:text="app使用说明（重要）"
@@ -109,7 +109,6 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
                 android:background="?attr/itemBg"
                 android:gravity="center"
                 android:text="关于开发者"
@@ -161,10 +160,25 @@
                 android:textColor="?attr/darkText"
                 android:text="重新同步云端数据"
                 android:background="?attr/itemBg"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_query_enter"
                 app:layout_constraintTop_toBottomOf="@id/tv_init_data"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/tv_query_enter"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:gravity="center"
+                android:textColor="?attr/darkText"
+                android:text="用户调查问卷"
+                android:background="?attr/itemBg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_reset_data"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 

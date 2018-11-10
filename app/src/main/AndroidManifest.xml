@@ -27,11 +27,11 @@
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.category.CategoryActivity" />
+        <activity android:name=".view.category.CategoryActivity" />
         <activity android:name=".view.detail.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
 
@@ -47,7 +47,8 @@
         <activity android:name=".view.about.AboutAppActivity" />
         <activity android:name=".view.about.AboutMeActivity" />
         <activity android:name=".view.search.SearchActivity" />
-        <activity android:name=".view.about.LikeActivity"/>
+        <activity android:name=".view.about.LikeActivity" />
+        <activity android:name=".view.WebActivity"></activity>
     </application>
 
 </manifest>

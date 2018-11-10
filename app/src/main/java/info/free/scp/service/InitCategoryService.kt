@@ -43,7 +43,7 @@ class InitCategoryService : IntentService("initDataService") {
             Log.i("loading", "requestCount = $value")
             field = value
             sendThreadStatus(3*value)
-            if (value == 29) {
+            if (value == 31) {
                 ScpDao.getInstance().insertCategoryData(scpModels)
                 PreferenceUtil.setInitCategoryFinish(true)
                 sendThreadStatus(100)
@@ -131,7 +131,7 @@ class InitCategoryService : IntentService("initDataService") {
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1
             val next = i + 1
-            if (next < 29) {
+            if (next < 31) {
                 getAllScpList(next)
             }
         }

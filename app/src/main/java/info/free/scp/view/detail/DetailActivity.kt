@@ -1,7 +1,5 @@
 package info.free.scp.view.detail
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -13,6 +11,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.v4.widget.NestedScrollView
 import android.util.Log
+import android.view.KeyEvent
+import android.view.KeyEvent.KEYCODE_BACK
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View.GONE
@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 class DetailActivity : BaseActivity() {
 
     private var readMode = 0 // 0 离线 1 网页
+    private var showSecretContent = false
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -41,6 +42,8 @@ class DetailActivity : BaseActivity() {
     private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
     private var currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
     private var screenHeight = 0
+    private val history: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private var historyIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,11 +52,6 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
         initSwitchBtn()
-
-        nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
-                                                     _: Int  ->
-            checkHasRead()
-        }
 
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
@@ -71,6 +69,11 @@ class DetailActivity : BaseActivity() {
             scp = ScpDao.getInstance().getScpModelById(sId)
         }
 
+        scp?.let {
+            historyIndex = history.size
+            history.add(it)
+        }
+
         setData(scp)
         webView?.requestFocus()
 
@@ -86,6 +89,10 @@ class DetailActivity : BaseActivity() {
                         val scpList = ScpDao.getInstance().getScpModelByLink(postString.toString())
                         if (scpList.isNotEmpty()) {
                             scp = scpList[0]
+                            scp?.let {
+                                historyIndex = history.size
+                                history.add(it)
+                            }
                             setData(scp)
                         }
                     }
@@ -99,6 +106,10 @@ class DetailActivity : BaseActivity() {
                 Handler().postDelayed({
                     checkHasRead()
                 }, 2000)
+                nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
+                                                             _: Int  ->
+                    checkHasRead()
+                }
             }
         }
 
@@ -136,6 +147,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setData(scp: ScpModel?) {
         scp?.let {
+
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
             // 更新标题
@@ -149,6 +161,8 @@ class DetailActivity : BaseActivity() {
                 webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                         "text/html", "utf-8", null)
             }
+            nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
+                                                         _: Int  -> }
             Handler().postDelayed({
                 nsv_web_wrapper?.scrollTo(0, 0)
             }, 1000)
@@ -159,7 +173,9 @@ class DetailActivity : BaseActivity() {
     private fun initToolbar() {
         setSupportActionBar(detail_toolbar)
         detail_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        detail_toolbar?.setNavigationOnClickListener { finish() }
+        detail_toolbar?.setNavigationOnClickListener {
+            finish()
+        }
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
             scp?.let {s ->
@@ -182,6 +198,18 @@ class DetailActivity : BaseActivity() {
                             webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
                                     "text/html", "utf-8", null)
                         }
+                    }
+                    // 显示隐藏内容
+                    R.id.show_secret_content -> {
+                        showSecretContent = !showSecretContent
+                        it.setTitle(if (showSecretContent) R.string.hide_secret_content else R.string.show_secret_content)
+                        webView.loadDataWithBaseURL(null, currentTextStyle +
+                                (if (showSecretContent) detailHtml.replace("display:none;", "")
+                                        .replace("display: none;", "")
+                                        .replace("display: none", "")
+                                        .replace("display:none", "")
+                                        else detailHtml),
+                                "text/html", "utf-8", null)
                     }
                     R.id.report -> {
                         val reportView = LayoutInflater.from(this@DetailActivity)
@@ -267,6 +295,23 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
+            if (historyIndex > 0) {
+                setData(history[historyIndex - 1])
+                history.removeAt(historyIndex)
+                historyIndex--
+                return true
+            } else if (webView.canGoBack()) {
+                webView.goBack()
+                return true
+            } else {
+                return super.onKeyDown(keyCode, event)
+            }
+        } else {
+            return super.onKeyDown(keyCode, event)
+        }
+    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.detail_menu, menu)

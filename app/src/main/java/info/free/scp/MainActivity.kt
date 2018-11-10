@@ -245,7 +245,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
     private fun checkInitDetailData() {
-        if (PreferenceUtil.getDetailDataLoadCount() < 29) {
+        if (PreferenceUtil.getDetailDataLoadCount() < 31) {
             // 正文没有加载完
             if (enabledWifi()) {
                 initDetailData()
@@ -309,6 +309,9 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
                 if (config.key == "db_last_update_time") {
                     PreferenceUtil.setServerLastUpdateTime(config.value)
                 }
+                if (config.key == "query_link") {
+                    PreferenceUtil.saveQueryLink(config.value)
+                }
             }
             if (currentVersionCode < newVersionCode) {
                 Log.i("version", "current = $currentVersionCode, new = $newVersionCode, 需要升级")
@@ -354,7 +357,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
     override fun onCategoryClick(type: Int) {
-        Toaster.show("jump")
         val intent = Intent()
         intent.putExtra("saveType", type)
         intent.setClass(this, CategoryActivity::class.java)

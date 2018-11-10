@@ -51,16 +51,19 @@
 
     <string name="offline_mode">切换离线模式</string>
     <string name="online_mode">切换网页模式</string>
+    <string name="show_secret_content">显示折叠内容</string>
+    <string name="hide_secret_content">隐藏折叠内容</string>
+    <string name="menu_report">反馈问题</string>
+    <string name="menu_open_in_browser">在浏览器中打开</string>
+    <string name="menu_copy_link">复制链接</string>
+    <string name="menu_like">收藏</string>
 
     <string name="next_article">下一篇</string>
     <string name="preview_article">上一篇</string>
 
     <string name="menu_reverse">逆序</string>
     <string name="menu_cn">cn</string>
-    <string name="menu_report">反馈问题</string>
-    <string name="menu_open_in_browser">在浏览器中打开</string>
-    <string name="menu_copy_link">复制链接</string>
-    <string name="menu_like">收藏</string>
+
     <string name="menu_search">搜索</string>
     <string name="menu_random">随机</string>
 

@@ -131,6 +131,14 @@ object PreferenceUtil {
         return getStringValue("update", "serverLastUpdateTime")
     }
 
+    fun getQueryLink():String{
+        return getStringValue("update", "queryLink")
+    }
+
+    fun saveQueryLink(link: String) {
+        setStringValue("update", "queryLink", link)
+    }
+
     /**
      * 积分系统
      */

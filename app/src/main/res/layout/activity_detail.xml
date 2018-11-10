@@ -27,12 +27,12 @@
         android:id="@+id/nsv_web_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="?attr/containerBg"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="?attr/containerBg">
+            android:layout_height="match_parent">
 
             <ProgressBar
                 android:id="@+id/pbLoading"

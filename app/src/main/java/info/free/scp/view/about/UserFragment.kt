@@ -9,16 +9,16 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDao
-import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
+import info.free.scp.util.*
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
 import kotlin.random.Random
@@ -168,14 +168,14 @@ class UserFragment : BaseFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK && data != null) {
             val uri = data.data
-            if (uri != null) {
+
+            uri?.let {
                 try {
                     val file = Utils.getFileByUri(uri, context!!)
-                    file?.let{
-                        EventUtil.onEvent(context, EventUtil.changeHeadImg, file.path)
-                        Utils.save(it, "scp_user_head")
-                        tv_nickname?.text = file.path
-                        iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(file.path))
+                    file?.let{f ->
+                        EventUtil.onEvent(context, EventUtil.changeHeadImg, f.path)
+                        Utils.save(f, "scp_user_head")
+                        iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
                     }
                 } catch (e: Exception) {
                     Log.e("Exception", e.message, e)

@@ -32,7 +32,7 @@ class SearchActivity : BaseActivity() {
             if (keyword.isEmpty()) {
                 Toaster.show("请输入正确的关键词")
             } else {
-                EventUtil.onEvent(this, EventUtil.doSearch)
+                EventUtil.onEvent(this, EventUtil.doSearch, keyword)
                 PreferenceUtil.addPoints(5)
                 resultList.clear()
                 resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))

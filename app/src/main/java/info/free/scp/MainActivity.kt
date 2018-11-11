@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
-import com.umeng.analytics.MobclickAgent
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH
@@ -18,6 +17,8 @@ import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
+import info.free.scp.util.EventUtil
+import info.free.scp.util.EventUtil.chooseJob
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
@@ -34,7 +35,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
 //    private val feedFragment = FeedFragment.newInstance()
-    private val aboutFragment = UserFragment.newInstance()
+    private val userFragment = UserFragment.newInstance()
     private var remoteDbVersion = -1
     private var isDownloadingDetail = false
 
@@ -51,14 +52,16 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
             }
             if (progress == 100) {
                 progressDialog?.dismiss()
-                AlertDialog.Builder(this@MainActivity)
-                        .setTitle("Notice")
-                        .setMessage("基金会传递的目录信息已接收完毕，由于正文大小较大，传输过程可能会持续很长影响" +
-                                "阅读体验，因此将在使用过程中在后台加载，具体进度可查看通知栏，" +
-                                "在所有数据传输完毕之后将可以离线浏览所有目录下的正文。\n加载过程请尽量将app保持" +
-                                "开启状态，同时手机至少保留120M存储空间。")
-                        .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
+                if (!isFinishing) {
+                    AlertDialog.Builder(this@MainActivity)
+                            .setTitle("Notice")
+                            .setMessage("基金会传递的目录信息已接收完毕，由于正文大小较大，传输过程可能会持续很长影响" +
+                                    "阅读体验，因此将在使用过程中在后台加载，具体进度可查看通知栏，" +
+                                    "在所有数据传输完毕之后将可以离线浏览所有目录下的正文。\n加载过程请尽量将app保持" +
+                                    "开启状态，同时手机至少保留120M存储空间。")
+                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                            .create().show()
+                }
             }
         }
     }
@@ -105,12 +108,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         //                return@OnNavigationItemSelectedListener true
         //            }
             R.id.navigation_about -> {
-                if (aboutFragment.isAdded) {
-                    transaction.show(aboutFragment)
+                if (userFragment.isAdded) {
+                    transaction.show(userFragment)
                 } else {
-                    transaction.add(R.id.flMainContainer, aboutFragment)
+                    transaction.add(R.id.flMainContainer, userFragment)
                 }
-                currentFragment = aboutFragment
+                currentFragment = userFragment
             }
         }
         transaction?.commit()
@@ -156,6 +159,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
             nameInputDialog.show()
             nameInputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 PreferenceUtil.saveNickname(inputView.et_report.text.toString())
+                EventUtil.onEvent(this, EventUtil.enterNickname, inputView.et_report.text.toString())
                 nameInputDialog.dismiss()
                 checkJob()
             }
@@ -165,12 +169,27 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
 
     private fun checkJob() {
         if (PreferenceUtil.getNickname().isNotEmpty() && PreferenceUtil.getJob().isEmpty()) {
-            val jobList = arrayOf("外勤特工","机动特遣队作业员","收容专家","研究员","安全人员","战术反应人员")
+            val jobList = arrayOf("收容专家","研究员","安全人员","战术反应人员","外勤特工","机动特遣队作业员")
             AlertDialog.Builder(this)
                     .setTitle("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业")
-                    .setItems(jobList){ dialog, which ->
-                        PreferenceUtil.setJob(jobList[which])
-                        dialog.dismiss()
+                    .setItems(jobList){ out, which ->
+                        val field = out?.javaClass?.superclass?.getDeclaredField(
+                                        "mShowing")
+                        field?.isAccessible = true
+                        //   将mShowing变量设为false，表示对话框已关闭
+                        field?.set(out, false)
+                        AlertDialog.Builder(this)
+                                .setTitle(jobList[which])
+                                .setMessage(PreferenceUtil.getDescForJob(jobList[which]))
+                                .setPositiveButton("确定选择（暂时不可更改）") { inner, _ ->
+                                    PreferenceUtil.setJob(jobList[which])
+                                    EventUtil.onEvent(this, chooseJob, jobList[which])
+                                    inner.dismiss()
+                                    field?.set(out, true)
+                                    out.dismiss()
+                                }
+                                .setNegativeButton("我手滑了") { dialog, _ -> dialog.dismiss() }
+                                .create().show()
                     }
                     .create().show()
         }
@@ -182,10 +201,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             PreferenceUtil.setLastCheckUpdateTime(0)
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
-            if (currentVersionCode == 7) {
-                onResetDataClick()
-                return
-            }
         }
         // 普通情况下一天检测一次更新
         if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
@@ -353,7 +368,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     fun refreshTheme() {
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
-        aboutFragment.refreshTheme()
+        userFragment.refreshTheme()
     }
 
     override fun onCategoryClick(type: Int) {

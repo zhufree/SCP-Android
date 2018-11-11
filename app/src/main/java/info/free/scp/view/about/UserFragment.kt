@@ -75,7 +75,7 @@ class UserFragment : BaseFragment() {
             else -> {
                 PreferenceUtil.getJobNameByLevel(0)
             }
-        } + Random(5).nextInt(600)
+        } + Random(System.currentTimeMillis()).nextInt(600)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,12 +109,12 @@ class UserFragment : BaseFragment() {
             EventUtil.onEvent(activity, EventUtil.clickAboutMe)
             activity?.startActivity(Intent(activity, AboutMeActivity::class.java))
         }
-        tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "白天模式" else "夜间模式"
+        tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式"
 
         tv_change_theme?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickChangeTheme)
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
-            tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "白天模式" else "夜间模式"
+            tv_change_theme?.text = if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式"
         }
         tv_init_data?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickInitData)
@@ -134,6 +134,7 @@ class UserFragment : BaseFragment() {
         }
         tv_query_enter?.setOnClickListener {
             if (PreferenceUtil.getQueryLink().isNotEmpty()) {
+                EventUtil.onEvent(context, EventUtil.clickQuery)
                 val queryIntent = Intent()
                 queryIntent.action = "android.intent.action.VIEW"
                 val updateUrl = Uri.parse(PreferenceUtil.getQueryLink())
@@ -160,6 +161,8 @@ class UserFragment : BaseFragment() {
         tv_init_data?.setBackgroundColor(ThemeUtil.itemBg)
         tv_reset_data?.setTextColor(ThemeUtil.darkText)
         tv_reset_data?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_query_enter?.setTextColor(ThemeUtil.darkText)
+        tv_query_enter?.setBackgroundColor(ThemeUtil.itemBg)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -169,7 +172,9 @@ class UserFragment : BaseFragment() {
                 try {
                     val file = Utils.getFileByUri(uri, context!!)
                     file?.let{
+                        EventUtil.onEvent(context, EventUtil.changeHeadImg, file.path)
                         Utils.save(it, "scp_user_head")
+                        tv_nickname?.text = file.path
                         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(file.path))
                     }
                 } catch (e: Exception) {

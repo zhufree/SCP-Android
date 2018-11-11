@@ -121,7 +121,7 @@ class CategoryActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (pageType == 1) {
+        if (pageType == 1 && currentCategoryPosition > -1 && currentCategoryPosition < categoryList.size) {
             getScpList(currentCategoryPosition)
             rv_scp_list?.scrollToPosition(currentScpPosition)
         }

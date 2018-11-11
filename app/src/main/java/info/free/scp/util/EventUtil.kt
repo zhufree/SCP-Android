@@ -47,6 +47,13 @@ object EventUtil {
     const val clickLikeList = "event_34"
     const val clickOpenInBrowser = "event_35"
     const val clickCopyLink = "event_36"
+    const val showSecretContent = "event_37"
+    const val hideSecretContent = "event_38"
+    const val chooseJob = "event_39"
+    const val enterNickname = "event_40"
+    const val cancelRead = "event_41"
+    const val clickQuery = "event_42"
+    const val changeHeadImg = "event_43"
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)

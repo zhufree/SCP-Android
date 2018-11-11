@@ -2,6 +2,7 @@ package info.free.scp.util
 
 import android.content.Context
 import android.content.SharedPreferences
+import info.free.scp.R
 import info.free.scp.ScpApplication
 import java.util.*
 import java.util.Calendar.YEAR
@@ -209,6 +210,36 @@ object PreferenceUtil {
             }
         }
     }
+
+    private val jobDesc = arrayOf(R.string.job_desc_1,R.string.job_desc_2,R.string.job_desc_3,
+            R.string.job_desc_4,R.string.job_desc_5,R.string.job_desc_6)
+
+    fun getDescForJob(job: String): Int{
+        return when (job) {
+            "收容专家" -> {
+                jobDesc[0]
+            }
+            "研究员" -> {
+                jobDesc[1]
+            }
+            "安全人员" -> {
+                jobDesc[2]
+            }
+            "战术反应人员" -> {
+                jobDesc[3]
+            }
+            "外勤特工" -> {
+                jobDesc[4]
+            }
+            "机动特遣队作业员" -> {
+                jobDesc[5]
+            }
+            else ->{
+                jobDesc[6]
+            }
+        }
+    }
+
 
     /**
      * 工具方法

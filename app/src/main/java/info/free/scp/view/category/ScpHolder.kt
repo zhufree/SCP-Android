@@ -7,6 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
+import info.free.scp.util.EventUtil
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**
@@ -25,11 +26,11 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
             AlertDialog.Builder(itemView?.context)
                     .setTitle("取消已读")
                     .setMessage("是否确定取消已读这篇文档？")
-                    .setPositiveButton("确定") { dialog, _ ->
+                    .setPositiveButton("确定") { _, _ ->
+                        EventUtil.onEvent(itemView?.context, EventUtil.cancelRead, model.link)
                         model.hasRead = if (model.hasRead == 0) 1 else 0
                         ScpDao.getInstance().insertLikeAndReadInfo(model)
                         itemView?.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
-                        dialog.dismiss()
                     }
                     .setNegativeButton("我手滑了") {dialog, _ ->
                         dialog.dismiss()

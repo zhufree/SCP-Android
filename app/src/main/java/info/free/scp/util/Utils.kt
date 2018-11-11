@@ -44,7 +44,7 @@ object Utils {
      * @return 文件对象
      */
     fun saveBitmapFile(bitmap: Bitmap, filename:String): File {
-        val filePath = getAlbumStorageDir("").path + "/$filename"
+        val filePath = getAlbumStorageDir("SCP").path + "/$filename"
         val file = File("$filePath.jpg")
         try {
             val outputStream = BufferedOutputStream(FileOutputStream(file))

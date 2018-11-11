@@ -201,6 +201,8 @@ class DetailActivity : BaseActivity() {
                     }
                     // 显示隐藏内容
                     R.id.show_secret_content -> {
+                        EventUtil.onEvent(this, if (showSecretContent) EventUtil.showSecretContent
+                            else EventUtil.hideSecretContent)
                         showSecretContent = !showSecretContent
                         it.setTitle(if (showSecretContent) R.string.hide_secret_content else R.string.show_secret_content)
                         webView.loadDataWithBaseURL(null, currentTextStyle +
@@ -321,7 +323,7 @@ class DetailActivity : BaseActivity() {
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         scp?.let {
             if (it.like == 1) {
-                val menuItem = menu?.getItem(2)
+                val menuItem = menu?.getItem(5)
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
         }

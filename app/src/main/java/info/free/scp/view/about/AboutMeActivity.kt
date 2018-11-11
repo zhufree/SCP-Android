@@ -31,8 +31,7 @@ class AboutMeActivity : BaseActivity() {
             PreferenceUtil.addPoints(2)
             Utils.saveBitmapFile((resources.getDrawable(R.drawable.img_donation) as BitmapDrawable)
                     .bitmap, "scp_donation")
-            MediaScannerConnection.scanFile(this, arrayOf(Environment
-                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path + "/scp_donation.jpg"),
+            MediaScannerConnection.scanFile(this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
                     null, null)
             Toaster.showLong("正在跳转到微信扫一扫，请从相册选取赞赏二维码随意打赏", context = this)
             Handler().postDelayed({startWechatScan(this)}, 1000)

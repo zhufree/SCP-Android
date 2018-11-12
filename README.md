@@ -2,6 +2,20 @@ SCP Android 第三方客户端
 
 `kotlin`
 
+# game list
+- 以撒
+- distrust
+- 幽浮
+- 绣湖/ 逃离方块
+- 恶灵附身
+- 艾迪芬奇的记忆
+- 克苏鲁的呼唤：官方游戏
+
+# scp game list
+(【SCP】器关的彷徨 【SCP】器関ノ彷徨 -The will of a single Tale-【DEMOver.】)[https://store.steampowered.com/app/836940/SCP_The_will_of_a_single_TaleDEMOver/]
+SCP：秘密实验室 https://store.steampowered.com/app/700330/SCP_Secret_Laboratory/
+Daughter of Shadows: An SCP Breach Event https://store.steampowered.com/app/449820/?utm_source=indienova
+
 ---
 
 # v0.0.1
@@ -9,7 +23,7 @@ SCP Android 第三方客户端
 
 TODO 8.23
 - [x] 整理adapter基类
-- [x] 整理scp网站的内容结构，为之后划分板块做准备 （PNG已上传git)
+- [x] 整理scp网站的内容结构，为之后划分板块做准备 （PNG已上传)
 - [x] toolbar展开菜单theme修改
 - [x] 整理笔记
 

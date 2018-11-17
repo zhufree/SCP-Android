@@ -40,7 +40,11 @@ class DetailActivity : BaseActivity() {
     private var detailHtml = ""
     private val nightTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#a0a0a0;}</style>"
     private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
-    private var currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
+    private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
+    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+    private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
+    private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
+    private val jsScript = jqScript + initScript + "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
     private var screenHeight = 0
     private val history: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var historyIndex = 0
@@ -56,7 +60,7 @@ class DetailActivity : BaseActivity() {
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
         webView?.setBackgroundColor(ThemeUtil.containerBg)
-        currentTextStyle = if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle
+        webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
         // 有些不是以/开头的而是完整链接
@@ -158,7 +162,8 @@ class DetailActivity : BaseActivity() {
                 webView.loadUrl(url)
             } else {
                 pbLoading.visibility = GONE
-                webView.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                webView.loadDataWithBaseURL( "file:///android_asset/", currentTextStyle
+                        + jsScript + detailHtml,
                         "text/html", "utf-8", null)
             }
             nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
@@ -195,23 +200,9 @@ class DetailActivity : BaseActivity() {
                         } else {
                             readMode = 0
                             it.setTitle(R.string.online_mode)
-                            webView?.loadDataWithBaseURL(null, currentTextStyle + detailHtml,
+                            webView?.loadDataWithBaseURL("file:///android_asset/", currentTextStyle + detailHtml,
                                     "text/html", "utf-8", null)
                         }
-                    }
-                    // 显示隐藏内容
-                    R.id.show_secret_content -> {
-                        EventUtil.onEvent(this, if (showSecretContent) EventUtil.showSecretContent
-                            else EventUtil.hideSecretContent)
-                        showSecretContent = !showSecretContent
-                        it.setTitle(if (showSecretContent) R.string.hide_secret_content else R.string.show_secret_content)
-                        webView.loadDataWithBaseURL(null, currentTextStyle +
-                                (if (showSecretContent) detailHtml.replace("display:none;", "")
-                                        .replace("display: none;", "")
-                                        .replace("display: none", "")
-                                        .replace("display:none", "")
-                                        else detailHtml),
-                                "text/html", "utf-8", null)
                     }
                     R.id.report -> {
                         val reportView = LayoutInflater.from(this@DetailActivity)
@@ -281,7 +272,7 @@ class DetailActivity : BaseActivity() {
             PreferenceUtil.addPoints(1)
             scp?.let { s ->
                 when(s.index) {
-                    14001 -> Toaster.show("已经是最后一篇了")
+                    15400 -> Toaster.show("已经是最后一篇了")
                     else -> {
                         scp = ScpDao.getInstance().getNextScp(s.index)
                         setData(scp)
@@ -323,7 +314,7 @@ class DetailActivity : BaseActivity() {
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         scp?.let {
             if (it.like == 1) {
-                val menuItem = menu?.getItem(5)
+                val menuItem = menu?.getItem(0)
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
         }

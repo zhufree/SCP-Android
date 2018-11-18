@@ -178,16 +178,13 @@ class CategoryActivity : BaseActivity() {
             }
             SERIES_CN -> {
                 pageType = 0
-                categoryList.addAll((0 until 9).map { it*100 })
+                categoryList.addAll((0 until 10).map { it*100 })
             }
             SERIES_STORY -> {
                 pageType = 0
-                categoryList.addAll(arrayOf("SCP系列1故事版1~500", "SCP系列1故事版501~1000", "SCP系列1故事版1001~1500",
-                        "SCP系列1故事版1501~1808", "SCP系列2故事版1~500", "SCP系列2故事版501~1000", "SCP系列2故事版1001~1193",
-                        "SCP系列3故事版1~500", "SCP系列3故事版501~1000", "SCP系列3故事版1000~1211"))
-                categoryList.addAll((0 until 9).map { "SCP系列1故事版${it*200 + 1}~${min(it*200+200, 1808)}" })
-                categoryList.addAll((0 until 6).map { "SCP系列2故事版${it*200 + 1}~${min(it*200+200, 1193)}" })
-                categoryList.addAll((0 until 7).map { "SCP系列3故事版${it*200 + 1}~${min(it*200+200, 1211)}" })
+                categoryList.addAll((0 until 9).map { "SCP系列1故事版${it*200 + 1}~${min(it*200+200, 2000)}" })
+                categoryList.addAll((0 until 6).map { "SCP系列2故事版${it*200 + 1}~${min(it*200+200, 1200)}" })
+                categoryList.addAll((0 until 7).map { "SCP系列3故事版${it*200 + 1}~${min(it*200+200, 1300)}" })
             }
             SERIES_ARCHIVED -> {
                 pageType = 0

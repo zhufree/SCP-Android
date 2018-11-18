@@ -1,4 +1,4 @@
-package info.free.scp.view.about
+package info.free.scp.view.user
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,7 @@ import android.view.View
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
+import info.free.scp.util.EventUtil
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
@@ -20,6 +21,7 @@ class LikeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventUtil.onEvent(this, EventUtil.clickLikeList)
         setContentView(R.layout.activity_like)
         initToolbar()
 

@@ -44,11 +44,25 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".view.about.AboutAppActivity" />
-        <activity android:name=".view.about.AboutMeActivity" />
+        <activity android:name=".view.user.AboutAppActivity" >
+            <intent-filter>
+                <action android:name="info.free.scp.view.user.AboutAppActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".view.user.AboutMeActivity" >
+            <intent-filter>
+                <action android:name="info.free.scp.view.user.AboutMeActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".view.search.SearchActivity" />
-        <activity android:name=".view.about.LikeActivity" />
-        <activity android:name=".view.WebActivity"></activity>
+        <activity android:name=".view.user.LikeActivity" >
+            <intent-filter>
+                <action android:name="info.free.scp.view.user.LikeActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

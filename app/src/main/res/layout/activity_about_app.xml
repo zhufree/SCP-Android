@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="?attr/containerBg"
     android:orientation="vertical"
-    tools:context="info.free.scp.view.about.AboutAppActivity">
+    tools:context="info.free.scp.view.user.AboutAppActivity">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"

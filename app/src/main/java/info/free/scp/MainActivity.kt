@@ -22,7 +22,7 @@ import info.free.scp.util.EventUtil.chooseJob
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
-import info.free.scp.view.about.UserFragment
+import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryActivity
@@ -248,7 +248,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
             } else {
                 AlertDialog.Builder(this)
                         .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择初始化数据" +
+                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择同步云端数据" +
                                 "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
                         .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
                         .create().show()

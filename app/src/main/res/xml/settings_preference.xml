@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:textColor="?attr/darkText"
+        android:title="@string/like_list">
+        <intent android:action="info.free.scp.view.user.LikeActivity" />
+    </Preference>
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="dark_mode"
+        android:textColor="?attr/darkText"
+        android:title="@string/dark_mode" />
+    <Preference
+        android:textColor="?attr/darkText"
+        android:title="@string/instructions">
+        <intent android:action="info.free.scp.view.user.AboutAppActivity" />
+    </Preference>
+    <Preference
+        android:textColor="?attr/darkText"
+        android:title="@string/about_developer">
+        <intent android:action="info.free.scp.view.user.AboutMeActivity" />
+    </Preference>
+    <Preference
+        android:key="copyright"
+        android:textColor="?attr/darkText"
+        android:title="@string/copyright_explained">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://scp-wiki-cn.wikidot.com/licensing-guide" />
+    </Preference>
+    <Preference
+        android:key="sync_data"
+        android:textColor="?attr/darkText"
+        android:title="@string/sync_data">
+
+    </Preference>
+    <Preference
+        android:key="query_enter"
+        android:textColor="?attr/darkText"
+        android:title="@string/query_enter">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="http://freeescp.mikecrm.com/HGDIeJR" />
+    </Preference>
+</PreferenceScreen>

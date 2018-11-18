@@ -77,4 +77,12 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
+    <string name="like_list">收藏列表</string>
+    <string name="dark_mode">夜间模式</string>
+    <string name="instructions">app使用说明</string>
+    <string name="about_developer">关于开发者</string>
+    <string name="copyright_explained">版权说明</string>
+    <string name="query_enter">用户调查问卷</string>
+    <string name="init_data">初始化数据</string>
+    <string name="sync_data">同步云端数据</string>
 </resources>

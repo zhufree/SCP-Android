@@ -1,4 +1,4 @@
-package info.free.scp.view.about
+package info.free.scp.view.user
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Bundle
 import info.free.scp.BuildConfig
 import info.free.scp.R
+import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
@@ -15,6 +16,7 @@ class AboutAppActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventUtil.onEvent(this, EventUtil.clickAboutApp)
         setContentView(R.layout.activity_about_app)
 
         tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"

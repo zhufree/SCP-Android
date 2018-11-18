@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.about.AboutMeActivity"
+    tools:context="info.free.scp.view.user.AboutMeActivity"
     android:background="?attr/containerBg">
 
     <ImageView

@@ -1,4 +1,4 @@
-package info.free.scp.view.about
+package info.free.scp.view.user
 
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
@@ -12,8 +12,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
-import android.net.Uri
-import android.os.Environment
 import android.os.Handler
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -24,6 +22,7 @@ class AboutMeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        EventUtil.onEvent(this, EventUtil.clickAboutMe)
         setContentView(R.layout.activity_about_me)
 
         tv_donation?.setOnClickListener {

@@ -33,7 +33,6 @@ import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 class DetailActivity : BaseActivity() {
 
     private var readMode = 0 // 0 离线 1 网页
-    private var showSecretContent = false
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -106,14 +105,6 @@ class DetailActivity : BaseActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
-                // 判断切换按钮是否可见，如果可以，说明篇幅较短，视为已读
-                Handler().postDelayed({
-                    checkHasRead()
-                }, 2000)
-                nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
-                                                             _: Int  ->
-                    checkHasRead()
-                }
             }
         }
 
@@ -131,22 +122,6 @@ class DetailActivity : BaseActivity() {
                     .create().show()
         }
 
-    }
-
-    private fun checkHasRead() {
-        scp?.let {
-            if (it.hasRead == 0) {
-                val location = IntArray(2)
-                tv_preview?.getLocationOnScreen(location)
-                if (location[1] < screenHeight) {
-                    EventUtil.onEvent(this, EventUtil.finishDetail)
-                    PreferenceUtil.addPoints(5)
-                    it.hasRead = 1
-                    Log.i("detail", "已读完")
-                    ScpDao.getInstance().insertLikeAndReadInfo(it)
-                }
-            }
-        }
     }
 
     private fun setData(scp: ScpModel?) {
@@ -280,11 +255,24 @@ class DetailActivity : BaseActivity() {
                 }
             }
         }
-        tv_random?.setOnClickListener {
-            EventUtil.onEvent(this, EventUtil.clickArticleRandom)
-            PreferenceUtil.addPoints(1)
-            scp = ScpDao.getInstance().getRandomScp()
-            setData(scp)
+        tv_set_has_read?.setOnClickListener {
+            scp?.let {
+                if (it.hasRead == 0) {
+                    // 标记已读
+                    EventUtil.onEvent(this, EventUtil.finishDetail)
+                    PreferenceUtil.addPoints(5)
+                    it.hasRead = 1
+                    ScpDao.getInstance().insertLikeAndReadInfo(it)
+                    tv_set_has_read?.setText(R.string.set_has_not_read)
+                } else {
+                    // 取消已读
+                    EventUtil.onEvent(this, EventUtil.cancelRead)
+                    PreferenceUtil.reducePoints(5)
+                    it.hasRead = 0
+                    ScpDao.getInstance().insertLikeAndReadInfo(it)
+                    tv_set_has_read?.setText(R.string.set_has_read)
+                }
+            }
         }
     }
 

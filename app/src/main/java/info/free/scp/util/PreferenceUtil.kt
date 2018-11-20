@@ -146,6 +146,9 @@ object PreferenceUtil {
     fun addPoints(point: Int) {
         setIntValue("level", "point", getPoint() + point)
     }
+    fun reducePoints(point: Int) {
+        setIntValue("level", "point", getPoint() - point)
+    }
 
     fun getPoint(): Int {
         return getIntValue("level", "point")

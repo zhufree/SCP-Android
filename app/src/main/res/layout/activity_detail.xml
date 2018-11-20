@@ -75,7 +75,7 @@
                 app:layout_constraintTop_toTopOf="@id/tv_preview" />
 
             <TextView
-                android:id="@+id/tv_random"
+                android:id="@+id/tv_set_has_read"
                 android:layout_width="60dp"
                 android:layout_height="30dp"
                 android:background="?attr/itemBg"

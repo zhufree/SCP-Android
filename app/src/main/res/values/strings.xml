@@ -54,6 +54,8 @@
 
     <string name="next_article">下一篇</string>
     <string name="preview_article">上一篇</string>
+    <string name="set_has_read">标记已读</string>
+    <string name="set_has_not_read">取消已读</string>
 
     <string name="menu_reverse">逆序</string>
     <string name="menu_cn">cn</string>

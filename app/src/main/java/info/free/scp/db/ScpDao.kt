@@ -5,11 +5,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
-import com.umeng.analytics.MobclickAgent
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.Toaster
 import java.util.*
 
 
@@ -378,6 +376,36 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 }
                 return resultList
             }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
+    fun searchScpInDetailByKeyword(keyword: String): MutableList<ScpModel>{
+        val sIdList = emptyList<String>().toMutableList()
+        val resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT " + ScpTable.ID + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
+                        + ScpTable.DETAIL_HTML + " LIKE ?;",
+                        arrayOf("%$keyword%"))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            sIdList.add(getCursorString(it, ScpTable.ID))
+                        }
+                    }
+                }
+            }
+            for (sId in sIdList) {
+                val scp = getScpModelById(sId)
+                scp?.let {
+                    resultList.add(it)
+                }
+            }
+            return resultList
 
         } catch (e: Exception) {
             e.printStackTrace()

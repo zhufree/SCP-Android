@@ -76,11 +76,11 @@
 
             <TextView
                 android:id="@+id/tv_set_has_read"
-                android:layout_width="60dp"
+                android:layout_width="80dp"
                 android:layout_height="30dp"
                 android:background="?attr/itemBg"
                 android:gravity="center"
-                android:text="@string/menu_random"
+                android:text="@string/set_has_read"
                 android:textColor="?attr/darkText"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@id/tv_next"

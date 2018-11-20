@@ -131,6 +131,7 @@ class DetailActivity : BaseActivity() {
             invalidateOptionsMenu()
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
+            tv_set_has_read?.setText(if (it.hasRead == 1) R.string.set_has_not_read else R.string.set_has_read)
             detail_toolbar?.title = scp.title
             detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
             if (detailHtml.isEmpty()) {
@@ -141,8 +142,7 @@ class DetailActivity : BaseActivity() {
                         + jsScript + detailHtml,
                         "text/html", "utf-8", null)
             }
-            nsv_web_wrapper?.setOnScrollChangeListener { _: NestedScrollView?, _: Int, _: Int, _: Int,
-                                                         _: Int  -> }
+
             Handler().postDelayed({
                 nsv_web_wrapper?.scrollTo(0, 0)
             }, 1000)

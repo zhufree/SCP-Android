@@ -1,5 +1,6 @@
 package info.free.scp.view.game
 
+import android.content.Context
 import android.support.v4.view.PagerAdapter
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearLayoutManager.VERTICAL
@@ -13,10 +14,12 @@ import info.free.scp.bean.GameModel
  *
  */
 
-class GamePagerAdapter : PagerAdapter() {
+class GamePagerAdapter(val mContext: Context) : PagerAdapter() {
     private var gameTypeList: MutableList<RecyclerView> = emptyList<RecyclerView>().toMutableList()
     private var pcGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var mobileGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
+    private var pcGameAdapter: GameListAdapter? = null
+    private var mobileGameAdapter: GameListAdapter? = null
 
     init {
         pcGameList.add(GameModel("【SCP】器关的彷徨", "PC", "steam",
@@ -24,22 +27,36 @@ class GamePagerAdapter : PagerAdapter() {
         pcGameList.add(GameModel("SCP：秘密实验室", "PC", "steam",
                 "https://store.steampowered.com/app/700330/SCP_Secret_Laboratory", "Free"))
         pcGameList.add(GameModel("Daughter of Shadows: An SCP Breach Event", "PC", "steam",
-                "https://store.steampowered.com/app/449820/", "Free"))
+                "https://store.steampowered.com/app/449820/", "6¥"))
+        pcGameList.add(GameModel("SCP-087: Recovered document", "PC", "steam",
+                "https://store.steampowered.com/app/765180/", "22¥"))
+        pcGameList.add(GameModel("SCP - Containment Breach", "PC", "none",
+                "http://www.scpcbgame.com/", "Free"))
+        pcGameList.add(GameModel("SCP-087-B", "PC", "none",
+                "http://www.scpcbgame.com/scp-087-b.html", "Free"))
+
+        mobileGameList.add(GameModel("SCP-087-B", "PC", "none",
+                "http://www.scpcbgame.com/scp-087-b.html", "Free"))
+
+
+        pcGameAdapter = GameListAdapter(mContext, pcGameList)
+        mobileGameAdapter = GameListAdapter(mContext, mobileGameList)
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val context = container.context
         if (position == 0) {
-            val rvPcGame = RecyclerView(container.context)
-            val lm = LinearLayoutManager(container.context, VERTICAL, false)
+            val rvPcGame = RecyclerView(mContext)
+            val lm = LinearLayoutManager(mContext, VERTICAL, false)
             rvPcGame.layoutManager = lm
-            rvPcGame.adapter = GameListAdapter(context, pcGameList)
+            rvPcGame.adapter = pcGameAdapter
+            container.addView(rvPcGame)
             return rvPcGame
         } else {
-            val rvMobileGame = RecyclerView(container.context)
-            val lm = LinearLayoutManager(container.context, VERTICAL, false)
+            val rvMobileGame = RecyclerView(mContext)
+            val lm = LinearLayoutManager(mContext, VERTICAL, false)
             rvMobileGame.layoutManager = lm
-            rvMobileGame.adapter = GameListAdapter(context, mobileGameList)
+            rvMobileGame.adapter = mobileGameAdapter
+            container.addView(rvMobileGame)
             return rvMobileGame
         }
     }
@@ -54,5 +71,9 @@ class GamePagerAdapter : PagerAdapter() {
 
     override fun getCount(): Int {
         return 2
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return if (position == 0) "PC" else "Mobile"
     }
 }

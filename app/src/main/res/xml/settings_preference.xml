@@ -8,7 +8,7 @@
     <Preference
         android:textColor="?attr/darkText"
         android:title="@string/like_list">
-        <intent android:action="info.free.scp.view.user.LikeActivity" />
+        <intent android:action="info.free.scp.view.game.GameListActivity" />
     </Preference>
     <SwitchPreference
         android:defaultValue="false"

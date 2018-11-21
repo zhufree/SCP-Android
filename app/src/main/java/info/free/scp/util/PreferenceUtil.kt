@@ -243,6 +243,10 @@ object PreferenceUtil {
         }
     }
 
+    fun getIfHideFinished(): Boolean {
+        return getBooleanValue("settings", "hide_finished_article")
+    }
+
 
     /**
      * 工具方法

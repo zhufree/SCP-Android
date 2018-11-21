@@ -2,12 +2,9 @@ package info.free.scp.view.user
 
 
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,11 +15,11 @@ import info.free.scp.db.ScpDao
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
-import kotlin.random.Random
+import java.util.*
+//import kotlin.random.Random
 
 
 /**
- * A simple [Fragment] subclass.
  * Use the [UserFragment.newInstance] factory method to
  * create an instance of this fragment.
  * 其他，包括写作相关，新人资讯，标签云和关于

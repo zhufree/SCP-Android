@@ -81,6 +81,7 @@
 
     <string name="like_list">收藏列表</string>
     <string name="dark_mode">夜间模式</string>
+    <string name="hide_finished_article">隐藏已读文档</string>
     <string name="instructions">app使用说明</string>
     <string name="about_developer">关于开发者</string>
     <string name="copyright_explained">版权说明</string>

@@ -5,11 +5,21 @@
         android:title="@string/like_list">
         <intent android:action="info.free.scp.view.user.LikeActivity" />
     </Preference>
+    <Preference
+        android:textColor="?attr/darkText"
+        android:title="@string/like_list">
+        <intent android:action="info.free.scp.view.user.LikeActivity" />
+    </Preference>
     <SwitchPreference
         android:defaultValue="false"
         android:key="dark_mode"
         android:textColor="?attr/darkText"
         android:title="@string/dark_mode" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="hide_finished_article"
+        android:textColor="?attr/darkText"
+        android:title="@string/hide_finished_article" />
     <Preference
         android:textColor="?attr/darkText"
         android:title="@string/instructions">

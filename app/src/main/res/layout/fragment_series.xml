@@ -79,16 +79,31 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="32dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="24dp"
         android:gravity="center"
         android:text="@string/title_series_about"
         android:background="?attr/itemBg"
         android:textColor="?attr/darkText"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_random"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvSeriesArchived" />
+
+    <TextView
+        android:id="@+id/tv_random"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:gravity="center"
+        android:text="@string/menu_random"
+        android:background="?attr/itemBg"
+        android:textColor="?attr/darkText"
+        app:layout_constraintStart_toEndOf="@id/tvSeriesAbout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tvSeriesAbout"
+        app:layout_constraintBottom_toBottomOf="@id/tvSeriesAbout"/>
 
 
 </android.support.constraint.ConstraintLayout>

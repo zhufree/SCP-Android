@@ -3,6 +3,7 @@ package info.free.scp.view.home
 
 import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,9 +20,11 @@ import info.free.scp.util.EventUtil.clickArchived
 import info.free.scp.util.EventUtil.clickSeries
 import info.free.scp.util.EventUtil.clickSeriesCn
 import info.free.scp.util.EventUtil.clickSeriesStory
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_series.*
@@ -76,6 +79,11 @@ class SeriesFragment : BaseFragment() {
         tvSeriesAbout?.setOnClickListener{
             EventUtil.onEvent(mContext, clickAbout)
             listener?.onCategoryClick(SERIES_ABOUT)
+        }
+        tv_random?.setOnClickListener {
+            EventUtil.onEvent(activity, EventUtil.clickRandom)
+            PreferenceUtil.addPoints(2)
+            activity?.startActivity(Intent(activity, DetailActivity::class.java))
         }
     }
 

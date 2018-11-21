@@ -81,11 +81,6 @@ class HomeFragment : BaseFragment() {
                     EventUtil.onEvent(activity, EventUtil.clickSearch)
                     activity?.startActivity(Intent(activity, SearchActivity::class.java))
                 }
-                R.id.random_article -> {
-                    EventUtil.onEvent(activity, EventUtil.clickRandom)
-                    PreferenceUtil.addPoints(2)
-                    activity?.startActivity(Intent(activity, DetailActivity::class.java))
-                }
             }
             true
         }

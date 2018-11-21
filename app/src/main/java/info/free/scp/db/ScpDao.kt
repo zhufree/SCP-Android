@@ -230,8 +230,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return resultList
             }
+            return resultList
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -251,10 +251,10 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             return null
         }
         try {
+            var scpModel: ScpModel? = null
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                         + ScpTable.ID + "=?", arrayOf(id))
-                var scpModel: ScpModel? = null
                 with(cursor) {
                     this?.let {
                         if (it.moveToFirst()) {
@@ -262,8 +262,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return scpModel
             }
+            return scpModel
+
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -275,9 +276,16 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                        + ScpTable.SAVE_TYPE + "=? ",
-                        arrayOf(type))
+                val cursor: Cursor? =
+                    if (PreferenceUtil.getIfHideFinished()) {
+                        this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                                + ScpTable.SAVE_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0",
+                                arrayOf(type))
+                    } else {
+                        this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                                + ScpTable.SAVE_TYPE + "=? ",
+                                arrayOf(type))
+                    }
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
@@ -285,8 +293,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return resultList.subList(start, if (end < resultList.size) end else resultList.size-1)
             }
+            return resultList.subList(start, if (end < resultList.size) end else resultList.size-1)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -308,8 +316,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return resultList
             }
+            return resultList
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -319,11 +327,11 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     fun getDetailById(id: String): String {
         try {
+            var detailString = ""
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT " + ScpTable.DETAIL_HTML
                         + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
                         + ScpTable.ID + "=? ", arrayOf(id))
-                var detailString = ""
                 cursor?.let {
                     with(it) {
                         if (cursor.moveToFirst()) {
@@ -331,9 +339,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return detailString.replace("href=\"/",
-                        "href=\"http://scp-wiki-cn.wikidot.com/")
             }
+            return detailString.replace("href=\"/",
+                    "href=\"http://scp-wiki-cn.wikidot.com/")
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -374,8 +382,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return resultList
             }
+            return resultList
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -388,21 +396,16 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT " + ScpTable.ID + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
-                        + ScpTable.DETAIL_HTML + " LIKE ?;",
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM "
+                        + ScpTable.TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME +" as detail on " +
+                        "scp.sId = detail.sId WHERE detail.detailHtml LIKE ?;",
                         arrayOf("%$keyword%"))
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
-                            sIdList.add(getCursorString(it, ScpTable.ID))
+                            resultList.add(extractScp(it))
                         }
                     }
-                }
-            }
-            for (sId in sIdList) {
-                val scp = getScpModelById(sId)
-                scp?.let {
-                    resultList.add(it)
                 }
             }
             return resultList
@@ -450,9 +453,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                         }
                     }
                 }
-                return resultList
             }
-
+            return resultList
         } catch (e: Exception) {
             e.printStackTrace()
         }

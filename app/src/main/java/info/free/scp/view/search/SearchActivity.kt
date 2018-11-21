@@ -42,7 +42,6 @@ class SearchActivity : BaseActivity() {
                 PreferenceUtil.addPoints(5)
                 resultList.clear()
                 resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
-                Log.i("search", resultList.size.toString())
                 if (adapter == null) {
                     adapter = SearchResultAdapter(this@SearchActivity, resultList)
                     rv_search_result?.adapter = adapter
@@ -70,7 +69,7 @@ class SearchActivity : BaseActivity() {
                     Log.i("search", "开始检索")
                     emitter.onNext(ScpDao.getInstance().searchScpInDetailByKeyword(keyword))
                     emitter.onComplete()
-                }, BackpressureStrategy.LATEST).subscribeOn(Schedulers.io())
+                }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe {scpList->
                             resultList.clear()

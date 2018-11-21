@@ -9,7 +9,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.v4.widget.NestedScrollView
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
@@ -32,7 +31,8 @@ import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 class DetailActivity : BaseActivity() {
 
-    private var readMode = 0 // 0 离线 1 网页
+    private var onlineMode = 0 // 0 离线 1 网页
+    private var readType = 0 // 0 普通（按顺序） 1 随机 2 未读列表
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -65,6 +65,7 @@ class DetailActivity : BaseActivity() {
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 随机文档
+            readType = 1
             scp = ScpDao.getInstance().getRandomScp()
         } else {
             url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
@@ -83,7 +84,7 @@ class DetailActivity : BaseActivity() {
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-                if (readMode == 1) {
+                if (onlineMode == 1) {
                     view.loadUrl(url)
                 } else {
                     if (url.startsWith("http://scp-wiki-cn.wikidot.com/")) {
@@ -163,17 +164,17 @@ class DetailActivity : BaseActivity() {
                     R.id.switch_read_mode -> {
                         EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
                         PreferenceUtil.addPoints(1)
-                        if (readMode == 0) {
+                        if (onlineMode == 0) {
                             if (enabledNetwork()) {
                                 pbLoading.visibility = VISIBLE
-                                readMode = 1
+                                onlineMode = 1
                                 it.setTitle(R.string.offline_mode)
                                 webView?.loadUrl(url)
                             } else {
                                 Toaster.show("请先开启网络")
                             }
                         } else {
-                            readMode = 0
+                            onlineMode = 0
                             it.setTitle(R.string.online_mode)
                             webView?.loadDataWithBaseURL("file:///android_asset/", currentTextStyle + detailHtml,
                                     "text/html", "utf-8", null)
@@ -235,7 +236,8 @@ class DetailActivity : BaseActivity() {
                 when (s.index) {
                     0 -> Toaster.show("已经是第一篇了")
                     else -> {
-                        scp = ScpDao.getInstance().getPreviewScp(s.index)
+                        scp = if (readType == 0) ScpDao.getInstance().getPreviewScp(s.index)
+                            else ScpDao.getInstance().getRandomScp()
                         setData(scp)
                     }
                 }
@@ -249,7 +251,8 @@ class DetailActivity : BaseActivity() {
                 when(s.index) {
                     15400 -> Toaster.show("已经是最后一篇了")
                     else -> {
-                        scp = ScpDao.getInstance().getNextScp(s.index)
+                        scp = if (readType == 0) ScpDao.getInstance().getNextScp(s.index)
+                            else ScpDao.getInstance().getRandomScp()
                         setData(scp)
                     }
                 }

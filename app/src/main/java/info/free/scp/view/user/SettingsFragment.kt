@@ -27,6 +27,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.settings_preference, rootKey)
+        preferenceManager?.sharedPreferencesName = "settings"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -36,6 +37,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference("dark_mode").setOnPreferenceClickListener {
             EventUtil.onEvent(activity, EventUtil.clickChangeTheme)
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
+            true
+        }
+        findPreference("hide_finished_article").setOnPreferenceClickListener {
+            // TODO event
             true
         }
 

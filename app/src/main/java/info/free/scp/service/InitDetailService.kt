@@ -61,8 +61,8 @@ class InitDetailService : IntentService("initDataService") {
     private fun createNotifyChannel() {
         val channelName = "channel_name"
         val channel = NotificationChannel(channelID, channelName, NotificationManager.IMPORTANCE_HIGH)
+        channel.setSound(null, null)
         notificationManager?.createNotificationChannel(channel)
-        Notification.Builder(this, channel.id)
     }
 
     /**

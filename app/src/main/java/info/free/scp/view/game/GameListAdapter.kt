@@ -16,7 +16,7 @@ class GameListAdapter(mContext: Context, dataList: MutableList<GameModel>)
     : BaseAdapter<GameHolder, GameModel>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): GameHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)
+        val view = LayoutInflater.from(mContext).inflate(R.layout.item_game_list, parent, false)
         view?.setOnLongClickListener(this)
         view?.setOnClickListener(this)
         return GameHolder(view)

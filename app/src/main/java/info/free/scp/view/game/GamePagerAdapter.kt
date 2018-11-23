@@ -39,15 +39,40 @@ class GamePagerAdapter(val mContext: Context) : PagerAdapter() {
                 "https://store.steampowered.com/app/449820/",
                 "https://cdn.steamstatic.com.8686c.com/steam/apps/449820/ss_0d5fc97c254c5c4" +
                         "4c33e41264bdb7069a45efaca.1920x1080.jpg","6¥"))
-        pcGameList.add(GameModel("SCP-087: Recovered document", "","PC", "steam",
-                "https://store.steampowered.com/app/765180/", "","22¥"))
-        pcGameList.add(GameModel("SCP - Containment Breach", "","PC", "none",
-                "http://www.scpcbgame.com/", "","Free"))
+        pcGameList.add(GameModel("SCP-087: Recovered document", "SCP-087: Recovered documents " +
+                "- first-person horror, that tells the story of a classified object.","PC", "steam",
+                "https://store.steampowered.com/app/765180/", "https://images.igdb.com" +
+                "/igdb/image/upload/t_720p/vnmpzozwhg0yimdpq4g4.jpg","22¥"))
+        pcGameList.add(GameModel("SCP - Containment Breach", "SCP - Containment Breach " +
+                "is a free survival horror game written in Blitz3D.","PC", "none",
+                "http://www.scpcbgame.com/", "https://static.indienova.com/ranch/gamedb" +
+                "/2017/07/cover/bjs6waswr6tlkndfan0a.jpg","Free"))
         pcGameList.add(GameModel("SCP-087-B", "","PC", "直接下载",
-                "http://www.scpcbgame.com/scp-087-b.html", "","Free"))
+                "http://www.scpcbgame.com/scp-087-b.html", "http://www.scpcbgame.com/images/087header.jpg","Free"))
 
-        mobileGameList.add(GameModel("SCP-087-B", "","PC", "直接下载",
-                "http://www.scpcbgame.com/scp-087-b.html", "","Free"))
+        mobileGameList.add(GameModel("SCP - Containment Breach", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "/ZDHMLbk_mHiyNvFsX_vWHJp519v4YiIp8CdgXDdoXdm6zZk1wsEOWC2FpN8K-VEXOeI=s180-rw","Free"))
+        mobileGameList.add(GameModel("SCP: Breach 2D", "检查你是否能活下来，并可能逃离危险的SCP综合体！ " +
+                "目前游戏有：SCP-173|SCP-106|SCP-966" +
+                "|SCP-714|SCP-096。","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent" +
+                ".com/rF1MS9_ewKpbxB1eKaakqu4j1FtLmoVC-OAbdvq0kSbAskC4w_lr-XWfhSESAKURxWI=s180-rw","Free"))
+        mobileGameList.add(GameModel("SCP-087-B", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "/B4LtOgf6wC7ivPa0Vuwa6GURIKvLQmo0VVMjERCC8oUsN4TfuEkXh7Dl9Cmy47kKt8M=s180-rw","Free"))
+        mobileGameList.add(GameModel("The Lost Signal: SCP", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com/" +
+                "RuNO2F7xkCFUE_f8bysegU8jULYqonUIEhI_bjqSwe1gD8kgnHVYu3j7tZoHeBpojw=s180-rw","Free"))
+        mobileGameList.add(GameModel("SCP: Run", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent." +
+                "com/B-BGDGvDbBRRw4Gs0zIa9WAWkQLfu90QCSVZLj8eSphJkGqHbNe6mgHlD5dAFLYye5M=s180-rw","Free"))
+        mobileGameList.add(GameModel("SCP: Site-19", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent." +
+                "com/YFEpmZ2qmybq7heR655CVq7BQ47aFDUhgDHTLmSWNGEeZdN1Az33ehbj8FCKx_Q5xQ=s180-rw","Free"))
+        mobileGameList.add(GameModel("SCP-087-Remake Horror Quest", "","mobile", "Google Play",
+                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "/vlD5h7UAfzCcXRa5dv1hOglFAXUtE9SUki6-2UqCKojhsKTcHgQfdz62u2Vwj_sXZRAB=s180-rw","Free"))
 
 
         pcGameAdapter = GameListAdapter(mContext, pcGameList)

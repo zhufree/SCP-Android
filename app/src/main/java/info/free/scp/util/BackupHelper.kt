@@ -46,11 +46,9 @@ class BackupHelper(val mContext: Context) {
         builder.setPositiveButton("确定") { _, _ ->
             val sp = File.separator
             val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
-            Log.i("backup", backUpPath)
             val file = File(backUpPath)
             Toaster.show("开始恢复", context = mContext)
             val isOk = restore(file.name, file)
-            Log.i("backup", "isOk = $isOk")
             if (!isOk) {
                 val failMsg = "恢复失败" + ":" + file.name
                 Toast.makeText(mContext, failMsg,
@@ -76,7 +74,6 @@ class BackupHelper(val mContext: Context) {
                 .setPositiveButton("确定") { _, _ ->
                     Toaster.show("开始备份")
                     Flowable.create<String>({ emitter ->
-                        Log.i("search", "开始备份")
                         backUp()
                         emitter.onNext("finish")
                         emitter.onComplete()
@@ -99,7 +96,6 @@ class BackupHelper(val mContext: Context) {
         var isOk = false
         val sp = File.separator
         val bkFolderFile = sdCardOk()
-        Log.i("backup", bkFolderFile?.path?:"")
         if (bkFolderFile != null) {
             try {
                 // 在backup文件夹下创建备份文件

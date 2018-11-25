@@ -5,4 +5,6 @@
     <color name="colorAccent">#600</color>
     <color name="itemBg">#e0f7fa</color>
     <color name="textColor">#333</color>
+
+    <color name="white">#fff</color>
 </resources>

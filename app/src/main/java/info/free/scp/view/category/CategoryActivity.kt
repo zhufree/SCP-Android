@@ -80,8 +80,9 @@ class CategoryActivity : BaseActivity() {
         setContentView(R.layout.activity_category)
 
         setSupportActionBar(category_toolbar)
-        category_toolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        category_toolbar.setNavigationOnClickListener {
+        category_toolbar?.title = "文档目录"
+        category_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        category_toolbar?.setNavigationOnClickListener {
             if (pageType == 0 || onlyOneLayer) {
                 finish()
             } else {
@@ -91,12 +92,12 @@ class CategoryActivity : BaseActivity() {
         }
 
         val lm = LinearLayoutManager(this, VERTICAL, false)
-        rv_scp_list.layoutManager = lm
+        rv_scp_list?.layoutManager = lm
 
         initData()
 
-        category_toolbar.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
-        category_toolbar.setOnMenuItemClickListener {
+        category_toolbar?.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
+        category_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
                     when (pageType) {

@@ -12,11 +12,12 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
-class GameListAdapter(mContext: Context, dataList: MutableList<GameModel>)
+class GameListAdapter(mContext: Context, dataList: MutableList<GameModel>, val type: Int)
     : BaseAdapter<GameHolder, GameModel>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): GameHolder {
-        val view = LayoutInflater.from(mContext).inflate(R.layout.item_game_list, parent, false)
+        val view = LayoutInflater.from(mContext).inflate(if (type == 0) R.layout.item_pc_game else
+                R.layout.item_mobile_game, parent, false)
         view?.setOnLongClickListener(this)
         view?.setOnClickListener(this)
         return GameHolder(view)

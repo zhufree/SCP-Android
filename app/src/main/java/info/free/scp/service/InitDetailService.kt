@@ -160,7 +160,7 @@ class InitDetailService : IntentService("initDataService") {
             ScpDao.getInstance().insertDetailData(it)
             PreferenceUtil.addDetailDataLoadCount()
             val next = i + 1
-            if (next < 29) {
+            if (it.count() > 499) {
                 createNotification(next*3)
                 getDetail(next)
             } else {
@@ -171,6 +171,7 @@ class InitDetailService : IntentService("initDataService") {
     }
 
     private fun notifyLoadFinish() {
+        PreferenceUtil.setDetailDataLoadFinish()
         val intent = Intent(LOAD_DETAIL_FINISH)
         mLocalBroadcastManager?.sendBroadcast(intent)
     }

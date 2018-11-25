@@ -45,6 +45,18 @@
 
     </Preference>
     <Preference
+        android:key="backup_data"
+        android:textColor="?attr/darkText"
+        android:title="备份本地数据库">
+
+    </Preference>
+    <Preference
+        android:key="restore_data"
+        android:textColor="?attr/darkText"
+        android:title="恢复本地数据库">
+
+    </Preference>
+    <Preference
         android:key="query_enter"
         android:textColor="?attr/darkText"
         android:title="@string/query_enter">

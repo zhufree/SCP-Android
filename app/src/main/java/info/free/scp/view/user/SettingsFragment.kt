@@ -7,9 +7,7 @@ import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.View
 import info.free.scp.R
-import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
+import info.free.scp.util.*
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -34,6 +32,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("theme", PreferenceUtil.getCurrentTheme().toString())
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
+
+        // 正文数据库不完整时不允许备份数据库
+        if (!PreferenceUtil.getDetailDataLoadFinish()) {
+            findPreference("backup_data").isEnabled = false
+        }
+        if (!BackupHelper.getInstance(context!!).checkBackUpFileExist()) {
+            findPreference("restore_data").isEnabled = false
+        }
+        findPreference("backup_data").title = "备份数据库${if (BackupHelper.getInstance(context!!)
+                        .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
+        findPreference("restore_data").title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
+                        .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
+
         findPreference("dark_mode").setOnPreferenceClickListener {
             EventUtil.onEvent(activity, EventUtil.clickChangeTheme)
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
@@ -63,6 +74,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 listener?.onResetDataClick()
                 // 只允许点击一次
                 it.isEnabled = false
+            }
+            true
+        }
+
+        findPreference("backup_data").setOnPreferenceClickListener {
+            context?.let {ctx->
+                BackupHelper.getInstance(ctx).backupDB()
+                findPreference("restore_data").isEnabled = true
+            }
+            true
+        }
+        findPreference("restore_data").setOnPreferenceClickListener {
+            context?.let {ctx->
+                BackupHelper.getInstance(ctx).restoreDB()
             }
             true
         }

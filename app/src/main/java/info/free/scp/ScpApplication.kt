@@ -19,12 +19,13 @@ class ScpApplication : MultiDexApplication() {
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
 //        MobclickAgent.openActivityDurationTrack(false)
         UMConfigure.setLogEnabled(true)
+        MobclickAgent.setCatchUncaughtExceptions(false)
+        context = applicationContext
 
         ThemeUtil.setTheme(this)
 
-        context = applicationContext
     }
     companion object {
-        var context: Context? = null
+        lateinit var context: Context
     }
 }

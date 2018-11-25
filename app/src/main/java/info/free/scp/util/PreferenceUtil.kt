@@ -31,6 +31,13 @@ object PreferenceUtil {
         setIntValue("init", "detailData", getDetailDataLoadCount() +1)
     }
 
+    fun setDetailDataLoadFinish() {
+        setBooleanValue("init", "load_detail_finish", true)
+    }
+    fun getDetailDataLoadFinish(): Boolean {
+        return getBooleanValue("init", "load_detail_finish")
+    }
+
     fun resetDetailDataLoadCount() {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putInt("detailData", 0)?.apply()
@@ -48,30 +55,6 @@ object PreferenceUtil {
     fun setFirstOpenCurrentVersion(versionCode: String) {
         val sp = getPrivateSharedPreference("init")
         sp?.edit()?.putBoolean(versionCode, false)?.apply()
-    }
-
-    fun getLocalDbVersion(): Int {
-        val sp = getPrivateSharedPreference("init")
-        return sp?.getInt("dbVersion", 1)?:1
-    }
-
-    fun setLocalDbVersion(version: Int) {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putInt("dbVersion", version)?.apply()
-        setLastUpdateDbTime()
-    }
-
-    /**
-     * 存储当前正在更新的数据库版本
-     */
-    fun setTempUpdateDbVersion(version: Int) {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putInt("tempUpdateDb", version)?.apply()
-    }
-
-    fun getTempUpdateDbVersion(): Int {
-        val sp = getPrivateSharedPreference("init")
-        return sp?.getInt("tempUpdateDb", 0)?:0
     }
 
     fun getShownDetailNotice(): Boolean {
@@ -130,14 +113,6 @@ object PreferenceUtil {
 
     fun getServerLastUpdateTime(): String {
         return getStringValue("update", "serverLastUpdateTime")
-    }
-
-    fun getQueryLink():String{
-        return getStringValue("update", "queryLink")
-    }
-
-    fun saveQueryLink(link: String) {
-        setStringValue("update", "queryLink", link)
     }
 
     /**
@@ -214,8 +189,12 @@ object PreferenceUtil {
         }
     }
 
-    private val jobDesc = arrayOf(R.string.job_desc_1,R.string.job_desc_2,R.string.job_desc_3,
-            R.string.job_desc_4,R.string.job_desc_5,R.string.job_desc_6)
+    private val jobDesc = arrayOf(R.string.job_desc_1,
+            R.string.job_desc_2,
+            R.string.job_desc_3,
+            R.string.job_desc_4,
+            R.string.job_desc_5,
+            R.string.job_desc_6)
 
     fun getDescForJob(job: String): Int{
         return when (job) {

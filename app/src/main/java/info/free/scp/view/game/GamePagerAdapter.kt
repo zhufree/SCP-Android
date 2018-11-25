@@ -51,27 +51,27 @@ class GamePagerAdapter(val mContext: Context) : PagerAdapter() {
                 "http://www.scpcbgame.com/scp-087-b.html", "http://www.scpcbgame.com/images/087header.jpg","Free"))
 
         mobileGameList.add(GameModel("SCP - Containment Breach", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "https://pan.baidu.com/s/1WrCWgMYnhZZUfAlpkv-P6A", "https://lh3.googleusercontent.com" +
                 "/ZDHMLbk_mHiyNvFsX_vWHJp519v4YiIp8CdgXDdoXdm6zZk1wsEOWC2FpN8K-VEXOeI=s180-rw","Free"))
         mobileGameList.add(GameModel("SCP: Breach 2D", "检查你是否能活下来，并可能逃离危险的SCP综合体！ " +
                 "目前游戏有：SCP-173|SCP-106|SCP-966" +
                 "|SCP-714|SCP-096。","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent" +
+                "https://pan.baidu.com/s/1UlsTOSrKJkVcrwgM92T_BA", "https://lh3.googleusercontent" +
                 ".com/rF1MS9_ewKpbxB1eKaakqu4j1FtLmoVC-OAbdvq0kSbAskC4w_lr-XWfhSESAKURxWI=s180-rw","Free"))
         mobileGameList.add(GameModel("SCP-087-B", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "https://pan.baidu.com/s/1Q57d1IrwPSuwyczsct00eQ", "https://lh3.googleusercontent.com" +
                 "/B4LtOgf6wC7ivPa0Vuwa6GURIKvLQmo0VVMjERCC8oUsN4TfuEkXh7Dl9Cmy47kKt8M=s180-rw","Free"))
         mobileGameList.add(GameModel("The Lost Signal: SCP", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com/" +
+                "https://pan.baidu.com/s/1Rfy-k4GZd43iopI4jiCMTQ", "https://lh3.googleusercontent.com/" +
                 "RuNO2F7xkCFUE_f8bysegU8jULYqonUIEhI_bjqSwe1gD8kgnHVYu3j7tZoHeBpojw=s180-rw","Free"))
         mobileGameList.add(GameModel("SCP: Run", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent." +
+                "https://pan.baidu.com/s/1Hz9UVVt1svPYp6VN_8w_EA", "https://lh3.googleusercontent." +
                 "com/B-BGDGvDbBRRw4Gs0zIa9WAWkQLfu90QCSVZLj8eSphJkGqHbNe6mgHlD5dAFLYye5M=s180-rw","Free"))
         mobileGameList.add(GameModel("SCP: Site-19", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent." +
+                "https://pan.baidu.com/s/1gsPop38_dZ0ryisC7sx82Q", "https://lh3.googleusercontent." +
                 "com/YFEpmZ2qmybq7heR655CVq7BQ47aFDUhgDHTLmSWNGEeZdN1Az33ehbj8FCKx_Q5xQ=s180-rw","Free"))
         mobileGameList.add(GameModel("SCP-087-Remake Horror Quest", "","mobile", "Google Play",
-                "http://www.scpcbgame.com/scp-087-b.html", "https://lh3.googleusercontent.com" +
+                "https://pan.baidu.com/s/1wqJ3QlDhhydyIkH_uvW7wQ", "https://lh3.googleusercontent.com" +
                 "/vlD5h7UAfzCcXRa5dv1hOglFAXUtE9SUki6-2UqCKojhsKTcHgQfdz62u2Vwj_sXZRAB=s180-rw","Free"))
 
 

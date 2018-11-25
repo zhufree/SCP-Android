@@ -6,15 +6,10 @@ SCP Android 第三方客户端
 - 以撒
 - distrust
 - 幽浮
-- 绣湖/ 逃离方块
+- 绣湖/逃离方块
 - 恶灵附身
 - 艾迪芬奇的记忆
 - 克苏鲁的呼唤：官方游戏
-
-# scp game list
-(【SCP】器关的彷徨 【SCP】器関ノ彷徨 -The will of a single Tale-【DEMOver.】)[https://store.steampowered.com/app/836940/SCP_The_will_of_a_single_TaleDEMOver/]
-SCP：秘密实验室 https://store.steampowered.com/app/700330/SCP_Secret_Laboratory/
-Daughter of Shadows: An SCP Breach Event https://store.steampowered.com/app/449820/?utm_source=indienova
 
 ---
 
@@ -22,20 +17,22 @@ TODO
 
 # 后续
 - [ ] 阅读体验优化
- - [ ] 稍后阅读功能，并且在稍后阅读列表中的上下篇是列表中切换
- - [ ] 新人引导
- - [ ] 写scp和工具箱，草稿箱
- - [ ] 主题/换肤
+  - [ ] 稍后阅读功能，并且在稍后阅读列表中的上下篇是列表中切换 0.1
+  - [ ] 功能引导提示
+  - [ ] 主题/换肤
+  - [ ] 新人资讯 0.1
+- [ ] 创作相关
+  - [ ] 保持登录状态
+  - [ ] 写scp和工具箱，草稿箱
 - [ ] 最新
-  - [ ] 最近更新/修改/新增的条目
+  - [ ] 最近更新/修改/新增的条目 0.1
   - [ ] 随机[原创]scp/故事
   - [ ] 评分最高/最低
 - [ ] 更多内容
   - [ ] 放逐者图书馆
   - [ ] 国际版
+  - [ ] tag检索
 - [ ] 其他
-  - [ ] 写作相关
-  - [ ] 新人资讯
   - [ ] 设置
 
 ---
@@ -43,7 +40,7 @@ TODO
 当前开发版本
 # v0.0.9
 - 主要新增功能
-    - [ ] 名片分享功能
+    - [ ] 名片分享功能（顺延下版本）
     - [x] UI优化
     - [ ] 游戏相关链接整理汇总
 - 优化
@@ -52,7 +49,7 @@ TODO
     - [x] 全文检索
     - [x] 已读改为手动标记，正文内替换随机按钮
     - [x] 隐藏已读文档
-    - [ ] 本地数据备份功能
+    - [x] 本地数据备份功能
 
 ---
 已发布版本更新内容

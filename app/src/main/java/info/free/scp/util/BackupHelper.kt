@@ -1,12 +1,9 @@
 package info.free.scp.util
 
 import android.content.Context
-import android.content.DialogInterface
 import android.os.Environment
 import android.support.v7.app.AlertDialog
 import android.util.Log
-import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.Toast
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -16,8 +13,6 @@ import kotlinx.io.IOException
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 /**
@@ -25,30 +20,49 @@ import java.util.*
  * 备份工具类
  */
 
-class BackupHelper {
+class BackupHelper(val mContext: Context) {
     private var dbFilename = "scp_info.db"
-    private var fileList: Array<String?>? = null // 数据库文件列表
-    private var choicePosition = -3 // 选择数据库列表中的位置
-    private var dialog: AlertDialog? = null
-    private val BACK_FOLDER = "backup"
-    private val appName = "SCP"
-    private lateinit var mContext: Context
+    private val backUpFolderName = "backup"
+    private val appFolderName = "SCP"
+    val sp = File.separator
 
-    fun BackupAndRestore(context: Context) {
-        mContext = context
+    companion object {
+        private var backupHelper: BackupHelper? = null
+        fun getInstance(context: Context): BackupHelper {
+            return backupHelper ?: BackupHelper(context)
+        }
     }
 
+    fun getBackUpFileName(): String {
+        return "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
+    }
     /**
      * 恢复数据的Dialog
      */
     fun restoreDB() {
-        fileList = getFileList()
         val builder = AlertDialog.Builder(mContext)
-        builder.setIcon(android.R.drawable.ic_dialog_info)
         builder.setTitle("恢复")
-        builder.setSingleChoiceItems(getFileList(), -1, DialogClick())
-        builder.setPositiveButton("确定", DialogClick())
-        builder.setNegativeButton("取消", DialogClick())
+        builder.setMessage("尝试从本地备份中恢复数据库")
+        builder.setPositiveButton("确定") { _, _ ->
+            val sp = File.separator
+            val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
+            Log.i("backup", backUpPath)
+            val file = File(backUpPath)
+            Toaster.show("开始恢复", context = mContext)
+            val isOk = restore(file.name, file)
+            Log.i("backup", "isOk = $isOk")
+            if (!isOk) {
+                val failMsg = "恢复失败" + ":" + file.name
+                Toast.makeText(mContext, failMsg,
+                        Toast.LENGTH_SHORT).show()
+            }
+            if (isOk) {
+                // 如果有数据体现则需要刷新出新的数据
+                Toaster.show("恢复完成")
+
+            }
+        }
+        builder.setNegativeButton("取消"){_,_->}
         builder.show()
     }
 
@@ -56,46 +70,24 @@ class BackupHelper {
      * 备份数据库
      */
     fun backupDB() {
-        showDialog("是否备份数据库", 'B')
-    }
-
-    /**
-     * 显示一个Dialog
-     *
-     * @param title
-     * 标题 ，必须引用资源ID resource ID
-     * @param sign
-     * 根据标示调用方法 I - 恢复默认设置 D - 恢复默认设置 H -选择主机
-     */
-    private fun showDialog(title: String, sign: Char) {
-        AlertDialog.Builder(mContext).setTitle(title)
+        AlertDialog.Builder(mContext)
+                .setTitle("是否备份数据库")
+                .setMessage("仅包括文档和读过、收藏数据，职位，ID等信息不会保存")
                 .setPositiveButton("确定") { _, _ ->
-                    when (sign) {
-                        'B' // 备份数据库
-                        -> {
-                            if (dialog == null) {
-                                dialog = awaitDialog(mContext)
-                            } else {
-                                dialog?.show()
+                    Toaster.show("开始备份")
+                    Flowable.create<String>({ emitter ->
+                        Log.i("search", "开始备份")
+                        backUp()
+                        emitter.onNext("finish")
+                        emitter.onComplete()
+                    }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe {
+                                Toaster.show("备份完成")
                             }
-                            Flowable.create<String>({ emitter ->
-                                Log.i("search", "开始备份")
-                                backUp()
-                                emitter.onNext("finish")
-                                emitter.onComplete()
-                            }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe { _ ->
-                                        if (dialog != null) {
-                                            dialog!!.dismiss()
-                                        }
-                                    }
-                        }
-                        else -> {
-                        }
-                    }
-                }.setNegativeButton("取消") { _, _ ->
-                }.show()
+                }
+                .setNegativeButton("取消") { _, _ -> }
+                .show()
     }
 
     /**
@@ -103,10 +95,11 @@ class BackupHelper {
      *
      * @return
      */
-    private fun backUp(): Boolean {
+    fun backUp(): Boolean {
         var isOk = false
         val sp = File.separator
         val bkFolderFile = sdCardOk()
+        Log.i("backup", bkFolderFile?.path?:"")
         if (bkFolderFile != null) {
             try {
                 // 在backup文件夹下创建备份文件
@@ -127,26 +120,6 @@ class BackupHelper {
     }
 
     /**
-     * 文件夹列表
-     *
-     * @return
-     */
-    private fun getFileList(): Array<String?>? {
-        var fileList: Array<String?>? = null
-        val file = sdCardOk()
-        if (file != null) {
-            val list = file.listFiles()
-            if (list != null && list.isNotEmpty()) {
-                fileList = arrayOfNulls(list.size)
-                for (i in list.indices) {
-                    fileList[i] = list[i].name
-                }
-            }
-        }
-        return fileList
-    }
-
-    /**
      * sdCard是否存在，创建备份的文件夹并返回
      *
      * @return null不能使用
@@ -157,7 +130,7 @@ class BackupHelper {
         if (Environment.MEDIA_MOUNTED == state) {
             val sp = File.separator
             // 外部存储路径/SCP/backup/
-            val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appName$sp$BACK_FOLDER"
+            val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName"
             bkFolderFile = File(backUpPath)
             if (!bkFolderFile.exists()) {
                 bkFolderFile.mkdirs()
@@ -171,12 +144,6 @@ class BackupHelper {
 
     /**
      * 恢复数据库
-     *
-     * @param name
-     * 选择的文件名称 选中的数据库名称
-     * @param resoreDbName
-     * 需要恢复的数据库名称
-     * @return
      */
     fun restore(name: String, f: File?): Boolean {
         var isOk = false
@@ -184,10 +151,10 @@ class BackupHelper {
             val dbFile = dbOk(name)
             try {
                 // System.out.println("覆盖的名称"+dbName);
-                if (dbFile != null) {
+                dbFile?.let {
+                    mContext.deleteDatabase(dbFilename)
                     isOk = fileCopy(dbFile, f.absoluteFile)
-                } else
-                    isOk = false
+                }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -202,7 +169,6 @@ class BackupHelper {
      * @return 数据库文件本身
      */
     private fun dbOk(dbName: String): File? {
-        val sp = File.separator
         val absPath = Environment.getDataDirectory().absolutePath
         val pakName = mContext.packageName
         // /data/data/packageName/databases
@@ -210,32 +176,21 @@ class BackupHelper {
         return File(dbPath)
     }
 
-    /**
-     * 等候动画
-     */
-    fun awaitDialog(context: Context): AlertDialog {
-        val bar = ProgressBar(context)
-        bar.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
-        val dialog = AlertDialog.Builder(context).create()
-        dialog.setCancelable(false)
-        dialog.show()
-        val window = dialog.window
-        val params = window.attributes
-        params.width = 50
-        params.height = 50
-        window.attributes = params
-        window.setContentView(bar)
-        return dialog
+    fun checkBackUpFileExist(): Boolean {
+        val state = Environment.getExternalStorageState()
+        if (Environment.MEDIA_MOUNTED == state) {
+            // 外部存储路径/SCP/backup/
+            val backUpFilePath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
+            val bkDbFile = File(backUpFilePath)
+            return bkDbFile.exists()
+        } else {
+            Toast.makeText(mContext, "sd卡不存在，请检查sd卡权限", Toast.LENGTH_SHORT).show()
+        }
+        return false
     }
 
     /**
      * 复制文件
-     * @param outFile
-     * 写入
-     * @param inFile
-     * 读取
-     * @throws FileNotFoundException
      */
     @Throws(IOException::class)
     private fun fileCopy(outFile: File?, inFile: File?): Boolean {
@@ -258,42 +213,5 @@ class BackupHelper {
             outChannel?.close()
         }
         return isOk
-    }
-
-    private inner class DialogClick : DialogInterface.OnClickListener {
-        override fun onClick(dialog: DialogInterface, which: Int) {
-            if (which == -1) { // 确定
-                if (choicePosition < 0) {
-                    Toast.makeText(mContext, "选择数据库", Toast.LENGTH_SHORT)
-                            .show()
-                    return
-                }
-                val sp = File.separator
-                val folderName = fileList!![choicePosition]
-                val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appName$sp$BACK_FOLDER$sp$folderName"
-                val file = File(backUpPath)
-                if (file.isDirectory) {
-                    val files = file.listFiles()
-                    var isOk = false
-                    for (i in files.indices) {
-                        val f = files[i]
-                        isOk = restore(f.name, f)
-                        if (!isOk) {
-                            val failMsg = "恢复失败" + ":" + f.getName()
-                            Toast.makeText(mContext, failMsg,
-                                    Toast.LENGTH_SHORT).show()
-                            return
-                        }
-                    }
-                    if (isOk) {
-                        // 如果有数据体现则需要刷新出新的数据
-
-                    }
-                }
-            } else if (which == -2) { // 取消
-            } else if (which >= 0) {
-                choicePosition = which
-            }
-        }
     }
 }

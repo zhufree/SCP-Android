@@ -14,6 +14,7 @@
             android:id="@+id/gp_game_hide_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             app:constraint_referenced_ids="tv_game_platform,tv_game_price,btn_view_game"/>
         <TextView
             android:id="@+id/tv_game_platform"
@@ -51,7 +52,8 @@
             android:id="@+id/iv_game_cover"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="@string/app_name"/>
+            android:contentDescription="@string/app_name"
+            android:scaleType="fitXY"/>
         <View
             android:layout_width="match_parent"
             android:layout_height="match_parent"

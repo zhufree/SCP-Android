@@ -22,6 +22,10 @@
         android:id="@+id/copy_link"
         android:title="@string/menu_copy_link"
         app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/share_picture"
+        android:title="图片分享"
+        app:showAsAction="collapseActionView"/>
 
 
 </menu>

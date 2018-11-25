@@ -27,12 +27,14 @@
         android:id="@+id/nsv_web_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/containerBg"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/cl_detail_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="?attr/containerBg"
+            android:paddingBottom="16dp">
 
             <ProgressBar
                 android:id="@+id/pbLoading"
@@ -44,6 +46,15 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toTopOf="parent">
+            </WebView>
 
             <TextView
                 android:id="@+id/tv_preview"
@@ -57,7 +68,8 @@
                 android:text="@string/preview_article"
                 android:textColor="?attr/darkText"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/webView"
+                app:layout_constraintBottom_toTopOf="@+id/tv_share_notice"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
@@ -83,18 +95,39 @@
                 android:text="@string/set_has_read"
                 android:textColor="?attr/darkText"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/tv_next"
+                app:layout_constraintBottom_toBottomOf="@id/tv_preview"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_next" />
+                app:layout_constraintTop_toTopOf="@id/tv_preview" />
 
-            <WebView
-                android:id="@+id/webView"
-                android:layout_width="match_parent"
+            <android.support.constraint.Group
+                android:id="@+id/gp_share_content"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:layout_constraintBottom_toTopOf="@id/tv_preview"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:visibility="gone"
+                app:constraint_referenced_ids="tv_share_notice, iv_download_qrcode"/>
+            <TextView
+                android:id="@+id/tv_share_notice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="扫描二维码，探索SCP基金会的秘密"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_set_has_read"
+                android:layout_marginTop="8dp"
+                android:textSize="16sp"/>
+            <ImageView
+                android:id="@+id/iv_download_qrcode"
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:src="@drawable/download_qr"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_share_notice"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="4dp"
+                />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

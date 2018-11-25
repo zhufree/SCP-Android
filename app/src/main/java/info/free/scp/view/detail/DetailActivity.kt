@@ -27,6 +27,16 @@ import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.opengl.ETC1.getHeight
+import android.opengl.ETC1.getWidth
+import android.view.ViewTreeObserver
+import android.widget.ImageView
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 
 class DetailActivity : BaseActivity() {
@@ -220,6 +230,33 @@ class DetailActivity : BaseActivity() {
                         ScpDao.getInstance().insertLikeAndReadInfo(s)
                         it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
                         else R.drawable.ic_star_border_white_24dp)
+                    }
+                    R.id.share_picture -> {
+                        // 截屏分享
+                        Toaster.show("生成图片中...", context = this)
+                        gp_share_content?.visibility = VISIBLE
+                        cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                                ViewTreeObserver.OnGlobalLayoutListener {
+                            override fun onGlobalLayout() {
+                                cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+                                Flowable.create<String>({ emitter ->
+                                    val bitmap = Bitmap.createBitmap(cl_detail_container.width, cl_detail_container.height,
+                                            Bitmap.Config.RGB_565)
+                                    //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
+                                    val canvas = Canvas(bitmap)
+                                    cl_detail_container.draw(canvas)
+                                    Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "")?:"")
+                                    emitter.onNext("finish")
+                                    emitter.onComplete()
+                                }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+                                        .observeOn(AndroidSchedulers.mainThread())
+                                        .subscribe {
+                                            Toaster.show("图片已保存")
+                                            gp_share_content?.visibility = GONE
+                                        }
+                            }
+                        })
+
                     }
                     else -> {}
                 }

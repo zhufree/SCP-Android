@@ -47,7 +47,7 @@ class DetailActivity : BaseActivity() {
     private var sId = ""
     private var scp: ScpModel? = null
     private var detailHtml = ""
-    private val nightTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#a0a0a0;}</style>"
+    private val nightTextStyle = "<style>body{background-color:#222;}p {font-size:16px;line-height:30px;}* {color:#a0a0a0;}</style>"
     private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)

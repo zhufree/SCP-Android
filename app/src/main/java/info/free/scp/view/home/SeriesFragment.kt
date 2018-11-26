@@ -4,6 +4,7 @@ package info.free.scp.view.home
 import android.app.Fragment
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +61,12 @@ class SeriesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tvScpSeries?.background?.alpha = 90
+        tvSeriesCn?.background?.alpha = 90
+        tvSeriesStory?.background?.alpha = 90
+        tvSeriesArchived?.background?.alpha = 90
+        tvSeriesAbout?.background?.alpha = 90
+        tv_random?.background?.alpha = 90
         tvScpSeries?.setOnClickListener {
             EventUtil.onEvent(mContext, clickSeries)
             listener?.onCategoryClick(SERIES)
@@ -90,15 +97,12 @@ class SeriesFragment : BaseFragment() {
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
         tvScpSeries?.setTextColor(ThemeUtil.darkText)
-        tvScpSeries?.setBackgroundColor(ThemeUtil.itemBg)
         tvSeriesCn?.setTextColor(ThemeUtil.darkText)
-        tvSeriesCn?.setBackgroundColor(ThemeUtil.itemBg)
+
         tvSeriesStory?.setTextColor(ThemeUtil.darkText)
-        tvSeriesStory?.setBackgroundColor(ThemeUtil.itemBg)
         tvSeriesArchived?.setTextColor(ThemeUtil.darkText)
-        tvSeriesArchived?.setBackgroundColor(ThemeUtil.itemBg)
         tvSeriesAbout?.setTextColor(ThemeUtil.darkText)
-        tvSeriesAbout?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_random?.setTextColor(ThemeUtil.darkText)
     }
 
     override fun onDetach() {

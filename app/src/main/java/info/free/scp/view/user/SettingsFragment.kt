@@ -32,6 +32,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         Log.i("theme", PreferenceUtil.getCurrentTheme().toString())
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
+        findPreference("dark_mode").setDefaultValue(ThemeUtil.currentTheme == 1)
 
         // 正文数据库不完整时不允许备份数据库
         if (!PreferenceUtil.getDetailDataLoadFinish()) {

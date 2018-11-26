@@ -9,7 +9,7 @@
     <string name="title_series">SCP系列</string>
     <string name="title_series_cn">SCP-CN系列</string>
     <string name="title_series_story">SCP故事版</string>
-    <string name="title_series_archived">归档内容</string>
+    <string name="title_series_others">其他SCP</string>
     <string name="title_series_about">相关信息</string>
 
     <string name="title_library">SCP图书馆</string>

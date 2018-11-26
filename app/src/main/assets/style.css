@@ -2,7 +2,7 @@
 /* css:base/code/1 */
 body{
 	margin: 0px;
-	padding: 0px;
+	padding: 15px;
 }
 
 
@@ -3302,12 +3302,6 @@ table.guest-commenting td label.hint {
 	margin: 0 auto;
 }
 
-body {
-	background-color: #fff;
-	font-size: 0.80em;
-	color: #333;
-}
-
 .container-wrap {
 	background-image: url(/local--files/css%3Amain/body_bg.png);
 	background-repeat: repeat-x;
@@ -3916,11 +3910,6 @@ a:hover {
   margin: 0 auto;
 }
 
-body {
-    background-color: #fff;
-    font-size: 0.80em;
-    color: #333;
-}
 div#container-wrap {
     background: url(/local--files/component:theme/body_bg.png) top left repeat-x;
 }

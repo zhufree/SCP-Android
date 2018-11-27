@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.ProgressBar
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
@@ -25,6 +24,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 class SearchActivity : BaseActivity() {
     var resultList: MutableList<ScpModel?> = emptyList<ScpModel>().toMutableList()
     var adapter: SearchResultAdapter? = null
+    var searchMode = 0 // 0 标题 1 全文
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,65 +38,71 @@ class SearchActivity : BaseActivity() {
             if (keyword.isEmpty()) {
                 Toaster.show("请输入正确的关键词")
             } else {
-                EventUtil.onEvent(this, EventUtil.doSearch, keyword)
-                PreferenceUtil.addPoints(5)
-                resultList.clear()
-                resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
-                if (adapter == null) {
-                    adapter = SearchResultAdapter(this@SearchActivity, resultList)
-                    rv_search_result?.adapter = adapter
-                    adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                        override fun onItemClick(view: View, position: Int) {
-                            val intent = Intent()
-                            intent.putExtra("link", resultList[position]?.link)
-                            intent.putExtra("sId", resultList[position]?.sId)
-                            intent.setClass(this@SearchActivity, DetailActivity::class.java)
-                            startActivity(intent)
-                        }
-                    }
-                } else {
-                    adapter?.notifyDataSetChanged()
-                }
-            }
-        }
-        btn_search_detail?.setOnClickListener {
-            val keyword = et_search_input?.text?.toString()?:""
-            if (keyword.isEmpty()) {
-                Toaster.show("请输入正确的关键词")
-            } else {
-                pb_searching?.visibility = VISIBLE
-                Flowable.create<MutableList<ScpModel>>({emitter->
-                    Log.i("search", "开始检索")
-                    emitter.onNext(ScpDao.getInstance().searchScpInDetailByKeyword(keyword))
-                    emitter.onComplete()
-                }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe {scpList->
-                            resultList.clear()
-                            resultList.addAll(scpList)
-                            Log.i("search", resultList.size.toString())
-                            if (adapter == null) {
-                                adapter = SearchResultAdapter(this@SearchActivity, resultList)
-                                rv_search_result?.adapter = adapter
-                                adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                                    override fun onItemClick(view: View, position: Int) {
-                                        val intent = Intent()
-                                        intent.putExtra("link", resultList[position]?.link)
-                                        intent.putExtra("sId", resultList[position]?.sId)
-                                        intent.setClass(this@SearchActivity, DetailActivity::class.java)
-                                        startActivity(intent)
-                                    }
-                                }
-                            } else {
-                                adapter?.notifyDataSetChanged()
-                            }
-                            pb_searching?.visibility = GONE
-                        }
-                EventUtil.onEvent(this, EventUtil.doSearch, keyword)
-                PreferenceUtil.addPoints(5)
+                if (searchMode == 0) searchByTitle(keyword) else searchByDetail(keyword)
             }
         }
 
+        tv_search_switch?.setOnClickListener {
+            searchMode = if (searchMode == 0) 1 else 0
+            tv_search_switch?.text = if (searchMode == 0) "标题搜索" else "全文搜索"
+        }
+    }
+
+    private fun searchByTitle(keyword:String) {
+        EventUtil.onEvent(this, EventUtil.doSearch, keyword)
+        PreferenceUtil.addPoints(5)
+        resultList.clear()
+        resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
+        if (resultList.size == 0) {
+            Toaster.show("搜索结果为空")
+        }
+        if (adapter == null) {
+            adapter = SearchResultAdapter(this@SearchActivity, resultList)
+            rv_search_result?.adapter = adapter
+            adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+                override fun onItemClick(view: View, position: Int) {
+                    val intent = Intent()
+                    intent.putExtra("link", resultList[position]?.link)
+                    intent.putExtra("sId", resultList[position]?.sId)
+                    intent.setClass(this@SearchActivity, DetailActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        } else {
+            adapter?.notifyDataSetChanged()
+        }
+    }
+    private fun searchByDetail(keyword:String) {
+        pb_searching?.visibility = VISIBLE
+        Flowable.create<MutableList<ScpModel>>({emitter->
+            Log.i("search", "开始检索")
+            emitter.onNext(ScpDao.getInstance().searchScpInDetailByKeyword(keyword))
+            emitter.onComplete()
+        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {scpList->
+                    resultList.clear()
+                    resultList.addAll(scpList)
+                    Log.i("search", resultList.size.toString())
+                    if (adapter == null) {
+                        adapter = SearchResultAdapter(this@SearchActivity, resultList)
+                        rv_search_result?.adapter = adapter
+                        adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+                            override fun onItemClick(view: View, position: Int) {
+                                val intent = Intent()
+                                intent.putExtra("link", resultList[position]?.link)
+                                intent.putExtra("sId", resultList[position]?.sId)
+                                intent.setClass(this@SearchActivity, DetailActivity::class.java)
+                                startActivity(intent)
+                            }
+                        }
+                    } else {
+                        adapter?.notifyDataSetChanged()
+                    }
+                    pb_searching?.visibility = GONE
+                }
+        EventUtil.onEvent(this, EventUtil.doSearch, keyword)
+        PreferenceUtil.addPoints(5)
     }
 
     private fun initToolbar() {

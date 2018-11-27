@@ -1,61 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <Preference
-        android:textColor="?attr/darkText"
-        android:title="@string/like_list">
-        <intent android:action="info.free.scp.view.user.LikeActivity" />
-    </Preference>
-    <Preference
-        android:textColor="?attr/darkText"
-        android:title="游戏列表">
-        <intent android:action="info.free.scp.view.game.GameListActivity" />
-    </Preference>
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="dark_mode"
-        android:textColor="?attr/darkText"
-        android:title="@string/dark_mode" />
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="hide_finished_article"
-        android:textColor="?attr/darkText"
-        android:title="@string/hide_finished_article" />
-    <Preference
-        android:textColor="?attr/darkText"
-        android:title="@string/instructions">
-        <intent android:action="info.free.scp.view.user.AboutAppActivity" />
-    </Preference>
-    <Preference
-        android:textColor="?attr/darkText"
-        android:title="@string/about_developer">
-        <intent android:action="info.free.scp.view.user.AboutMeActivity" />
-    </Preference>
-    <Preference
-        android:key="copyright"
-        android:textColor="?attr/darkText"
-        android:title="@string/copyright_explained">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://scp-wiki-cn.wikidot.com/licensing-guide" />
-    </Preference>
-    <Preference
-        android:key="sync_data"
-        android:textColor="?attr/darkText"
-        android:title="@string/sync_data">
+    <PreferenceCategory
+        android:title="额外内容">
+        <Preference
+            android:textColor="?attr/darkText"
+            android:title="@string/like_list">
+            <intent android:action="info.free.scp.view.user.LikeActivity" />
+        </Preference>
+        <Preference
+            android:textColor="?attr/darkText"
+            android:title="游戏列表">
+            <intent android:action="info.free.scp.view.game.GameListActivity" />
+        </Preference>
+    </PreferenceCategory>
 
-    </Preference>
-    <Preference
-        android:key="backup_data"
-        android:textColor="?attr/darkText"
-        android:title="备份本地数据库">
+    <PreferenceCategory
+        android:title="设置">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="dark_mode"
+            android:textColor="?attr/darkText"
+            android:title="@string/dark_mode" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="hide_finished_article"
+            android:textColor="?attr/darkText"
+            android:title="@string/hide_finished_article" />
+    </PreferenceCategory>
 
-    </Preference>
-    <Preference
-        android:key="restore_data"
-        android:textColor="?attr/darkText"
-        android:title="恢复本地数据库">
+    <PreferenceCategory
+        android:title="关于">
+        <Preference
+            android:textColor="?attr/darkText"
+            android:title="@string/instructions">
+            <intent android:action="info.free.scp.view.user.AboutAppActivity" />
+        </Preference>
+        <Preference
+            android:textColor="?attr/darkText"
+            android:title="@string/about_developer">
+            <intent android:action="info.free.scp.view.user.AboutMeActivity" />
+        </Preference>
+        <Preference
+            android:key="copyright"
+            android:textColor="?attr/darkText"
+            android:title="@string/copyright_explained">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://scp-wiki-cn.wikidot.com/licensing-guide" />
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="数据">
+        <Preference
+            android:key="sync_data"
+            android:textColor="?attr/darkText"
+            android:title="@string/sync_data">
 
-    </Preference>
+        </Preference>
+        <Preference
+            android:key="backup_data"
+            android:textColor="?attr/darkText"
+            android:title="备份本地数据库">
+
+        </Preference>
+        <Preference
+            android:key="restore_data"
+            android:textColor="?attr/darkText"
+            android:title="恢复本地数据库">
+
+        </Preference>
+    </PreferenceCategory>
     <Preference
         android:key="query_enter"
         android:textColor="?attr/darkText"

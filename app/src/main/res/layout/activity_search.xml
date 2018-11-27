@@ -41,16 +41,13 @@
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
                 android:contentDescription="TODO" />
-            <ImageButton
-                android:id="@+id/btn_search_detail"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_search_for_detail"
-                android:background="@null"
-                android:layout_gravity="end"
-                android:layout_marginEnd="16dp"
-                android:scaleType="fitXY"
-                android:contentDescription="TODO" />
+            <TextView
+                android:id="@+id/tv_search_switch"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:text="标题搜索"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"/>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
     <android.support.v7.widget.RecyclerView

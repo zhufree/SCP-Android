@@ -8,7 +8,6 @@ import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
@@ -29,10 +28,7 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
 import android.view.ViewTreeObserver
-import android.widget.ImageView
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -47,13 +43,27 @@ class DetailActivity : BaseActivity() {
     private var sId = ""
     private var scp: ScpModel? = null
     private var detailHtml = ""
-    private val nightTextStyle = "<style>body{background-color:#222;}p {font-size:16px;line-height:30px;}* {color:#a0a0a0;}</style>"
-    private val dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
+    private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
+    private var currentTextSizeIndex = 2
+        set(value) {
+            field = value
+            nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
+                    "${textSizeList[currentTextSizeIndex]};line-height:30px;}* {color:#a0a0a0;}</style>"
+            dayTextStyle = "<style>p {font-size:${textSizeList[currentTextSizeIndex]}" +
+                    ";line-height:30px;}* {color:#000;}</style>"
+        }
+    private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
+            "${textSizeList[currentTextSizeIndex]};line-height:30px;}* {color:#a0a0a0;}</style>"
+    private var dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
     private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
     private val jsScript = jqScript + initScript + "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
+
+    private val copyRightHtml = "<div id=\"license-area\" class=\"license-area\">除非特别注明，" +
+            "本页内容采用以下授权方式： <a rel=\"license\" href=\"http://creativecommons.org/licenses/" +
+            "by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 License</a></div>"
     private var screenHeight = 0
     private val history: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var historyIndex = 0
@@ -142,7 +152,7 @@ class DetailActivity : BaseActivity() {
             invalidateOptionsMenu()
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            tv_set_has_read?.setText(if (it.hasRead == 1) R.string.set_has_not_read else R.string.set_has_read)
+            tv_bottom_set_has_read?.setText(if (it.hasRead == 1) R.string.set_has_not_read else R.string.set_has_read)
             detail_toolbar?.title = scp.title
             detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
             if (detailHtml.isEmpty()) {
@@ -150,15 +160,21 @@ class DetailActivity : BaseActivity() {
             } else {
                 pbLoading.visibility = GONE
                 webView.loadDataWithBaseURL( "file:///android_asset/", currentTextStyle
-                        + jsScript + detailHtml,
+                        + jsScript + detailHtml + copyRightHtml,
                         "text/html", "utf-8", null)
             }
-
-            Handler().postDelayed({
-                nsv_web_wrapper?.scrollTo(0, 0)
-            }, 1000)
-
+            nsv_web_wrapper?.scrollTo(0, 0)
         }
+    }
+
+    /**
+     * 不改变网页内容，只刷新样式
+     */
+    private fun refreshStyle() {
+        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+        webView.loadDataWithBaseURL( "file:///android_asset/", currentTextStyle
+                + jsScript + detailHtml + copyRightHtml,
+                "text/html", "utf-8", null)
     }
 
     private fun initToolbar() {
@@ -186,7 +202,8 @@ class DetailActivity : BaseActivity() {
                         } else {
                             onlineMode = 0
                             it.setTitle(R.string.online_mode)
-                            webView?.loadDataWithBaseURL("file:///android_asset/", currentTextStyle + detailHtml,
+                            webView?.loadDataWithBaseURL("file:///android_asset/",
+                                    currentTextStyle + detailHtml + copyRightHtml,
                                     "text/html", "utf-8", null)
                         }
                     }
@@ -240,7 +257,7 @@ class DetailActivity : BaseActivity() {
                             override fun onGlobalLayout() {
                                 cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
                                 Flowable.create<String>({ emitter ->
-                                    val bitmap = Bitmap.createBitmap(cl_detail_container.width, cl_detail_container.height,
+                                    val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
                                             Bitmap.Config.RGB_565)
                                     //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                                     val canvas = Canvas(bitmap)
@@ -256,7 +273,22 @@ class DetailActivity : BaseActivity() {
                                         }
                             }
                         })
+                    }
+                    R.id.big_text -> {
+                        if (currentTextSizeIndex < 4) {
+                            currentTextSizeIndex++
+                            refreshStyle()
+                        } else {
 
+                        }
+                    }
+                    R.id.small_text -> {
+                        if (currentTextSizeIndex > 0) {
+                            currentTextSizeIndex--
+                            refreshStyle()
+                        } else {
+
+                        }
                     }
                     else -> {}
                 }
@@ -264,55 +296,72 @@ class DetailActivity : BaseActivity() {
             true
         }
     }
+    private fun toNextArticle() {
+        EventUtil.onEvent(this, EventUtil.clickNextArticle)
+        PreferenceUtil.addPoints(1)
+        scp?.let { s ->
+            when(s.index) {
+                15400 -> Toaster.show("已经是最后一篇了")
+                else -> {
+                    scp = if (readType == 0) ScpDao.getInstance().getNextScp(s.index)
+                    else ScpDao.getInstance().getRandomScp()
+                    setData(scp)
+                }
+            }
+        }
+    }
+    private fun toPreviewArticle() {
+        EventUtil.onEvent(this, EventUtil.clickLastArticle)
+        PreferenceUtil.addPoints(1)
+        scp?.let { s ->
+            when (s.index) {
+                0 -> Toaster.show("已经是第一篇了")
+                else -> {
+                    scp = if (readType == 0) ScpDao.getInstance().getPreviewScp(s.index)
+                    else ScpDao.getInstance().getRandomScp()
+                    setData(scp)
+                }
+            }
+        }
+    }
+    private fun setHasRead() {
+        scp?.let {s ->
+            if (s.hasRead == 0) {
+                // 标记已读
+                EventUtil.onEvent(this, EventUtil.finishDetail)
+                PreferenceUtil.addPoints(5)
+                s.hasRead = 1
+                ScpDao.getInstance().insertLikeAndReadInfo(s)
+                tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
+            } else {
+                // 取消已读
+                EventUtil.onEvent(this, EventUtil.cancelRead)
+                PreferenceUtil.reducePoints(5)
+                s.hasRead = 0
+                ScpDao.getInstance().insertLikeAndReadInfo(s)
+                tv_bottom_set_has_read?.setText(R.string.set_has_read)
+            }
+        }
+    }
 
     private fun initSwitchBtn() {
-        tv_preview?.setOnClickListener {
-            EventUtil.onEvent(this, EventUtil.clickLastArticle)
-            PreferenceUtil.addPoints(1)
-            scp?.let { s ->
-                when (s.index) {
-                    0 -> Toaster.show("已经是第一篇了")
-                    else -> {
-                        scp = if (readType == 0) ScpDao.getInstance().getPreviewScp(s.index)
-                            else ScpDao.getInstance().getRandomScp()
-                        setData(scp)
-                    }
-                }
-            }
-
+        tv_bottom_preview?.setOnClickListener {
+            toPreviewArticle()
         }
-        tv_next?.setOnClickListener {
-            EventUtil.onEvent(this, EventUtil.clickNextArticle)
-            PreferenceUtil.addPoints(1)
-            scp?.let { s ->
-                when(s.index) {
-                    15400 -> Toaster.show("已经是最后一篇了")
-                    else -> {
-                        scp = if (readType == 0) ScpDao.getInstance().getNextScp(s.index)
-                            else ScpDao.getInstance().getRandomScp()
-                        setData(scp)
-                    }
-                }
-            }
+        tv_top_preview?.setOnClickListener {
+            toPreviewArticle()
         }
-        tv_set_has_read?.setOnClickListener {
-            scp?.let {
-                if (it.hasRead == 0) {
-                    // 标记已读
-                    EventUtil.onEvent(this, EventUtil.finishDetail)
-                    PreferenceUtil.addPoints(5)
-                    it.hasRead = 1
-                    ScpDao.getInstance().insertLikeAndReadInfo(it)
-                    tv_set_has_read?.setText(R.string.set_has_not_read)
-                } else {
-                    // 取消已读
-                    EventUtil.onEvent(this, EventUtil.cancelRead)
-                    PreferenceUtil.reducePoints(5)
-                    it.hasRead = 0
-                    ScpDao.getInstance().insertLikeAndReadInfo(it)
-                    tv_set_has_read?.setText(R.string.set_has_read)
-                }
-            }
+        tv_bottom_next?.setOnClickListener {
+            toNextArticle()
+        }
+        tv_top_next?.setOnClickListener {
+            toNextArticle()
+        }
+        tv_bottom_set_has_read?.setOnClickListener {
+            setHasRead()
+        }
+        tv_top_set_has_read?.setOnClickListener {
+            setHasRead()
         }
     }
 

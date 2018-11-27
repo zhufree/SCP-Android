@@ -15,6 +15,14 @@
         android:title="@string/menu_report"
         app:showAsAction="collapseActionView"/>
     <item
+        android:id="@+id/big_text"
+        android:title="放大字体"
+        app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/small_text"
+        android:title="缩小字体"
+        app:showAsAction="collapseActionView"/>
+    <item
         android:id="@+id/open_in_browser"
         android:title="@string/menu_open_in_browser"
         app:showAsAction="collapseActionView"/>

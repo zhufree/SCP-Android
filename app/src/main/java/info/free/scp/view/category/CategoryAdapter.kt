@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseAdapter
 
 /**

@@ -17,15 +17,15 @@
     <PreferenceCategory
         android:title="设置">
         <SwitchPreference
-            android:defaultValue="false"
             android:key="dark_mode"
             android:textColor="?attr/darkText"
             android:title="@string/dark_mode" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="hide_finished_article"
+
+        <Preference
             android:textColor="?attr/darkText"
-            android:title="@string/hide_finished_article" />
+            android:title="阅读设置">
+            <intent android:action="info.free.scp.view.user.SettingsActivity" />
+        </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory

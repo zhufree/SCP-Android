@@ -223,7 +223,17 @@ object PreferenceUtil {
     }
 
     fun getIfHideFinished(): Boolean {
-        return getBooleanValue("settings", "hide_finished_article")
+        return getBooleanValue("read_settings", "hide_finished_article")
+    }
+
+    fun getCategoryCount(): Int {
+        return getStringValue("read_settings", "category_count").toInt()
+    }
+    fun getCategoryHeight(): Int {
+        return getStringValue("read_settings", "category_height").toInt()
+    }
+    fun getCategoryInterval(): Int {
+        return getStringValue("read_settings", "category_interval").toInt()
     }
 
 

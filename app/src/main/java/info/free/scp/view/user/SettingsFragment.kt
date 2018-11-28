@@ -24,13 +24,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         // Load the preferences from an XML resource
-        setPreferencesFromResource(R.xml.settings_preference, rootKey)
-        preferenceManager?.sharedPreferencesName = "settings"
+        setPreferencesFromResource(R.xml.pref_general_settings, rootKey)
+        preferenceManager?.sharedPreferencesName = "general_settings"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.i("theme", PreferenceUtil.getCurrentTheme().toString())
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
         findPreference("dark_mode").setDefaultValue(ThemeUtil.currentTheme == 1)
 
@@ -46,17 +45,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference("restore_data").title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
                         .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
 
-        findPreference("dark_mode").setOnPreferenceClickListener {
+        findPreference("dark_mode")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, EventUtil.clickChangeTheme)
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
             true
         }
-        findPreference("hide_finished_article").setOnPreferenceClickListener {
-            // TODO event
-            true
-        }
 
-        findPreference("sync_data").setOnPreferenceClickListener {
+
+        findPreference("sync_data")?.setOnPreferenceClickListener {
             if (PreferenceUtil.getInitCategoryFinish()) {
                 AlertDialog.Builder(activity)
                         .setTitle("注意")
@@ -79,14 +75,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference("backup_data").setOnPreferenceClickListener {
+        findPreference("backup_data")?.setOnPreferenceClickListener {
             context?.let {ctx->
                 BackupHelper.getInstance(ctx).backupDB()
                 findPreference("restore_data").isEnabled = true
             }
             true
         }
-        findPreference("restore_data").setOnPreferenceClickListener {
+        findPreference("restore_data")?.setOnPreferenceClickListener {
             context?.let {ctx->
                 BackupHelper.getInstance(ctx).restoreDB()
             }

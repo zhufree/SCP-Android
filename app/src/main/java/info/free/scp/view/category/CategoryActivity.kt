@@ -71,6 +71,11 @@ class CategoryActivity : BaseActivity() {
     private val tag = "category"
     private var currentScpPosition = -1
     private var currentCategoryPosition = -1
+    private val categoryCount = PreferenceUtil.getCategoryCount()
+    private val story1Count = 2000/categoryCount
+    private val story2Count = 1200/categoryCount
+    private val story3Count = 1400/categoryCount
+
 
     private val eventScpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
@@ -175,17 +180,21 @@ class CategoryActivity : BaseActivity() {
         when (categoryType) {
             SERIES -> {
                 pageType = 0
-                categoryList.addAll((0 until 25).map { it*200 })
+//                categoryList.addAll((0 until 25).map { it*200 })
+                categoryList.addAll((0 until (5000/categoryCount)).map { it*categoryCount })
             }
             SERIES_CN -> {
                 pageType = 0
-                categoryList.addAll((0 until 10).map { it*100 })
+                categoryList.addAll((0 until (1000/categoryCount)).map { it*categoryCount })
             }
             SERIES_STORY -> {
                 pageType = 0
-                categoryList.addAll((0 until 9).map { "SCP系列1故事版${it*200 + 1}~${min(it*200+200, 2000)}" })
-                categoryList.addAll((0 until 6).map { "SCP系列2故事版${it*200 + 1}~${min(it*200+200, 1200)}" })
-                categoryList.addAll((0 until 7).map { "SCP系列3故事版${it*200 + 1}~${min(it*200+200, 1300)}" })
+                categoryList.addAll((0 until story1Count).map { "SCP系列1故事版${it*categoryCount + 1}" +
+                        "~${min(it*categoryCount+categoryCount, 2000)}" })
+                categoryList.addAll((0 until story2Count).map { "SCP系列2故事版${it*categoryCount + 1}" +
+                        "~${min(it*categoryCount+categoryCount, 1200)}" })
+                categoryList.addAll((0 until story3Count).map { "SCP系列3故事版${it*categoryCount + 1}" +
+                        "~${min(it*categoryCount+categoryCount, 1300)}" })
             }
             SERIES_ARCHIVED -> {
                 pageType = 0
@@ -254,36 +263,36 @@ class CategoryActivity : BaseActivity() {
         when (categoryType) {
             SERIES -> {
                 // 0,499,999
-                val start = if (position == 0) 0 else position * 200
-                val limit = 200
+                val start = if (position == 0) 0 else position * categoryCount
+                val limit = categoryCount
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES, start, limit))
             }
             SERIES_CN -> {
-                val start = if (position == 0) 0 else position * 100 - 1
-                val limit = if (start == 0) 99 else 100
+                val start = if (position == 0) 0 else position * categoryCount
+                val limit = categoryCount
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_CN, start, limit))
 
             }
             SERIES_STORY -> {
                 when (position) {
                     // 故事版1~499
-                    in 0 until 9 -> {
-                        val start = if (position == 0) 0 else position * 200
-                        val limit = 200
+                    in 0 until story1Count -> {
+                        val start = if (position == 0) 0 else position * categoryCount
+                        val limit = categoryCount
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_1, start, limit))
                     }
                     // 故事版2 1~499
-                    in 9 until 15 -> {
-                        val subPosition = position - 9
-                        val start = if (subPosition == 0) 0 else subPosition * 200
-                        val limit = 200
+                    in story1Count until story1Count + story2Count -> {
+                        val subPosition = position - story1Count
+                        val start = if (subPosition == 0) 0 else subPosition * categoryCount
+                        val limit = categoryCount
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_2, start, limit))
                     }
                     // 故事版3 1~499
-                    in 15 until 22 -> {
-                        val subPosition = position - 15
-                        val start = if (subPosition == 0) 0 else subPosition * 200
-                        val limit = 200
+                    in story1Count + story2Count until story1Count + story2Count + story3Count -> {
+                        val subPosition = position - story1Count + story2Count
+                        val start = if (subPosition == 0) 0 else subPosition * categoryCount
+                        val limit = categoryCount
                         scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SAVE_SERIES_STORY_3, start, limit))
                     }
                 }

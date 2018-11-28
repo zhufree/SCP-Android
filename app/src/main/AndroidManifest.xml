@@ -73,6 +73,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".view.user.SettingsActivity"
+            android:label="@string/title_activity_settings">
+            <intent-filter>
+                <action android:name="info.free.scp.view.user.SettingsActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -76,9 +76,10 @@ class UserFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         about_toolbar?.setTitle(R.string.app_name)
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
-        tv_nickname?.text = "${getRank(PreferenceUtil.getPoint())}：${PreferenceUtil.getNickname()}"
-        tv_data_desc?.text = "已阅读${ScpDao.getInstance().getReadCount()}篇文档    " +
-                "已收藏${ScpDao.getInstance().getLikeCount()}篇文档"
+        tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+        tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
+                "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
 
         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
                 + "/scp_user_head.jpg"))

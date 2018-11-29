@@ -62,19 +62,20 @@
                 android:id="@+id/tv_nickname"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:lineSpacingMultiplier="1.2"
                 android:textColor="?attr/darkText"
-                android:textSize="18sp"
+                android:textSize="15sp"
                 app:layout_constraintTop_toTopOf="@id/iv_user_head"
                 app:layout_constraintBottom_toTopOf="@+id/tv_data_desc"
                 app:layout_constraintStart_toEndOf="@id/iv_user_head"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginStart="16dp"
-                app:layout_constraintVertical_chainStyle="spread" />
+                android:layout_marginStart="16dp"/>
 
             <TextView
                 android:id="@+id/tv_data_desc"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:lineSpacingMultiplier="1.2"
                 android:textColor="?attr/lightText"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toTopOf="@+id/tv_slogan"
@@ -85,13 +86,42 @@
             <TextView
                 android:id="@+id/tv_slogan"
                 android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="牢记你的使命，我们控制，我们收容，我们保护。"
+                android:layout_height="wrap_content"
+                android:text="控制，收容，保护。"
+                android:maxLines="1"
+                android:textSize="13sp"
                 android:textColor="@color/colorAccent"
                 app:layout_constraintBottom_toBottomOf="@id/iv_user_head"
                 app:layout_constraintStart_toStartOf="@id/tv_nickname"
                 app:layout_constraintEnd_toEndOf="@id/tv_nickname"
                 app:layout_constraintTop_toBottomOf="@id/tv_data_desc" />
+            <TextView
+                android:id="@+id/iv_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22sp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="机密人员"
+                android:textColor="@color/colorAccent"
+                android:alpha="0.3"
+                android:background="@drawable/user_label_bg"
+                app:layout_constraintTop_toTopOf="@id/tv_nickname"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="@id/tv_nickname" />
+            <ImageView
+                android:id="@+id/iv_cover"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/img_user_cover"
+                android:scaleType="fitXY"
+                android:alpha="0.2"
+                app:layout_constraintStart_toStartOf="@id/iv_user_head"
+                app:layout_constraintTop_toTopOf="@id/iv_user_head"
+                app:layout_constraintEnd_toEndOf="@id/tv_nickname"
+                app:layout_constraintBottom_toBottomOf="@id/iv_user_head"/>
 
             <View
                 android:id="@+id/v_blank"

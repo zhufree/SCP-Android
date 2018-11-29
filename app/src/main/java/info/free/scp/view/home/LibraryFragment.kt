@@ -59,6 +59,11 @@ class LibraryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tvScpTales?.background?.alpha = 90
+        tvSettings?.background?.alpha = 90
+        tvStorySeries?.background?.alpha = 90
+        tvEssayContest?.background?.alpha = 90
+        tvEventRecord?.background?.alpha = 90
         view.tvScpTales?.setOnClickListener {
             if (isCnPage) {
                 EventUtil.onEvent(mContext, EventUtil.clickTalesCn)
@@ -131,17 +136,11 @@ class LibraryFragment : BaseFragment() {
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
         tvScpTales?.setTextColor(ThemeUtil.darkText)
-        tvScpTales?.setBackgroundColor(ThemeUtil.itemBg)
         tvSettings?.setTextColor(ThemeUtil.darkText)
-        tvSettings?.setBackgroundColor(ThemeUtil.itemBg)
         tvStorySeries?.setTextColor(ThemeUtil.darkText)
-        tvStorySeries?.setBackgroundColor(ThemeUtil.itemBg)
         tvEssayContest?.setTextColor(ThemeUtil.darkText)
-        tvEssayContest?.setBackgroundColor(ThemeUtil.itemBg)
         tvEventRecord?.setTextColor(ThemeUtil.darkText)
-        tvEventRecord?.setBackgroundColor(ThemeUtil.itemBg)
         tvMore?.setTextColor(ThemeUtil.darkText)
-        tvMore?.setBackgroundColor(ThemeUtil.itemBg)
     }
 
     override fun onDetach() {

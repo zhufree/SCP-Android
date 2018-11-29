@@ -21,8 +21,8 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     init {
         itemView.rl_category_item.minimumHeight = categoryHeight
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
-        lp.topMargin = categoryInterval
-        lp.bottomMargin = categoryInterval/2
+        lp.topMargin = Utils.dp2px(categoryInterval)
+        lp.bottomMargin = Utils.dp2px(categoryInterval/2)
     }
     fun setData(data: Any, type: Int) {
         when (type) {

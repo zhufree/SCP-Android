@@ -8,6 +8,8 @@ import android.view.View.VISIBLE
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**
@@ -16,6 +18,16 @@ import kotlinx.android.synthetic.main.item_category.view.*
  */
 
 class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
+    private val categoryCount = PreferenceUtil.getCategoryCount()
+    private val categoryHeight = PreferenceUtil.getCategoryHeight()
+    private val categoryInterval = PreferenceUtil.getCategoryInterval()
+
+    init {
+        itemView.rl_category_item.minimumHeight = categoryHeight
+        val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
+        lp.topMargin = Utils.dp2px(categoryInterval)
+        lp.bottomMargin = Utils.dp2px(categoryInterval/2)
+    }
 
     fun setData(model: ScpModel) {
         itemView?.tvScpTitle?.text = if (model.notFound == "true" && !model.title.contains("拒绝访问"))

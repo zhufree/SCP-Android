@@ -44,17 +44,23 @@ class DetailActivity : BaseActivity() {
     private var scp: ScpModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
-    private var currentTextSizeIndex = 2
+    private var currentTextSizeIndex = textSizeList.indexOf(PreferenceUtil.getDetailTextSize())
         set(value) {
             field = value
+            currentTextSize = textSizeList[value]
+        }
+    private var currentTextSize = PreferenceUtil.getDetailTextSize()
+        set(value) {
+            field = value
+            PreferenceUtil.setDetailTextSize(value)
             nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-                    "${textSizeList[currentTextSizeIndex]};line-height:30px;}* {color:#a0a0a0;}</style>"
-            dayTextStyle = "<style>p {font-size:${textSizeList[currentTextSizeIndex]}" +
+                    "$currentTextSize;line-height:30px;}* {color:#a0a0a0;}</style>"
+            dayTextStyle = "<style>p {font-size:$currentTextSize}" +
                     ";line-height:30px;}* {color:#000;}</style>"
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "${textSizeList[currentTextSizeIndex]};line-height:30px;}* {color:#a0a0a0;}</style>"
-    private var dayTextStyle = "<style>p {font-size:16px;line-height:30px;}* {color:#000;}</style>"
+            "$currentTextSize;line-height:30px;}* {color:#a0a0a0;}</style>"
+    private var dayTextStyle = "<style>p {font-size:$currentTextSize;line-height:30px;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"

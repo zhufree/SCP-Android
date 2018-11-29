@@ -8,11 +8,11 @@
         <item>20</item>
     </string-array>
     <string-array name="detail_text_size_value">
-        <item>12</item>
-        <item>14</item>
-        <item>16</item>
-        <item>18</item>
-        <item>20</item>
+        <item>12px</item>
+        <item>14px</item>
+        <item>16px</item>
+        <item>18px</item>
+        <item>20px</item>
     </string-array>
     <string-array name="category_count_key">
         <item>50</item>
@@ -42,16 +42,18 @@
     </string-array>
     <string-array name="category_interval_key">
         <item>0</item>
-        <item>5</item>
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
         <item>10</item>
-        <item>15</item>
-        <item>20</item>
     </string-array>
     <string-array name="category_interval_value">
         <item>0</item>
-        <item>5</item>
+        <item>2</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
         <item>10</item>
-        <item>15</item>
-        <item>20</item>
     </string-array>
 </resources>

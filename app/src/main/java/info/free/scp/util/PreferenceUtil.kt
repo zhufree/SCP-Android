@@ -236,6 +236,13 @@ object PreferenceUtil {
         return getStringValue("read_settings", "category_interval").toInt()
     }
 
+    fun getDetailTextSize(): String {
+        return getStringValue("read_settings", "detail_text_size")
+    }
+    fun setDetailTextSize(size: String) {
+        setStringValue("read_settings", "detail_text_size", size)
+    }
+
 
     /**
      * 工具方法

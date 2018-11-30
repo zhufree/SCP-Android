@@ -227,17 +227,21 @@ object PreferenceUtil {
     }
 
     fun getCategoryCount(): Int {
-        return getStringValue("read_settings", "category_count").toInt()
+        val count = getStringValue("read_settings", "category_count")
+        return if (count.isNotEmpty()) count.toInt() else 100
     }
     fun getCategoryHeight(): Int {
-        return getStringValue("read_settings", "category_height").toInt()
+        val height = getStringValue("read_settings", "category_height")
+        return if (height.isNotEmpty()) height.toInt() else 50
     }
     fun getCategoryInterval(): Int {
-        return getStringValue("read_settings", "category_interval").toInt()
+        val interval = getStringValue("read_settings", "category_interval")
+        return if (interval.isNotEmpty()) interval.toInt() else 4
     }
 
     fun getDetailTextSize(): String {
-        return getStringValue("read_settings", "detail_text_size")
+        val textSize = getStringValue("read_settings", "detail_text_size")
+        return if (textSize.isNotEmpty()) textSize else "16px"
     }
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)

@@ -11,15 +11,18 @@
             android:key="category_count"
             android:title="目录条数设置"
             android:entries="@array/category_count_key"
+            android:defaultValue="100"
             android:entryValues="@array/category_count_value" />
         <DropDownPreference
             android:key="category_height"
             android:title="目录条目高度"
+            android:defaultValue="50"
             android:entries="@array/category_height_key"
             android:entryValues="@array/category_height_value" />
         <DropDownPreference
             android:key="category_interval"
             android:title="目录条目间距"
+            android:defaultValue="4"
             android:entries="@array/category_interval_key"
             android:entryValues="@array/category_interval_value" />
     </PreferenceCategory>
@@ -29,32 +32,33 @@
         <DropDownPreference
             android:key="detail_text_size"
             android:title="字体设置"
+            android:defaultValue="16px"
             android:entries="@array/detail_text_size_key"
             android:entryValues="@array/detail_text_size_value" />
     </PreferenceCategory>
 
     <!-- NOTE: EditTextPreference accepts EditText attributes. -->
     <!-- NOTE: EditTextPreference's summary should be set to its value by the activity code. -->
-    <EditTextPreference
-        android:capitalize="words"
-        android:defaultValue="@string/pref_default_display_name"
-        android:inputType="textCapWords"
-        android:key="example_text"
-        android:maxLines="1"
-        android:selectAllOnFocus="true"
-        android:singleLine="true"
-        android:title="@string/pref_title_display_name" />
+    <!--<EditTextPreference-->
+        <!--android:capitalize="words"-->
+        <!--android:defaultValue="@string/pref_default_display_name"-->
+        <!--android:inputType="textCapWords"-->
+        <!--android:key="example_text"-->
+        <!--android:maxLines="1"-->
+        <!--android:selectAllOnFocus="true"-->
+        <!--android:singleLine="true"-->
+        <!--android:title="@string/pref_title_display_name" />-->
 
     <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
          dismiss it. -->
     <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
-    <ListPreference
-        android:defaultValue="-1"
-        android:entries="@array/pref_example_list_titles"
-        android:entryValues="@array/pref_example_list_values"
-        android:key="example_list"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_add_friends_to_messages" />
+    <!--<ListPreference-->
+        <!--android:defaultValue="-1"-->
+        <!--android:entries="@array/pref_example_list_titles"-->
+        <!--android:entryValues="@array/pref_example_list_values"-->
+        <!--android:key="example_list"-->
+        <!--android:negativeButtonText="@null"-->
+        <!--android:positiveButtonText="@null"-->
+        <!--android:title="@string/pref_title_add_friends_to_messages" />-->
 
 </PreferenceScreen>

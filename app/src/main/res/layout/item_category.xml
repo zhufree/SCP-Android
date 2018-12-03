@@ -12,9 +12,7 @@
     <RelativeLayout
         android:id="@+id/rl_category_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="80dp"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
         <TextView
             android:id="@+id/tvScpTitle"
             android:layout_width="wrap_content"

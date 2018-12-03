@@ -56,7 +56,7 @@ class BackupHelper(val mContext: Context) {
             }
             if (isOk) {
                 // 如果有数据体现则需要刷新出新的数据
-                Toaster.show("恢复完成")
+                Toaster.show("恢复完成", context = mContext)
 
             }
         }

@@ -66,8 +66,6 @@ class HomeFragment : BaseFragment() {
             }
 
             override fun onPageSelected(position: Int) {
-                EventUtil.onEvent(null, if (position == 0) EventUtil.showScpSeries
-                        else EventUtil.showScpLibrary)
             }
         })
         category_toolbar?.setTitle(R.string.app_name)
@@ -78,7 +76,6 @@ class HomeFragment : BaseFragment() {
                     libraryFragment.changePage()
                 }
                 R.id.search -> {
-                    EventUtil.onEvent(activity, EventUtil.clickSearch)
                     activity?.startActivity(Intent(activity, SearchActivity::class.java))
                 }
             }

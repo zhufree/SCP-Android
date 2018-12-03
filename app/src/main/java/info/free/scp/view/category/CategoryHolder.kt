@@ -2,6 +2,7 @@ package info.free.scp.view.category
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import android.widget.FrameLayout
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.Category.SERIES_CN
 import info.free.scp.util.PreferenceUtil
@@ -19,7 +20,8 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
 
     init {
-        itemView.rl_category_item.minimumHeight = categoryHeight
+        val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
+        rlLp.height = Utils.dp2px(categoryHeight)
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)

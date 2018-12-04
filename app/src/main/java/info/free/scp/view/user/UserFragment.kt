@@ -69,7 +69,7 @@ class UserFragment : BaseFragment() {
             else -> {
                 PreferenceUtil.getJobNameByLevel(0)
             }
-        } + Random(System.currentTimeMillis()).nextInt(600)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

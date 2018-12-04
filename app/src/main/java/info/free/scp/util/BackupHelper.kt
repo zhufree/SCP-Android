@@ -24,7 +24,7 @@ class BackupHelper(val mContext: Context) {
     private var dbFilename = "scp_info.db"
     private val backUpFolderName = "backup"
     private val appFolderName = "SCP"
-    val sp = File.separator
+    private val sp = File.separator
 
     companion object {
         private var backupHelper: BackupHelper? = null
@@ -44,21 +44,18 @@ class BackupHelper(val mContext: Context) {
         builder.setTitle("恢复")
         builder.setMessage("尝试从本地备份中恢复数据库")
         builder.setPositiveButton("确定") { _, _ ->
-            val sp = File.separator
-            val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
-            val file = File(backUpPath)
-            Toaster.show("开始恢复", context = mContext)
-            val isOk = restore(file.name, file)
-            if (!isOk) {
-                val failMsg = "恢复失败" + ":" + file.name
-                Toast.makeText(mContext, failMsg,
-                        Toast.LENGTH_SHORT).show()
-            }
-            if (isOk) {
-                // 如果有数据体现则需要刷新出新的数据
-                Toaster.show("恢复完成", context = mContext)
-
-            }
+            Toaster.show("开始恢复")
+            Flowable.create<Boolean>({ emitter ->
+                val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
+                val file = File(backUpPath)
+                emitter.onNext(restore(file.name, file))
+                emitter.onComplete()
+            }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        val resultMsg = if (it) "恢复完成" else "恢复失败"
+                        Toaster.show(resultMsg)
+                    }
         }
         builder.setNegativeButton("取消"){_,_->}
         builder.show()

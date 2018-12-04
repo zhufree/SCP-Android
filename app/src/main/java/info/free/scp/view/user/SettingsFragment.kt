@@ -75,6 +75,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference("backup_data")?.setOnPreferenceClickListener {
             context?.let {ctx->
+                EventUtil.onEvent(ctx, EventUtil.clickBackUpData)
                 BackupHelper.getInstance(ctx).backupDB()
                 findPreference("restore_data").isEnabled = true
             }
@@ -82,6 +83,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         findPreference("restore_data")?.setOnPreferenceClickListener {
             context?.let {ctx->
+                EventUtil.onEvent(ctx, EventUtil.clickRestoreData)
                 BackupHelper.getInstance(ctx).restoreDB()
             }
             true

@@ -1,6 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="目录设置">
+        android:title="@string/category_settings">
         <SwitchPreference
             android:defaultValue="false"
             android:key="hide_finished_article"
@@ -9,19 +9,19 @@
 
         <DropDownPreference
             android:key="category_count"
-            android:title="目录条数设置"
+            android:title="@string/category_count"
             android:entries="@array/category_count_key"
             android:defaultValue="100"
             android:entryValues="@array/category_count_value" />
         <DropDownPreference
             android:key="category_height"
-            android:title="目录条目高度"
+            android:title="@string/category_height"
             android:defaultValue="50"
             android:entries="@array/category_height_key"
             android:entryValues="@array/category_height_value" />
         <DropDownPreference
             android:key="category_interval"
-            android:title="目录条目间距"
+            android:title="@string/category_interval"
             android:defaultValue="4"
             android:entries="@array/category_interval_key"
             android:entryValues="@array/category_interval_value" />
@@ -31,7 +31,7 @@
 
         <DropDownPreference
             android:key="detail_text_size"
-            android:title="字体设置"
+            android:title="@string/font_size_setting"
             android:defaultValue="16px"
             android:entries="@array/detail_text_size_key"
             android:entryValues="@array/detail_text_size_value" />

@@ -7,6 +7,7 @@ import android.preference.PreferenceActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import info.free.scp.R
+import info.free.scp.util.EventUtil
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -46,11 +47,13 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             findPreference("hide_finished_article").setOnPreferenceClickListener {
-                // TODO event
+                EventUtil.onEvent(context, EventUtil.hideReadContent)
+                true
+            }
+            findPreference("category_count").setOnPreferenceChangeListener { _, any ->
+                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 true
             }
         }
     }
-
-
 }

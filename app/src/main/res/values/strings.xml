@@ -31,25 +31,37 @@
     <string name="title_scp_int">SCP国际</string>
 
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
-    <string name="user_notice">关于数据同步：云端文档数据不会实时更新，可能一周或两周更新一次，从0.0.7版本之后不再强制要求更新文档（数据库结构更新除外），
+    <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
+        想要详细了解scp基金会请访问官网\n
+        关于数据同步：云端文档数据不会实时更新，可能一周或两周更新一次，从0.0.7版本之后不再强制要求更新文档（数据库结构更新除外），
         用户可以根据页面底部的时间对比决定要不要同步云端数据，选择【重新同步云端数据】即可删除本地数据并重新加载。\n
-        关于数据数量：目前的条目总数为15000+，其中禁止访问即404的内容有4500+条，另有一些文档是重复出现的，如在SCP系列中同时也在SCP故事版中，
-        此处只按条目计数，也因此搜索功能可能会搜出两篇一样的文档，属正常现象，望周知。\n
-        关于收藏等功能：读过和收藏功能是基于文档链接存储的，且这部分数据仅在本地保存，请谨慎卸载重装app（之后会做个导出功能用于备份）。\n\n
-        0.0.9版本更新：\n
-
+        关于收藏等功能：读过和收藏功能是基于文档链接存储的，且这部分数据仅在本地保存，可以使用备份功能保存数据，但职位等级等信息不会保留。\n\n
+        0.0.9版本更新：\n新增功能：\n
+        1.SCP相关游戏列表，收录6个PC游戏和7个手机游戏；\n
+        2.备份和恢复本地数据库功能，保存离线的文档数据和已读收藏数据；\n
+        优化：\n
+        1.增加设置页面可用于设置目录的条目数和高度间距等；\n
+        2.可在设置页和阅读页面调整字体大小；\n
+        3.整体界面样式调整，阅读页面使用网站样式并在页面底部添加了版权声明；\n
+        4.正文内的折叠部分可以直接点击；\n
+        5.阅读页面按钮固定在屏幕底部；\n
+        6.新增全文截图分享功能，如果文章过长可能造成内存溢出闪退；\n
+        7.新增全文检索功能，搜索时间会比较长，请注意不要搜索特别常见的词，否则可能会导致手机卡住；
+        8.随机功能入口调整至第一个tab的最后一个入口；
+        9.已读改为手动标记；
         \n\n
-        PPS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
+        PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
 
     <string name="download_detail_service">下载正文</string>
 
     <string name="offline_mode">切换离线模式</string>
     <string name="online_mode">切换网页模式</string>
-    <string name="show_secret_content">显示折叠内容</string>
-    <string name="hide_secret_content">隐藏折叠内容</string>
     <string name="menu_report">反馈问题</string>
+    <string name="big_size">放大字体</string>
+    <string name="small_size">缩小字体</string>
     <string name="menu_open_in_browser">在浏览器中打开</string>
     <string name="menu_copy_link">复制链接</string>
+    <string name="share_with_picture">图片分享</string>
     <string name="menu_like">收藏</string>
 
     <string name="next_article">下一篇</string>
@@ -79,86 +91,27 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
+    <string name="extra_content">额外内容</string>
     <string name="like_list">收藏列表</string>
+    <string name="game_list">游戏列表</string>
+    <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
+    <string name="read_settings">阅读设置</string>
     <string name="hide_finished_article">隐藏已读文档</string>
+    <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
     <string name="about_developer">关于开发者</string>
     <string name="copyright_explained">版权说明</string>
-    <string name="query_enter">用户调查问卷</string>
+    <string name="query_enter">用户调查问卷（每次更新版本时更新）</string>
+    <string name="data">数据</string>
     <string name="init_data">初始化数据</string>
     <string name="sync_data">同步云端数据</string>
-    <string name="title_activity_settings">Settings</string>
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
-    <string-array name="pref_example_list_titles">
-        <item>Always</item>
-        <item>When possible</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_example_list_values">
-        <item>1</item>
-        <item>0</item>
-        <item>-1</item>
-    </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
-    <string-array name="pref_sync_frequency_titles">
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
-    </string-array>
-    <string-array name="pref_sync_frequency_values">
-        <item>15</item>
-        <item>30</item>
-        <item>60</item>
-        <item>180</item>
-        <item>360</item>
-        <item>-1</item>
-    </string-array>
-
-    <string-array name="list_preference_entries">
-        <item>Entry 1</item>
-        <item>Entry 2</item>
-        <item>Entry 3</item>
-    </string-array>
-
-    <string-array name="list_preference_entry_values">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-    </string-array>
-
-    <string-array name="multi_select_list_preference_default_value" />
-
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="backup_data">备份本地数据库</string>
+    <string name="restore_data">恢复本地数据库</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="category_settings">目录设置</string>
+    <string name="category_count">目录条目数量</string>
+    <string name="category_height">目录条目高度</string>
+    <string name="category_interval">目录条目间距</string>
+    <string name="font_size_setting">字体设置</string>
 </resources>

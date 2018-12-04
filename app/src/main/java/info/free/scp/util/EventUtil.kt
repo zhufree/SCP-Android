@@ -37,6 +37,11 @@ object EventUtil {
     const val finishRead = "finish_read"
     const val searchTitle = "search_title"
     const val searchDetail = "search_detail"
+    const val setListItemCount = "set_list_item_count" // 设置列表条目
+    const val hideReadContent = "hide_read_content"// 隐藏已读文档
+    const val clickRestoreData =  "click_restore_data"// 点击恢复数据库
+    const val clickBackUpData = "click_backup_data"// 点击备份数据库
+    const val clickGameList = "click_game_list"// 点击游戏列表
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)

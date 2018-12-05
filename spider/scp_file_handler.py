@@ -54,6 +54,7 @@ def get_not_found_category_from_file(filename):
         		not_found_list.append(c)
         return not_found_list
 
+# 从文件中读取链接，自动去重
 def get_list_from_file(filename):
     with open(filename, 'r') as f:
         # link_list = list(f.read()[2:-2].split("\', \'"))
@@ -65,7 +66,7 @@ def get_list_from_file(filename):
                 real_list.append(link)
         return real_list
 
-def get_category_from_file(filename):
+def get_scps_from_file(filename):
     with open(filename, 'r', encoding='utf-8', newline='') as f:
         # 统一header，方便后续合并文件一起上传
         reader = csv.DictReader(f)
@@ -101,7 +102,7 @@ def merge_new_link_to_old():
     write_link_to_file(base_link_list, 'final_category_list.txt')
 
 def select_scp_by_real_link():
-    new_found_scp = get_category_from_file('new-found-category-9.csv')
+    new_found_scp = get_scps_from_file('new-found-category-9.csv')
     final_new_found_link = get_list_from_file('final_new_found_link.txt')
     real_new_scp = []
     for scp in new_found_scp:
@@ -117,7 +118,7 @@ def select_scp_by_real_link():
 
 def get_new_round_detail():
     final_total_link_list = get_list_from_file('final_category_list.txt')
-    scp_list = get_category_from_file("final_new_scp.csv")
+    scp_list = get_scps_from_file("final_new_scp.csv")
     link_list = get_list_from_file('final_new_found_link.txt')
     get_detail_by_link_list(link_list, final_total_link_list, scp_list)
     write_to_csv(new_found_category_list, "new-found-category-1.csv")
@@ -126,14 +127,14 @@ def get_new_round_detail():
 def fix_not_found():
     final_total_link_list = get_list_from_file('final_category_list.txt')
     not_found_list = get_not_found_category_from_file('scp-category-new-1.csv')
-    all_list = get_category_from_file('scp-category-new-1.csv')
+    all_list = get_scps_from_file('scp-category-new-1.csv')
     links = [s['link'] for s in not_found_list]
     get_detail_by_link_list(links, final_total_link_list, all_list)
     write_to_csv(all_list, "scp-category-new-1.csv")
 
 
 def split_csv_file():
-    all_scp = get_category_from_file('scp-category-merge.csv')
+    all_scp = get_scps_from_file('scp-category-merge.csv')
     # 4000一组
     for i in range(0, 4):
         if i*4000+4000 > len(all_scp):

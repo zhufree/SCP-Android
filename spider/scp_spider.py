@@ -450,12 +450,14 @@ def run_old_spider():
 # 正文中有的链接再存储一遍，和之前的链接列表对比再次去重抓取
 def run_category_spider():
     total_scp_list = []
-    sys.stdout = Logger("category_list.txt")
+    # 把所有链接print到文件里保存
+    sys.stdout = Logger("link_list.txt")
     for i in range(1, 6):
         total_scp_list = total_scp_list + thread_get_series(i)
     total_scp_list = total_scp_list + get_series_cn()
-    for i in range(1, 4):
-        total_scp_list = total_scp_list + thread_get_story(i)
+    # 故事版不抓
+    # for i in range(1, 4):
+        # total_scp_list = total_scp_list + thread_get_story(i)
     total_scp_list = total_scp_list + thread_get_tales('false')
     total_scp_list = total_scp_list + thread_get_tales('true')
     # 故事系列
@@ -486,7 +488,7 @@ def run_category_spider():
     total_scp_list = total_scp_list + thread_get_archives('http://scp-wiki-cn.wikidot.com/scp-removed',\
         'div.content-panel>ul>li', 'false', 'removed')
 
-    write_to_csv(total_scp_list, "scp-inital.csv")
+    write_to_csv(total_scp_list, "scp-category.csv")
 
 
 class Logger(object):
@@ -502,7 +504,7 @@ class Logger(object):
         pass
 
 # 根据链接抓取内容，更新到category文件中，同时把正文中新出现的链接记录下来
-def get_detail_by_link(link, total_link_list, total_category_list, new_link):
+def get_detail_by_link(link, total_link_list, total_scps_list, new_link):
     try:
         print(link)
         if 'http://scp-wiki-cn.wikidot.com' in link:
@@ -510,7 +512,7 @@ def get_detail_by_link(link, total_link_list, total_category_list, new_link):
         else:
             detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
         detail_dom = list(detail_doc('div#page-content').items())[0]
-        for category in total_category_list:
+        for category in total_scps_list:
             if category['link'] == link:
                 category['not_found'] = "false"
                 category['detail'] = detail_dom.html().replace('  ', '').replace('\n', '')
@@ -531,52 +533,51 @@ def get_detail_by_link(link, total_link_list, total_category_list, new_link):
                 }
                 new_found_category_list.append(new_category)
     except:
-        for category in total_category_list:
+        for category in total_scps_list:
             if category['link'] == link:
                 category['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
                 category['not_found'] = "true"
 
 # 链接列表遍历
-def get_detail_by_link_list(link_list, total_link_list, total_category_list):
+def get_detail_by_link_list(link_list, total_link_list, total_scps_list):
     new_link = []
     for link in link_list:
-        get_detail_by_link(link, total_link_list, total_category_list, new_link)
+        get_detail_by_link(link, total_link_list, total_scps_list, new_link)
     sys.stdout = Logger("new_found_link_1.txt")
     for l in new_link:
         print(l)
 
 def get_detail_order():
-    total_link_list = get_list_from_file() # 去重
-    total_category_list = get_category_from_file()
+    # 第一次爬虫跑完所有的链接
+    total_link_list = get_list_from_file('link_list.txt') # 去重
+    # 第一次爬虫跑完所有的scp
+    total_scps_list = get_scps_from_file("scp-category.csv")
     print('real list size:' + str(len(total_link_list)))
-    print('category list size:' + str(len(total_category_list)))
+    print('category list size:' + str(len(total_scps_list)))
     # for link in total_link_list:
     #     print(link)
-    #     get_detail_by_link(link, total_link_list, total_category_list)
+    #     get_detail_by_link(link, total_link_list, total_scps_list)
 
     sys.stdout = Logger("new_found_link.txt")
-    get_detail_by_link(total_link_list[1000:2000], total_link_list, total_category_list)
+    get_detail_by_link(total_link_list[1000:2000], total_link_list, total_scps_list)
 
     write_to_csv(new_found_category_list, "new-found-category-2.csv")
-    write_to_csv(total_category_list, "scp-category-new-2.csv")
+    write_to_csv(total_scps_list, "scp-category-new-2.csv")
 
 
 if __name__ == '__main__':
     # new spider
-    run_category_spider()
+    # run_category_spider()
     # get_detail_order()
     # test
-    # run_category_spider()
-    # merge_all_file()
-    # get_list_from_file()
-    # get_category_from_file()
-    # get_detail_order()
+    run_category_spider()
+    get_detail_order()
     # new_found_category_list = get_not_found_category_from_file('scp-category-new-1.csv')
     # total_link_list = get_list_from_file('final_new_found_link.txt')
-    # total_category_list = get_category_from_file()
+    # total_scps_list = get_category_from_file()
     # print('not found category list size:' + str(len(new_found_category_list)))
     # sys.stdout = Logger("new_found_link.txt")
-    # get_detail_by_link([no_found['link'] for no_found in new_found_category_list], total_link_list, total_category_list)
+    # get_detail_by_link([no_found['link'] for no_found in new_found_category_list], total_link_list, total_scps_list)
     # write_to_csv(new_found_category_list, "new-found-category-9.csv")
-    # write_to_csv(total_category_list, "scp-category-new-9.csv")
+    # write_to_csv(total_scps_list, "scp-category-new-9.csv")
     

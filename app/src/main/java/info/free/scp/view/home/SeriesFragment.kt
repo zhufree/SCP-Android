@@ -16,17 +16,10 @@ import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
 import info.free.scp.SCPConstants.Category.SERIES_CN
 import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.util.EventUtil
-import info.free.scp.util.EventUtil.clickAbout
-import info.free.scp.util.EventUtil.clickArchived
-import info.free.scp.util.EventUtil.clickSeries
-import info.free.scp.util.EventUtil.clickSeriesCn
-import info.free.scp.util.EventUtil.clickSeriesStory
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.fragment_series.view.*
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_series.*
 
@@ -68,23 +61,18 @@ class SeriesFragment : BaseFragment() {
         tvSeriesAbout?.background?.alpha = 90
         tv_random?.background?.alpha = 90
         tvScpSeries?.setOnClickListener {
-            EventUtil.onEvent(mContext, clickSeries)
             listener?.onCategoryClick(SERIES)
         }
         tvSeriesCn?.setOnClickListener{
-            EventUtil.onEvent(mContext, clickSeriesCn)
             listener?.onCategoryClick(SERIES_CN)
         }
         tvSeriesStory?.setOnClickListener{
-            EventUtil.onEvent(mContext, clickSeriesStory)
             listener?.onCategoryClick(SERIES_STORY)
         }
         tvSeriesArchived?.setOnClickListener{
-            EventUtil.onEvent(mContext, clickArchived)
             listener?.onCategoryClick(SERIES_ARCHIVED)
         }
         tvSeriesAbout?.setOnClickListener{
-            EventUtil.onEvent(mContext, clickAbout)
             listener?.onCategoryClick(SERIES_ABOUT)
         }
         tv_random?.setOnClickListener {

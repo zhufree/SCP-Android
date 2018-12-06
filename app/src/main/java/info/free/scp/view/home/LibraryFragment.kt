@@ -66,47 +66,37 @@ class LibraryFragment : BaseFragment() {
         tvEventRecord?.background?.alpha = 90
         view.tvScpTales?.setOnClickListener {
             if (isCnPage) {
-                EventUtil.onEvent(mContext, EventUtil.clickTalesCn)
                 listener?.onCategoryClick(TALES_CN)
             } else {
-                EventUtil.onEvent(mContext, EventUtil.clickTales)
                 listener?.onCategoryClick(TALES)
             }
         }
         view.tvStorySeries?.setOnClickListener {
             if (isCnPage) {
-                EventUtil.onEvent(mContext, EventUtil.clickStoryCn)
                 listener?.onCategoryClick(STORY_SERIES_CN)
             } else {
-                EventUtil.onEvent(mContext, EventUtil.clickStory)
                 listener?.onCategoryClick(STORY_SERIES)
             }
         }
         view.tvSettings?.setOnClickListener {
             if (isCnPage) {
-                EventUtil.onEvent(mContext, EventUtil.clickSettingsCn)
                 listener?.onCategoryClick(SETTINGS_CN)
             } else {
-                EventUtil.onEvent(mContext, EventUtil.clickSettings)
                 listener?.onCategoryClick(SETTINGS)
             }
         }
         view.tvEssayContest?.setOnClickListener {
             if (isCnPage) {
-                EventUtil.onEvent(mContext, EventUtil.clickContestCn)
                 listener?.onCategoryClick(CONTEST_CN)
             } else {
-                EventUtil.onEvent(mContext, EventUtil.clickContest)
                 listener?.onCategoryClick(CONTEST)
             }
         }
         view.tvEventRecord?.setOnClickListener {
-            EventUtil.onEvent(mContext, EventUtil.clickEvent)
             listener?.onCategoryClick(EVENT)
         }
         view.tvMore?.setOnClickListener {
             if (isCnPage) {
-                EventUtil.onEvent(mContext, EventUtil.clickTalesCnByTime)
                 listener?.onCategoryClick(TALES_BY_TIME)
             } else {
                 Toast.makeText(ScpApplication.context, "更多功能敬请期待", LENGTH_SHORT).show()

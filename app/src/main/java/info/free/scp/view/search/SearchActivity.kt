@@ -49,7 +49,7 @@ class SearchActivity : BaseActivity() {
     }
 
     private fun searchByTitle(keyword:String) {
-        EventUtil.onEvent(this, EventUtil.doSearch, keyword)
+        EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
         resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
@@ -76,6 +76,7 @@ class SearchActivity : BaseActivity() {
         pb_searching?.visibility = VISIBLE
         Flowable.create<MutableList<ScpModel>>({emitter->
             Log.i("search", "开始检索")
+            EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
             emitter.onNext(ScpDao.getInstance().searchScpInDetailByKeyword(keyword))
             emitter.onComplete()
         }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
@@ -101,7 +102,6 @@ class SearchActivity : BaseActivity() {
                     }
                     pb_searching?.visibility = GONE
                 }
-        EventUtil.onEvent(this, EventUtil.doSearch, keyword)
         PreferenceUtil.addPoints(5)
     }
 

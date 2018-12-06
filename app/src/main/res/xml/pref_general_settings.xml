@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="额外内容">
+        android:title="@string/extra_content">
         <Preference
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/like_list">
             <intent android:action="info.free.scp.view.user.LikeActivity" />
         </Preference>
         <Preference
-            android:textColor="?attr/darkText"
-            android:title="游戏列表">
+            android:textColor="?attr/lightText"
+            android:title="@string/game_list">
             <intent android:action="info.free.scp.view.game.GameListActivity" />
         </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="设置">
+        android:title="@string/settings">
         <SwitchPreference
             android:key="dark_mode"
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/dark_mode" />
 
         <Preference
-            android:textColor="?attr/darkText"
-            android:title="阅读设置">
+            android:textColor="?attr/lightText"
+            android:title="@string/read_settings">
             <intent android:action="info.free.scp.view.user.SettingsActivity" />
         </Preference>
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:title="关于">
+        android:title="@string/about">
         <Preference
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/instructions">
             <intent android:action="info.free.scp.view.user.AboutAppActivity" />
         </Preference>
         <Preference
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/about_developer">
             <intent android:action="info.free.scp.view.user.AboutMeActivity" />
         </Preference>
         <Preference
             android:key="copyright"
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/copyright_explained">
             <intent
                 android:action="android.intent.action.VIEW"
@@ -50,32 +50,32 @@
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="数据">
+        android:title="@string/data">
         <Preference
             android:key="sync_data"
-            android:textColor="?attr/darkText"
+            android:textColor="?attr/lightText"
             android:title="@string/sync_data">
 
         </Preference>
         <Preference
             android:key="backup_data"
-            android:textColor="?attr/darkText"
-            android:title="备份本地数据库">
+            android:textColor="?attr/lightText"
+            android:title="@string/backup_data">
 
         </Preference>
         <Preference
             android:key="restore_data"
-            android:textColor="?attr/darkText"
-            android:title="恢复本地数据库">
+            android:textColor="?attr/lightText"
+            android:title="@string/restore_data">
 
         </Preference>
     </PreferenceCategory>
     <Preference
         android:key="query_enter"
-        android:textColor="?attr/darkText"
+        android:textColor="?attr/lightText"
         android:title="@string/query_enter">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="http://freeescp.mikecrm.com/HGDIeJR" />
+            android:data="http://freeescp.mikecrm.com/IXVGgmc" />
     </Preference>
 </PreferenceScreen>

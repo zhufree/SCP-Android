@@ -207,7 +207,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
             nameInputDialog.show()
             nameInputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 PreferenceUtil.saveNickname(inputView.et_report.text.toString())
-                EventUtil.onEvent(this, EventUtil.enterNickname, inputView.et_report.text.toString())
                 nameInputDialog.dismiss()
                 checkJob()
             }

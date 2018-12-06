@@ -194,7 +194,6 @@ class DetailActivity : BaseActivity() {
             scp?.let {s ->
                 when (it.itemId) {
                     R.id.switch_read_mode -> {
-                        EventUtil.onEvent(this@DetailActivity, EventUtil.clickChangeReadMode)
                         PreferenceUtil.addPoints(1)
                         if (onlineMode == 0) {
                             if (enabledNetwork()) {
@@ -303,7 +302,6 @@ class DetailActivity : BaseActivity() {
         }
     }
     private fun toNextArticle() {
-        EventUtil.onEvent(this, EventUtil.clickNextArticle)
         PreferenceUtil.addPoints(1)
         scp?.let { s ->
             when(s.index) {
@@ -317,7 +315,6 @@ class DetailActivity : BaseActivity() {
         }
     }
     private fun toPreviewArticle() {
-        EventUtil.onEvent(this, EventUtil.clickLastArticle)
         PreferenceUtil.addPoints(1)
         scp?.let { s ->
             when (s.index) {
@@ -334,14 +331,14 @@ class DetailActivity : BaseActivity() {
         scp?.let {s ->
             if (s.hasRead == 0) {
                 // 标记已读
-                EventUtil.onEvent(this, EventUtil.finishDetail)
+                EventUtil.onEvent(this, EventUtil.finishRead)
                 PreferenceUtil.addPoints(5)
                 s.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
                 tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
             } else {
                 // 取消已读
-                EventUtil.onEvent(this, EventUtil.cancelRead)
+                EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link?:"")
                 PreferenceUtil.reducePoints(5)
                 s.hasRead = 0
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
@@ -354,21 +351,15 @@ class DetailActivity : BaseActivity() {
         tv_bottom_preview?.setOnClickListener {
             toPreviewArticle()
         }
-        tv_top_preview?.setOnClickListener {
-            toPreviewArticle()
-        }
+
         tv_bottom_next?.setOnClickListener {
             toNextArticle()
         }
-        tv_top_next?.setOnClickListener {
-            toNextArticle()
-        }
+
         tv_bottom_set_has_read?.setOnClickListener {
             setHasRead()
         }
-        tv_top_set_has_read?.setOnClickListener {
-            setHasRead()
-        }
+
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

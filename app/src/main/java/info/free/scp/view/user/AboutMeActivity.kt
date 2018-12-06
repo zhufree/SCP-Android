@@ -33,7 +33,7 @@ class AboutMeActivity : BaseActivity() {
             MediaScannerConnection.scanFile(this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
                     null, null)
             Toaster.showLong("正在跳转到微信扫一扫，请从相册选取赞赏二维码随意打赏", context = this)
-            Handler().postDelayed({startWechatScan(this)}, 1000)
+            Handler().postDelayed({startWechatScan(this)}, 500)
         }
     }
 

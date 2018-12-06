@@ -69,7 +69,7 @@ class UserFragment : BaseFragment() {
             else -> {
                 PreferenceUtil.getJobNameByLevel(0)
             }
-        } + Random(System.currentTimeMillis()).nextInt(600)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,7 +109,6 @@ class UserFragment : BaseFragment() {
                 try {
                     val file = Utils.getFileByUri(uri, context!!)
                     file?.let{f ->
-                        EventUtil.onEvent(context, EventUtil.changeHeadImg, f.path)
                         Utils.save(f, "scp_user_head")
                         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
                     }

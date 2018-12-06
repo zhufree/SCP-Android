@@ -154,7 +154,6 @@ class CategoryActivity : BaseActivity() {
             scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
                     currentScpPosition = position
-                    EventUtil.onEvent(this@CategoryActivity, EventUtil.clickDetail, scpList[position].link)
                     PreferenceUtil.addPoints(2)
                     val intent = Intent()
                     intent.putExtra("link", scpList[position].link)
@@ -199,7 +198,7 @@ class CategoryActivity : BaseActivity() {
             SERIES_ARCHIVED -> {
                 pageType = 0
                 categoryList.addAll(arrayOf("搞笑SCP"))
-                categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("前SCP", "被归档的SCP", "废除SCP", "删除SCP"))
+                categoryList.addAll(if (isCnPage) arrayOf("已解明SCP") else arrayOf("已解明SCP", "被归档的SCP", "废除SCP", "删除SCP"))
             }
             TALES -> {
                 // 1021
@@ -313,19 +312,19 @@ class CategoryActivity : BaseActivity() {
                             scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_JOKE))
                         }
                     }
-                    3 -> {
+                    1 -> {
                         // 已解明scp
                         scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_EX))
                     }
-                    4 -> {
+                    2 -> {
                         // 归档scp
                         scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_ARCHIVED))
                     }
-                    5 -> {
+                    3 -> {
                         // 废弃scp
                         scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_DECOMMISSIONED))
                     }
-                    6 -> {
+                    4 -> {
                         // 已移除scp
                         scpList.addAll(ScpDao.getInstance().getScpByType(SAVE_REMOVED))
                     }

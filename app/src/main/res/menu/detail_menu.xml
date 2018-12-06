@@ -16,11 +16,11 @@
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/big_text"
-        android:title="放大字体"
+        android:title="@string/big_size"
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/small_text"
-        android:title="缩小字体"
+        android:title="@string/small_size"
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/open_in_browser"
@@ -32,7 +32,7 @@
         app:showAsAction="collapseActionView"/>
     <item
         android:id="@+id/share_picture"
-        android:title="图片分享"
+        android:title="@string/share_with_picture"
         app:showAsAction="collapseActionView"/>
 
 

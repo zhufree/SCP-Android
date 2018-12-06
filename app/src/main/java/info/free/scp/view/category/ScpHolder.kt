@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.FrameLayout
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
@@ -23,7 +24,8 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
 
     init {
-        itemView.rl_category_item.minimumHeight = categoryHeight
+        val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
+        rlLp.height = Utils.dp2px(categoryHeight)
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)

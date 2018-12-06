@@ -21,7 +21,6 @@ class LikeActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventUtil.onEvent(this, EventUtil.clickLikeList)
         setContentView(R.layout.activity_like)
         initToolbar()
 

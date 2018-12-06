@@ -14,7 +14,7 @@ import java.util.Calendar.YEAR
 
 object PreferenceUtil {
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
-        return ScpApplication.context?.getSharedPreferences(name, Context.MODE_PRIVATE)
+        return ScpApplication.context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
     fun getInitCategoryFinish(): Boolean {
         return getBooleanValue("init", "initData")

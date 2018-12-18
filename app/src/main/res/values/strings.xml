@@ -6,15 +6,19 @@
     <string name="tab_latest">最近更新</string>
     <string name="tab_mine">我的</string>
 
-    <string name="title_series">SCP系列</string>
-    <string name="title_series_cn">SCP-CN系列</string>
-    <string name="title_series_story">SCP故事版</string>
-    <string name="title_series_others">其他SCP</string>
+    <string name="title_scp_documents">SCP文档</string>
+    <string name="title_other_documents">其他文档</string>
+    <string name="title_about_documents">相关材料</string>
+    <string name="title_more_about">更多相关</string>
+    <string name="title_direct">编号直达</string>
+
+
     <string name="title_series_about">相关信息</string>
 
-    <string name="title_library">SCP图书馆</string>
-    <string name="title_scp_tales">基金会故事</string>
-    <string name="title_scp_tales_cn">原创故事(CN)</string>
+
+    <string name="title_scp_story">故事外围</string>
+    <string name="title_joke_scp">搞笑作品</string>
+    <string name="title_settings">基金会设定</string>
     <string name="title_scp_settings">设定中心</string>
     <string name="title_scp_settings_cn">设定中心(CN)</string>
     <string name="title_scp_story_series">故事系列</string>

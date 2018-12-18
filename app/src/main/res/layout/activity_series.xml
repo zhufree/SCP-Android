@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.home.HomeFragment">
+    tools:context=".view.home.SeriesActivity">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
@@ -11,17 +11,18 @@
         app:layout_constraintTop_toTopOf="parent"
         android:theme="@style/AppTheme.AppBarOverlay">
         <android.support.v7.widget.Toolbar
-            android:id="@+id/home_toolbar"
+            android:id="@+id/series_toolbar"
             android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
             android:background="?attr/toolbarBg"
+            app:title="@string/title_scp_documents"
             app:popupTheme="@style/ToolbarPopupTheme">
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.TabLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:id="@+id/tabHome"
+        android:id="@+id/tab_series_doc"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:background="?attr/containerBg"
@@ -30,10 +31,10 @@
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"/>
 
     <android.support.v4.view.ViewPager
-        android:id="@+id/vpHome"
+        android:id="@+id/vp_series_doc"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tabHome"
+        app:layout_constraintTop_toBottomOf="@id/tab_series_doc"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 

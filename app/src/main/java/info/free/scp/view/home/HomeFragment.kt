@@ -68,9 +68,9 @@ class HomeFragment : BaseFragment() {
             override fun onPageSelected(position: Int) {
             }
         })
-        category_toolbar?.setTitle(R.string.app_name)
-        category_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
-        category_toolbar?.setOnMenuItemClickListener{
+        home_toolbar?.setTitle(R.string.app_name)
+        home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
+        home_toolbar?.setOnMenuItemClickListener{
             when (it.itemId) {
                 R.id.cn_page -> {
                     libraryFragment.changePage()
@@ -86,7 +86,7 @@ class HomeFragment : BaseFragment() {
 
     fun refreshTheme() {
         tabHome?.setBackgroundColor(ThemeUtil.containerBg)
-        category_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         seriesFragment.refreshTheme()
         libraryFragment.refreshTheme()
     }

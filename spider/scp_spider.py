@@ -60,7 +60,7 @@ def thread_get_series(i):
 # scpCn系列，抓一次，无多线程
 def get_series_cn():
     article_list = []
-    doc = pq('http://scp-wiki-cn.wikidot.com/scp-series-cn', headers=spider_header)
+    doc = pq('http://scp-wiki-cn.wikidot.com/scp-series-cn-2', headers=spider_header)
     for ul in list(doc('div#page-content ul').items())[1:-1]:
         for li in ul('li').items():
             link = li('a').attr('href')
@@ -68,7 +68,7 @@ def get_series_cn():
                 'title': li.text(),
                 'link': link,
                 'cn': 'true',
-                'type': 'series'
+                'scp_type': 'series'
             }
             # link_list.append(link)
             print(link)
@@ -147,7 +147,7 @@ def thread_get_story_series(cn, i):
         new_article['author'] = tds[1].text()
         new_article['snippet'] = tds[2].text()
         new_article['cn'] = cn
-        new_article['type'] = 'story_series'
+        new_article['scp_type'] = 'story_series'
         # link_list.append(new_article['link'])
         print(new_article['link'])
         article_list.append(new_article)
@@ -162,7 +162,7 @@ def thread_get_tales(cn):
     article_list = []
     letter_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
                    'U', 'V', 'W', 'X', 'Y', 'Z', '0-9']
-    if cn == 'true':
+    if cn == 'false':
         doc = pq('http://scp-wiki-cn.wikidot.com/tales-cn-by-page-name', headers=spider_header)
     else:
         doc = pq('http://scp-wiki-cn.wikidot.com/tales-by-page-name', headers=spider_header)
@@ -176,9 +176,9 @@ def thread_get_tales(cn):
             new_article['created_time'] = tds[2].text()
             new_article['page_code'] = letter_list[i]
             new_article['cn'] = cn
-            new_article['type'] = 'tale'
+            new_article['scp_type'] = 'tale'
             # link_list.append(new_article['link'])
-            print(new_article['link'])
+            # print(new_article['link'])
             article_list.append(new_article)
     # if cn == 'true':
     #     write_to_csv(article_list, 'scps/tales-cn.csv')
@@ -200,7 +200,7 @@ def get_tales_cn_by_time():
                 'author': tds[1]('span').text(),
                 'created_time': tds[2]('span').text(),
                 'cn': 'true',
-                'type': 'tale_by_time',
+                'scp_type': 'tale',
                 'month': current_month
             }
             # link_list.append(new_article['link'])
@@ -212,19 +212,19 @@ def get_tales_cn_by_time():
 # 设定中心
 def thread_get_setting(cn):
     article_list = []
-    if cn == 'true':
+    if cn == 'false':
         doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub', headers=spider_header)
     else:
         doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub-cn', headers=spider_header)
     for div in list(doc('div.content-panel').items())[:-1]:
         new_article = {}
-        new_article['title'] = div('div.canon-title>p').text()
-        new_article['link'] = div('div.canon-title>p>a').attr('href')
+        new_article['title'] = div('div.canon-title a').text()
+        new_article['link'] = div('div.canon-title a').attr('href')
         new_article['desc'] = div('div.canon-description').text()
         new_article['snippet'] = div('div.canon-snippet').text()
         new_article['subtext'] = div('div.canon-snippet-subtext').text()
         new_article['cn'] = cn
-        new_article['type'] = 'setting'
+        new_article['scp_type'] = 'setting'
         # link_list.append(new_article['link'])
         print(new_article['link'])
         article_list.append(new_article)
@@ -547,6 +547,18 @@ def get_detail_by_link_list(link_list, total_link_list, total_scps_list):
     for l in new_link:
         print(l)
 
+# 获取单篇详情
+def get_single_detail(link):
+    try:
+        if 'http://scp-wiki-cn.wikidot.com' in link:
+            detail_doc = pq(link)
+        else:
+            detail_doc = pq('http://scp-wiki-cn.wikidot.com' + link)
+        detail_dom = list(detail_doc('div#page-content').items())[0]
+        return detail_dom.html().replace('  ', '').replace('\n', '')
+    except:
+        return "<h3>抱歉，该页面尚无内容</h3>"
+
 def get_detail_order():
     # 第一次爬虫跑完所有的链接
     total_link_list = get_list_from_file('link_list.txt') # 去重
@@ -565,19 +577,6 @@ def get_detail_order():
     write_to_csv(total_scps_list, "scp-category-new-2.csv")
 
 
-if __name__ == '__main__':
-    # new spider
-    # run_category_spider()
-    # get_detail_order()
-    # test
-    run_category_spider()
-    get_detail_order()
-    # new_found_category_list = get_not_found_category_from_file('scp-category-new-1.csv')
-    # total_link_list = get_list_from_file('final_new_found_link.txt')
-    # total_scps_list = get_category_from_file()
-    # print('not found category list size:' + str(len(new_found_category_list)))
-    # sys.stdout = Logger("new_found_link.txt")
-    # get_detail_by_link([no_found['link'] for no_found in new_found_category_list], total_link_list, total_scps_list)
-    # write_to_csv(new_found_category_list, "new-found-category-9.csv")
-    # write_to_csv(total_scps_list, "scp-category-new-9.csv")
+# if __name__ == '__main__':
+    
     

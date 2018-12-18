@@ -9,9 +9,18 @@ import csv
 
 class ScpSpiderPipeline(object):
     def process_item(self, item, spider):
-        raw_list = self.get_scps_from_file('scp_files/scp_list.csv')
-        raw_list.append(dict(item))
-        self.write_to_csv(raw_list, 'scp_files/scp_list.csv')
+        raw_list = self.get_scps_from_file('scp_files/tag_scp_list.csv')
+        # 如果之前已经有了，加上tag
+        article_dict = dict(item)
+        already_in = False
+        for raw in raw_list:
+        	if raw['link'] == article_dict['link']:
+        		raw['tags'] += ',' + article_dict['tags']
+        		already_in = True
+        if already_in == False:
+        	raw_list.append(dict(item))
+
+        self.write_article_to_csv(raw_list, 'scp_files/tag_scp_list.csv')
         return item
 
     def parse_detail(self, response):
@@ -49,6 +58,15 @@ class ScpSpiderPipeline(object):
                 'created_time', 'month', 'event_type', 'page_code'])
             writer.writeheader()
             writer.writerows(article_list)
+
+    def write_article_to_csv(self, article_list, file_name):
+        with open(file_name, 'w+', encoding='utf-8', newline='') as f:
+            # 统一header，方便后续合并文件一起上传
+            writer = csv.DictWriter(f, ['link', 'title', 'detail', 'tags'])
+            writer.writeheader()
+            writer.writerows(article_list)
+
+
     def get_scps_from_file(self, filename):
         with open(filename, 'r', encoding='utf-8', newline='') as f:
             # 统一header，方便后续合并文件一起上传

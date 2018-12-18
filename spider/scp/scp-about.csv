@@ -1,5 +1,5 @@
-desc,title,cn,snippet,created_time,subtext,event_type,detail,number,author,contest_link,contest_name,type,link,story_num,page_code,month
-,SCP项目等級,,,,,,"<div style=""min-height:600px&quot;"">
+link,title,scp_type,detail,cn,not_found,author,desc,snippet,subtext,contest_name,contest_link,created_time,month,event_type,page_code,tags
+/object-classes,SCP项目等級,about,"<div style=""min-height:600px&quot;"">
 <div id=""toc"" class=""floatright"">
 <div id=""toc-action-bar""><a href=""javascript:;"" onclick=""WIKIDOT.page.listeners.foldToc(event)"">收合</a><a style=""display: none"" href=""javascript:;"" onclick=""WIKIDOT.page.listeners.unfoldToc(event)"">展开</a></div>
 <div class=""title"">目录</div>
@@ -64,8 +64,8 @@ desc,title,cn,snippet,created_time,subtext,event_type,detail,number,author,conte
 <p>不，危險並非全然影響一個SCP的項目等級。就如前面重申過數次的，一個項目的項目等級更多是基於收容的難度，而非其他方面的危險。舉例來說，一個在被按下時能夠摧毀整個宇宙的按鈕是Safe，反之一隻會隨機跟地球上任何地方的一隻貓交換位置的貓會被認為是Keter。</p>
 <hr>
 <p><strong><span style=""font-size:120%;"">如果你有任何其它關於項目等級的問題，請隨意在討論區中提問。</span></strong></p>
-</div>",,,,,about,/object-classes,,,
-,安保设施地点,,,,,,"<div style=""min-height:600px&quot;"">
+</div>",,,,,,,,,,,,,指导
+/secure-facilities-locations,安保设施地点,about,"<div style=""min-height:600px&quot;"">
 
 <script type=""text/javascript"" src=""http://d3g0gp89917ko0.cloudfront.net/v--2f62f70fa3c2/common--javascript/yahooui/tabview-min.js"">
 </script>
@@ -219,8 +219,8 @@ OZONE.dom.onDomReady(function(){
                 }, ""dummy-ondomready-block"");
         
 //]]>
-</script></div>",,,,,about,/secure-facilities-locations,,,
-,机动特遣队,,,,,,"<div style=""min-height:600px&quot;"">
+</script></div>",,,,,,,,,,,,,"需更新,指导"
+/task-forces,机动特遣队,about,"<div style=""min-height:600px&quot;"">
 <div class=""scp-image-block block-center"" style=""width:700px;""><img src=""http://scp-wiki.wdfiles.com/local--files/task-forces/scorpionmtf.png"" style=""width:700px;"" alt=""scorpionmtf.png"" class=""image"">
 <div class=""scp-image-caption"" style=""width:700px;"">
 <p>由Scorpion141绘制的MTFs</p>
@@ -1364,8 +1364,8 @@ OZONE.dom.onDomReady(function(){
 <p><sub><a href=""#toc"">回到顶部</a></sub></p>
 </div>
 </div>
-</div>",,,,,about,/task-forces,,,
-,异常项目记录,,,,,,"<div style=""min-height:600px&quot;"">
+</div>",,,,,,,,,,,,,"需更新,指导,中心"
+/log-of-anomalous-items,异常项目记录,about,"<div style=""min-height:600px&quot;"">
 <p><strong>前言：</strong>SCP基金會發現了為數不少的項目無用得不值得進一步關注。本文件列出了那些激起了一些好奇心的項目。作為資源，這些項目的知識在將來變得有用或必要。<br>
 ——█████ █████博士，Site ██研究主管</p>
 <p><em><strong>注：</strong>請在列表的底部加入新條目，而不是中間或頂部。</em></p>
@@ -2140,8 +2140,8 @@ Victor Louis意識到其他的我失蹤了。他發出俗氣的聲音，意味�
 <div class=""footnote-footer"" id=""footnote-11""><a href=""javascript:;"" onclick=""WIKIDOT.page.utils.scrollToReference('footnoteref-11')"">11</a>. 譯註：藍月是不依照規則在日曆中出現的滿月。</div>
 <div class=""footnote-footer"" id=""footnote-12""><a href=""javascript:;"" onclick=""WIKIDOT.page.utils.scrollToReference('footnoteref-12')"">12</a>. 譯註：即99cm×191cm。</div>
 <div class=""footnote-footer"" id=""footnote-13""><a href=""javascript:;"" onclick=""WIKIDOT.page.utils.scrollToReference('footnoteref-13')"">13</a>. 譯註：學名為翼齶神經節疼痛，是一種通常因食用冰冷食物造成的急促的頭痛。</div>
-</div>",,,,,about,/log-of-anomalous-items,,,
-,超常事件记录,,,,,,"<div style=""min-height:600px&quot;"">
+</div>",,,,,,,,,,,,,"需更新,合作,故事"
+/log-of-extranormal-events,超常事件记录,about,"<div style=""min-height:600px&quot;"">
 <p><strong>前言：</strong>本頁旨在記錄吸引了基金會注意但發生時間對基金會的控制或收容而言過於短暫的超常事件。作為替代，基金會部置了一隊掩蓋隊伍從公眾面前隱瞞證據。這僅是提醒特工和研究員，不是所有事件都能被收容。<br>
 — 特工 Carriontrooper</p>
 <p><strong>事件描述：</strong>3 名平民報告在附近的一個湖中心出現了一個發光的身影，並有兩張手機拍攝的相片作證據。沒有理由相信該異常在突然消失前持續超過幾秒鐘。<br>
@@ -2411,8 +2411,8 @@ Victor Louis意識到其他的我失蹤了。他發出俗氣的聲音，意味�
 <strong>發生日期：</strong>11/24/2015<br>
 <strong>地點：</strong>美國，科羅拉多州，雪松春天<br>
 <strong>採取的後續行動：</strong>所有事件的記錄被修改或銷毀，目擊者被執行 A 級記憶消除。</p>
-</div>",,,,,about,/log-of-extranormal-events,,,
-,安保设施地点(CN),,,,,,"<div style=""min-height:600px&quot;"">
+</div>",,,,,,,,,,,,,"需更新,合作,故事"
+/secure-facilities-locations-cn,安保设施地点(CN),about,"<div style=""min-height:600px&quot;"">
 
 
 <div id=""toc"" class=""floatright"">
@@ -2579,8 +2579,8 @@ Victor Louis意識到其他的我失蹤了。他發出俗氣的聲音，意味�
 </div>
 </div>
 </div>
-</div>",,,,,about,/secure-facilities-locations-cn,,,
-,安保许可等级,,,,,,"<div style=""min-height:600px&quot;""><script type=""text/javascript"" src=""http://d3g0gp89917ko0.cloudfront.net/v--2f62f70fa3c2/common--javascript/yahooui/tabview-min.js"">
+</div>",,,,,,,,,,,,,"指导,原创"
+/security-clearance-levels,安保许可等级,about,"<div style=""min-height:600px&quot;""><script type=""text/javascript"" src=""http://d3g0gp89917ko0.cloudfront.net/v--2f62f70fa3c2/common--javascript/yahooui/tabview-min.js"">
 </script>
 <div id=""wiki-tabview-d54c4a3658f601f2e8fb567328e943d8"" class=""yui-navset yui-navset-top"">
 <ul class=""yui-nav"">
@@ -2735,4 +2735,4 @@ OZONE.dom.onDomReady(function(){
                 }, ""dummy-ondomready-block"");
         
 //]]>
-</script></div>",,,,,about,/security-clearance-levels,,,
+</script></div>",,,,,,,,,,,,,指导

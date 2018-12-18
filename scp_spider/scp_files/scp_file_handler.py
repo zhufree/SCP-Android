@@ -1,5 +1,4 @@
 import csv
-from scp_spider import *
 import sqlite3
 
 bad_link_list = ['/', '/scp-series', '/scp-series-cn', '/series-archive',\
@@ -29,23 +28,15 @@ def merge_all_file():
     # merge_files(files[27:], 'scp-4') # 31m
     merge_files(files, 'scp-category') # 31m
 
-# 写入scp list
+
 def write_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8', newline='') as f:
         # 统一header，方便后续合并文件一起上传
         writer = csv.DictWriter(f, ['link', 'title', 'scp_type', 'detail', 'cn', 'not_found', \
             'author', 'desc', 'snippet', 'subtext', 'contest_name', 'contest_link', \
-            'created_time', 'month', 'event_type', 'page_code', 'tags'])
+            'created_time', 'month', 'event_type', 'page_code', 'number', 'story_num'])
         writer.writeheader()
         writer.writerows(article_list)
-# 写入设定中心，故事系列这种有子目录的
-def write_sub_cate_to_csv(sub_cate_list, filename):
-    with open(filename, 'w+', encoding='utf-8', newline='') as f:
-        # 统一header，方便后续合并文件一起上传
-        writer = csv.DictWriter(f, ['link', 'title', 'scp_type', 'detail', 'cn', 'not_found', \
-            'author', 'desc', 'snippet', 'subtext', 'tags', 'sub_scps'])
-        writer.writeheader()
-        writer.writerows(sub_cate_list)
 
 def write_link_to_file(link_list, filename):
     with open(filename, 'w+', encoding='utf-8') as f:
@@ -151,24 +142,43 @@ def split_csv_file():
         else:
             scp_group = all_scp[i*4000: i*4000+4000]
         write_to_csv(scp_group, "scp-split-" + str(i) + '.csv')
+if __name__ == '__main__':
+    # empty_scp_list = get_scps_from_file('empty_scp_list.csv')
+    # scp_list = get_scps_from_file('scp_list.csv')
+    # print(len(empty_scp_list))
+    # print(len(scp_list))
+    # for empty in empty_scp_list:
+    #     has_detail = False
+    #     for scp in scp_list:
+    #         if scp['link'] == empty['link']:
+    #             empty['detail'] = scp['detail']
+    #             empty['not_found'] = 'false'
+    #             has_detail = True
+    #     if has_detail == False:
+    #         empty['detail'] = "<h3>抱歉，该页面尚无内容</h3>"
+    #         empty['not_found'] = 'true'
 
-# 从数据库里拿tag更新上去
-def update_tag_by_db(filename):
+    # tags1 = get_scps_from_file('tag_scp_list.csv')
+    # tags2 = get_scps_from_file('more_tag_scp_list.csv')
+
+    # for t in tags1:
+    #     already_in = False
+    #     for i in tags2:
+    #         if i['link'] == t['link']:
+    #             already_in = True
+
+    #     if already_in == False:
+    #         print(t)
+
+
+    # write_to_csv(empty_scp_list, 'empty_scp_list.csv')
     con = sqlite3.connect("E:/scp.db")
     cur = con.cursor()
-    tag_article_list = get_scps_from_file(filename)
+    tag_article_list = get_scps_from_file('tag_scp_list.csv')
     print(len(tag_article_list))
     for article in tag_article_list:
-        # del article['story_num']
-        # del article['number']
-        cur.execute('''select tags from tag_scp where link = ?''', (article['link'],))
-        for row in cur:
-            if row[0] != None:
-                article['tags'] = row[0]
-    # write_subto_csv(tag_article_list,'scp/scp-sub-cate.csv')
-    write_sub_cate_to_csv(tag_article_list,'scp/scp-sub-cate.csv')
+        cur.execute('''insert into tag_scp (_id,link,title,detail,tags) values (NULL,?,?,?,?)''',
+            (article['link'], article['title'], article['detail'], article['tags']))
+        con.commit()
 
-
-if __name__ == '__main__':
-    update_tag_by_db('scp/scp_sub_cate.csv')
 

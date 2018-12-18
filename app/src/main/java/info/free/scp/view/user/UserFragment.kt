@@ -66,6 +66,9 @@ class UserFragment : BaseFragment() {
             point < 6000 -> {
                 "A级" + PreferenceUtil.getJobNameByLevel(5)
             }
+            point > 6000 -> {
+                "A级" + PreferenceUtil.getJobNameByLevel(5)
+            }
             else -> {
                 PreferenceUtil.getJobNameByLevel(0)
             }

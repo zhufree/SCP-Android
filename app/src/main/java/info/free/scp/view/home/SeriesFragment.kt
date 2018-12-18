@@ -4,7 +4,6 @@ package info.free.scp.view.home
 import android.app.Fragment
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -54,25 +53,26 @@ class SeriesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvScpSeries?.background?.alpha = 90
-        tvSeriesCn?.background?.alpha = 90
-        tvSeriesStory?.background?.alpha = 90
-        tvSeriesArchived?.background?.alpha = 90
-        tvSeriesAbout?.background?.alpha = 90
+        tv_series_doc?.background?.alpha = 90
+        tv_other_doc?.background?.alpha = 90
+        tv_about_doc?.background?.alpha = 90
+        tv_more_about?.background?.alpha = 90
+        tv_direct_doc?.background?.alpha = 90
         tv_random?.background?.alpha = 90
-        tvScpSeries?.setOnClickListener {
-            listener?.onCategoryClick(SERIES)
+        tv_series_doc?.setOnClickListener {
+//            listener?.onCategoryClick(SERIES)
+            startActivity(Intent(mContext, SeriesActivity::class.java))
         }
-        tvSeriesCn?.setOnClickListener{
+        tv_other_doc?.setOnClickListener{
             listener?.onCategoryClick(SERIES_CN)
         }
-        tvSeriesStory?.setOnClickListener{
+        tv_about_doc?.setOnClickListener{
             listener?.onCategoryClick(SERIES_STORY)
         }
-        tvSeriesArchived?.setOnClickListener{
+        tv_more_about?.setOnClickListener{
             listener?.onCategoryClick(SERIES_ARCHIVED)
         }
-        tvSeriesAbout?.setOnClickListener{
+        tv_direct_doc?.setOnClickListener{
             listener?.onCategoryClick(SERIES_ABOUT)
         }
         tv_random?.setOnClickListener {
@@ -84,12 +84,12 @@ class SeriesFragment : BaseFragment() {
 
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
-        tvScpSeries?.setTextColor(ThemeUtil.darkText)
-        tvSeriesCn?.setTextColor(ThemeUtil.darkText)
+        tv_series_doc?.setTextColor(ThemeUtil.darkText)
+        tv_other_doc?.setTextColor(ThemeUtil.darkText)
 
-        tvSeriesStory?.setTextColor(ThemeUtil.darkText)
-        tvSeriesArchived?.setTextColor(ThemeUtil.darkText)
-        tvSeriesAbout?.setTextColor(ThemeUtil.darkText)
+        tv_about_doc?.setTextColor(ThemeUtil.darkText)
+        tv_more_about?.setTextColor(ThemeUtil.darkText)
+        tv_direct_doc?.setTextColor(ThemeUtil.darkText)
         tv_random?.setTextColor(ThemeUtil.darkText)
     }
 

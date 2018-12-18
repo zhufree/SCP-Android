@@ -21,7 +21,6 @@ import info.free.scp.SCPConstants.Category.TALES
 import info.free.scp.SCPConstants.Category.TALES_BY_TIME
 import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.ScpApplication
-import info.free.scp.util.EventUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.HomeFragment.CategoryListener
@@ -107,14 +106,14 @@ class LibraryFragment : BaseFragment() {
     fun changePage() {
         isCnPage = !isCnPage
         if (isCnPage) {
-            tvScpTales?.setText(R.string.title_scp_tales_cn)
+            tvScpTales?.setText(R.string.title_settings)
             tvSettings?.setText(R.string.title_scp_settings_cn)
             tvStorySeries?.setText(R.string.title_scp_story_series_cn)
             tvEssayContest?.setText(R.string.title_scp_essay_cn)
             tvEventRecord?.setText(R.string.title_scp_event)
             tvMore?.setText(R.string.title_scp_story_by_time)
         } else {
-            tvScpTales?.setText(R.string.title_scp_tales)
+            tvScpTales?.setText(R.string.title_joke_scp)
             tvSettings?.setText(R.string.title_scp_settings)
             tvStorySeries?.setText(R.string.title_scp_story_series)
             tvEssayContest?.setText(R.string.title_scp_essay)

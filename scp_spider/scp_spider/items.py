@@ -27,3 +27,11 @@ class ScpSpiderItem(scrapy.Item):
     month = scrapy.Field()
     event_type = scrapy.Field()
     page_code = scrapy.Field()
+
+class ScpArticleItem(scrapy.Item):
+    """docstring for ScpArticleItem"""
+    link = scrapy.Field()
+    title = scrapy.Field()
+    detail = scrapy.Field()
+    tags = scrapy.Field()
+        

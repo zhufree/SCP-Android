@@ -16,7 +16,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/img_dark_logo"
         android:gravity="center"
-        android:text="@string/title_scp_tales"
+        android:text="@string/title_joke_scp"
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="?attr/darkText"

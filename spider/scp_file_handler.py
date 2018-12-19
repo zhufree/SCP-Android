@@ -166,9 +166,9 @@ def update_tag_by_db(filename):
             if row[0] != None:
                 article['tags'] = row[0]
     # write_subto_csv(tag_article_list,'scp/scp-sub-cate.csv')
-    write_sub_cate_to_csv(tag_article_list,'scp/scp-sub-cate.csv')
+    write_sub_cate_to_csv(tag_article_list,'scp/scp_sub_cate.csv')
 
 
 if __name__ == '__main__':
-    update_tag_by_db('scp/scp_sub_cate.csv')
+    update_tag_by_db('scp/scp-sub-cate.csv')
 

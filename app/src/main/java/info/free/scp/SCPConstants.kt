@@ -23,6 +23,7 @@ object SCPConstants {
         const val SCP_ARCHIVED = 17
         const val SCP_REMOVED = 18
         const val SCP_DECOMMISSIONED = 19
+        const val SCP_ABNORMAL = 20
         const val SERIES_STORY = 3
         const val SERIES_ARCHIVED = 4
         const val SERIES_ABOUT = 5

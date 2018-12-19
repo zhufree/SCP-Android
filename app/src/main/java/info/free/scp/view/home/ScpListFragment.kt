@@ -21,11 +21,15 @@ import kotlinx.android.synthetic.main.fragment_category.*
 
 class ScpListFragment : BaseFragment() {
     private var categoryType = -1
+    private var clickPosition = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var scpAdapter: ScpAdapter? = null
     private val eventScpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+
+    private val taleCategory = arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -41,9 +45,10 @@ class ScpListFragment : BaseFragment() {
 
     private fun initScpAdapter() {
         categoryType = arguments?.getInt("category_type")?:-1
+        clickPosition = arguments?.getInt("click_position")?:-1
         if (scpAdapter == null) {
             Log.i(tag, "初始化scpAdapter")
-            getScpList(categoryType)
+            getScpList()
             scpAdapter = ScpAdapter(mContext!!, scpList)
             scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
@@ -60,18 +65,18 @@ class ScpListFragment : BaseFragment() {
         scpAdapter?.notifyDataSetChanged()
     }
 
-    private fun getScpList(position: Int) {
+    private fun getScpList() {
         Log.i("category", "加载scp列表")
         scpList.clear()
         when (categoryType) {
             SCPConstants.Category.SERIES -> {
                 // 0,499,999
-                val start = if (position == 0) 0 else position * categoryCount
+                val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
                 val limit = categoryCount
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.SaveType.SAVE_SERIES, start, limit))
             }
             SCPConstants.Category.SERIES_CN -> {
-                val start = if (position == 0) 0 else position * categoryCount
+                val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
                 val limit = categoryCount
                 scpList.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.SaveType.SAVE_SERIES_CN, start, limit))
 
@@ -82,21 +87,21 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.Category.SERIES_ABOUT -> {
                 scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_ABOUT))
             }
-            SCPConstants.Category.SERIES_ARCHIVED -> {
-                // 内容较少，直接全部加载
-                when (position) {
-                    0 -> {
-                        // 搞笑scp
-//                        if (isCnPage) {
-                            // cn
-                            scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE_CN))
-
-//                        } else {
-                            scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE))
-//                        }
-                    }
-                }
-            }
+//            SCPConstants.Category.SERIES_ARCHIVED -> {
+//                // 内容较少，直接全部加载
+//                when (clickPosition) {
+//                    0 -> {
+//                        // 搞笑scp
+////                        if (isCnPage) {
+//                            // cn
+//                            scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE_CN))
+//
+////                        } else {
+//                            scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE))
+////                        }
+//                    }
+//                }
+//            }
             SCPConstants.Category.SCP_ARCHIVED -> {
                 scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_ARCHIVED))
             }
@@ -107,10 +112,12 @@ class ScpListFragment : BaseFragment() {
                 scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_REMOVED))
             }
             SCPConstants.Category.TALES -> {
-//                scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_PREFIX + categoryList[position]))
+                scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_PREFIX
+                        + taleCategory[clickPosition]))
             }
             SCPConstants.Category.TALES_CN -> {
-//                scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_CN_PREFIX + categoryList[position]))
+                scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
+                        + taleCategory[clickPosition]))
             }
             SCPConstants.Category.STORY_SERIES -> {
                 scpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_STORY_SERIES))
@@ -134,7 +141,7 @@ class ScpListFragment : BaseFragment() {
                 if (eventScpList.isEmpty()) {
                     eventScpList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_EVENT))
                 }
-                when (position) {
+                when (clickPosition) {
                     0 -> {
                         scpList.addAll(eventScpList.filter { it.evenType == "lab_record" })
                     }
@@ -156,7 +163,7 @@ class ScpListFragment : BaseFragment() {
                 if (taleTimeList.isEmpty()) {
                     taleTimeList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_BY_TIME))
                 }
-                when (position) {
+                when (clickPosition) {
                     0 -> {
                         scpList.addAll(taleTimeList.filter { it.month.startsWith("2018") })
                     }
@@ -188,10 +195,11 @@ class ScpListFragment : BaseFragment() {
 
     companion object {
 
-        fun newInstance(categoryType: Int): ScpListFragment {
+        fun newInstance(categoryType: Int, clickPosition: Int): ScpListFragment {
             val fragment = ScpListFragment()
             val args = Bundle()
             args.putInt("category_type", categoryType)
+            args.putInt("click_position", clickPosition)
 //            args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
             return fragment

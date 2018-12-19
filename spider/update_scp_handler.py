@@ -77,18 +77,21 @@ def update_jokes():
 
 # 设定和故事系列
 def update_settings_and_story_series():
-    # total_scp_list = []
-    # # 故事系列
-    # total_scp_list = total_scp_list + thread_get_story_series('true', 0,)
-    # total_scp_list = total_scp_list + thread_get_story_series('false', 1,)
-    # total_scp_list = total_scp_list + thread_get_story_series('false', 2,)
-    # print(len(total_scp_list))
-    # # 设定
-    # total_scp_list = total_scp_list + thread_get_setting('false')
-    # total_scp_list = total_scp_list + thread_get_setting('true')
-    # print(len(total_scp_list))
-    # write_sub_cate_to_csv(total_scp_list, "scp-sub-cate.csv")
-    cate_scp_list = get_scps_from_file('scp/scp-sub-cate.csv')
+    total_scp_list = []
+    # 故事系列
+    total_scp_list = total_scp_list + thread_get_story_series('true', 0,)
+    print(len(total_scp_list))
+    total_scp_list = total_scp_list + thread_get_story_series('false', 1,)
+    total_scp_list = total_scp_list + thread_get_story_series('false', 2,)
+    total_scp_list = total_scp_list + thread_get_story_series('false', 3,)
+    total_scp_list = total_scp_list + thread_get_story_series('false', 4,)
+    print(len(total_scp_list))
+    # 设定
+    total_scp_list = total_scp_list + thread_get_setting('false')
+    total_scp_list = total_scp_list + thread_get_setting('true')
+    print(len(total_scp_list))
+    write_sub_cate_to_csv(total_scp_list, "scp/scp_sub_cate.csv")
+    cate_scp_list = get_scps_from_file('scp/scp_sub_cate.csv')
     for old_scp in cate_scp_list:
         print(old_scp['link'])
         detail = get_single_detail(old_scp['link'])
@@ -97,7 +100,7 @@ def update_settings_and_story_series():
             old_scp['not_found'] = 'true'
         else:
             old_scp['not_found'] = 'false'
-    write_sub_cate_to_csv(cate_scp_list, 'scp/scp_sub_cate.csv')
+    write_sub_cate_to_csv(cate_scp_list, 'scp/scp-sub-cate.csv')
 
 if __name__ == '__main__':
     update_settings_and_story_series()

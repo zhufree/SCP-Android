@@ -31,7 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.category.CategoryActivity" />
+        <activity android:name=".view.category.ScpListActivity" />
         <activity android:name=".view.detail.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
 

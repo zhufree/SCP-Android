@@ -216,7 +216,7 @@ def thread_get_setting(cn):
         doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub', headers=spider_header)
     else:
         doc = pq('http://scp-wiki-cn.wikidot.com/canon-hub-cn', headers=spider_header)
-    for div in list(doc('div.content-panel').items())[:-1]:
+    for div in list(doc('div.centered').items()):
         new_article = {}
         new_article['title'] = div('div.canon-title a').text()
         new_article['link'] = div('div.canon-title a').attr('href')

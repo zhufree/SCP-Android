@@ -13,10 +13,8 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.CategoryActivity
+import info.free.scp.view.category.ScpListActivity
 import info.free.scp.view.category.CategoryAdapter
-import info.free.scp.view.category.ScpAdapter
-import kotlinx.android.synthetic.main.activity_category.*
 import kotlinx.android.synthetic.main.fragment_category.*
 
 class CategoryFragment : BaseFragment() {
@@ -25,7 +23,6 @@ class CategoryFragment : BaseFragment() {
     private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
     private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null
-    private var scpAdapter: ScpAdapter? = null
     private var currentCategoryPosition = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,9 +74,9 @@ class CategoryFragment : BaseFragment() {
                     override fun onItemClick(view: View, position: Int) {
                         Log.i(tag, "onItemClick")
                         currentCategoryPosition = position
-                        val subCateIntent = Intent(it, CategoryActivity::class.java)
-                        subCateIntent.putExtra("categoryType", categoryType)
-                        subCateIntent.putExtra("position", position)
+                        val subCateIntent = Intent(it, ScpListActivity::class.java)
+                        subCateIntent.putExtra("category_type", categoryType)
+                        subCateIntent.putExtra("click_position", position)
                         startActivity(subCateIntent)
                     }
                 }
@@ -88,7 +85,7 @@ class CategoryFragment : BaseFragment() {
             categoryAdapter?.notifyDataSetChanged()
             rv_category_list?.adapter = categoryAdapter
             if (currentCategoryPosition > 0) {
-                rv_scp_list?.scrollToPosition(currentCategoryPosition)
+                rv_category_list?.scrollToPosition(currentCategoryPosition)
             }
         }
     }

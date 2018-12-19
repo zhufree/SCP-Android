@@ -20,7 +20,7 @@
         android:textColor="?attr/darkText"
         android:textStyle="bold"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/tv_about_doc"
+        app:layout_constraintBottom_toTopOf="@id/tv_story_doc"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@id/tv_other_doc"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -41,14 +41,14 @@
         android:gravity="center"
         android:text="@string/title_other_documents"
         android:textColor="?attr/darkText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_more_about"
+        app:layout_constraintBottom_toTopOf="@+id/tv_about_doc"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_series_doc"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tv_about_doc"
+        android:id="@+id/tv_story_doc"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="21dp"
@@ -57,17 +57,17 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:text="@string/title_about_documents"
+        android:text="@string/title_scp_story"
         android:textColor="?attr/darkText"
         app:layout_constraintBottom_toTopOf="@+id/tv_direct_doc"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/tv_more_about"
+        app:layout_constraintEnd_toStartOf="@+id/tv_about_doc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_series_doc" />
 
 
     <TextView
-        android:id="@+id/tv_more_about"
+        android:id="@+id/tv_about_doc"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginEnd="42dp"
@@ -76,12 +76,12 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:text="@string/title_more_about"
+        android:text="@string/title_about_documents"
         android:textColor="?attr/darkText"
         app:layout_constraintBottom_toTopOf="@+id/tv_random"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_about_doc"
+        app:layout_constraintStart_toEndOf="@id/tv_story_doc"
         app:layout_constraintTop_toBottomOf="@+id/tv_other_doc" />
 
     <TextView
@@ -100,7 +100,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/tv_random"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_about_doc" />
+        app:layout_constraintTop_toBottomOf="@id/tv_story_doc" />
 
     <TextView
         android:id="@+id/tv_random"
@@ -118,7 +118,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_direct_doc"
-        app:layout_constraintTop_toBottomOf="@id/tv_more_about" />
+        app:layout_constraintTop_toBottomOf="@id/tv_about_doc" />
 
 
 </android.support.constraint.ConstraintLayout>

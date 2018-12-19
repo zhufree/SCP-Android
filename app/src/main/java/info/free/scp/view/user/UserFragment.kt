@@ -48,25 +48,25 @@ class UserFragment : BaseFragment() {
     private fun getRank(point: Int): String {
         Log.i("point", "point = $point")
         return when {
-            point < 100 -> {
+            point < 200 -> {
                 PreferenceUtil.getJobNameByLevel(0)
             }
-            point < 500 -> {
+            point < 700 -> {
                 PreferenceUtil.getJobNameByLevel(1)
             }
-            point < 1200 -> {
+            point < 1500 -> {
                 PreferenceUtil.getJobNameByLevel(2)
             }
-            point < 2000 -> {
+            point < 2500 -> {
                 "C级" + PreferenceUtil.getJobNameByLevel(3)
             }
-            point < 3000 -> {
+            point < 4000 -> {
                 "B级" + PreferenceUtil.getJobNameByLevel(4)
             }
-            point < 6000 -> {
+            point < 8000 -> {
                 "A级" + PreferenceUtil.getJobNameByLevel(5)
             }
-            point > 6000 -> {
+            point > 8000 -> {
                 "A级" + PreferenceUtil.getJobNameByLevel(5)
             }
             else -> {

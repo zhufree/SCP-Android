@@ -5,7 +5,6 @@ import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
@@ -23,7 +22,7 @@ import info.free.scp.util.EventUtil.chooseJob
 import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.CategoryActivity
+import info.free.scp.view.category.ScpListActivity
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
@@ -393,7 +392,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     override fun onCategoryClick(type: Int) {
         val intent = Intent()
         intent.putExtra("saveType", type)
-        intent.setClass(this, CategoryActivity::class.java)
+        intent.setClass(this, ScpListActivity::class.java)
         startActivity(intent)
     }
 

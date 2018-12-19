@@ -12,7 +12,6 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES_ABOUT
 import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
-import info.free.scp.SCPConstants.Category.SERIES_CN
 import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -55,8 +54,8 @@ class SeriesFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         tv_series_doc?.background?.alpha = 90
         tv_other_doc?.background?.alpha = 90
+        tv_story_doc?.background?.alpha = 90
         tv_about_doc?.background?.alpha = 90
-        tv_more_about?.background?.alpha = 90
         tv_direct_doc?.background?.alpha = 90
         tv_random?.background?.alpha = 90
         tv_series_doc?.setOnClickListener {
@@ -70,14 +69,18 @@ class SeriesFragment : BaseFragment() {
             intent.putExtra("entry_type", SCPConstants.Entry.OTHER_DOC)
             startActivity(intent)
         }
-        tv_about_doc?.setOnClickListener{
-            listener?.onCategoryClick(SERIES_STORY)
+        tv_story_doc?.setOnClickListener{
+            val intent = Intent(mContext, SeriesDocActivity::class.java)
+            intent.putExtra("entry_type", SCPConstants.Entry.STORY_DOC)
+            startActivity(intent)
         }
-        tv_more_about?.setOnClickListener{
-            listener?.onCategoryClick(SERIES_ARCHIVED)
+        tv_about_doc?.setOnClickListener{
+            val intent = Intent(mContext, SeriesDocActivity::class.java)
+            intent.putExtra("entry_type", SCPConstants.Entry.ABOUT_STUFF)
+            startActivity(intent)
         }
         tv_direct_doc?.setOnClickListener{
-            listener?.onCategoryClick(SERIES_ABOUT)
+            // TODO 直达
         }
         tv_random?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickRandom)
@@ -91,8 +94,8 @@ class SeriesFragment : BaseFragment() {
         tv_series_doc?.setTextColor(ThemeUtil.darkText)
         tv_other_doc?.setTextColor(ThemeUtil.darkText)
 
+        tv_story_doc?.setTextColor(ThemeUtil.darkText)
         tv_about_doc?.setTextColor(ThemeUtil.darkText)
-        tv_more_about?.setTextColor(ThemeUtil.darkText)
         tv_direct_doc?.setTextColor(ThemeUtil.darkText)
         tv_random?.setTextColor(ThemeUtil.darkText)
     }

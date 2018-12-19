@@ -82,7 +82,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.home.SeriesActivity"></activity>
+        <activity android:name=".view.home.SeriesDocActivity"></activity>
     </application>
 
 </manifest>

@@ -7,9 +7,22 @@ package info.free.scp
 
 object SCPConstants {
     // category type
+    object Entry {
+        const val SCP_DOC = 0 // SCP文档
+        const val OTHER_DOC = 1 // 其他文档
+        const val STORY_DOC = 2 // 故事外围
+        const val ABOUT_STUFF = 3 // 相关材料，全部单页面
+        const val JOKE_DOC = 4 // 搞笑作品
+        const val SETTINGS_DOC = 5 // 设定中心，GOI、hub等
+        const val MORE_ABOUT = 6 // 艺作、传承、精品、竞赛、征文等
+    }
     object Category {
         const val SERIES = 1
         const val SERIES_CN = 2
+        const val SCP_EX = 16
+        const val SCP_ARCHIVED = 17
+        const val SCP_REMOVED = 18
+        const val SCP_DECOMMISSIONED = 19
         const val SERIES_STORY = 3
         const val SERIES_ARCHIVED = 4
         const val SERIES_ABOUT = 5

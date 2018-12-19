@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES_ABOUT
 import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
 import info.free.scp.SCPConstants.Category.SERIES_CN
@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_series.*
  * A simple [Fragment] subclass.
  * Use the [SeriesFragment.newInstance] factory method to
  * create an instance of this fragment.
- * 首页，一级子页面是SCP系列和SCP图书馆两个
+ *
  */
 class SeriesFragment : BaseFragment() {
     var listener: CategoryListener? = null
@@ -61,10 +61,14 @@ class SeriesFragment : BaseFragment() {
         tv_random?.background?.alpha = 90
         tv_series_doc?.setOnClickListener {
 //            listener?.onCategoryClick(SERIES)
-            startActivity(Intent(mContext, SeriesActivity::class.java))
+            val intent = Intent(mContext, SeriesDocActivity::class.java)
+            intent.putExtra("entry_type", SCPConstants.Entry.SCP_DOC)
+            startActivity(intent)
         }
         tv_other_doc?.setOnClickListener{
-            listener?.onCategoryClick(SERIES_CN)
+            val intent = Intent(mContext, SeriesDocActivity::class.java)
+            intent.putExtra("entry_type", SCPConstants.Entry.OTHER_DOC)
+            startActivity(intent)
         }
         tv_about_doc?.setOnClickListener{
             listener?.onCategoryClick(SERIES_STORY)

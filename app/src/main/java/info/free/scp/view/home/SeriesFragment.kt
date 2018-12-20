@@ -10,13 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.Category.SERIES_ABOUT
-import info.free.scp.SCPConstants.Category.SERIES_ARCHIVED
-import info.free.scp.SCPConstants.Category.SERIES_STORY
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_series.*
@@ -59,25 +57,16 @@ class SeriesFragment : BaseFragment() {
         tv_direct_doc?.background?.alpha = 90
         tv_random?.background?.alpha = 90
         tv_series_doc?.setOnClickListener {
-//            listener?.onCategoryClick(SERIES)
-            val intent = Intent(mContext, SeriesDocActivity::class.java)
-            intent.putExtra("entry_type", SCPConstants.Entry.SCP_DOC)
-            startActivity(intent)
+            goToDocPage(SCPConstants.Entry.SCP_DOC)
         }
         tv_other_doc?.setOnClickListener{
-            val intent = Intent(mContext, SeriesDocActivity::class.java)
-            intent.putExtra("entry_type", SCPConstants.Entry.OTHER_DOC)
-            startActivity(intent)
+            goToDocPage(SCPConstants.Entry.OTHER_DOC)
         }
         tv_story_doc?.setOnClickListener{
-            val intent = Intent(mContext, SeriesDocActivity::class.java)
-            intent.putExtra("entry_type", SCPConstants.Entry.STORY_DOC)
-            startActivity(intent)
+            goToDocPage(SCPConstants.Entry.STORY_DOC)
         }
         tv_about_doc?.setOnClickListener{
-            val intent = Intent(mContext, SeriesDocActivity::class.java)
-            intent.putExtra("entry_type", SCPConstants.Entry.ABOUT_STUFF)
-            startActivity(intent)
+            goToDocPage(SCPConstants.Entry.ABOUT_STUFF)
         }
         tv_direct_doc?.setOnClickListener{
             // TODO 直达

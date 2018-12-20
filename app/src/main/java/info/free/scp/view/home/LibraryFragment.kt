@@ -3,6 +3,7 @@ package info.free.scp.view.home
 
 import android.app.Fragment
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.CONTEST
 import info.free.scp.SCPConstants.Category.CONTEST_CN
 import info.free.scp.SCPConstants.Category.EVENT
@@ -23,6 +25,7 @@ import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.ScpApplication
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.home.HomeFragment.CategoryListener
 import kotlinx.android.synthetic.main.fragment_library.*
 import kotlinx.android.synthetic.main.fragment_library.view.*
@@ -58,31 +61,19 @@ class LibraryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvScpTales?.background?.alpha = 90
-        tvSettings?.background?.alpha = 90
-        tvStorySeries?.background?.alpha = 90
+        tv_joke_doc?.background?.alpha = 90
+        tv_more_about?.background?.alpha = 90
+        tv_settings_doc?.background?.alpha = 90
         tvEssayContest?.background?.alpha = 90
         tvEventRecord?.background?.alpha = 90
-        view.tvScpTales?.setOnClickListener {
-            if (isCnPage) {
-                listener?.onCategoryClick(TALES_CN)
-            } else {
-                listener?.onCategoryClick(TALES)
-            }
+        view.tv_joke_doc?.setOnClickListener {
+            goToDocPage(SCPConstants.Entry.JOKE_DOC)
         }
-        view.tvStorySeries?.setOnClickListener {
-            if (isCnPage) {
-                listener?.onCategoryClick(STORY_SERIES_CN)
-            } else {
-                listener?.onCategoryClick(STORY_SERIES)
-            }
+        view.tv_settings_doc?.setOnClickListener {
+            goToDocPage(SCPConstants.Entry.SETTINGS_DOC)
         }
-        view.tvSettings?.setOnClickListener {
-            if (isCnPage) {
-                listener?.onCategoryClick(SETTINGS_CN)
-            } else {
-                listener?.onCategoryClick(SETTINGS)
-            }
+        view.tv_more_about?.setOnClickListener {
+            goToDocPage(SCPConstants.Entry.MORE_ABOUT)
         }
         view.tvEssayContest?.setOnClickListener {
             if (isCnPage) {
@@ -106,16 +97,16 @@ class LibraryFragment : BaseFragment() {
     fun changePage() {
         isCnPage = !isCnPage
         if (isCnPage) {
-            tvScpTales?.setText(R.string.title_settings)
-            tvSettings?.setText(R.string.title_scp_settings_cn)
-            tvStorySeries?.setText(R.string.title_scp_story_series_cn)
+            tv_joke_doc?.setText(R.string.title_settings)
+            tv_more_about?.setText(R.string.title_scp_settings_cn)
+            tv_settings_doc?.setText(R.string.title_scp_story_series_cn)
             tvEssayContest?.setText(R.string.title_scp_essay_cn)
             tvEventRecord?.setText(R.string.title_scp_event)
             tvMore?.setText(R.string.title_scp_story_by_time)
         } else {
-            tvScpTales?.setText(R.string.title_joke_scp)
-            tvSettings?.setText(R.string.title_scp_settings)
-            tvStorySeries?.setText(R.string.title_scp_story_series)
+            tv_joke_doc?.setText(R.string.title_joke_scp)
+            tv_more_about?.setText(R.string.title_scp_settings)
+            tv_settings_doc?.setText(R.string.title_scp_story_series)
             tvEssayContest?.setText(R.string.title_scp_essay)
             tvEventRecord?.setText(R.string.title_scp_event)
             tvMore?.setText(R.string.title_more_function)
@@ -124,9 +115,9 @@ class LibraryFragment : BaseFragment() {
 
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
-        tvScpTales?.setTextColor(ThemeUtil.darkText)
-        tvSettings?.setTextColor(ThemeUtil.darkText)
-        tvStorySeries?.setTextColor(ThemeUtil.darkText)
+        tv_joke_doc?.setTextColor(ThemeUtil.darkText)
+        tv_more_about?.setTextColor(ThemeUtil.darkText)
+        tv_settings_doc?.setTextColor(ThemeUtil.darkText)
         tvEssayContest?.setTextColor(ThemeUtil.darkText)
         tvEventRecord?.setTextColor(ThemeUtil.darkText)
         tvMore?.setTextColor(ThemeUtil.darkText)

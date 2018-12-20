@@ -256,9 +256,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
      */
     private fun checkInitData(forceInit: Boolean = false) {
         if (!forceInit && BackupHelper.getInstance(this).checkBackUpFileExist()) {
-            val backUpPath = BackupHelper.getInstance(this).getBackUpFileName()
-            val file = File(backUpPath)
-            if (BackupHelper.getInstance(this).restore(file.name, file)) {
+            if (BackupHelper.getInstance(this).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
                 PreferenceUtil.setDetailDataLoadFinish()
                 return

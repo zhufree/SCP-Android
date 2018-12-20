@@ -1,4 +1,4 @@
-package info.free.scp.view.home
+package info.free.scp.view.category
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,15 +13,12 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.ScpListActivity
-import info.free.scp.view.category.CategoryAdapter
 import kotlinx.android.synthetic.main.fragment_category.*
 
 class CategoryFragment : BaseFragment() {
     private var categoryType = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
-    private val scpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null
     private var currentCategoryPosition = -1
 
@@ -39,7 +36,6 @@ class CategoryFragment : BaseFragment() {
     private fun initData() {
         categoryType = arguments?.getInt("category_type")?:-1
         categoryList.clear()
-        scpList.clear()
         // 一级目录
         when (categoryType) {
             SCPConstants.Category.SERIES -> {
@@ -88,6 +84,11 @@ class CategoryFragment : BaseFragment() {
                 rv_category_list?.scrollToPosition(currentCategoryPosition)
             }
         }
+    }
+
+    fun reverseScpList() {
+        categoryList.reverse()
+        categoryAdapter?.notifyDataSetChanged()
     }
 
     fun refreshTheme() {

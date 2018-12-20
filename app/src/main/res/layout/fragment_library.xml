@@ -7,7 +7,7 @@
     android:background="?attr/containerBg">
 
     <TextView
-        android:id="@+id/tvScpTales"
+        android:id="@+id/tv_joke_doc"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
@@ -20,14 +20,14 @@
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="?attr/darkText"
-        app:layout_constraintBottom_toTopOf="@+id/tvSettings"
+        app:layout_constraintBottom_toTopOf="@+id/tv_more_about"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/tvStorySeries"
+        app:layout_constraintEnd_toStartOf="@id/tv_settings_doc"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/tvStorySeries"
+        android:id="@+id/tv_settings_doc"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
@@ -43,12 +43,12 @@
         app:layout_constraintBottom_toTopOf="@+id/tvEssayContest"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvScpTales"
+        app:layout_constraintStart_toEndOf="@id/tv_joke_doc"
         app:layout_constraintTop_toTopOf="parent" />
 
 
     <TextView
-        android:id="@+id/tvSettings"
+        android:id="@+id/tv_more_about"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="24dp"
@@ -56,7 +56,7 @@
         android:layout_marginStart="42dp"
         android:background="@drawable/img_empty_logo"
         android:gravity="center"
-        android:text="@string/title_scp_story_series"
+        android:text="@string/title_more_about"
         android:textStyle="bold"
         android:textSize="18sp"
         android:textColor="?attr/darkText"
@@ -64,7 +64,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/tvEssayContest"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvScpTales" />
+        app:layout_constraintTop_toBottomOf="@id/tv_joke_doc" />
 
     <TextView
         android:id="@+id/tvEssayContest"
@@ -82,8 +82,8 @@
         app:layout_constraintBottom_toTopOf="@+id/tvMore"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tvSettings"
-        app:layout_constraintTop_toBottomOf="@id/tvStorySeries" />
+        app:layout_constraintStart_toEndOf="@id/tv_more_about"
+        app:layout_constraintTop_toBottomOf="@id/tv_settings_doc" />
 
     <TextView
         android:id="@+id/tvEventRecord"
@@ -101,7 +101,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/tvMore"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvSettings" />
+        app:layout_constraintTop_toBottomOf="@id/tv_more_about" />
 
     <TextView
         android:id="@+id/tvMore"

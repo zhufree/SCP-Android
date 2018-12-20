@@ -109,6 +109,9 @@ object Utils {
     fun save(file: File, filename: String) {
         val filePath = getAlbumStorageDir("SCP").path + "/$filename"
         val newFile = File("$filePath.jpg")
+        if (!newFile.exists()) {
+            newFile.createNewFile()
+        }
         try {
             val outputStream = BufferedOutputStream(FileOutputStream(newFile))
             outputStream.write(file.readBytes())

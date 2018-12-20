@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -87,11 +88,10 @@ class UserFragment : BaseFragment() {
         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
                 + "/scp_user_head.jpg"))
         iv_user_head.setOnClickListener {
-            val intent = Intent()
+            val intent = Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             /* 开启Pictures画面Type设定为image */
-            intent.type = "image/*"
+            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*")
             /* 使用Intent.ACTION_GET_CONTENT这个Action */
-            intent.action = Intent.ACTION_GET_CONTENT
             /* 取得相片后返回本画面 */
             startActivityForResult(intent, 1)
         }
@@ -105,7 +105,7 @@ class UserFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && data != null) {
+        if (data != null) {
             val uri = data.data
 
             uri?.let {

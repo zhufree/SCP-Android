@@ -3,7 +3,6 @@ package info.free.scp.util
 import android.content.Context
 import android.os.Environment
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.widget.Toast
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -22,6 +21,7 @@ import java.io.FileOutputStream
 
 class BackupHelper(val mContext: Context) {
     private var dbFilename = "scp_info.db"
+    private var prefFilename = "level.xml" // 用户名和等级信息
     private val backUpFolderName = "backup"
     private val appFolderName = "SCP"
     private val sp = File.separator
@@ -46,9 +46,7 @@ class BackupHelper(val mContext: Context) {
         builder.setPositiveButton("确定") { _, _ ->
             Toaster.show("开始恢复")
             Flowable.create<Boolean>({ emitter ->
-                val backUpPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
-                val file = File(backUpPath)
-                emitter.onNext(restore(file.name, file))
+                emitter.onNext(restore())
                 emitter.onComplete()
             }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -97,13 +95,20 @@ class BackupHelper(val mContext: Context) {
             try {
                 // 在backup文件夹下创建备份文件
                 val dbFile = dbOk(dbFilename)
+                val prefFile = prefOk(prefFilename)
                 dbFile?.let {
                     val backDbFile = File(bkFolderFile.absolutePath + sp
                             + it.name)
                     backDbFile.createNewFile()
                     isOk = fileCopy(backDbFile, it.absoluteFile)
-                    return isOk
                 }
+                prefFile?.let {
+                    val backPrefFile = File(bkFolderFile.absolutePath + sp
+                            + it.name)
+                    backPrefFile.createNewFile()
+                    isOk = fileCopy(backPrefFile, it.absoluteFile)
+                }
+                return isOk
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -138,20 +143,35 @@ class BackupHelper(val mContext: Context) {
     /**
      * 恢复数据库
      */
-    fun restore(name: String, f: File?): Boolean {
+    fun restore(): Boolean {
         var isOk = false
-        if (f != null) {
-            val dbFile = dbOk(name)
+        val backUpDbPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp" +
+                "$backUpFolderName$sp$dbFilename"
+        val backUpPrefPath = "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp" +
+                "$backUpFolderName$sp$prefFilename"
+        val backUpDbFile = File(backUpDbPath)
+        val backUpPrefFile = File(backUpPrefPath)
+        backUpDbFile?.let {
+            val dbFile = dbOk(it.name)
             try {
-                // System.out.println("覆盖的名称"+dbName);
-                dbFile?.let {
+                dbFile?.let {_ ->
                     mContext.deleteDatabase(dbFilename)
-                    isOk = fileCopy(dbFile, f.absoluteFile)
+                    isOk = fileCopy(dbFile, it.absoluteFile)
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
             }
-
+        }
+        backUpPrefFile?.let {
+            val prefFile = prefOk(it.name)
+            try {
+                prefFile?.let { _ ->
+                    mContext.deleteDatabase(prefFilename)
+                    isOk = fileCopy(prefFile, it.absoluteFile)
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
         return isOk
     }
@@ -166,6 +186,19 @@ class BackupHelper(val mContext: Context) {
         val pakName = mContext.packageName
         // /data/data/packageName/databases
         val dbPath = ("$absPath${sp}data$sp$pakName${sp}databases$sp$dbName")
+        return File(dbPath)
+    }
+
+    /**
+     * pref文件是否存在，并可以使用
+     *
+     * @return 数据库文件本身
+     */
+    private fun prefOk(prefName: String): File? {
+        val absPath = Environment.getDataDirectory().absolutePath
+        val pakName = mContext.packageName
+        // /data/data/packageName/shared_prefs
+        val dbPath = ("$absPath${sp}data$sp$pakName${sp}shared_prefs$sp$prefName")
         return File(dbPath)
     }
 

@@ -107,12 +107,12 @@ object PreferenceUtil {
         return if (calendar.get(YEAR) == 1970) "无" else calendar.time.toString()
     }
 
-    fun setServerLastUpdateTime(time: String) {
-        setStringValue("update", "serverLastUpdateTime", time)
+    fun setServerLastUpdateTime(dbIndex: String, time: String) {
+        setStringValue("update", dbIndex, time)
     }
 
-    fun getServerLastUpdateTime(): String {
-        return getStringValue("update", "serverLastUpdateTime")
+    fun getServerLastUpdateTime(dbIndex: String): String {
+        return getStringValue("update", dbIndex)
     }
 
     /**

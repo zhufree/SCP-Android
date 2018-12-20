@@ -33,7 +33,6 @@ class ScpListActivity : BaseActivity() {
         category_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
-                    // TODO reverse
                     mFragment?.reverseScpList()
                 }
             }

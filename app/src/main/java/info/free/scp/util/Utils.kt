@@ -20,6 +20,8 @@ import android.content.ContentUris
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.os.Build
 import android.content.ContentValues
+import android.net.ConnectivityManager
+import android.net.wifi.WifiManager
 import android.text.TextUtils
 import info.free.scp.ScpApplication
 
@@ -55,6 +57,26 @@ object Utils {
     fun px2dp(pxValue: Int, context: Context = ScpApplication.context): Int {
         val scale = context.resources.displayMetrics.density
         return (pxValue / scale + 0.5f).toInt()
+    }
+
+    /**
+     * wifi开启检查
+     *
+     * @return
+     */
+    fun enabledWifi(context: Context): Boolean {
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager?
+        return wifiManager != null && wifiManager.wifiState == WifiManager.WIFI_STATE_ENABLED
+    }
+
+    /**
+     * 3G网开启检查
+     *
+     * @return
+     */
+    fun enabledNetwork(context: Context): Boolean {
+        val cManager = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
     }
 
     /**

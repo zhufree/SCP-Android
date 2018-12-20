@@ -87,7 +87,7 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.Category.SCP_EX -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_EX))
             }
-            SCPConstants.Category.SERIES_ABOUT -> {
+            SCPConstants.Category.SCP_ABNORMAL -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_ABOUT))
             }
 

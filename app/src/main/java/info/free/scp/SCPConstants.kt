@@ -24,7 +24,7 @@ object SCPConstants {
         const val SCP_REMOVED = 18
         const val SCP_DECOMMISSIONED = 19
         const val SCP_ABNORMAL = 20
-        const val SERIES_ABOUT = 5
+        const val ABOUT_STUFF = 5
         const val TALES = 6
         const val TALES_CN = 7
         const val STORY_SERIES = 8

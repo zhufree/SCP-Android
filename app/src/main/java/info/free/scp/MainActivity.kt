@@ -192,8 +192,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         }
     }
 
-    /**
-     */
+
     private fun checkUserInfo() {
         if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()) {
             val inputView = LayoutInflater.from(this).inflate(R.layout.layout_dialog_report, null)
@@ -357,7 +356,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
                 }
                 // 上次数据更新时间
                 if (config.key == "db_last_update_time") {
-                    PreferenceUtil.setServerLastUpdateTime(config.value)
+                    PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
                 }
             }
             if (currentVersionCode < newVersionCode) {

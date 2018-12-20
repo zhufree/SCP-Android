@@ -3,7 +3,11 @@ package info.free.scp.view.category
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.Menu
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import info.free.scp.R
+import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.ABOUT_STUFF
 import info.free.scp.SCPConstants.Category.JOKE
 import info.free.scp.SCPConstants.Category.JOKE_CN
 import info.free.scp.SCPConstants.Category.SCP_ABNORMAL
@@ -96,9 +100,14 @@ class SeriesDocActivity : BaseActivity() {
                         .toList()
                 titleList = arrayOf("基金会故事", "中国分部原创故事", "故事系列", "中国分部故事系列").toList()
             }
-            ABOUT_STUFF -> {
+            SCPConstants.Entry.ABOUT_STUFF -> {
                 supportActionBar?.setTitle(R.string.title_about_documents)
                 // TODO 相关材料
+                vp_series_doc.visibility = GONE
+                tab_series_doc.visibility = GONE
+                supportFragmentManager.beginTransaction().replace(R.id.fl_scp_item_container,
+                        ScpItemFragment.newInstance(SCPConstants.Category.ABOUT_STUFF, 0)).commit()
+                fl_scp_item_container.visibility = VISIBLE
             }
             JOKE_DOC -> {
                 supportActionBar?.setTitle(R.string.title_joke_scp)
@@ -119,7 +128,9 @@ class SeriesDocActivity : BaseActivity() {
                 supportActionBar?.setTitle(R.string.title_more_about)
             }
         }
-        currentFragment = fragmentList[0]
+        if (fragmentList.isNotEmpty()) {
+            currentFragment = fragmentList[0]
+        }
         val scpPagerAdapter = HomeFragmentPager(supportFragmentManager, fragmentList, titleList)
         vp_series_doc?.adapter = scpPagerAdapter
         tab_series_doc?.setupWithViewPager(vp_series_doc)

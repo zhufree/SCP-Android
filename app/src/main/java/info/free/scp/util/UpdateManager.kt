@@ -1,25 +1,36 @@
 package info.free.scp.util
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
+import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import info.free.scp.BuildConfig
+import info.free.scp.SCPConstants
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 
-object UpdateUtil {
+object UpdateManager {
     private val currentVersionCode = BuildConfig.VERSION_CODE
     private var isDownloadingDetail = false
 
     private var mInitCategoryReceiver : BroadcastReceiver? = null
+    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private fun registerBroadCastReceivers(activity: BaseActivity) {
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity)
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
+        mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver!!, IntentFilter(SCPConstants.BroadCastAction.INIT_PROGRESS))
+//        mLocalBroadcastManager?.registerReceiver(mDetailReceiver, IntentFilter(SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH))
+//        mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(SCPConstants.BroadCastAction.ACTION_CHANGE_THEME))
+    }
 
     fun initReceiver(activity: BaseActivity) {
         mInitCategoryReceiver = object : BroadcastReceiver() {
@@ -32,18 +43,36 @@ object UpdateUtil {
                 if (progress == 100) {
                     progressDialog?.dismiss()
                     if (!activity.isFinishing) {
+                        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","其他文档（解明，废除，删除，归档等）",
+                                "基金会故事+设定中心","相关材料")
+                        val chooseList =  arrayOf(false, false,false,false,false).toBooleanArray()
                         // TODO 显示分库下载选项
                         AlertDialog.Builder(activity)
                                 .setTitle("Notice")
-                                .setMessage("基金会传递的目录信息已接收完毕，将在后台加载正文数据，全部传输完成之前" +
-                                        "将有部分文档不能离线查看，会自动显示网页模式。具体加载进度可查看通知栏，如果" +
-                                        "因为网络问题加载卡住等可尝试退出重进app或在设置页【同步云端数据】。")
-                                .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
+                                .setMultiChoiceItems(dbList, chooseList){ out, which, isChecked ->
+                                    chooseList[which] = isChecked
+//                                    AlertDialog.Builder(activity)
+//                                            .setTitle(dbList[which])
+//                                            .setMessage(PreferenceUtil.getDescForJob(dbList[which]))
+//                                            .setPositiveButton("确定") { inner, _ ->
+//
+//                                                inner.dismiss()
+//                                                field?.set(out, true)
+//                                                out.dismiss()
+//                                            }
+//                                            .setNegativeButton("我手滑了") { dialog, _ -> dialog.dismiss() }
+//                                            .create().show()
+
+                                }
+                                .setPositiveButton("OK") { dialog, _ ->
+                                    // TODO 下载对应数据库
+                                }
                                 .create().show()
                     }
                 }
             }
         }
+        registerBroadCastReceivers(activity)
     }
 
     fun checkAppData(activity: BaseActivity) {
@@ -116,7 +145,7 @@ object UpdateUtil {
      * 2.点击按钮手动检测时调用
      * [forceInit] 强制更新，不强制更新的话可以直接使用备份数据
      */
-    private fun checkInitData(activity: BaseActivity, forceInit: Boolean = false) {
+    fun checkInitData(activity: BaseActivity, forceInit: Boolean = false) {
         if (!forceInit && BackupHelper.getInstance(activity).checkBackUpFileExist()) {
             if (BackupHelper.getInstance(activity).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
@@ -130,13 +159,13 @@ object UpdateUtil {
                 ScpDao.getInstance().resetDb()
                 initCategoryData(activity)
                 if (Utils.enabledWifi(activity)) {
-                    initDetailData(activity)
+//                    initDetailData(activity)
                 } else if (Utils.enabledNetwork(activity)) {
                     AlertDialog.Builder(activity)
                             .setTitle("数据初始化")
                             .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
                             .setPositiveButton("确定") { _, _ ->
-                                initDetailData(activity)
+//                                initDetailData(activity)
                             }
                             .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                             .create().show()
@@ -151,7 +180,7 @@ object UpdateUtil {
             }
         } else {
             // 目录加载了，检测正文是否下完
-            checkInitDetailData(activity)
+//            checkInitDetailData(activity)
         }
     }
 
@@ -180,13 +209,13 @@ object UpdateUtil {
         if (!PreferenceUtil.getDetailDataLoadFinish()) {
             // 正文没有加载完
             if (Utils.enabledWifi(activity)) {
-                initDetailData(activity)
+//                initDetailData(activity)
             } else if (Utils.enabledNetwork(activity)) {
                 AlertDialog.Builder(activity)
                         .setTitle("数据初始化")
                         .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
                         .setPositiveButton("确定") { _, _ ->
-                            initDetailData(activity)
+//                            initDetailData(activity)
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                         .create().show()

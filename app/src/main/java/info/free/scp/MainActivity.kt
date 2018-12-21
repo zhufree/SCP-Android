@@ -26,7 +26,6 @@ import info.free.scp.view.category.ScpListActivity
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import java.io.File
 
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
@@ -116,7 +115,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 注册广播
-        registerBroadCastReceivers()
+//        registerBroadCastReceivers()
 
         setContentView(R.layout.activity_main)
         // 恢复意外退出的数据（不知道有没有用）
@@ -139,7 +138,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         transaction?.commit()
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        checkAppData()
+//        checkAppData()
     }
 
     /**
@@ -394,13 +393,14 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
     override fun onInitDataClick() {
-        checkInitData(false)
+        UpdateManager.checkInitData(this, false)
     }
 
     override fun onResetDataClick() {
         // 清空数据库
         ScpDao.getInstance().resetDb()
         // 重新加载
-        checkInitData(true)
+        UpdateManager.initReceiver(this)
+        UpdateManager.checkInitData(this, true)
     }
 }

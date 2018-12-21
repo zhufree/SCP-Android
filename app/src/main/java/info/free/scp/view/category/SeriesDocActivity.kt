@@ -102,7 +102,6 @@ class SeriesDocActivity : BaseActivity() {
             }
             SCPConstants.Entry.ABOUT_STUFF -> {
                 supportActionBar?.setTitle(R.string.title_about_documents)
-                // TODO 相关材料
                 vp_series_doc.visibility = GONE
                 tab_series_doc.visibility = GONE
                 supportFragmentManager.beginTransaction().replace(R.id.fl_scp_item_container,

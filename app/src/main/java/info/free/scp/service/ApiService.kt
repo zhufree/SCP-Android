@@ -22,13 +22,25 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ScpModelV3")
+    @GET("1/classes/ScpModelV4")
     fun getAllScp(@Query("skip") skip: Int,
                   @Query("limit") limit: Int,
-                  @Query("keys") keys: String="type,cn,not_found,contest_link,contest_name,created_time," +
-                          "desc,event_type,link,month,number,page_code,snippet,story_num," +
-                          "subtext,title,author")
+                  @Query("keys") keys: String="scp_type,cn,not_found,contest_link,contest_name,created_time," +
+                          "desc,event_type,link,month,page_code,snippet,subtext,title,author")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
+
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ScpModelV4")
+    fun getPartScp(@Query("skip") skip: Int,
+                  @Query("limit") limit: Int,
+                  @Query("keys") keys: String="scp_type,cn,not_found,contest_link,contest_name,created_time," +
+                          "desc,event_type,link,month,page_code,snippet,subtext,title,author")
+            : Observable<ApiBean.ApiListResponse<ScpModel>>
+
 
     // 获取正文
     // --data-urlencode 'limit=200' \
@@ -39,7 +51,7 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ScpModelV3")
+    @GET("1/classes/ScpModelV4")
     fun getScpDetail(@Query("skip") skip: Int,
                   @Query("limit") limit: Int,
                   @Query("keys") keys: String="detail")

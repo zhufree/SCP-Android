@@ -1,7 +1,7 @@
 import csv
 from scp_spider import *
 import sqlite3
-
+csv.field_size_limit(100000000)
 bad_link_list = ['/', '/scp-series', '/scp-series-cn', '/series-archive',\
         '/series-archive-cn', '/tales-cn-by-page-name','/tales-by-page-name', \
         '/tales-cn-by-create-time', '/canon-hub', '/canon-hub-cn', '/contest-archive', \
@@ -33,7 +33,7 @@ def merge_all_file():
 def write_to_csv(article_list, file_name):
     with open(file_name, 'w+', encoding='utf-8', newline='') as f:
         # 统一header，方便后续合并文件一起上传
-        writer = csv.DictWriter(f, ['link', 'title', 'scp_type', 'detail', 'cn', 'not_found', \
+        writer = csv.DictWriter(f, ['link', 'title', 'scp_type', 'download_type', 'detail', 'cn', 'not_found', \
             'author', 'desc', 'snippet', 'subtext', 'contest_name', 'contest_link', \
             'created_time', 'month', 'event_type', 'page_code', 'tags'])
         writer.writeheader()
@@ -80,6 +80,8 @@ def get_scps_from_file(filename):
         # 统一header，方便后续合并文件一起上传
         reader = csv.DictReader(f)
         category_list = [dict(order_dict) for order_dict in reader]
+        for scp in category_list:
+            del scp["ID"]
         return category_list
 
 
@@ -143,13 +145,13 @@ def fix_not_found():
 
 
 def split_csv_file():
-    all_scp = get_scps_from_file('scp-category-merge.csv')
+    all_scp = get_scps_from_file('scp.csv')
     # 4000一组
-    for i in range(0, 4):
-        if i*4000+4000 > len(all_scp):
-            scp_group = all_scp[i*4000:]
+    for i in range(0, 2):
+        if i*6000+6000 > len(all_scp):
+            scp_group = all_scp[i*6000:]
         else:
-            scp_group = all_scp[i*4000: i*4000+4000]
+            scp_group = all_scp[i*6000: i*6000+6000]
         write_to_csv(scp_group, "scp-split-" + str(i) + '.csv')
 
 # 从数据库里拿tag更新上去
@@ -165,10 +167,39 @@ def update_tag_by_db(filename):
         for row in cur:
             if row[0] != None:
                 article['tags'] = row[0]
-    # write_subto_csv(tag_article_list,'scp/scp-sub-cate.csv')
-    write_sub_cate_to_csv(tag_article_list,'scp/scp_sub_cate.csv')
+    write_to_csv(tag_article_list, filename)
+    # write_sub_cate_to_csv(tag_article_list, filename)
+
+def write_to_db(filename):
+    con = sqlite3.connect("E:/scp.db")
+    cur = con.cursor()
+    scp_list = get_scps_from_file(filename)
+    print(len(scp_list))
+    for scp in scp_list:
+        # del scp['story_num']
+        # del scp['number']
+        cur.execute('''insert into scps values (NULL, ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',\
+         (scp['title'],scp['link'],scp['detail'],scp['download_type'],scp['scp_type'],\
+            scp['cn'],scp['not_found'],scp['author'],scp['desc'],scp['snippet'],scp['subtext'],\
+            scp['contest_name'],scp['contest_link'],scp['created_time'],scp['month'],\
+            scp['event_type'],scp['page_code'],scp['tags'],))
+    
+    con.commit()
+    con.close()
+    # write_subto_csv(scp_list,'scp/scp-sub-cate.csv')
+    # write_sub_cate_to_csv(scp_list,'scp/scp_sub_cate.csv')
+# 把not_found的值改为int保存
+def fix_column():
+    con = sqlite3.connect("E:/scp.db")
+    cur = con.cursor()
+    cur.execute('''UPDATE scps SET not_found = 0 WHERE not_found = 'false';''')
+    cur.execute('''UPDATE scps SET not_found = 1 WHERE not_found = 'true';''')
+    cur.execute('''UPDATE scps SET cn = 0 WHERE cn = 'false';''')
+    cur.execute('''UPDATE scps SET cn = 1 WHERE cn = 'true';''')
+    con.commit()
+    con.close()
 
 
 if __name__ == '__main__':
-    update_tag_by_db('scp/scp-sub-cate.csv')
+    split_csv_file()
 

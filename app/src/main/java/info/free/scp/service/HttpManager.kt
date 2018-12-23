@@ -1,7 +1,7 @@
 package info.free.scp.service
 
-//import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
+//import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ApiBean
 import info.free.scp.bean.ScpModel
@@ -26,8 +26,8 @@ class HttpManager {
     private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SCPConstants.BMOB_API_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-//            .addConverterFactory(serializationConverterFactory(contentType, JSON))
-            .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
+            .addConverterFactory(serializationConverterFactory(contentType, JSON))
+//            .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
             .build()
     private val apiService = retrofit.create(ApiService::class.java)
 
@@ -53,6 +53,16 @@ class HttpManager {
                 })
     }
 
+    fun getPartDetail(skip:Int, limit: Int, download_type: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+        val where = "{\"download_type\":\"$download_type\"}"
+        apiService.getPartDetail(skip, limit, where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                        updateView(t.results)
+                    }
+                })
+    }
+
     fun getDetail(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
         apiService.getScpDetail(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
@@ -65,6 +75,5 @@ class HttpManager {
 
     companion object {
         val instance = HttpManager()
-
     }
 }

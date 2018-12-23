@@ -32,10 +32,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
         findPreference("dark_mode").setDefaultValue(ThemeUtil.currentTheme == 1)
 
-        // 正文数据库不完整时不允许备份数据库
-        if (!PreferenceUtil.getDetailDataLoadFinish()) {
-            findPreference("backup_data").isEnabled = false
-        }
         if (!BackupHelper.getInstance(context!!).checkBackUpFileExist()) {
             findPreference("restore_data").isEnabled = false
         }

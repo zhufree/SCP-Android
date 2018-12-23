@@ -16,6 +16,12 @@ object SCPConstants {
         const val SETTINGS_DOC = 5 // 设定中心，GOI、hub等
         const val MORE_ABOUT = 6 // 艺作、传承、精品、竞赛、征文等
     }
+    object Download {
+        const val DOWNLOAD_SCP = 0
+        const val DOWNLOAD_SCP_CN = 1
+        const val DOWNLOAD_OTHER = 2
+        const val DOWNLOAD_TALE = 3
+    }
     object Category {
         const val SERIES = 1
         const val SERIES_CN = 2
@@ -46,13 +52,14 @@ object SCPConstants {
         const val SAVE_SERIES_STORY_1 = "SeriesStory1"
         const val SAVE_SERIES_STORY_2 = "SeriesStory2"
         const val SAVE_SERIES_STORY_3 = "SeriesStory3"
-        const val SAVE_JOKE = "Joke"
+        const val SAVE_JOKE = "joke"
         const val SAVE_JOKE_CN = "jokeCn"
         const val SAVE_EX = "ex"
         const val SAVE_ARCHIVED = "archived"
         const val SAVE_REMOVED = "removed"
         const val SAVE_DECOMMISSIONED = "decommissioned"
-        const val SAVE_ABOUT = "about"
+        const val SAVE_INFO = "information"
+        const val SAVE_ABNORMAL = "abnormal"
         // 后面加字母
         const val SAVE_TALES_PREFIX = "tales_"
         const val SAVE_TALES_CN_PREFIX = "talesCn_"

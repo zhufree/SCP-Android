@@ -16,31 +16,44 @@ object PreferenceUtil {
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
+
+    /**
+     * -------------------数据初始化----------------------
+     */
+    /**
+     * 目录和数据库是否离线完成，用boolean记录
+     */
     fun getInitCategoryFinish(): Boolean {
-        return getBooleanValue("init", "initData")
+        return getBooleanValue("init", "init_category")
     }
 
     fun setInitCategoryFinish(finish: Boolean) {
-        setBooleanValue("init", "initData", finish)
-    }
-    fun getDetailDataLoadCount(): Int {
-        return getIntValue("init", "detailData")
+        setBooleanValue("init", "init_category", finish)
     }
 
-    fun addDetailDataLoadCount() {
-        setIntValue("init", "detailData", getDetailDataLoadCount() +1)
+    fun setDetailDataLoadFinish(downloadType: String, value: Boolean) {
+        setBooleanValue("init", downloadType, value)
+    }
+    fun getDetailDataLoadFinish(downloadType: String): Boolean {
+        return getBooleanValue("init", downloadType, true)
     }
 
-    fun setDetailDataLoadFinish() {
-        setBooleanValue("init", "load_detail_finish", true)
+    /**
+     * 下载进度记录
+     */
+    fun getDetailDataLoadCount(downloadType: String): Int {
+        return getIntValue("download", downloadType)
     }
-    fun getDetailDataLoadFinish(): Boolean {
-        return getBooleanValue("init", "load_detail_finish")
+    fun setDetailDataLoadCount(downloadType: String, progress: Int) {
+        setIntValue("download", downloadType, progress)
     }
 
-    fun resetDetailDataLoadCount() {
-        val sp = getPrivateSharedPreference("init")
-        sp?.edit()?.putInt("detailData", 0)?.apply()
+    fun addDetailDataLoadCount(downloadType: String) {
+        setIntValue("download", downloadType, getDetailDataLoadCount(downloadType) +1)
+    }
+    fun resetDetailDataLoadCount(downloadType: String) {
+        val sp = getPrivateSharedPreference("download")
+        sp?.edit()?.putInt(downloadType, 0)?.apply()
     }
 
 
@@ -57,6 +70,9 @@ object PreferenceUtil {
         sp?.edit()?.putBoolean(versionCode, false)?.apply()
     }
 
+    /**
+     * 第一次进正文是否显示过提示
+     */
     fun getShownDetailNotice(): Boolean {
         val sp = getPrivateSharedPreference("init")
         return sp?.getBoolean("shownDetailNotice", false)?:false
@@ -251,9 +267,9 @@ object PreferenceUtil {
     /**
      * 工具方法
      */
-    private fun getBooleanValue(spName: String, key: String): Boolean {
+    private fun getBooleanValue(spName: String, key: String, defaultValue: Boolean = false): Boolean {
         val sp = getPrivateSharedPreference(spName)
-        return sp?.getBoolean(key, false)?:false
+        return sp?.getBoolean(key, defaultValue)?:defaultValue
     }
     private fun setBooleanValue(spName: String, key: String, value: Boolean) {
         val sp = getPrivateSharedPreference(spName)

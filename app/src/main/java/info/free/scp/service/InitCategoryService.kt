@@ -8,7 +8,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
-import info.free.scp.SCPConstants.SaveType.SAVE_ABOUT
+import info.free.scp.SCPConstants.SaveType.SAVE_INFO
 import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
 import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST
 import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST_CN
@@ -121,7 +121,7 @@ class InitCategoryService : IntentService("initDataService") {
                         scp.saveType = SAVE_TALES_BY_TIME
                     }
                     "about" -> {
-                        scp.saveType = SAVE_ABOUT
+                        scp.saveType = SAVE_INFO
                     }
                 }
                 scp.index = i*500 + index

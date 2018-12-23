@@ -139,6 +139,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
 //        checkAppData()
+        UpdateManager.getInstance(this).checkAppData()
     }
 
     /**
@@ -166,30 +167,30 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
      * 5. 录已加载完的前提下，检测姓名和职位是否存在（一般是第二天打开了，提示输入姓名和职位
      * ---finish---
      */
-    private fun checkAppData() {
-        // 第一次启动app，把检测更新时间重置，再检测一次更新
-        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
-            PreferenceUtil.setLastCheckUpdateTime(0)
-            PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
-            if (PreferenceUtil.getDetailDataLoadCount() > 31) {
-                PreferenceUtil.setInitCategoryFinish(true)
-                PreferenceUtil.setDetailDataLoadFinish()
-                BackupHelper.getInstance(this).backUp()
-            }
-        } else if (!isDownloadingDetail) {
-            // 该版本第一次启动
-            checkInitDetailData()
-        }
-        // 普通情况下一天检测一次更新
-        if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
-            PreferenceUtil.addPoints(1)
-            Log.i("scp", "checkUpdate()")
-            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
-            // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
-            checkUpdateAndCategory()
-            checkUserInfo()
-        }
-    }
+//    private fun checkAppData() {
+//        // 第一次启动app，把检测更新时间重置，再检测一次更新
+//        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
+//            PreferenceUtil.setLastCheckUpdateTime(0)
+//            PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
+//            if (PreferenceUtil.getDetailDataLoadCount() > 31) {
+//                PreferenceUtil.setInitCategoryFinish(true)
+//                PreferenceUtil.setDetailDataLoadFinish()
+//                BackupHelper.getInstance(this).backUp()
+//            }
+//        } else if (!isDownloadingDetail) {
+//            // 该版本第一次启动
+//            checkInitDetailData()
+//        }
+//        // 普通情况下一天检测一次更新
+//        if (PreferenceUtil.checkNeedShowUpdateNotice() && enabledNetwork()) {
+//            PreferenceUtil.addPoints(1)
+//            Log.i("scp", "checkUpdate()")
+//            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
+//            // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
+//            checkUpdateAndCategory()
+//            checkUserInfo()
+//        }
+//    }
 
 
     private fun checkUserInfo() {
@@ -252,64 +253,64 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
      * 2.点击按钮手动检测时调用
      * [forceInit] 强制更新，不强制更新的话可以直接使用备份数据
      */
-    private fun checkInitData(forceInit: Boolean = false) {
-        if (!forceInit && BackupHelper.getInstance(this).checkBackUpFileExist()) {
-            if (BackupHelper.getInstance(this).restore()) {
-                PreferenceUtil.setInitCategoryFinish(true)
-                PreferenceUtil.setDetailDataLoadFinish()
-                return
-            }
-        }
-        if (!PreferenceUtil.getInitCategoryFinish()) {
-            // 目录和正文都没加载
-            if (enabledNetwork()) {
-                ScpDao.getInstance().resetDb()
-                initCategoryData()
-                if (enabledWifi()) {
-                    initDetailData()
-                } else if (enabledNetwork()) {
-                    AlertDialog.Builder(this)
-                            .setTitle("数据初始化")
-                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                            .setPositiveButton("确定") { _, _ ->
-                                initDetailData()
-                            }
-                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                            .create().show()
-                }
-            } else {
-                AlertDialog.Builder(this)
-                        .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择同步云端数据" +
-                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
-                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
-            }
-        } else {
-            // 目录加载了，检测正文是否下完
-            checkInitDetailData()
-        }
+//    private fun checkInitData(forceInit: Boolean = false) {
+//        if (!forceInit && BackupHelper.getInstance(this).checkBackUpFileExist()) {
+//            if (BackupHelper.getInstance(this).restore()) {
+//                PreferenceUtil.setInitCategoryFinish(true)
+//                PreferenceUtil.setDetailDataLoadFinish()
+//                return
+//            }
+//        }
+//        if (!PreferenceUtil.getInitCategoryFinish()) {
+//            // 目录和正文都没加载
+//            if (enabledNetwork()) {
+//                ScpDao.getInstance().resetDb()
+//                initCategoryData()
+//                if (enabledWifi()) {
+//                    initDetailData()
+//                } else if (enabledNetwork()) {
+//                    AlertDialog.Builder(this)
+//                            .setTitle("数据初始化")
+//                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+//                            .setPositiveButton("确定") { _, _ ->
+//                                initDetailData()
+//                            }
+//                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+//                            .create().show()
+//                }
+//            } else {
+//                AlertDialog.Builder(this)
+//                        .setTitle("数据初始化")
+//                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择同步云端数据" +
+//                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
+//                        .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
+//                        .create().show()
+//            }
+//        } else {
+//            // 目录加载了，检测正文是否下完
+//            checkInitDetailData()
+//        }
+//
+//    }
 
-    }
-
-    private fun checkInitDetailData() {
-        if (!PreferenceUtil.getDetailDataLoadFinish()) {
-            // 正文没有加载完
-            if (enabledWifi()) {
-                initDetailData()
-            } else if (enabledNetwork()) {
-                AlertDialog.Builder(this)
-                        .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                        .setPositiveButton("确定") { _, _ ->
-                            initDetailData()
-                        }
-                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
-            }
-            // 如果没网就不管了，下次再下
-        }
-    }
+//    private fun checkInitDetailData() {
+//        if (!PreferenceUtil.getDetailDataLoadFinish()) {
+//            // 正文没有加载完
+//            if (enabledWifi()) {
+//                initDetailData()
+//            } else if (enabledNetwork()) {
+//                AlertDialog.Builder(this)
+//                        .setTitle("数据初始化")
+//                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+//                        .setPositiveButton("确定") { _, _ ->
+//                            initDetailData()
+//                        }
+//                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+//                        .create().show()
+//            }
+//            // 如果没网就不管了，下次再下
+//        }
+//    }
 
     /**
      * 初始化数据
@@ -334,50 +335,50 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     /**
      * 检查更新信息
      */
-    private fun checkUpdateAndCategory() {
-        var newVersionCode = 0
-        var updateDesc: String? = ""
-        var updateLink: String? = ""
-        HttpManager.instance.getAppConfig {
-            for (config in it) {
-                if (config.key == "version") {
-                    newVersionCode = config.value.toInt()
-                }
-                if (config.key == "update_desc") {
-                    updateDesc = config.value
-                }
-                if (config.key == "update_link") {
-                    updateLink = config.value
-                }
-                // 数据版本，变化时需要重新初始化数据
-                if (config.key == "db_version") {
-                    remoteDbVersion = config.value.toInt()
-                }
-                // 上次数据更新时间
-                if (config.key == "db_last_update_time") {
-                    PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
-                }
-            }
-            if (currentVersionCode < newVersionCode) {
-                Log.i("version", "current = $currentVersionCode, new = $newVersionCode, 需要升级")
-                AlertDialog.Builder(this)
-                        .setTitle("发现新版本")
-                        .setMessage(updateDesc)
-                        .setPositiveButton("现在升级") { _, _ ->
-                            val updateIntent = Intent()
-                            updateIntent.action = "android.intent.action.VIEW"
-                            val updateUrl = Uri.parse(updateLink)
-                            updateIntent.data = updateUrl
-                            startActivity(updateIntent)
-                        }
-                        .setNegativeButton("暂不升级") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
-                return@getAppConfig
-            }
-            // 显示更新就不检查数据，更新完毕后再检测数据更新
-            checkInitData(false)
-        }
-    }
+//    private fun checkUpdateAndCategory() {
+//        var newVersionCode = 0
+//        var updateDesc: String? = ""
+//        var updateLink: String? = ""
+//        HttpManager.instance.getAppConfig {
+//            for (config in it) {
+//                if (config.key == "version") {
+//                    newVersionCode = config.value.toInt()
+//                }
+//                if (config.key == "update_desc") {
+//                    updateDesc = config.value
+//                }
+//                if (config.key == "update_link") {
+//                    updateLink = config.value
+//                }
+//                // 数据版本，变化时需要重新初始化数据
+//                if (config.key == "db_version") {
+//                    remoteDbVersion = config.value.toInt()
+//                }
+//                // 上次数据更新时间
+//                if (config.key == "db_last_update_time") {
+//                    PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
+//                }
+//            }
+//            if (currentVersionCode < newVersionCode) {
+//                Log.i("version", "current = $currentVersionCode, new = $newVersionCode, 需要升级")
+//                AlertDialog.Builder(this)
+//                        .setTitle("发现新版本")
+//                        .setMessage(updateDesc)
+//                        .setPositiveButton("现在升级") { _, _ ->
+//                            val updateIntent = Intent()
+//                            updateIntent.action = "android.intent.action.VIEW"
+//                            val updateUrl = Uri.parse(updateLink)
+//                            updateIntent.data = updateUrl
+//                            startActivity(updateIntent)
+//                        }
+//                        .setNegativeButton("暂不升级") { dialog, _ -> dialog.dismiss() }
+//                        .create().show()
+//                return@getAppConfig
+//            }
+//            // 显示更新就不检查数据，更新完毕后再检测数据更新
+//            checkInitData(false)
+//        }
+//    }
 
     fun refreshTheme() {
         navigation.setBackgroundColor(ThemeUtil.containerBg)
@@ -393,14 +394,13 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
     override fun onInitDataClick() {
-        UpdateManager.checkInitData(this, false)
+        UpdateManager.getInstance(this).showChooseDbDialog()
     }
 
     override fun onResetDataClick() {
         // 清空数据库
         ScpDao.getInstance().resetDb()
         // 重新加载
-        UpdateManager.initReceiver(this)
-        UpdateManager.checkInitData(this, true)
+        UpdateManager.getInstance(this).showChooseDbDialog()
     }
 }

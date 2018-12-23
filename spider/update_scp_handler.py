@@ -2,7 +2,7 @@ import csv
 import sqlite3
 from scp_file_handler import *
 from scp_spider import *
-
+csv.field_size_limit(100000000)
 # 根据旧文件更新
 
 # SCP系列+Cn
@@ -102,5 +102,64 @@ def update_settings_and_story_series():
             old_scp['not_found'] = 'false'
     write_sub_cate_to_csv(cate_scp_list, 'scp/scp-sub-cate.csv')
 
+# 单页面
+abnormal_link_list = ['/log-of-anomalous-items-cn','/log-of-anomalous-items', '/log-of-extranormal-events',
+'/log-of-extranormal-events-cn']
+single_page_list = ['/object-classes','/secure-facilities-locations','/secure-facilities-locations-cn',
+'/security-clearance-levels','/task-forces','/faq','/guide-for-newbies','/how-to-write-an-scp']
+short_story_link = '/short-stories'
+
+def update_single_pages():
+    single_scp_list = []
+    for link in abnormal_link_list:
+        scp = {
+        'link': link,
+        'scp_type': 'abnormal',
+        'detail': get_single_detail(link),
+        'download_type':4
+        }
+        if scp['detail'] =="<h3>抱歉，该页面尚无内容</h3>":
+            scp['not_found'] = 1
+        else:
+            scp['not_found'] = 0
+        single_scp_list.append(scp)
+    for link in single_page_list:
+        scp = {
+        'link': link,
+        'scp_type': 'information',
+        'detail': get_single_detail(link),
+        'download_type': 4
+        }
+        if scp['detail'] =="<h3>抱歉，该页面尚无内容</h3>":
+            scp['not_found'] = 1
+        else:
+            scp['not_found'] = 0
+        single_scp_list.append(scp)
+    short_scp = {
+        'link': link,
+        'scp_type': 'short_story',
+        'detail': get_single_detail(link),
+        'download_type' : 4
+        }
+    single_scp_list.append(short_scp)
+    print(len(single_scp_list))
+    write_to_csv(single_scp_list, 'scp/single_scp.csv')
+
+# 事故记录作为内页
+def update_events():
+    scp_list = get_scps_from_file('scp/scp_event.csv')
+    for scp in scp_list:
+        scp['download_type'] = 3
+    write_to_csv(scp_list, 'scp/scp_event.csv')
+
+def update_download_type(filename):
+    # files = ['scp/' + name for name in os.listdir('scp/')]
+    scp_list = get_scps_from_file(filename)
+    print(len(scp_list))
+    for scp in scp_list:
+        scp['download_type'] = 3
+    write_to_csv(scp_list, filename)
+
+
 if __name__ == '__main__':
-    update_settings_and_story_series()
+    update_events()

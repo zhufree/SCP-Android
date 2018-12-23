@@ -42,7 +42,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     fun resetDb() {
         PreferenceUtil.setInitCategoryFinish(false)
-        PreferenceUtil.resetDetailDataLoadCount()
+        for (i in 0 ..4) {
+            PreferenceUtil.resetDetailDataLoadCount(i.toString())
+        }
         with(writableDatabase) {
             this?.execSQL(ScpTable.dropScpTableSQL)
             this?.execSQL(ScpTable.dropDetailTableSQL)

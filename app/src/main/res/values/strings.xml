@@ -56,7 +56,7 @@
         \n\n
         PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
 
-    <string name="download_detail_service">下载正文</string>
+    <string name="download_detail_service">离线正文</string>
 
     <string name="offline_mode">切换离线模式</string>
     <string name="online_mode">切换网页模式</string>

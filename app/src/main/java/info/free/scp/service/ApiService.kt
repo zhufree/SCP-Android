@@ -29,16 +29,17 @@ interface ApiService {
                           "desc,event_type,link,month,page_code,snippet,subtext,title,author")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
+    // where "{\"scp_type\":\"${category_type}\"}"
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
     @GET("1/classes/ScpModelV4")
-    fun getPartScp(@Query("skip") skip: Int,
-                  @Query("limit") limit: Int,
-                  @Query("keys") keys: String="scp_type,cn,not_found,contest_link,contest_name,created_time," +
-                          "desc,event_type,link,month,page_code,snippet,subtext,title,author")
+    fun getPartDetail(@Query("skip") skip: Int,
+                      @Query("limit") limit: Int,
+                      @Query("where") where: String,
+                      @Query("keys") keys: String="detail")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
 

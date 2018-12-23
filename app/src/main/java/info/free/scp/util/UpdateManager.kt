@@ -11,19 +11,34 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import info.free.scp.BuildConfig
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 
-object UpdateManager {
+class UpdateManager(private val activity: BaseActivity) {
+
+    init {
+        manager = this
+        initReceiver()
+    }
+
+    companion object {
+        var manager : UpdateManager? = null
+
+        fun getInstance(activity: BaseActivity): UpdateManager {
+            return manager?:UpdateManager(activity)
+        }
+    }
+
     private val currentVersionCode = BuildConfig.VERSION_CODE
     private var isDownloadingDetail = false
 
     private var mInitCategoryReceiver : BroadcastReceiver? = null
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private fun registerBroadCastReceivers(activity: BaseActivity) {
+    private fun registerBroadCastReceivers() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
@@ -32,7 +47,7 @@ object UpdateManager {
 //        mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(SCPConstants.BroadCastAction.ACTION_CHANGE_THEME))
     }
 
-    fun initReceiver(activity: BaseActivity) {
+    fun initReceiver() {
         mInitCategoryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
@@ -43,46 +58,44 @@ object UpdateManager {
                 if (progress == 100) {
                     progressDialog?.dismiss()
                     if (!activity.isFinishing) {
-                        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","其他文档（解明，废除，删除，归档等）",
-                                "基金会故事+设定中心","相关材料")
-                        val chooseList =  arrayOf(false, false,false,false,false).toBooleanArray()
-                        // TODO 显示分库下载选项
-                        AlertDialog.Builder(activity)
-                                .setTitle("Notice")
-                                .setMultiChoiceItems(dbList, chooseList){ out, which, isChecked ->
-                                    chooseList[which] = isChecked
-//                                    AlertDialog.Builder(activity)
-//                                            .setTitle(dbList[which])
-//                                            .setMessage(PreferenceUtil.getDescForJob(dbList[which]))
-//                                            .setPositiveButton("确定") { inner, _ ->
-//
-//                                                inner.dismiss()
-//                                                field?.set(out, true)
-//                                                out.dismiss()
-//                                            }
-//                                            .setNegativeButton("我手滑了") { dialog, _ -> dialog.dismiss() }
-//                                            .create().show()
-
-                                }
-                                .setPositiveButton("OK") { dialog, _ ->
-                                    // TODO 下载对应数据库
-                                }
-                                .create().show()
+                        showChooseDbDialog()
                     }
                 }
             }
         }
-        registerBroadCastReceivers(activity)
+        registerBroadCastReceivers()
     }
 
-    fun checkAppData(activity: BaseActivity) {
+    fun showChooseDbDialog() {
+        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事",
+                "搞笑作品，其他文档（解明，废除，删除，归档等）")
+//        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
+//                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
+        val chooseList =  arrayOf(false,false,false,false).toBooleanArray()
+        // TODO 显示分库下载选项
+        AlertDialog.Builder(activity)
+                .setTitle("选择你想要离线的内容")
+                .setMultiChoiceItems(dbList, chooseList){ _, which, isChecked ->
+                    chooseList[which] = isChecked
+                }
+                .setPositiveButton("OK") { _, _ ->
+                    for (i in chooseList.indices) {
+                        if (chooseList[i]) {
+                            initDetailData(i)
+                        }
+                    }
+                }
+                .create().show()
+    }
+
+    fun checkAppData() {
         // 第一次启动app，把检测更新时间重置，再检测一次更新
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             PreferenceUtil.setLastCheckUpdateTime(0)
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
         } else if (!isDownloadingDetail) {
             // 如果没有在下载正文，检测正文是否下完
-            checkInitDetailData(activity)
+            checkInitDetailData()
         }
         // 普通情况下一天检测一次更新
         if (PreferenceUtil.checkNeedShowUpdateNotice() && Utils.enabledNetwork(activity)) {
@@ -90,7 +103,7 @@ object UpdateManager {
             Log.i("scp", "checkUpdate()")
             PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
-            checkUpdateAndCategory(activity)
+            checkUpdateAndCategory()
 //            checkUserInfo()
         }
     }
@@ -98,7 +111,7 @@ object UpdateManager {
     /**
      * 检查更新信息
      */
-    private fun checkUpdateAndCategory(activity: BaseActivity) {
+    private fun checkUpdateAndCategory() {
         var newVersionCode = 0
         var updateDesc: String? = ""
         var updateLink: String? = ""
@@ -135,7 +148,7 @@ object UpdateManager {
                 return@getAppConfig
             }
             // 显示更新就不检查数据，更新完毕后再检测数据更新
-            checkInitData(activity, false)
+            checkInitData(false)
         }
     }
 
@@ -145,11 +158,13 @@ object UpdateManager {
      * 2.点击按钮手动检测时调用
      * [forceInit] 强制更新，不强制更新的话可以直接使用备份数据
      */
-    fun checkInitData(activity: BaseActivity, forceInit: Boolean = false) {
+    fun checkInitData(forceInit: Boolean = false) {
         if (!forceInit && BackupHelper.getInstance(activity).checkBackUpFileExist()) {
             if (BackupHelper.getInstance(activity).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
-                PreferenceUtil.setDetailDataLoadFinish()
+                for (i in 0..5) {
+                    PreferenceUtil.setDetailDataLoadFinish(i.toString(), true)
+                }
                 return
             }
         }
@@ -157,7 +172,7 @@ object UpdateManager {
             // 目录和正文都没加载
             if (Utils.enabledNetwork(activity)) {
                 ScpDao.getInstance().resetDb()
-                initCategoryData(activity)
+                initCategoryData()
                 if (Utils.enabledWifi(activity)) {
 //                    initDetailData(activity)
                 } else if (Utils.enabledNetwork(activity)) {
@@ -188,7 +203,7 @@ object UpdateManager {
     /**
      * 初始化数据
      */
-    private fun initCategoryData(activity: BaseActivity) {
+    private fun initCategoryData() {
         val intent = Intent(activity, InitCategoryService::class.java)
         activity.startService(intent)
         progressDialog = ProgressDialog(activity)
@@ -199,28 +214,31 @@ object UpdateManager {
         progressDialog?.show()
     }
 
-    private fun initDetailData(activity: BaseActivity) {
+    private fun initDetailData(downloadType: Int) {
         val intent = Intent(activity, InitDetailService::class.java)
+        intent.putExtra("download_type", downloadType)
         activity.startService(intent)
         isDownloadingDetail = true
     }
 
-    private fun checkInitDetailData(activity: BaseActivity) {
-        if (!PreferenceUtil.getDetailDataLoadFinish()) {
-            // 正文没有加载完
-            if (Utils.enabledWifi(activity)) {
-//                initDetailData(activity)
-            } else if (Utils.enabledNetwork(activity)) {
-                AlertDialog.Builder(activity)
-                        .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                        .setPositiveButton("确定") { _, _ ->
-//                            initDetailData(activity)
-                        }
-                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
+    private fun checkInitDetailData() {
+        for (i in 0..4) {
+            if (!PreferenceUtil.getDetailDataLoadFinish(i.toString())) {
+                // 正文没有加载完
+                if (Utils.enabledWifi(activity)) {
+                    initDetailData(i)
+                } else if (Utils.enabledNetwork(activity)) {
+                    AlertDialog.Builder(activity)
+                            .setTitle("数据初始化")
+                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                            .setPositiveButton("确定") { _, _ ->
+                                //                            initDetailData(activity)
+                            }
+                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                            .create().show()
+                }
+                // 如果没网就不管了，下次再下
             }
-            // 如果没网就不管了，下次再下
         }
     }
 }

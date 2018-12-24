@@ -26,10 +26,10 @@ interface ApiService {
     fun getAllScp(@Query("skip") skip: Int,
                   @Query("limit") limit: Int,
                   @Query("keys") keys: String="scp_type,cn,not_found,contest_link,contest_name,created_time," +
-                          "desc,event_type,link,month,page_code,snippet,subtext,title,author")
+                          "desc,event_type,link,month,page_code,snippet,subtext,title,author,download_type")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
-    // where "{\"scp_type\":\"${category_type}\"}"
+    // where "{\"download_type\":\"${download_type}\"}"
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",

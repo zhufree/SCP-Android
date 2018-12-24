@@ -11,6 +11,10 @@ import android.util.Log
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.R
+import info.free.scp.SCPConstants.Download.DOWNLOAD_OTHER
+import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
+import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
+import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
 import info.free.scp.SCPConstants.SaveType.SAVE_ABNORMAL
 import info.free.scp.SCPConstants.SaveType.SAVE_INFO
 import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
@@ -38,6 +42,8 @@ class InitDetailService : IntentService("initDataService") {
     private var notificationManager: NotificationManager? = null
     private val DOWNLOAD_DETAIL_NOTIFICATION = R.string.download_detail_service
     val channelID = "zhufree"
+    private var downloadList = emptyList<Int>().toMutableList()
+    private var isDownloading = false
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
 
@@ -51,15 +57,18 @@ class InitDetailService : IntentService("initDataService") {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val downloadType = intent?.getIntExtra("download_type", 0)
         downloadType?.let {
+            downloadList.add(it)
             // 检查之前的进度
             val downloadCount = PreferenceUtil.getDetailDataLoadCount(it.toString())
             if (downloadCount == 0) {
                 // 如果没有进度，标记为没有离线完
                 PreferenceUtil.setDetailDataLoadFinish(it.toString(), false)
             }
-            createNotification(downloadCount*500)
-            // 从之前的进度开始下载
-            getPartDetail(it, downloadCount)
+            if (!isDownloading) {
+                createNotification(it, downloadCount * 500)
+                // 从之前的进度开始下载
+                getPartDetail(it, downloadCount)
+            }
         }
     }
 
@@ -74,7 +83,7 @@ class InitDetailService : IntentService("initDataService") {
     /**
      * Notification
      */
-    private fun createNotification(count: Int) {
+    private fun createNotification(downloadType: Int, count: Int) {
 
         val builder = if (Build.VERSION.SDK_INT >= 26) {
             createNotifyChannel()
@@ -87,7 +96,7 @@ class InitDetailService : IntentService("initDataService") {
                 // 立即启动
                 .setWhen(System.currentTimeMillis())
                 // 内容标题
-                .setContentTitle(getString(R.string.download_detail_service))
+                .setContentTitle("离线${getDownloadTitleByType(downloadType)}")
                 // 内容文字
                 .setContentText("已离线数目：$count")
                 // 不会被滑动删除（常驻）
@@ -100,16 +109,26 @@ class InitDetailService : IntentService("initDataService") {
         notificationManager?.notify(DOWNLOAD_DETAIL_NOTIFICATION, notification)
     }
 
+    private fun getDownloadTitleByType(downloadType: Int): String{
+        return when (downloadType) {
+            DOWNLOAD_SCP -> "SCP系列"
+            DOWNLOAD_SCP_CN -> "SCP-CN系列"
+            DOWNLOAD_TALE -> "基金会故事"
+            DOWNLOAD_OTHER -> "其他文档"
+            else -> "正文"
+        }
+    }
+
     private fun getPartDetail(downloadType: Int, index: Int) {
         HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
             for ((i, scp) in it.withIndex()) {
                 when (scp.requestType) {
                     "series" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_SERIES_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_SERIES_CN
                         else SAVE_SERIES
                     }
                     "joke" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_JOKE_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_JOKE_CN
                         else SAVE_JOKE
                     }
                     "archived" -> {
@@ -125,19 +144,19 @@ class InitDetailService : IntentService("initDataService") {
                         scp.saveType = SAVE_REMOVED
                     }
                     "story_series" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_STORY_SERIES_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_STORY_SERIES_CN
                         else SAVE_STORY_SERIES
                     }
                     "tale" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_TALES_CN_PREFIX + scp.pageCode
+                        scp.saveType = if (scp.cn == 1) SAVE_TALES_CN_PREFIX + scp.pageCode
                         else SAVE_TALES_PREFIX + scp.pageCode
                     }
                     "setting" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_SETTINGS_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_SETTINGS_CN
                         else SAVE_SETTINGS
                     }
                     "contest" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_CONTEST_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_CONTEST_CN
                         else SAVE_CONTEST
                     }
                     "event" -> {
@@ -156,14 +175,28 @@ class InitDetailService : IntentService("initDataService") {
             ScpDao.getInstance().insertDetailData(it)
             // 下载进度+1
             PreferenceUtil.addDetailDataLoadCount(downloadType.toString())
-            createNotification(index*500+it.size)
+            createNotification(downloadType, index*500+it.size)
             if (it.size > 499) {
                 getPartDetail(downloadType, index+1)
             } else {
                 // 标记下载完成
                 PreferenceUtil.setDetailDataLoadFinish(downloadType.toString(), true)
-                notificationManager?.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
-                notifyLoadFinish()
+                var allFinish = true
+                // 判断列表里还有没有要下载的
+                for (i in downloadList) {
+                    // 按数字大小判断下一个要下载的
+                    if (i > downloadType) {
+                        getPartDetail(i, 0)
+                        createNotification(i, 0)
+                        allFinish = false
+                        break
+                    }
+                }
+                // 全都下载完成
+                if (allFinish) {
+                    notificationManager?.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
+                    notifyLoadFinish()
+                }
             }
         }
     }

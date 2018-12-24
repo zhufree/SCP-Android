@@ -157,16 +157,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
     }
 
-    /**
-     * 检测更新和数据初始化
-     * ---start---
-     * 1. 检测app版本，确保是最新版
-     * 2. 检测本地是否有备份数据，如果有，执行恢复并把初始化标记位都置为true，跳转5，否则转3
-     * 3. 检测目录是否初始化，加载目录，完毕后加载正文
-     * 4. 检测正文是否加载完成，没有的话继续加载
-     * 5. 录已加载完的前提下，检测姓名和职位是否存在（一般是第二天打开了，提示输入姓名和职位
-     * ---finish---
-     */
+
 //    private fun checkAppData() {
 //        // 第一次启动app，把检测更新时间重置，再检测一次更新
 //        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {

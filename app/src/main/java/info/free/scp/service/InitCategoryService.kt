@@ -8,6 +8,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
+import info.free.scp.SCPConstants.SaveType.SAVE_ABNORMAL
 import info.free.scp.SCPConstants.SaveType.SAVE_INFO
 import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
 import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST
@@ -43,7 +44,7 @@ class InitCategoryService : IntentService("initDataService") {
             Log.i("loading", "requestCount = $value")
             field = value
             sendThreadStatus(3*value)
-            if (value == 31) {
+            if (value == 21) {
                 ScpDao.getInstance().insertCategoryData(scpModels)
                 PreferenceUtil.setInitCategoryFinish(true)
                 sendThreadStatus(100)
@@ -72,12 +73,10 @@ class InitCategoryService : IntentService("initDataService") {
             for ((index, scp) in it.withIndex()) {
                 when (scp.requestType) {
                     "series" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_SERIES_CN
-                        else SAVE_SERIES
+                        scp.saveType = if (scp.cn == 1) SAVE_SERIES_CN else SAVE_SERIES
                     }
                     "joke" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_JOKE_CN
-                        else SAVE_JOKE
+                        scp.saveType = if (scp.cn == 1) SAVE_JOKE_CN else SAVE_JOKE
                     }
                     "archived" -> {
                         scp.saveType = SAVE_ARCHIVED
@@ -91,37 +90,30 @@ class InitCategoryService : IntentService("initDataService") {
                     "removed" -> {
                         scp.saveType = SAVE_REMOVED
                     }
-                    "story" -> {
-                        when (scp.storyNum) {
-                            "1" -> scp.saveType = SAVE_SERIES_STORY_1
-                            "2" -> scp.saveType = SAVE_SERIES_STORY_2
-                            "3" -> scp.saveType = SAVE_SERIES_STORY_3
-                        }
-                    }
                     "story_series" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_STORY_SERIES_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_STORY_SERIES_CN
                         else SAVE_STORY_SERIES
                     }
                     "tale" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_TALES_CN_PREFIX + scp.pageCode
+                        scp.saveType = if (scp.cn == 1) SAVE_TALES_CN_PREFIX + scp.pageCode
                         else SAVE_TALES_PREFIX + scp.pageCode
                     }
                     "setting" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_SETTINGS_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_SETTINGS_CN
                         else SAVE_SETTINGS
                     }
                     "contest" -> {
-                        scp.saveType = if (scp.cn == "true") SAVE_CONTEST_CN
+                        scp.saveType = if (scp.cn == 1) SAVE_CONTEST_CN
                         else SAVE_CONTEST
                     }
                     "event" -> {
                         scp.saveType = SAVE_EVENT
                     }
-                    "tale_by_time" -> {
-                        scp.saveType = SAVE_TALES_BY_TIME
-                    }
                     "about" -> {
                         scp.saveType = SAVE_INFO
+                    }
+                    "abnormal" -> {
+                        scp.saveType = SAVE_ABNORMAL
                     }
                 }
                 scp.index = i*500 + index

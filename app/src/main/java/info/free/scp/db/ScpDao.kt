@@ -130,16 +130,15 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 stmt.bindString(8, model.snippet)
                 stmt.bindString(9, model.desc)
                 stmt.bindString(10, model.author)
-                stmt.bindString(11, model.number)
-                stmt.bindString(12, model.storyNum)
-                stmt.bindString(13, model.pageCode)
-                stmt.bindString(14, model.contestName)
-                stmt.bindString(15, model.contestLink)
-                stmt.bindString(16, model.createdTime)
-                stmt.bindLong(17, model.index.toLong())
-                stmt.bindString(18, model.evenType)
-                stmt.bindString(19, model.month)
-                stmt.bindString(21, model.notFound)
+                stmt.bindString(11, model.pageCode)
+                stmt.bindString(12, model.contestName)
+                stmt.bindString(13, model.contestLink)
+                stmt.bindString(14, model.createdTime)
+                stmt.bindLong(15, model.index.toLong())
+                stmt.bindString(16, model.eventType)
+                stmt.bindString(17, model.month)
+                stmt.bindLong(18, model.notFound.toLong())
+                stmt.bindLong(19, model.downloadType.toLong())
                 Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()
@@ -619,12 +618,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.createdTime.isNotEmpty()) {
             cv.put(ScpTable.CREATED_TIME, model.createdTime)
         }
-        if (model.number.isNotEmpty()) {
-            cv.put(ScpTable.NUMBER, model.number)
-        }
-        if (model.storyNum.isNotEmpty()) {
-            cv.put(ScpTable.STORY_NUMBER, model.storyNum)
-        }
         if (model.pageCode.isNotEmpty()) {
             cv.put(ScpTable.PAGE_CODE, model.pageCode)
         }
@@ -640,14 +633,17 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.index > -1) {
             cv.put(ScpTable.INDEX, model.index)
         }
-        if (model.evenType.isNotEmpty()) {
-            cv.put(ScpTable.EVENT_TYPE, model.evenType)
+        if (model.eventType.isNotEmpty()) {
+            cv.put(ScpTable.EVENT_TYPE, model.eventType)
         }
         if (model.month.isNotEmpty()) {
             cv.put(ScpTable.MONTH, model.month)
         }
-        if (model.notFound.isNotEmpty()) {
+        if (model.notFound > -1) {
             cv.put(ScpTable.NOT_FOUND, model.notFound)
+        }
+        if (model.downloadType > -1) {
+            cv.put(ScpTable.DOWNLOAD_TYPE, model.downloadType)
         }
         return cv
     }
@@ -660,7 +656,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),
                 getCursorString(cursor, ScpTable.TITLE), "",
-                getCursorString(cursor, ScpTable.NOT_FOUND),
+                getCursorInt(cursor, ScpTable.NOT_FOUND),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 // getCursorString(cursor, ScpTable.DETAIL_HTML),
                 getCursorInt(cursor, ScpTable.HAS_READ),
@@ -670,17 +666,14 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.SUB_TEXT),
                 getCursorString(cursor, ScpTable.SNIPPET),
                 getCursorString(cursor, ScpTable.DESC),
-                getCursorString(cursor, ScpTable.NUMBER),
-                getCursorString(cursor, ScpTable.STORY_NUMBER),
                 getCursorInt(cursor, ScpTable.INDEX),
                 getCursorString(cursor, ScpTable.PAGE_CODE),
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.CONTEST_NAME),
                 getCursorString(cursor, ScpTable.CONTEST_LINK),
-                "", "",
+                "", -1,
                 getCursorString(cursor, ScpTable.EVENT_TYPE),
-                getCursorString(cursor, ScpTable.MONTH)
+                getCursorString(cursor, ScpTable.MONTH), -1
         )
-
     }
 }

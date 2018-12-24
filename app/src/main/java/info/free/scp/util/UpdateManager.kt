@@ -38,6 +38,40 @@ class UpdateManager(private val activity: BaseActivity) {
 
     private var mInitCategoryReceiver : BroadcastReceiver? = null
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
+
+    /**
+     * 检测更新和数据初始化
+     * ---start---
+     * 1. 检测app版本，确保是最新版：checkUpdateAndCategory()
+     * 2. 检测本地是否有备份数据，如果有，执行恢复并把初始化标记位都置为true，跳转5，否则转3
+     * 3. 检测目录是否初始化，加载目录，完毕后加载正文
+     * 4. 检测正文是否加载完成，没有的话继续加载
+     * 5. 录已加载完的前提下，检测姓名和职位是否存在（一般是第二天打开了，提示输入姓名和职位
+     * ---finish---
+     */
+    fun checkAppData() {
+        // 第一次启动app，把检测更新时间重置，再检测一次更新
+        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
+            PreferenceUtil.setLastCheckUpdateTime(0)
+            PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
+        }
+        // 去掉这个逻辑，改为在下载管理中继续
+        //        else if (!isDownloadingDetail) {
+        //            // 如果没有在下载正文，检测正文是否下完
+        //            checkInitDetailData()
+        //        }
+        // 普通情况下一天检测一次更新
+        if (PreferenceUtil.checkNeedShowUpdateNotice() && Utils.enabledNetwork(activity)) {
+            PreferenceUtil.addPoints(1)
+            Log.i("scp", "checkUpdate")
+            // 记录上次检测更新时间
+            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
+            // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
+            checkUpdateAndCategory()
+            //            checkUserInfo()
+        }
+    }
+
     private fun registerBroadCastReceivers() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity)
         val intentFilter = IntentFilter()
@@ -57,7 +91,18 @@ class UpdateManager(private val activity: BaseActivity) {
                 }
                 if (progress == 100) {
                     progressDialog?.dismiss()
-                    if (!activity.isFinishing) {
+                    if (Utils.enabledNetwork(activity) && !Utils.enabledWifi(activity)) {
+                        AlertDialog.Builder(activity)
+                                .setTitle("数据初始化")
+                                .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                                .setPositiveButton("确定") { _, _ ->
+                                    if (!activity.isFinishing) {
+                                        showChooseDbDialog()
+                                    }
+                                }
+                                .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                                .create().show()
+                    } else if (Utils.enabledWifi(activity) && !activity.isFinishing) {
                         showChooseDbDialog()
                     }
                 }
@@ -66,13 +111,15 @@ class UpdateManager(private val activity: BaseActivity) {
         registerBroadCastReceivers()
     }
 
+    /**
+     * 显示分库下载的多选框
+     */
     fun showChooseDbDialog() {
-        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事",
+        val dbList = arrayOf("SCP系列1-4999","SCP-CN系列1-1999","基金会故事",
                 "搞笑作品，其他文档（解明，废除，删除，归档等）")
 //        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
         val chooseList =  arrayOf(false,false,false,false).toBooleanArray()
-        // TODO 显示分库下载选项
         AlertDialog.Builder(activity)
                 .setTitle("选择你想要离线的内容")
                 .setMultiChoiceItems(dbList, chooseList){ _, which, isChecked ->
@@ -88,25 +135,6 @@ class UpdateManager(private val activity: BaseActivity) {
                 .create().show()
     }
 
-    fun checkAppData() {
-        // 第一次启动app，把检测更新时间重置，再检测一次更新
-        if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
-            PreferenceUtil.setLastCheckUpdateTime(0)
-            PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
-        } else if (!isDownloadingDetail) {
-            // 如果没有在下载正文，检测正文是否下完
-            checkInitDetailData()
-        }
-        // 普通情况下一天检测一次更新
-        if (PreferenceUtil.checkNeedShowUpdateNotice() && Utils.enabledNetwork(activity)) {
-            PreferenceUtil.addPoints(1)
-            Log.i("scp", "checkUpdate()")
-            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
-            // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
-            checkUpdateAndCategory()
-//            checkUserInfo()
-        }
-    }
 
     /**
      * 检查更新信息
@@ -143,7 +171,7 @@ class UpdateManager(private val activity: BaseActivity) {
                             updateIntent.data = updateUrl
                             activity.startActivity(updateIntent)
                         }
-                        .setNegativeButton("暂不升级") { dialog, _ -> dialog.dismiss() }
+                        .setNegativeButton("暂不升级") { _, _ ->  }
                         .create().show()
                 return@getAppConfig
             }
@@ -169,22 +197,11 @@ class UpdateManager(private val activity: BaseActivity) {
             }
         }
         if (!PreferenceUtil.getInitCategoryFinish()) {
-            // 目录和正文都没加载
+            // 目录没加载
             if (Utils.enabledNetwork(activity)) {
+                // 确保数据库重置，重新下载
                 ScpDao.getInstance().resetDb()
                 initCategoryData()
-                if (Utils.enabledWifi(activity)) {
-//                    initDetailData(activity)
-                } else if (Utils.enabledNetwork(activity)) {
-                    AlertDialog.Builder(activity)
-                            .setTitle("数据初始化")
-                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                            .setPositiveButton("确定") { _, _ ->
-//                                initDetailData(activity)
-                            }
-                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                            .create().show()
-                }
             } else {
                 AlertDialog.Builder(activity)
                         .setTitle("数据初始化")
@@ -193,15 +210,12 @@ class UpdateManager(private val activity: BaseActivity) {
                         .setPositiveButton("确定") { dialog, _ -> dialog.dismiss() }
                         .create().show()
             }
-        } else {
-            // 目录加载了，检测正文是否下完
-//            checkInitDetailData(activity)
         }
     }
 
     var progressDialog: ProgressDialog? = null
     /**
-     * 初始化数据
+     * 初始化目录
      */
     private fun initCategoryData() {
         val intent = Intent(activity, InitCategoryService::class.java)
@@ -210,6 +224,7 @@ class UpdateManager(private val activity: BaseActivity) {
         progressDialog?.max = 100
         progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
         progressDialog?.setMessage("与基金会通信中")
+        // 设置强制显示
         progressDialog?.setCancelable(false)
         progressDialog?.show()
     }
@@ -219,26 +234,5 @@ class UpdateManager(private val activity: BaseActivity) {
         intent.putExtra("download_type", downloadType)
         activity.startService(intent)
         isDownloadingDetail = true
-    }
-
-    private fun checkInitDetailData() {
-        for (i in 0..4) {
-            if (!PreferenceUtil.getDetailDataLoadFinish(i.toString())) {
-                // 正文没有加载完
-                if (Utils.enabledWifi(activity)) {
-                    initDetailData(i)
-                } else if (Utils.enabledNetwork(activity)) {
-                    AlertDialog.Builder(activity)
-                            .setTitle("数据初始化")
-                            .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                            .setPositiveButton("确定") { _, _ ->
-                                //                            initDetailData(activity)
-                            }
-                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                            .create().show()
-                }
-                // 如果没网就不管了，下次再下
-            }
-        }
     }
 }

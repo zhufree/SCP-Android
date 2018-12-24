@@ -19,8 +19,6 @@ object ScpTable {
     const val AUTHOR = "author"
     const val CREATED_TIME = "createdTime"
     const val HAS_READ = "hasRead"
-    const val NUMBER = "number"
-    const val STORY_NUMBER = "storyNumber"
     const val PAGE_CODE = "pageCode"
     const val CONTEST_NAME = "contestName"
     const val CONTEST_LINK = "contestLink"
@@ -29,6 +27,7 @@ object ScpTable {
     const val EVENT_TYPE = "eventType"
     const val MONTH = "month"
     const val NOT_FOUND = "notFound"
+    const val DOWNLOAD_TYPE = "downloadType"
 
     const val LIKE = "like"
 
@@ -38,13 +37,12 @@ object ScpTable {
             "$DETAIL_HTML VARCHAR," +
             "$HAS_READ INTEGER, $SAVE_TYPE STRING," +
             "$SUB_TEXT VARCHAR, $SNIPPET VARCHAR, $DESC VARCHAR, $AUTHOR VARCHAR, " +
-            "$NUMBER VARCHAR, $STORY_NUMBER VARCHAR, " +
             "$PAGE_CODE VARCHAR, " +
             "$CONTEST_NAME VARCHAR, $CONTEST_LINK VARCHAR," +
             "$CREATED_TIME VARCHAR, " +
             "$INDEX INTEGER, " +
             "$EVENT_TYPE VARCHAR, $MONTH VARCHAR, " +
-            "$LIKE INTEGER, $NOT_FOUND VARCHAR" +
+            "$LIKE INTEGER, $NOT_FOUND INTEGER, $DOWNLOAD_TYPE INTEGER" +
             ")"
 
     const val CREATE_DETAIL_TABLE_SQL = "create table IF NOT EXISTS $DETAIL_TABLE_NAME (" +
@@ -55,11 +53,11 @@ object ScpTable {
 
     const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +
             "$ID , $LINK , $TITLE , $DETAIL_HTML ,$HAS_READ , $SAVE_TYPE," +
-            "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , $NUMBER , $STORY_NUMBER , " +
+            "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR , " +
             "$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK , $CREATED_TIME , " +
-            "$INDEX, $EVENT_TYPE, $MONTH, $LIKE, $NOT_FOUND) " +
+            "$INDEX, $EVENT_TYPE, $MONTH, $LIKE, $NOT_FOUND, $DOWNLOAD_TYPE) " +
             "VALUES (?,?,?,?,?,?,?,?,?,?," +
-            "?,?,?,?,?,?,?,?,?,?,?)"
+            "?,?,?,?,?,?,?,?,?,?)"
 
     const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
             "$ID, $DETAIL_HTML) VALUES (?,?)"

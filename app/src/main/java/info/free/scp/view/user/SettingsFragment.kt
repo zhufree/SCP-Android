@@ -54,8 +54,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         .setPositiveButton("确定") { dialog, _ ->
                             EventUtil.onEvent(activity, EventUtil.clickSyncData)
                             listener?.onResetDataClick()
-                            // 只允许点击一次
-                            it.isEnabled = false
                             dialog.dismiss()
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }

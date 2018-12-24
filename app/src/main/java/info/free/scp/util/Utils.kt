@@ -23,6 +23,7 @@ import android.content.ContentValues
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.text.TextUtils
+import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 
 
@@ -239,5 +240,15 @@ object Utils {
         fis.close()
         bos.close()
         return RequestBody.create(MediaType.parse("application/octet-stream"), bos.toByteArray())
+    }
+
+    fun getDownloadTitleByType(downloadType: Int): String{
+        return when (downloadType) {
+            SCPConstants.Download.DOWNLOAD_SCP -> "SCP系列"
+            SCPConstants.Download.DOWNLOAD_SCP_CN -> "SCP-CN系列"
+            SCPConstants.Download.DOWNLOAD_TALE -> "基金会故事"
+            SCPConstants.Download.DOWNLOAD_OTHER -> "其他文档"
+            else -> "正文"
+        }
     }
 }

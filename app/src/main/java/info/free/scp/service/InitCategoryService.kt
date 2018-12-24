@@ -43,18 +43,20 @@ class InitCategoryService : IntentService("initDataService") {
         set(value) {
             Log.i("loading", "requestCount = $value")
             field = value
-            sendThreadStatus(3*value)
-            if (value == 21) {
-                ScpDao.getInstance().insertCategoryData(scpModels)
-                PreferenceUtil.setInitCategoryFinish(true)
-                sendThreadStatus(100)
-            }
+            sendThreadStatus(5*value)
+
         }
 
     override fun onCreate() {
         super.onCreate()
         // 0-499,500-999
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+    }
+
+    private fun finishCategoryLoad() {
+        ScpDao.getInstance().insertCategoryData(scpModels)
+        PreferenceUtil.setInitCategoryFinish(true)
+        sendThreadStatus(100)
     }
 
     private fun sendThreadStatus(progress: Int) {
@@ -73,10 +75,10 @@ class InitCategoryService : IntentService("initDataService") {
             for ((index, scp) in it.withIndex()) {
                 when (scp.requestType) {
                     "series" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_SERIES_CN else SAVE_SERIES
+                        scp.saveType = if (scp.cn == "1") SAVE_SERIES_CN else SAVE_SERIES
                     }
                     "joke" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_JOKE_CN else SAVE_JOKE
+                        scp.saveType = if (scp.cn == "1") SAVE_JOKE_CN else SAVE_JOKE
                     }
                     "archived" -> {
                         scp.saveType = SAVE_ARCHIVED
@@ -91,19 +93,19 @@ class InitCategoryService : IntentService("initDataService") {
                         scp.saveType = SAVE_REMOVED
                     }
                     "story_series" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_STORY_SERIES_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_STORY_SERIES_CN
                         else SAVE_STORY_SERIES
                     }
                     "tale" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_TALES_CN_PREFIX + scp.pageCode
+                        scp.saveType = if (scp.cn == "1") SAVE_TALES_CN_PREFIX + scp.pageCode
                         else SAVE_TALES_PREFIX + scp.pageCode
                     }
                     "setting" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_SETTINGS_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_SETTINGS_CN
                         else SAVE_SETTINGS
                     }
                     "contest" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_CONTEST_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_CONTEST_CN
                         else SAVE_CONTEST
                     }
                     "event" -> {
@@ -123,8 +125,10 @@ class InitCategoryService : IntentService("initDataService") {
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1
             val next = i + 1
-            if (next < 31) {
+            if (it.size == 500) {
                 getAllScpList(next)
+            } else {
+                finishCategoryLoad()
             }
         }
     }

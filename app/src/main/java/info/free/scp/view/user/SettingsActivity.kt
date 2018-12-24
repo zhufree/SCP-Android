@@ -1,13 +1,17 @@
 package info.free.scp.view.user
 
-import android.annotation.TargetApi
-import android.os.Build
+import android.app.AlertDialog
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import info.free.scp.R
+import info.free.scp.SCPConstants.Download.DOWNLOAD_OTHER
+import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
+import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
+import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
 import info.free.scp.util.EventUtil
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -30,14 +34,16 @@ class SettingsActivity : BaseActivity() {
         settings_toolbar?.setTitle(R.string.app_name)
         settings_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         settings_toolbar?.setNavigationOnClickListener { finish() }
-        supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings, ReadSettingsFragment()).commit()
+        val settingType = intent.getIntExtra("setting_type", 0)
+
+        supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings, if (settingType == 0)
+            ReadSettingsFragment() else DownloadFragment()).commit()
     }
 
     /**
      * This fragment shows general preferences only. It is used when the
      * activity is showing a two-pane settings UI.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     class ReadSettingsFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_read_settings, rootKey)
@@ -54,6 +60,49 @@ class SettingsActivity : BaseActivity() {
                 EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 true
             }
+        }
+    }
+    class DownloadFragment : PreferenceFragmentCompat() {
+        override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
+            setPreferencesFromResource(R.xml.pref_download_settings, rootKey)
+            preferenceManager?.sharedPreferencesName = "download_settings"
+        }
+
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            // TODO 显示更新时间
+//            findPreference("download_scp").summary =
+            findPreference("download_scp").setOnPreferenceClickListener {
+//                EventUtil.onEvent(context, EventUtil.hideReadContent)
+                showNoticeDialog(DOWNLOAD_SCP)
+                true
+            }
+            findPreference("download_scp_cn").setOnPreferenceClickListener {
+//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
+                showNoticeDialog(DOWNLOAD_SCP_CN)
+                true
+            }
+            findPreference("download_tale").setOnPreferenceClickListener {
+//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
+                showNoticeDialog(DOWNLOAD_TALE)
+                true
+            }
+            findPreference("download_other").setOnPreferenceClickListener {
+//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
+                showNoticeDialog(DOWNLOAD_OTHER)
+                true
+            }
+        }
+
+        private fun showNoticeDialog(downloadType: Int) {
+            AlertDialog.Builder(activity)
+                    .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
+                    .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                    .setPositiveButton("确定") { _, _ ->
+
+                    }
+                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                    .create().show()
         }
     }
 }

@@ -671,7 +671,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.CONTEST_NAME),
                 getCursorString(cursor, ScpTable.CONTEST_LINK),
-                "", -1,
+                "", "",
                 getCursorString(cursor, ScpTable.EVENT_TYPE),
                 getCursorString(cursor, ScpTable.MONTH), -1
         )

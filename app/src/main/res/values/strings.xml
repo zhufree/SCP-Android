@@ -118,4 +118,10 @@
     <string name="category_height">目录条目高度</string>
     <string name="category_interval">目录条目间距</string>
     <string name="font_size_setting">字体设置</string>
+    
+    <string name="download_scp_title">SCP系列</string>
+    <string name="download_scp_cn_title">SCP-CN系列</string>
+    <string name="download_tale_title">基金会故事</string>
+    <string name="download_other_title">其他文档</string>
+    <string name="download_summary">云端更新时间：%1$s，本地更新时间：%1$s</string>
 </resources>

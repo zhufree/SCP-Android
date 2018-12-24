@@ -35,6 +35,7 @@ import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
 import info.free.scp.SCPConstants.SaveType.SAVE_TALES_PREFIX
 import info.free.scp.db.ScpDao
+import info.free.scp.util.Utils
 
 
 class InitDetailService : IntentService("initDataService") {
@@ -65,6 +66,7 @@ class InitDetailService : IntentService("initDataService") {
                 PreferenceUtil.setDetailDataLoadFinish(it.toString(), false)
             }
             if (!isDownloading) {
+                isDownloading = true
                 createNotification(it, downloadCount * 500)
                 // 从之前的进度开始下载
                 getPartDetail(it, downloadCount)
@@ -96,7 +98,7 @@ class InitDetailService : IntentService("initDataService") {
                 // 立即启动
                 .setWhen(System.currentTimeMillis())
                 // 内容标题
-                .setContentTitle("离线${getDownloadTitleByType(downloadType)}")
+                .setContentTitle("离线${Utils.getDownloadTitleByType(downloadType)}")
                 // 内容文字
                 .setContentText("已离线数目：$count")
                 // 不会被滑动删除（常驻）
@@ -109,26 +111,18 @@ class InitDetailService : IntentService("initDataService") {
         notificationManager?.notify(DOWNLOAD_DETAIL_NOTIFICATION, notification)
     }
 
-    private fun getDownloadTitleByType(downloadType: Int): String{
-        return when (downloadType) {
-            DOWNLOAD_SCP -> "SCP系列"
-            DOWNLOAD_SCP_CN -> "SCP-CN系列"
-            DOWNLOAD_TALE -> "基金会故事"
-            DOWNLOAD_OTHER -> "其他文档"
-            else -> "正文"
-        }
-    }
+
 
     private fun getPartDetail(downloadType: Int, index: Int) {
         HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
             for ((i, scp) in it.withIndex()) {
                 when (scp.requestType) {
                     "series" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_SERIES_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_SERIES_CN
                         else SAVE_SERIES
                     }
                     "joke" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_JOKE_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_JOKE_CN
                         else SAVE_JOKE
                     }
                     "archived" -> {
@@ -144,19 +138,19 @@ class InitDetailService : IntentService("initDataService") {
                         scp.saveType = SAVE_REMOVED
                     }
                     "story_series" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_STORY_SERIES_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_STORY_SERIES_CN
                         else SAVE_STORY_SERIES
                     }
                     "tale" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_TALES_CN_PREFIX + scp.pageCode
+                        scp.saveType = if (scp.cn == "1") SAVE_TALES_CN_PREFIX + scp.pageCode
                         else SAVE_TALES_PREFIX + scp.pageCode
                     }
                     "setting" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_SETTINGS_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_SETTINGS_CN
                         else SAVE_SETTINGS
                     }
                     "contest" -> {
-                        scp.saveType = if (scp.cn == 1) SAVE_CONTEST_CN
+                        scp.saveType = if (scp.cn == "1") SAVE_CONTEST_CN
                         else SAVE_CONTEST
                     }
                     "event" -> {

@@ -392,6 +392,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         // 清空数据库
         ScpDao.getInstance().resetDb()
         // 重新加载
-        UpdateManager.getInstance(this).showChooseDbDialog()
+        UpdateManager.getInstance(this).checkInitData(true)
     }
 }

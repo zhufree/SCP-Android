@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+        android:key="download_scp"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_scp_title">
+    </Preference>
+    <Preference
+        android:key="download_scp_cn"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_scp_cn_title">
+    </Preference>
+    <Preference
+        android:key="download_tale"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_tale_title">
+    </Preference>
+    <Preference
+        android:key="download_other"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_other_title">
+    </Preference>
+</PreferenceScreen>

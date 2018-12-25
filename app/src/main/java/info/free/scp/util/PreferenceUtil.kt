@@ -31,11 +31,11 @@ object PreferenceUtil {
         setBooleanValue("init", "init_category", finish)
     }
 
-    fun setDetailDataLoadFinish(downloadType: String, value: Boolean) {
-        setBooleanValue("init", downloadType, value)
+    fun setDetailDataLoadFinish(downloadType: Int, value: Boolean) {
+        setBooleanValue("init", downloadType.toString(), value)
     }
-    fun getDetailDataLoadFinish(downloadType: String): Boolean {
-        return getBooleanValue("init", downloadType, true)
+    fun getDetailDataLoadFinish(downloadType: Int): Boolean {
+        return getBooleanValue("init", downloadType.toString(), true)
     }
 
     /**

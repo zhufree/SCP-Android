@@ -46,7 +46,7 @@ object ScpTable {
             ")"
 
     const val CREATE_DETAIL_TABLE_SQL = "create table IF NOT EXISTS $DETAIL_TABLE_NAME (" +
-            "$ID VARCHAR PRIMARY KEY, $DETAIL_HTML VARCHAR)"
+            "$LINK VARCHAR PRIMARY KEY, $DETAIL_HTML VARCHAR, $DOWNLOAD_TYPE INTEGER)"
 
     const val CREATE_LIKE_AND_READ_TABLE_SQL = "create table IF NOT EXISTS $LIKE_AND_READ_TABLE_NAME (" +
             "$LINK VARCHAR PRIMARY KEY, $TITLE VARCHAR, $LIKE INTEGER, $HAS_READ INTEGER)"
@@ -60,7 +60,7 @@ object ScpTable {
             "?,?,?,?,?,?,?,?,?,?)"
 
     const val INSERT_DETAIL_SQL = "INSERT INTO $DETAIL_TABLE_NAME (" +
-            "$ID, $DETAIL_HTML) VALUES (?,?)"
+            "$LINK, $DETAIL_HTML, $DOWNLOAD_TYPE) VALUES (?,?,?)"
 
     const val INSERT_LIKE_SQL = "INSERT INTO $LIKE_AND_READ_TABLE_NAME (" +
             "$LINK, $TITLE, $LIKE, $HAS_READ) VALUES (?,?,?,?)"

@@ -101,6 +101,7 @@
     <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
     <string name="read_settings">阅读设置</string>
+    <string name="download_settings">离线设置</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
@@ -118,10 +119,11 @@
     <string name="category_height">目录条目高度</string>
     <string name="category_interval">目录条目间距</string>
     <string name="font_size_setting">字体设置</string>
-    
+
     <string name="download_scp_title">SCP系列</string>
     <string name="download_scp_cn_title">SCP-CN系列</string>
     <string name="download_tale_title">基金会故事</string>
     <string name="download_other_title">其他文档</string>
+    <string name="sync_category_title">更新目录</string>
     <string name="download_summary">云端更新时间：%1$s，本地更新时间：%1$s</string>
 </resources>

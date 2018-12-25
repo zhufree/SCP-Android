@@ -351,14 +351,13 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
 
     fun getDetailByLink(link: String): String {
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.ID
-                    + " FROM " + ScpTable.TABLE_NAME + " WHERE "
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT " + ScpTable.DETAIL_HTML
+                    + " FROM " + ScpTable.DETAIL_TABLE_NAME + " WHERE "
                     + ScpTable.LINK + "=? ", arrayOf(link))
             var detailString = ""
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    val id = getCursorString(cursor, ScpTable.ID)
-                    detailString = getDetailById(id)
+                    detailString = getCursorString(cursor, ScpTable.DETAIL_HTML)
                 }
                 cursor.close()
             }
@@ -425,9 +424,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                     + ScpTable.INDEX + "=? ", arrayOf(randomIndex.toString()))
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
-                    val sId = getCursorString(cursor, ScpTable.ID)
-                    Log.i("random", sId)
-                    val detailHtml = getDetailById(sId)
+                    val link = getCursorString(cursor, ScpTable.LINK)
+                    Log.i("random", link)
+                    val detailHtml = getDetailByLink(link)
                     scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
                         getRandomScp() else extractScp(cursor)
                 }
@@ -555,13 +554,25 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return count
     }
 
+    fun deleteDetailByDownloadType(downloadType: Int) {
+        with(writableDatabase) {
+            this.delete(ScpTable.DETAIL_TABLE_NAME, ScpTable.DOWNLOAD_TYPE + "=?",
+                    arrayOf(downloadType.toString()))
+        }
+    }
+
+    fun resetCategoryData() {
+        with(writableDatabase) {
+            PreferenceUtil.setInitCategoryFinish(false)
+            this?.execSQL(ScpTable.dropScpTableSQL)
+            this?.execSQL(ScpTable.CREATE_TABLE_SQL)
+        }
+    }
+
     companion object {
         private var scpDao: ScpDao? = ScpDao()
         fun getInstance(): ScpDao {
-            if (scpDao == null) {
-                scpDao = ScpDao()
-            }
-            return scpDao!!
+            return scpDao?:ScpDao()
         }
     }
 

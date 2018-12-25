@@ -63,7 +63,7 @@ class InitDetailService : IntentService("initDataService") {
             val downloadCount = PreferenceUtil.getDetailDataLoadCount(it.toString())
             if (downloadCount == 0) {
                 // 如果没有进度，标记为没有离线完
-                PreferenceUtil.setDetailDataLoadFinish(it.toString(), false)
+                PreferenceUtil.setDetailDataLoadFinish(it, false)
             }
             if (!isDownloading) {
                 isDownloading = true
@@ -174,7 +174,7 @@ class InitDetailService : IntentService("initDataService") {
                 getPartDetail(downloadType, index+1)
             } else {
                 // 标记下载完成
-                PreferenceUtil.setDetailDataLoadFinish(downloadType.toString(), true)
+                PreferenceUtil.setDetailDataLoadFinish(downloadType, true)
                 var allFinish = true
                 // 判断列表里还有没有要下载的
                 for (i in downloadList) {

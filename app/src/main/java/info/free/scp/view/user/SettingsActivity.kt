@@ -10,7 +10,10 @@ import info.free.scp.SCPConstants.Download.DOWNLOAD_OTHER
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
 import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
+import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.UpdateManager
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -92,17 +95,32 @@ class SettingsActivity : BaseActivity() {
                 showNoticeDialog(DOWNLOAD_OTHER)
                 true
             }
+            findPreference("sync_category").setOnPreferenceClickListener {
+                ScpDao.getInstance().resetCategoryData()
+                UpdateManager.getInstance(activity as BaseActivity).initCategoryData()
+                true
+            }
         }
 
         private fun showNoticeDialog(downloadType: Int) {
-            AlertDialog.Builder(activity)
-                    .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
-                    .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                    .setPositiveButton("确定") { _, _ ->
-
-                    }
-                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                    .create().show()
+            if (PreferenceUtil.getDetailDataLoadFinish(downloadType)) {
+                AlertDialog.Builder(activity)
+                        .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
+                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                        .setPositiveButton("确定") { _, _ ->
+                            PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
+                            ScpDao.getInstance().deleteDetailByDownloadType(downloadType)
+                            UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
+                        }
+                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                        .create().show()
+            } else {
+                AlertDialog.Builder(activity)
+                        .setTitle("Notice")
+                        .setMessage("当前离线未完成，请等待完成才可以选择更新（如果判断错误请选择同步云端数据重新离线）")
+                        .setPositiveButton("确定") { _, _ -> }
+                        .create().show()
+            }
         }
     }
 }

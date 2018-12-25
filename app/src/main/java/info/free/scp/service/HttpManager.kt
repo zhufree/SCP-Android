@@ -54,7 +54,7 @@ class HttpManager {
     }
 
     fun getPartDetail(skip:Int, limit: Int, download_type: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        val where = "{\"download_type\":\"$download_type\"}"
+        val where = "{\"download_type\":$download_type}"
         apiService.getPartDetail(skip, limit, where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {

@@ -19,4 +19,9 @@
         android:textColor="?attr/lightText"
         android:title="@string/download_other_title">
     </Preference>
+    <Preference
+        android:key="sync_category"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_other_title">
+    </Preference>
 </PreferenceScreen>

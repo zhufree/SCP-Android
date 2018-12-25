@@ -18,13 +18,15 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.fragment_category.*
 
+/**
+ * 一级目录，点进去是正文
+ */
 class ScpListFragment : BaseFragment() {
     private var categoryType = -1
     private var clickPosition = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private val scpList: MutableList<ScpModel>? = emptyList<ScpModel>().toMutableList()
     private var scpAdapter: ScpAdapter? = null
-    private val eventScpList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var currentScrollPosition = -1
 

@@ -191,7 +191,7 @@ class UpdateManager(private val activity: BaseActivity) {
             if (BackupHelper.getInstance(activity).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
                 for (i in 0..5) {
-                    PreferenceUtil.setDetailDataLoadFinish(i.toString(), true)
+                    PreferenceUtil.setDetailDataLoadFinish(i, true)
                 }
                 return
             }
@@ -217,7 +217,7 @@ class UpdateManager(private val activity: BaseActivity) {
     /**
      * 初始化目录
      */
-    private fun initCategoryData() {
+    fun initCategoryData() {
         val intent = Intent(activity, InitCategoryService::class.java)
         activity.startService(intent)
         progressDialog = ProgressDialog(activity)
@@ -229,7 +229,7 @@ class UpdateManager(private val activity: BaseActivity) {
         progressDialog?.show()
     }
 
-    private fun initDetailData(downloadType: Int) {
+    fun initDetailData(downloadType: Int) {
         val intent = Intent(activity, InitDetailService::class.java)
         intent.putExtra("download_type", downloadType)
         activity.startService(intent)

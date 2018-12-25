@@ -22,9 +22,14 @@
             android:title="@string/dark_mode" />
 
         <Preference
+            android:key="read_settings"
             android:textColor="?attr/lightText"
             android:title="@string/read_settings">
-            <intent android:action="info.free.scp.view.user.SettingsActivity" />
+        </Preference>
+        <Preference
+            android:key="download_settings"
+            android:textColor="?attr/lightText"
+            android:title="@string/download_settings">
         </Preference>
     </PreferenceCategory>
 

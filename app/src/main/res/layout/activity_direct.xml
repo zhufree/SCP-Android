@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="info.free.scp.view.home.DirectActivity">
+
+    <TextView
+        android:id="@+id/tv_direct_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:gravity="end|center_vertical"
+        android:padding="8dp"
+        android:text="SCP-"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btn_direct_cn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="CN"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toStartOf="@+id/btn_direct_j"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="@+id/tv_direct_title"
+        app:layout_constraintTop_toBottomOf="@+id/tv_direct_title" />
+
+    <TextView
+        android:id="@+id/btn_direct_j"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="J"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_direct_title"
+        app:layout_constraintStart_toEndOf="@+id/btn_direct_cn"
+        app:layout_constraintTop_toTopOf="@+id/btn_direct_cn" />
+
+    <GridView
+        android:id="@+id/gv_direct_number"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:numColumns="3"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toStartOf="@id/tv_direct_title"
+        app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
+        app:layout_constraintTop_toBottomOf="@id/btn_direct_cn"
+        android:layout_marginTop="24dp"/>
+</android.support.constraint.ConstraintLayout>

@@ -15,6 +15,9 @@ import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_category.*
 
+/**
+ * 二级目录，点进去还有一层目录
+ */
 class CategoryFragment : BaseFragment() {
     private var categoryType = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()

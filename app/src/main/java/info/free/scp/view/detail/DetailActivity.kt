@@ -124,6 +124,8 @@ class DetailActivity : BaseActivity() {
                                 history.add(it)
                             }
                             setData(scp)
+                        } else {
+                            view.loadUrl(url)
                         }
                     }
                 }
@@ -159,8 +161,8 @@ class DetailActivity : BaseActivity() {
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
             tv_bottom_set_has_read?.setText(if (it.hasRead == 1) R.string.set_has_not_read else R.string.set_has_read)
-            detail_toolbar?.title = scp.title
-            detailHtml = ScpDao.getInstance().getDetailById(scp.sId)
+            detail_toolbar?.title = it.title
+            detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
             if (detailHtml.isEmpty()) {
                 webView.loadUrl(url)
             } else {

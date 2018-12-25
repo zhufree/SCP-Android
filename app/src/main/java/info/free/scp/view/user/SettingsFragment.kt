@@ -2,6 +2,7 @@ package info.free.scp.view.user
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
@@ -42,6 +43,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference("dark_mode")?.setOnPreferenceClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
+            true
+        }
+
+        findPreference("read_settings").setOnPreferenceClickListener {
+            val intent = Intent(activity, SettingsActivity::class.java)
+            intent.putExtra("setting_type", 0)
+            activity?.startActivity(intent)
+            true
+        }
+        findPreference("download_settings").setOnPreferenceClickListener {
+            val intent = Intent(activity, SettingsActivity::class.java)
+            intent.putExtra("setting_type", 1)
+            activity?.startActivity(intent)
             true
         }
 

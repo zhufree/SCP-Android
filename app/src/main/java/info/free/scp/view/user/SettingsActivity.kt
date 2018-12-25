@@ -74,7 +74,14 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             // TODO 显示更新时间
-//            findPreference("download_scp").summary =
+            findPreference("download_scp").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getDetailLastLoadTime(0), "")
+            findPreference("download_scp_cn").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getDetailLastLoadTime(1), "")
+            findPreference("download_tale").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getDetailLastLoadTime(2), "")
+            findPreference("download_other").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getDetailLastLoadTime(3), "")
             findPreference("download_scp").setOnPreferenceClickListener {
 //                EventUtil.onEvent(context, EventUtil.hideReadContent)
                 showNoticeDialog(DOWNLOAD_SCP)
@@ -106,7 +113,7 @@ class SettingsActivity : BaseActivity() {
             if (PreferenceUtil.getDetailDataLoadFinish(downloadType)) {
                 AlertDialog.Builder(activity)
                         .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
-                        .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                        .setMessage("删除该部分本地数据并从云端重新下载最新数据？")
                         .setPositiveButton("确定") { _, _ ->
                             PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
                             ScpDao.getInstance().deleteDetailByDownloadType(downloadType)

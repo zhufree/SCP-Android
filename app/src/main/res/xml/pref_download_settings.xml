@@ -22,6 +22,6 @@
     <Preference
         android:key="sync_category"
         android:textColor="?attr/lightText"
-        android:title="@string/download_other_title">
+        android:title="@string/sync_category_title">
     </Preference>
 </PreferenceScreen>

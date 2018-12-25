@@ -70,6 +70,7 @@ class SeriesFragment : BaseFragment() {
         }
         tv_direct_doc?.setOnClickListener{
             // TODO 直达
+            activity?.startActivity(Intent(activity, DirectActivity::class.java))
         }
         tv_random?.setOnClickListener {
             EventUtil.onEvent(activity, EventUtil.clickRandom)

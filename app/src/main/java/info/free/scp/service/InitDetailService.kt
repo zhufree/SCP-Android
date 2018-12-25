@@ -60,7 +60,7 @@ class InitDetailService : IntentService("initDataService") {
         downloadType?.let {
             downloadList.add(it)
             // 检查之前的进度
-            val downloadCount = PreferenceUtil.getDetailDataLoadCount(it.toString())
+            val downloadCount = PreferenceUtil.getDetailDataLoadCount(it)
             if (downloadCount == 0) {
                 // 如果没有进度，标记为没有离线完
                 PreferenceUtil.setDetailDataLoadFinish(it, false)
@@ -168,7 +168,7 @@ class InitDetailService : IntentService("initDataService") {
             }
             ScpDao.getInstance().insertDetailData(it)
             // 下载进度+1
-            PreferenceUtil.addDetailDataLoadCount(downloadType.toString())
+            PreferenceUtil.addDetailDataLoadCount(downloadType)
             createNotification(downloadType, index*500+it.size)
             if (it.size > 499) {
                 getPartDetail(downloadType, index+1)

@@ -32,6 +32,9 @@ object PreferenceUtil {
     }
 
     fun setDetailDataLoadFinish(downloadType: Int, value: Boolean) {
+        if (value) {
+            setDetailLastLoadTime(downloadType, Utils.formatNow())
+        }
         setBooleanValue("init", downloadType.toString(), value)
     }
     fun getDetailDataLoadFinish(downloadType: Int): Boolean {
@@ -41,19 +44,26 @@ object PreferenceUtil {
     /**
      * 下载进度记录
      */
-    fun getDetailDataLoadCount(downloadType: String): Int {
-        return getIntValue("download", downloadType)
+    fun getDetailDataLoadCount(downloadType: Int): Int {
+        return getIntValue("download", downloadType.toString())
     }
-    fun setDetailDataLoadCount(downloadType: String, progress: Int) {
-        setIntValue("download", downloadType, progress)
+    fun setDetailDataLoadCount(downloadType: Int, progress: Int) {
+        setIntValue("download", downloadType.toString(), progress)
     }
 
-    fun addDetailDataLoadCount(downloadType: String) {
-        setIntValue("download", downloadType, getDetailDataLoadCount(downloadType) +1)
+    fun addDetailDataLoadCount(downloadType: Int) {
+        setIntValue("download", downloadType.toString(), getDetailDataLoadCount(downloadType) +1)
     }
-    fun resetDetailDataLoadCount(downloadType: String) {
+    fun resetDetailDataLoadCount(downloadType: Int) {
         val sp = getPrivateSharedPreference("download")
-        sp?.edit()?.putInt(downloadType, 0)?.apply()
+        sp?.edit()?.putInt(downloadType.toString(), 0)?.apply()
+    }
+
+    fun getDetailLastLoadTime(downloadType: Int): String {
+        return getStringValue("download","${downloadType}_time" )
+    }
+    fun setDetailLastLoadTime(downloadType: Int, time: String) {
+        setStringValue("download", "${downloadType}_time", time)
     }
 
 

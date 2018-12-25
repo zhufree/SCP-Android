@@ -22,9 +22,10 @@ import android.os.Build
 import android.content.ContentValues
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import android.text.TextUtils
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
+import java.text.DateFormat.MEDIUM
+import java.text.SimpleDateFormat
 
 
 object Utils {
@@ -79,6 +80,13 @@ object Utils {
         val cManager = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
     }
+
+    fun formatDate(time: Long): String {
+        val format =  SimpleDateFormat.getDateInstance(MEDIUM)
+        return format.format(time)
+    }
+
+    fun formatNow() = formatDate(System.currentTimeMillis())
 
     /**
      * bitmap保存为一个文件

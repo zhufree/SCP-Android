@@ -39,7 +39,7 @@ interface ApiService {
     fun getPartDetail(@Query("skip") skip: Int,
                       @Query("limit") limit: Int,
                       @Query("where") where: String,
-                      @Query("keys") keys: String="detail")
+                      @Query("keys") keys: String="link,detail,download_type")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
 

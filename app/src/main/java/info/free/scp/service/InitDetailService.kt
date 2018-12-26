@@ -115,57 +115,6 @@ class InitDetailService : IntentService("initDataService") {
 
     private fun getPartDetail(downloadType: Int, index: Int) {
         HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
-            for ((i, scp) in it.withIndex()) {
-                when (scp.requestType) {
-                    "series" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_SERIES_CN
-                        else SAVE_SERIES
-                    }
-                    "joke" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_JOKE_CN
-                        else SAVE_JOKE
-                    }
-                    "archived" -> {
-                        scp.saveType = SAVE_ARCHIVED
-                    }
-                    "ex" -> {
-                        scp.saveType = SAVE_EX
-                    }
-                    "decommissioned" -> {
-                        scp.saveType = SAVE_DECOMMISSIONED
-                    }
-                    "removed" -> {
-                        scp.saveType = SAVE_REMOVED
-                    }
-                    "story_series" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_STORY_SERIES_CN
-                        else SAVE_STORY_SERIES
-                    }
-                    "tale" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_TALES_CN_PREFIX + scp.pageCode
-                        else SAVE_TALES_PREFIX + scp.pageCode
-                    }
-                    "setting" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_SETTINGS_CN
-                        else SAVE_SETTINGS
-                    }
-                    "contest" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_CONTEST_CN
-                        else SAVE_CONTEST
-                    }
-                    "event" -> {
-                        scp.saveType = SAVE_EVENT
-                    }
-                    "information" -> {
-                        scp.saveType = SAVE_INFO
-                    }
-                    "abnormal" -> {
-                        scp.saveType = SAVE_ABNORMAL
-                    }
-                }
-                scp.index = i*500 + index
-                Log.i("loading", "${scp.saveType} index = ${scp.index}")
-            }
             ScpDao.getInstance().insertDetailData(it)
             // 下载进度+1
             PreferenceUtil.addDetailDataLoadCount(downloadType)

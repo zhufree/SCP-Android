@@ -125,5 +125,5 @@
     <string name="download_tale_title">基金会故事</string>
     <string name="download_other_title">其他文档</string>
     <string name="sync_category_title">更新目录</string>
-    <string name="download_summary">云端更新时间：%1$s，本地更新时间：%1$s</string>
+    <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>
 </resources>

@@ -116,6 +116,7 @@ class SettingsActivity : BaseActivity() {
                         .setMessage("删除该部分本地数据并从云端重新下载最新数据？")
                         .setPositiveButton("确定") { _, _ ->
                             PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
+                            PreferenceUtil.setDetailDataLoadCount(downloadType, 0)
                             ScpDao.getInstance().deleteDetailByDownloadType(downloadType)
                             UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
                         }

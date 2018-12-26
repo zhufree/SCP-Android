@@ -44,7 +44,6 @@ class InitCategoryService : IntentService("initDataService") {
             Log.i("loading", "requestCount = $value")
             field = value
             sendThreadStatus(5*value)
-
         }
 
     override fun onCreate() {
@@ -56,7 +55,6 @@ class InitCategoryService : IntentService("initDataService") {
     private fun finishCategoryLoad() {
         ScpDao.getInstance().insertCategoryData(scpModels)
         PreferenceUtil.setInitCategoryFinish(true)
-        sendThreadStatus(100)
     }
 
     private fun sendThreadStatus(progress: Int) {

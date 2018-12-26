@@ -151,8 +151,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             val stmt = compileStatement(ScpTable.INSERT_DETAIL_SQL)
             for (model in models) {
-                stmt.bindString(1, model.sId)
+                stmt.bindString(1, model.link)
                 stmt.bindString(2, model.detailHtml)
+                stmt.bindLong(3, model.downloadType.toLong())
                 Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()

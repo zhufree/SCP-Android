@@ -11,14 +11,13 @@ import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import info.free.scp.BuildConfig
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.db.ScpDao
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 
-class UpdateManager(private val activity: BaseActivity) {
+class UpdateManager(private var activity: BaseActivity) {
 
     init {
         manager = this
@@ -28,8 +27,9 @@ class UpdateManager(private val activity: BaseActivity) {
     companion object {
         var manager : UpdateManager? = null
 
-        fun getInstance(activity: BaseActivity): UpdateManager {
-            return manager?:UpdateManager(activity)
+        fun getInstance(newActivity: BaseActivity): UpdateManager {
+            manager?.activity = newActivity
+            return manager?:UpdateManager(newActivity)
         }
     }
 

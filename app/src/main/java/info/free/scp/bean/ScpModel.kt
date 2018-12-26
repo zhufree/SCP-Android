@@ -25,9 +25,9 @@ data class ScpModel(@SerialName("objectId") val sId: String,
                     @Optional @SerialName("created_time") var createdTime: String = "", // 基金会故事创建时间
                     @Optional @SerialName("contest_name") var contestName: String = "",
                     @Optional @SerialName("contest_link")var contestLink: String = "", // 征文竞赛
-                    @Optional @SerialName("scp_type") val requestType: String = "",
+                    @Optional @SerialName("scp_type") var requestType: String = "",
                     @Optional val cn: String = "", // 查询带的字段
-                    @Optional @SerialName("event_type") val eventType: String = "",
+                    @Optional @SerialName("event_type") var eventType: String = "",
                     @Optional val month: String = "",
-                    @Optional @SerialName("download_type") val downloadType: Int = -1
+                    @Optional @SerialName("download_type") var downloadType: Int = -1
 )

@@ -19,8 +19,8 @@ object SCPConstants {
     object Download {
         const val DOWNLOAD_SCP = 0
         const val DOWNLOAD_SCP_CN = 1
-        const val DOWNLOAD_OTHER = 2
-        const val DOWNLOAD_TALE = 3
+        const val DOWNLOAD_TALE = 2
+        const val DOWNLOAD_OTHER = 3
     }
     object Category {
         const val SERIES = 1

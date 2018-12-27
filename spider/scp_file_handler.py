@@ -80,8 +80,8 @@ def get_scps_from_file(filename):
         # 统一header，方便后续合并文件一起上传
         reader = csv.DictReader(f)
         category_list = [dict(order_dict) for order_dict in reader]
-        for scp in category_list:
-            del scp["ID"]
+        # for scp in category_list:
+            # del scp["ID"]
         return category_list
 
 

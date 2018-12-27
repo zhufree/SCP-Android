@@ -16,10 +16,14 @@
         android:gravity="end|center_vertical"
         android:padding="8dp"
         android:text="SCP-"
+        android:background="?attr/containerBg"
+        android:textColor="@color/textColor"
         android:textSize="32sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_direct_cn"
+        app:layout_constraintVertical_chainStyle="spread"/>
 
     <TextView
         android:id="@+id/btn_direct_cn"
@@ -27,13 +31,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:padding="8dp"
+        android:padding="16dp"
         android:text="CN"
+        android:background="?attr/itemBg"
+        android:textColor="?attr/darkText"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_direct_j"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="@+id/tv_direct_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_direct_title" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_direct_title"
+        app:layout_constraintBottom_toTopOf="@+id/gv_direct_number"/>
 
     <TextView
         android:id="@+id/btn_direct_j"
@@ -41,8 +48,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:gravity="center"
-        android:padding="8dp"
+        android:padding="16dp"
         android:text="J"
+        android:background="?attr/itemBg"
+        android:textColor="?attr/darkText"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_direct_title"
         app:layout_constraintStart_toEndOf="@+id/btn_direct_cn"
@@ -52,10 +61,29 @@
         android:id="@+id/gv_direct_number"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="24dp"
+        android:columnWidth="80dp"
         android:numColumns="3"
+        android:stretchMode="spacingWidth"
+        android:verticalSpacing="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_go_direst_btn"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
+        app:layout_constraintStart_toStartOf="@id/tv_direct_title"
+        app:layout_constraintTop_toBottomOf="@id/btn_direct_cn" />
+
+    <TextView
+        android:id="@+id/tv_go_direst_btn"
+        android:layout_width="0dp"
+        android:layout_height="80dp"
+        android:background="?attr/itemBg"
+        android:textColor="?attr/darkText"
+        android:text="Go!"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="@id/tv_direct_title"
         app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
-        app:layout_constraintTop_toBottomOf="@id/btn_direct_cn"
-        android:layout_marginTop="24dp"/>
+        app:layout_constraintTop_toBottomOf="@id/gv_direct_number"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"/>
 </android.support.constraint.ConstraintLayout>

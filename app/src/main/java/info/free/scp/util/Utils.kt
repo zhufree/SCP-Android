@@ -24,7 +24,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
-import java.text.DateFormat.MEDIUM
+import java.text.DateFormat.*
 import java.text.SimpleDateFormat
 
 
@@ -82,7 +82,7 @@ object Utils {
     }
 
     fun formatDate(time: Long): String {
-        val format =  SimpleDateFormat.getDateInstance(MEDIUM)
+        val format =  SimpleDateFormat.getDateInstance(FULL)
         return format.format(time)
     }
 

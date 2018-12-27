@@ -8,16 +8,17 @@ csv.field_size_limit(100000000)
 # SCP系列+Cn
 # 以1000为范围更新，4000+和cn1000系列更新频繁一些
 def update_scp_series():
-    old_scp_list = get_scps_from_file('scp/scp-series.csv')
-    for old_scp in old_scp_list[6000:]:
+    old_scp_list = get_scps_from_file('scp-split-0.csv')
+    for old_scp in old_scp_list[3000:]:
         detail = get_single_detail(old_scp['link'])
         old_scp['detail'] = detail
         if detail =="<h3>抱歉，该页面尚无内容</h3>":
-            old_scp['not_found'] = 'true'
+            old_scp['not_found'] = 1
         else:
-            old_scp['not_found'] = 'false'
+            old_scp['not_found'] = 0
+        print(old_scp['link'] + "not found = " + str(old_scp['not_found']))
 
-    write_to_csv(old_scp_list, 'scp/scp_series.csv')
+    write_to_csv(old_scp_list, 'scp-split-0.csv')
 
 
 # 故事外围 tales
@@ -162,4 +163,4 @@ def update_download_type(filename):
 
 
 if __name__ == '__main__':
-    update_events()
+    update_scp_series()

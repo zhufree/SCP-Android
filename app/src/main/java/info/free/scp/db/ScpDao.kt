@@ -137,8 +137,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 stmt.bindLong(15, model.index.toLong())
                 stmt.bindString(16, model.eventType)
                 stmt.bindString(17, model.month)
-                stmt.bindLong(18, model.notFound.toLong())
-                stmt.bindLong(19, model.downloadType.toLong())
+                stmt.bindLong(19, model.notFound.toLong())
+                stmt.bindLong(20, model.downloadType.toLong())
                 Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()
@@ -512,6 +512,27 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             e.printStackTrace()
         }
         return scpModel
+    }
+
+    fun getScpByTypeAndNumber(type: String, number: String): ScpModel? {
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.SAVE_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
+                        arrayOf(type, "%$number%"))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            return extractScp(it)
+                        }
+                    }
+                }
+            }
+            return null
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 
     fun getLikeCount(): Int {

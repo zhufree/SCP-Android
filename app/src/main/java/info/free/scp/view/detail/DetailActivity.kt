@@ -6,6 +6,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.umeng.analytics.MobclickAgent
@@ -24,21 +27,18 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.view.ViewTreeObserver
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_detail.*
+import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class DetailActivity : BaseActivity() {
 
     private var onlineMode = 0 // 0 离线 1 网页
-    private var readType = 0 // 0 普通（按顺序） 1 随机 2 未读列表
+    private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -65,13 +65,17 @@ class DetailActivity : BaseActivity() {
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
     private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
-    private val jsScript = jqScript + initScript + "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
+    private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
+    private val wikiScript = "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
+    private val jsScript = "$jqScript$initScript$tabScript$wikiScript"
 
     private val copyRightHtml = "<div id=\"license-area\" class=\"license-area\">除非特别注明，" +
             "本页内容采用以下授权方式： <a rel=\"license\" href=\"http://creativecommons.org/licenses/" +
             "by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 License</a></div>"
     private var screenHeight = 0
-    private val history: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private var randomIndex = 0
     private var historyIndex = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,8 +104,11 @@ class DetailActivity : BaseActivity() {
         }
 
         scp?.let {
-            historyIndex = history.size
-            history.add(it)
+            historyIndex = historyList.size
+            historyList.add(it)
+            if (readType == 1) {
+                randomList.add(it)
+            }
         }
 
         setData(scp)
@@ -120,8 +127,8 @@ class DetailActivity : BaseActivity() {
                         if (scpList.isNotEmpty()) {
                             scp = scpList[0]
                             scp?.let {
-                                historyIndex = history.size
-                                history.add(it)
+                                historyIndex = historyList.size
+                                historyList.add(it)
                             }
                             setData(scp)
                         } else {
@@ -167,7 +174,7 @@ class DetailActivity : BaseActivity() {
                 webView.loadUrl(url)
             } else {
                 pbLoading.visibility = GONE
-                webView.loadDataWithBaseURL( "file:///android_asset/", currentTextStyle
+                webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                         + jsScript + detailHtml + copyRightHtml,
                         "text/html", "utf-8", null)
             }
@@ -180,7 +187,7 @@ class DetailActivity : BaseActivity() {
      */
     private fun refreshStyle() {
         currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
-        webView.loadDataWithBaseURL( "file:///android_asset/", currentTextStyle
+        webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                 + jsScript + detailHtml + copyRightHtml,
                 "text/html", "utf-8", null)
     }
@@ -193,7 +200,7 @@ class DetailActivity : BaseActivity() {
         }
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
-            scp?.let {s ->
+            scp?.let { s ->
                 when (it.itemId) {
                     R.id.switch_read_mode -> {
                         PreferenceUtil.addPoints(1)
@@ -269,7 +276,7 @@ class DetailActivity : BaseActivity() {
                                     //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                                     val canvas = Canvas(bitmap)
                                     cl_detail_container.draw(canvas)
-                                    Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "")?:"")
+                                    Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
                                     emitter.onNext("finish")
                                     emitter.onComplete()
                                 }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
@@ -297,40 +304,77 @@ class DetailActivity : BaseActivity() {
 
                         }
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
             true
         }
     }
+
     private fun toNextArticle() {
         PreferenceUtil.addPoints(1)
-        scp?.let { s ->
-            when(s.index) {
-                15400 -> Toaster.show("已经是最后一篇了")
-                else -> {
-                    scp = if (readType == 0) ScpDao.getInstance().getNextScp(s.index)
-                    else ScpDao.getInstance().getRandomScp()
-                    setData(scp)
+        when (readType) {
+            0 -> {
+                scp?.let { s ->
+                    scp = ScpDao.getInstance().getNextScp(s.index)
+                    scp?.let {
+                        setData(scp)
+                    }?:Toaster.show("已经是最后一篇了")
                 }
+            }
+            1 -> {
+                if (randomIndex < randomList.size-1) {
+                    scp = randomList[++randomIndex]
+                    scp?.let {
+                        setData(it)
+                    }
+                } else {
+                    scp = ScpDao.getInstance().getRandomScp()
+                    scp?.let {
+                        randomList.add(it)
+                        randomIndex++
+                        Log.i("random", randomIndex.toString())
+                        setData(it)
+                    }
+                }
+            }
+            else -> {
             }
         }
     }
+
     private fun toPreviewArticle() {
         PreferenceUtil.addPoints(1)
-        scp?.let { s ->
-            when (s.index) {
-                0 -> Toaster.show("已经是第一篇了")
-                else -> {
-                    scp = if (readType == 0) ScpDao.getInstance().getPreviewScp(s.index)
-                    else ScpDao.getInstance().getRandomScp()
-                    setData(scp)
+        when (readType) {
+            0 -> {
+                scp?.let { s ->
+                    when (s.index) {
+                        0 -> Toaster.show("已经是第一篇了")
+                        else -> {
+                            scp = ScpDao.getInstance().getPreviewScp(s.index)
+                            setData(scp)
+                        }
+                    }
                 }
             }
+            1 -> {
+                if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
+                    scp = randomList[--randomIndex]
+                    Log.i("random", randomIndex.toString())
+                    setData(scp)
+                } else {
+                    Toaster.show("已经是第一篇了")
+                }
+            }
+            else -> {
+            }
         }
+
     }
+
     private fun setHasRead() {
-        scp?.let {s ->
+        scp?.let { s ->
             if (s.hasRead == 0) {
                 // 标记已读
                 EventUtil.onEvent(this, EventUtil.finishRead)
@@ -340,7 +384,7 @@ class DetailActivity : BaseActivity() {
                 tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
             } else {
                 // 取消已读
-                EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link?:"")
+                EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link ?: "")
                 PreferenceUtil.reducePoints(5)
                 s.hasRead = 0
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
@@ -367,8 +411,8 @@ class DetailActivity : BaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
             if (historyIndex > 0) {
-                setData(history[historyIndex - 1])
-                history.removeAt(historyIndex)
+                setData(historyList[historyIndex - 1])
+                historyList.removeAt(historyIndex)
                 historyIndex--
                 return true
             } else if (webView.canGoBack()) {

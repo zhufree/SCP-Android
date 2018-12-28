@@ -418,7 +418,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun getRandomScp(): ScpModel? {
-        val randomIndex = Random().nextInt(14002)
+        val randomIndex = Random().nextInt(12000)
         var scpModel: ScpModel? = null
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
@@ -430,6 +430,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                     val detailHtml = getDetailByLink(link)
                     scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
                         getRandomScp() else extractScp(cursor)
+                } else {
+                    scpModel = getRandomScp()
                 }
                 cursor.close()
             }

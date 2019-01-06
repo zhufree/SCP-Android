@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
@@ -18,6 +19,14 @@ import kotlinx.android.synthetic.main.activity_like.*
 class LikeActivity : BaseActivity() {
     val likeList = emptyList<ScpModel?>().toMutableList()
     var adapter : SearchResultAdapter? = null
+    var orderType = 0 // 0 默认顺序 1 按编号
+        set(value) {
+            field = value
+            likeList.clear()
+            likeList.addAll(if (value == 0) ScpDao.getInstance().getLikeScpList() else
+                ScpDao.getInstance().getOrderedLikeList())
+            adapter?.notifyDataSetChanged()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +54,22 @@ class LikeActivity : BaseActivity() {
     private fun initToolbar() {
         setSupportActionBar(like_toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        like_toolbar?.title = "收藏"
+        supportActionBar?.title = "收藏"
+        like_toolbar?.inflateMenu(R.menu.category_menu)
         like_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         like_toolbar?.setNavigationOnClickListener { finish() }
+        like_toolbar?.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.reverse -> {
+                    orderType = if (orderType == 0) 1 else 0
+                }
+            }
+            true
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.category_menu, menu)
+        return true
     }
 }

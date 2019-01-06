@@ -23,6 +23,7 @@ const val DB_NAME = "scp_info.db"
 const val DB_VERSION = 3
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
+    var randomCount = 0
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(ScpTable.CREATE_TABLE_SQL)
@@ -418,6 +419,11 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun getRandomScp(): ScpModel? {
+        randomCount ++
+        if (randomCount > 50) {
+            randomCount = 0
+            return null
+        }
         val randomIndex = Random().nextInt(12000)
         var scpModel: ScpModel? = null
         try {
@@ -448,6 +454,29 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
                         + ScpTable.LIKE + "=?;",
+                        arrayOf("1"))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(getOneScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
+                        }
+                    }
+                }
+            }
+            return resultList
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
+    fun getOrderedLikeList(): MutableList<ScpModel?> {
+        val resultList = emptyList<ScpModel?>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " as like_scp "
+                        + " left join "+ ScpTable.TABLE_NAME+" as scp on like_scp.link = scp.link WHERE like_scp."
+                        + ScpTable.LIKE +"=? ORDER BY scp."+ ScpTable.SAVE_TYPE + ", scp."+ScpTable.INDEX + ";",
                         arrayOf("1"))
                 with(cursor) {
                     this?.let {
@@ -687,6 +716,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * cursor转model取出
      */
     private fun extractScp(cursor: Cursor): ScpModel {
+        randomCount = 0
         return ScpModel(getCursorString(cursor, ScpTable.ID),
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),

@@ -187,7 +187,8 @@ class UpdateManager(private var activity: BaseActivity) {
      * [forceInit] 强制更新，不强制更新的话可以直接使用备份数据
      */
     fun checkInitData(forceInit: Boolean = false) {
-        if (!forceInit && BackupHelper.getInstance(activity).checkBackUpFileExist()) {
+        if (!forceInit && !PreferenceUtil.getInitCategoryFinish() &&
+                BackupHelper.getInstance(activity).checkBackUpFileExist()) {
             if (BackupHelper.getInstance(activity).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
                 for (i in 0..5) {

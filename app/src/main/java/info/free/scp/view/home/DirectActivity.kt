@@ -60,7 +60,6 @@ class DirectActivity : BaseActivity() {
         tv_go_direst_btn?.setOnClickListener {
             val scp = when (chooseType) {
                 0 -> {
-                    // TODO 查找并跳转
                     ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
                 }
                 1 -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES_CN, numberString)

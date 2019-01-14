@@ -255,7 +255,7 @@ object Utils {
             SCPConstants.Download.DOWNLOAD_SCP -> "SCP系列"
             SCPConstants.Download.DOWNLOAD_SCP_CN -> "SCP-CN系列"
             SCPConstants.Download.DOWNLOAD_TALE -> "基金会故事"
-            SCPConstants.Download.DOWNLOAD_OTHER -> "其他文档"
+            SCPConstants.Download.DOWNLOAD_ARCHIVES -> "其他文档"
             else -> "正文"
         }
     }

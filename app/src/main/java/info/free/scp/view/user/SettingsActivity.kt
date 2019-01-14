@@ -6,7 +6,7 @@ import android.preference.PreferenceActivity
 import android.support.v7.preference.PreferenceFragmentCompat
 import android.view.View
 import info.free.scp.R
-import info.free.scp.SCPConstants.Download.DOWNLOAD_OTHER
+import info.free.scp.SCPConstants.Download.DOWNLOAD_ARCHIVES
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
 import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
@@ -99,7 +99,7 @@ class SettingsActivity : BaseActivity() {
             }
             findPreference("download_other").setOnPreferenceClickListener {
 //                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
-                showNoticeDialog(DOWNLOAD_OTHER)
+                showNoticeDialog(DOWNLOAD_ARCHIVES)
                 true
             }
             findPreference("sync_category").setOnPreferenceClickListener {

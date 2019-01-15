@@ -33,43 +33,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     private val homeFragment = HomeFragment.newInstance()
 //    private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
-    private var remoteDbVersion = -1
     private var isDownloadingDetail = false
 
     var progressDialog: ProgressDialog? = null
-    private val currentVersionCode = BuildConfig.VERSION_CODE
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var mInitCategoryReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val progress = intent?.getIntExtra("progress", 0) ?: 0
-            progressDialog?.progress = progress
-            if (progress > 90) {
-                progressDialog?.setMessage("写入数据库中")
-            }
-            if (progress == 100) {
-                progressDialog?.dismiss()
-                if (!isFinishing) {
-                    AlertDialog.Builder(this@MainActivity)
-                            .setTitle("Notice")
-                            .setMessage("基金会传递的目录信息已接收完毕，将在后台加载正文数据，全部传输完成之前" +
-                                    "将有部分文档不能离线查看，会自动显示网页模式。具体加载进度可查看通知栏，如果" +
-                                    "因为网络问题加载卡住等可尝试退出重进app或在设置页【同步云端数据】。")
-                            .setPositiveButton("OK") { dialog, _ -> dialog.dismiss() }
-                            .create().show()
-                }
-            }
-        }
-    }
 
-    private var mDetailReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            Toaster.show("正文已全部传输完毕")
-            isDownloadingDetail = false
-            PreferenceUtil.setLastUpdateDbTime()
-            BackupHelper.getInstance(this@MainActivity).backupDB()
-        }
-    }
 
     private var themeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -138,6 +107,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         transaction?.commit()
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
+        Logger.local = true
         UpdateManager.getInstance(this).checkAppData()
     }
 
@@ -204,8 +174,6 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
     override fun onResetDataClick() {
-        // 清空数据库
-        ScpDao.getInstance().resetDb()
         // 重新加载
         UpdateManager.getInstance(this).checkInitData(true)
     }

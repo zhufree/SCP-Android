@@ -31,6 +31,9 @@ object PreferenceUtil {
         setBooleanValue("init", "init_category", finish)
     }
 
+    /**
+     * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
+     */
     fun setDetailDataLoadFinish(downloadType: Int, value: Boolean) {
         if (value) {
             setDetailLastLoadTime(downloadType, Utils.formatNow())
@@ -44,21 +47,22 @@ object PreferenceUtil {
     /**
      * 下载进度记录
      */
-    fun getDetailDataLoadCount(downloadType: Int): Int {
+    fun getSingleDbLoadCount(downloadType: Int): Int {
         return getIntValue("download", downloadType.toString())
     }
-    fun setDetailDataLoadCount(downloadType: Int, progress: Int) {
+    fun setSingleDbLoadCount(downloadType: Int, progress: Int) {
         setIntValue("download", downloadType.toString(), progress)
     }
 
-    fun addDetailDataLoadCount(downloadType: Int) {
-        setIntValue("download", downloadType.toString(), getDetailDataLoadCount(downloadType) +1)
+    fun addSingleDbLoadCount(downloadType: Int) {
+        setIntValue("download", downloadType.toString(), getSingleDbLoadCount(downloadType) +1)
     }
-    fun resetDetailDataLoadCount(downloadType: Int) {
-        val sp = getPrivateSharedPreference("download")
-        sp?.edit()?.putInt(downloadType.toString(), 0)?.apply()
+    fun resetSingleDbLoadCount(downloadType: Int) {
+        setSingleDbLoadCount(downloadType, 0)
     }
-
+    /**
+     * 数据更新时间相关
+     */
     fun getDetailLastLoadTime(downloadType: Int): String {
         return getStringValue("download","${downloadType}_time" )
     }
@@ -120,18 +124,6 @@ object PreferenceUtil {
         return lastTime < beginOfDate
     }
 
-    /**
-     * 数据更新时间相关
-     */
-    fun setLastUpdateDbTime() {
-        setLongValue("update", "lastUpdateDbTime", System.currentTimeMillis())
-    }
-
-    fun getLastUpdateDbTime(): String {
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = getLongValue("update", "lastUpdateDbTime")
-        return if (calendar.get(YEAR) == 1970) "无" else calendar.time.toString()
-    }
 
     fun setServerLastUpdateTime(dbIndex: String, time: String) {
         setStringValue("update", dbIndex, time)

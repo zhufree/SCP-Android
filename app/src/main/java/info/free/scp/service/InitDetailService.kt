@@ -18,7 +18,7 @@ class InitDetailService : IntentService("initDataService") {
     val LOAD_DETAIL_FINISH = "loadDetailFinish"
     private var notificationManager: NotificationManager? = null
     private val DOWNLOAD_DETAIL_NOTIFICATION = R.string.download_detail_service
-    val channelID = "zhufree"
+    val channelID = "info.free.scp"
     private var downloadList = emptyList<Int>().toMutableList()
     private var isDownloading = false
 
@@ -36,7 +36,7 @@ class InitDetailService : IntentService("initDataService") {
         downloadType?.let {
             downloadList.add(it)
             // 检查之前的进度
-            val downloadCount = PreferenceUtil.getDetailDataLoadCount(it)
+            val downloadCount = PreferenceUtil.getSingleDbLoadCount(it)
             if (downloadCount == 0) {
                 // 如果没有进度，标记为没有离线完
                 PreferenceUtil.setDetailDataLoadFinish(it, false)
@@ -93,13 +93,14 @@ class InitDetailService : IntentService("initDataService") {
         HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
             ScpDao.getInstance().insertDetailData(it)
             // 下载进度+1
-            PreferenceUtil.addDetailDataLoadCount(downloadType)
+            PreferenceUtil.addSingleDbLoadCount(downloadType)
             createNotification(downloadType, index*500+it.size)
-            if (it.size > 499) {
+            if (it.size == 500) {
                 getPartDetail(downloadType, index+1)
             } else {
                 // 标记下载完成
                 PreferenceUtil.setDetailDataLoadFinish(downloadType, true)
+
                 var allFinish = true
                 // 判断列表里还有没有要下载的
                 for (i in downloadList) {
@@ -114,7 +115,7 @@ class InitDetailService : IntentService("initDataService") {
                 // 全都下载完成
                 if (allFinish) {
                     notificationManager?.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
-                    notifyLoadFinish()
+                    notifyLoadFinish() // 发送广播通知
                 }
             }
         }

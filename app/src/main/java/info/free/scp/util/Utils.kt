@@ -80,6 +80,9 @@ object Utils {
         val cManager = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
     }
+    fun onlyEnabled4G(context: Context): Boolean {
+        return enabledNetwork(context) && !enabledWifi(context)
+    }
 
     fun formatDate(time: Long): String {
         val format =  SimpleDateFormat.getDateInstance(FULL)

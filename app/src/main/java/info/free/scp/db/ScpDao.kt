@@ -5,8 +5,10 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
+import info.free.scp.util.Logger
 import info.free.scp.util.PreferenceUtil
 import java.util.*
 
@@ -42,14 +44,15 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun resetDb() {
+        Logger.i("resetDb")
         PreferenceUtil.setInitCategoryFinish(false)
-        for (i in 0 ..4) {
-            PreferenceUtil.resetDetailDataLoadCount(i)
+        for (i in 0 ..SCPConstants.Download.DOWNLOAD_TOTAL) {
+            PreferenceUtil.resetSingleDbLoadCount(i)
+            PreferenceUtil.setDetailLastLoadTime(i, "")
         }
         with(writableDatabase) {
             this?.execSQL(ScpTable.dropScpTableSQL)
             this?.execSQL(ScpTable.dropDetailTableSQL)
-            // 先这么处理，回头改成添加字段啥的更新
             this?.execSQL(ScpTable.CREATE_TABLE_SQL)
             this?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
         }

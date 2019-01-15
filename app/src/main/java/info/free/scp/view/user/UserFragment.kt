@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.db.ScpDao
 import info.free.scp.util.*
+import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_about.*
 import java.util.*
@@ -95,6 +96,11 @@ class UserFragment : BaseFragment() {
             /* 取得相片后返回本画面 */
             startActivityForResult(intent, 1)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
     }
 
     fun refreshTheme() {

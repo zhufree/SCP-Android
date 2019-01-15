@@ -6,6 +6,7 @@ package info.free.scp
  */
 
 object SCPConstants {
+    const val PACKAGE_NAME = "info.free.scp"
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档

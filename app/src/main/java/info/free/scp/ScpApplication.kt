@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.multidex.MultiDexApplication
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import info.free.scp.util.Logger
 import info.free.scp.util.ThemeUtil
 
 /**
@@ -25,6 +26,12 @@ class ScpApplication : MultiDexApplication() {
         ThemeUtil.setTheme(this)
 
     }
+
+    override fun onTerminate() {
+        Logger.saveLog()
+        super.onTerminate()
+    }
+
     companion object {
         lateinit var context: Context
     }

@@ -20,7 +20,6 @@ class AboutAppActivity : BaseActivity() {
         setContentView(R.layout.activity_about_app)
 
         tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
-        tv_data_update_time?.text = "本地数据上次更新时间：${PreferenceUtil.getLastUpdateDbTime()}"
 //        tv_server_data_latest_time?.text = "云端最新数据更新时间：${PreferenceUtil.getServerLastUpdateTime()}"
 
         tv_qq_group?.setOnLongClickListener {

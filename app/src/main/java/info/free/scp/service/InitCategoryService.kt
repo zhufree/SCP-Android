@@ -7,6 +7,7 @@ import android.util.Log
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
+import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.SCPConstants.SaveType.SAVE_ABNORMAL
 import info.free.scp.SCPConstants.SaveType.SAVE_INFO
@@ -21,14 +22,10 @@ import info.free.scp.SCPConstants.SaveType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.SaveType.SAVE_REMOVED
 import info.free.scp.SCPConstants.SaveType.SAVE_SERIES
 import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_1
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_2
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_STORY_3
 import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS
 import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS_CN
 import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
 import info.free.scp.SCPConstants.SaveType.SAVE_TALES_PREFIX
 import info.free.scp.db.ScpDao
@@ -71,53 +68,11 @@ class InitCategoryService : IntentService("initDataService") {
     private fun getAllScpList(i: Int) {
         HttpManager.instance.getAllScp(i*500, 500) {
             for ((index, scp) in it.withIndex()) {
-                when (scp.requestType) {
-                    "series" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_SERIES_CN else SAVE_SERIES
-                    }
-                    "joke" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_JOKE_CN else SAVE_JOKE
-                    }
-                    "archived" -> {
-                        scp.saveType = SAVE_ARCHIVED
-                    }
-                    "ex" -> {
-                        scp.saveType = SAVE_EX
-                    }
-                    "decommissioned" -> {
-                        scp.saveType = SAVE_DECOMMISSIONED
-                    }
-                    "removed" -> {
-                        scp.saveType = SAVE_REMOVED
-                    }
-                    "story_series" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_STORY_SERIES_CN
-                        else SAVE_STORY_SERIES
-                    }
-                    "tale" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_TALES_CN_PREFIX + scp.pageCode
-                        else SAVE_TALES_PREFIX + scp.pageCode
-                    }
-                    "setting" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_SETTINGS_CN
-                        else SAVE_SETTINGS
-                    }
-                    "contest" -> {
-                        scp.saveType = if (scp.cn == "1") SAVE_CONTEST_CN
-                        else SAVE_CONTEST
-                    }
-                    "event" -> {
-                        scp.saveType = SAVE_EVENT
-                    }
-                    "about" -> {
-                        scp.saveType = SAVE_INFO
-                    }
-                    "abnormal" -> {
-                        scp.saveType = SAVE_ABNORMAL
-                    }
-                }
                 scp.index = i*500 + index
-                Log.i("loading", "${scp.saveType} index = ${scp.index}")
+                if (scp.downloadType == SCPConstants.Download.DOWNLOAD_COLLECTIONS) {
+                    scp.isCollection = 1
+                }
+                Log.i("loading", "${scp.scpType} index = ${scp.index}")
             }
             scpModels.addAll(it)
             Log.i("loading", "i = $i, size = ${scpModels.size}")

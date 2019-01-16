@@ -46,7 +46,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun resetDb() {
         Logger.i("resetDb")
         PreferenceUtil.setInitCategoryFinish(false)
-        for (i in 0 ..SCPConstants.Download.DOWNLOAD_TOTAL) {
+        for (i in 0..SCPConstants.Download.DOWNLOAD_TOTAL) {
             PreferenceUtil.resetSingleDbLoadCount(i)
             PreferenceUtil.setDetailLastLoadTime(i, "")
         }
@@ -125,24 +125,29 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             val stmt = compileStatement(ScpTable.INSERT_SCP_SQL)
             for (model in models) {
                 stmt.bindString(1, model.sId)
-                stmt.bindString(2, model.link)
-                stmt.bindString(3, model.title)
-                stmt.bindString(4, model.detailHtml)
-                stmt.bindLong(5, model.hasRead.toLong())
-                stmt.bindString(6, model.saveType)
-                stmt.bindString(7, model.subtext)
-                stmt.bindString(8, model.snippet)
-                stmt.bindString(9, model.desc)
-                stmt.bindString(10, model.author)
-                stmt.bindString(11, model.pageCode)
-                stmt.bindString(12, model.contestName)
-                stmt.bindString(13, model.contestLink)
+                stmt.bindLong(2, model.index.toLong())
+                stmt.bindString(3, model.link)
+                stmt.bindString(4, model.title)
+                stmt.bindString(5, model.detailHtml)
+                stmt.bindLong(6, model.notFound.toLong())
+                stmt.bindLong(7, model.scpType.toLong())
+                stmt.bindLong(8, model.downloadType.toLong())
+                stmt.bindString(9, model.subtext)
+                stmt.bindString(10, model.snippet)
+                stmt.bindString(11, model.desc)
+                stmt.bindString(12, model.author)
+                stmt.bindString(13, model.creator)
                 stmt.bindString(14, model.createdTime)
-                stmt.bindLong(15, model.index.toLong())
-                stmt.bindString(16, model.eventType)
-                stmt.bindString(17, model.month)
-                stmt.bindLong(19, model.notFound.toLong())
-                stmt.bindLong(20, model.downloadType.toLong())
+                stmt.bindString(15, model.pageCode)
+                stmt.bindString(16, model.contestName)
+                stmt.bindString(17, model.contestLink)
+                stmt.bindString(18, model.eventType)
+                stmt.bindString(19, model.month)
+                stmt.bindString(20, model.tags)
+                stmt.bindString(21, model.subLinks)
+                stmt.bindLong(22, model.isCollection.toLong())
+                stmt.bindLong(23, model.like.toLong())
+                stmt.bindLong(24, model.hasRead.toLong())
                 Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()
@@ -191,6 +196,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             db.endTransaction()
         }
     }
+
     /**
      * 网络请求到数据时保存一次
      * 返回更新后的model
@@ -277,21 +283,21 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return null
     }
 
-    fun getScpByTypeAndRange(type: String, start: Int, range: Int) : MutableList<ScpModel>{
+    fun getScpByTypeAndRange(type: String, start: Int, range: Int): MutableList<ScpModel> {
         val end = start + range
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? =
-                    if (PreferenceUtil.getIfHideFinished()) {
-                        this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                                + ScpTable.SAVE_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0",
-                                arrayOf(type))
-                    } else {
-                        this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                                + ScpTable.SAVE_TYPE + "=? ",
-                                arrayOf(type))
-                    }
+                        if (PreferenceUtil.getIfHideFinished()) {
+                            this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                                    + ScpTable.SCP_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0",
+                                    arrayOf(type))
+                        } else {
+                            this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                                    + ScpTable.SCP_TYPE + "=? ",
+                                    arrayOf(type))
+                        }
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
@@ -300,7 +306,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                     }
                 }
             }
-            return resultList.subList(start, if (end < resultList.size) end else resultList.size-1)
+            return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -308,12 +314,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    fun getScpByType(type: String) : MutableList<ScpModel>{
+    fun getScpByType(type: String): MutableList<ScpModel> {
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                        + ScpTable.SAVE_TYPE + "=?;",
+                        + ScpTable.SCP_TYPE + "=?;",
                         arrayOf(type))
                 with(cursor) {
                     this?.let {
@@ -373,7 +379,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return ""
     }
 
-    fun searchScpByKeyword(keyword: String): MutableList<ScpModel>{
+    fun searchScpByKeyword(keyword: String): MutableList<ScpModel> {
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
@@ -396,13 +402,13 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    fun searchScpInDetailByKeyword(keyword: String): MutableList<ScpModel>{
+    fun searchScpInDetailByKeyword(keyword: String): MutableList<ScpModel> {
         val sIdList = emptyList<String>().toMutableList()
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM "
-                        + ScpTable.TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME +" as detail on " +
+                        + ScpTable.TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME + " as detail on " +
                         "scp.sId = detail.sId WHERE detail.detailHtml LIKE ?;",
                         arrayOf("%$keyword%"))
                 with(cursor) {
@@ -422,7 +428,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun getRandomScp(): ScpModel? {
-        randomCount ++
+        randomCount++
         if (randomCount > 50) {
             randomCount = 0
             return null
@@ -478,8 +484,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " as like_scp "
-                        + " left join "+ ScpTable.TABLE_NAME+" as scp on like_scp.link = scp.link WHERE like_scp."
-                        + ScpTable.LIKE +"=? ORDER BY scp."+ ScpTable.SAVE_TYPE + ", scp."+ScpTable.INDEX + ";",
+                        + " left join " + ScpTable.TABLE_NAME + " as scp on like_scp.link = scp.link WHERE like_scp."
+                        + ScpTable.LIKE + "=? ORDER BY scp." + ScpTable.SCP_TYPE + ", scp." + ScpTable.INDEX + ";",
                         arrayOf("1"))
                 with(cursor) {
                     this?.let {
@@ -517,7 +523,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         var scpModel: ScpModel? = null
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.INDEX + "=? ", arrayOf("${index+1}"))
+                    + ScpTable.INDEX + "=? ", arrayOf("${index + 1}"))
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     scpModel = extractScp(cursor)
@@ -530,11 +536,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
         return scpModel
     }
+
     fun getPreviewScp(index: Int): ScpModel? {
         var scpModel: ScpModel? = null
         try {
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.INDEX + "=? ", arrayOf("${index-1}"))
+                    + ScpTable.INDEX + "=? ", arrayOf("${index - 1}"))
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     scpModel = extractScp(cursor)
@@ -552,7 +559,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                        + ScpTable.SAVE_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
+                        + ScpTable.SCP_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
                         arrayOf(type, "%$number%"))
                 with(cursor) {
                     this?.let {
@@ -575,7 +582,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT COUNT(*) FROM "
                     + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
                     + ScpTable.LIKE + "=? ", arrayOf("1"))
-            with (cursor) {
+            with(cursor) {
                 this?.let {
                     if (it.moveToFirst()) {
                         count = it.getInt(0)
@@ -596,7 +603,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             val cursor: Cursor? = readableDatabase.rawQuery("SELECT COUNT(*) FROM "
                     + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
                     + ScpTable.HAS_READ + "=? ", arrayOf("1"))
-            with (cursor) {
+            with(cursor) {
                 this?.let {
                     if (it.moveToFirst()) {
                         count = it.getInt(0)
@@ -628,7 +635,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     companion object {
         private var scpDao: ScpDao? = ScpDao()
         fun getInstance(): ScpDao {
-            return scpDao?:ScpDao()
+            return scpDao ?: ScpDao()
         }
     }
 
@@ -642,6 +649,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             ""
         }
     }
+
     private fun getCursorInt(cursor: Cursor?, columnIndex: String): Int {
         return if (cursor?.getColumnIndex(columnIndex)?.compareTo(0) == 1) {
             cursor.getInt(cursor.getColumnIndex(columnIndex))
@@ -658,6 +666,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.sId.isNotEmpty()) {
             cv.put(ScpTable.ID, model.sId)
         }
+        if (model.index > -1) {
+            cv.put(ScpTable.INDEX, model.index)
+        }
         if (model.link.isNotEmpty()) {
             cv.put(ScpTable.LINK, model.link)
         }
@@ -667,8 +678,15 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.detailHtml.isNotEmpty()) {
             cv.put(ScpTable.DETAIL_HTML, model.detailHtml)
         }
-        cv.put(ScpTable.HAS_READ, model.hasRead)
-        cv.put(ScpTable.LIKE, model.like)
+        if (model.notFound > -1) {
+            cv.put(ScpTable.NOT_FOUND, model.notFound)
+        }
+        if (model.scpType > -1) {
+            cv.put(ScpTable.SCP_TYPE, model.scpType)
+        }
+        if (model.downloadType > -1) {
+            cv.put(ScpTable.DOWNLOAD_TYPE, model.downloadType)
+        }
 
         if (model.subtext.isNotEmpty()) {
             cv.put(ScpTable.SUB_TEXT, model.subtext)
@@ -682,6 +700,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.author.isNotEmpty()) {
             cv.put(ScpTable.AUTHOR, model.author)
         }
+        if (model.creator.isNotEmpty()) {
+            cv.put(ScpTable.CREATOR, model.creator)
+        }
         if (model.createdTime.isNotEmpty()) {
             cv.put(ScpTable.CREATED_TIME, model.createdTime)
         }
@@ -694,24 +715,24 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.contestLink.isNotEmpty()) {
             cv.put(ScpTable.CONTEST_LINK, model.contestLink)
         }
-        if (model.saveType.isNotEmpty()) {
-            cv.put(ScpTable.SAVE_TYPE, model.saveType)
-        }
-        if (model.index > -1) {
-            cv.put(ScpTable.INDEX, model.index)
-        }
+
         if (model.eventType.isNotEmpty()) {
             cv.put(ScpTable.EVENT_TYPE, model.eventType)
         }
         if (model.month.isNotEmpty()) {
             cv.put(ScpTable.MONTH, model.month)
         }
-        if (model.notFound > -1) {
-            cv.put(ScpTable.NOT_FOUND, model.notFound)
+        if (model.tags.isNotEmpty()) {
+            cv.put(ScpTable.TAGS, model.tags)
         }
-        if (model.downloadType > -1) {
-            cv.put(ScpTable.DOWNLOAD_TYPE, model.downloadType)
+        if (model.subLinks.isNotEmpty()) {
+            cv.put(ScpTable.SUB_LINKS, model.subLinks)
         }
+        if (model.isCollection > -1) {
+            cv.put(ScpTable.IS_COLLECTION, model.isCollection)
+        }
+        cv.put(ScpTable.HAS_READ, model.hasRead)
+        cv.put(ScpTable.LIKE, model.like)
         return cv
     }
 
@@ -721,27 +742,30 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     private fun extractScp(cursor: Cursor): ScpModel {
         randomCount = 0
         return ScpModel(getCursorString(cursor, ScpTable.ID),
+                getCursorInt(cursor, ScpTable.INDEX),
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),
                 getCursorString(cursor, ScpTable.TITLE), "",
                 getCursorInt(cursor, ScpTable.NOT_FOUND),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
-                // getCursorString(cursor, ScpTable.DETAIL_HTML),
-                getCursorInt(cursor, ScpTable.HAS_READ),
-                getCursorInt(cursor, ScpTable.LIKE),
-                getCursorString(cursor, ScpTable.SAVE_TYPE),
-                getCursorString(cursor, ScpTable.AUTHOR),
+                getCursorInt(cursor, ScpTable.SCP_TYPE),
+                getCursorInt(cursor, ScpTable.DOWNLOAD_TYPE),
                 getCursorString(cursor, ScpTable.SUB_TEXT),
                 getCursorString(cursor, ScpTable.SNIPPET),
                 getCursorString(cursor, ScpTable.DESC),
-                getCursorInt(cursor, ScpTable.INDEX),
+                getCursorString(cursor, ScpTable.AUTHOR),
+                getCursorString(cursor, ScpTable.CREATOR),
                 getCursorString(cursor, ScpTable.PAGE_CODE),
                 getCursorString(cursor, ScpTable.CREATED_TIME),
                 getCursorString(cursor, ScpTable.CONTEST_NAME),
                 getCursorString(cursor, ScpTable.CONTEST_LINK),
-                "", "",
                 getCursorString(cursor, ScpTable.EVENT_TYPE),
-                getCursorString(cursor, ScpTable.MONTH), -1
+                getCursorString(cursor, ScpTable.MONTH),
+                getCursorString(cursor, ScpTable.TAGS),
+                getCursorString(cursor, ScpTable.SUB_LINKS),
+                getCursorInt(cursor, ScpTable.IS_COLLECTION),
+                getCursorInt(cursor, ScpTable.HAS_READ),
+                getCursorInt(cursor, ScpTable.LIKE)
         )
     }
 }

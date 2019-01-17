@@ -73,7 +73,7 @@ class ScpItemFragment : BaseFragment() {
         when (categoryType) {
             SCPConstants.Category.ABOUT_STUFF -> {
                 // 相关材料
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_INFO))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INFO))
             }
         }
         if (scpList?.size == 0) {

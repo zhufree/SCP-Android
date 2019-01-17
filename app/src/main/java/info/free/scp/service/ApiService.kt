@@ -25,8 +25,8 @@ interface ApiService {
     @GET("1/classes/ScpModelV4")
     fun getAllScp(@Query("skip") skip: Int,
                   @Query("limit") limit: Int,
-                  @Query("keys") keys: String="scp_type,cn,not_found,contest_link,contest_name,created_time," +
-                          "desc,event_type,link,month,page_code,snippet,subtext,title,author,download_type")
+                  @Query("keys") keys: String="scp_type,not_found,contest_link,contest_name,created_time," +
+                          "desc,event_type,link,month,page_code,snippet,subtext,title,author,download_type,tags")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
     // where "{\"download_type\":\"${download_type}\"}"

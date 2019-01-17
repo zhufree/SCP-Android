@@ -45,7 +45,7 @@ class CategoryFragment : BaseFragment() {
                 categoryList.addAll((0 until (5000/categoryCount)).map { it*categoryCount })
             }
             SCPConstants.Category.SERIES_CN -> {
-                categoryList.addAll((0 until (1000/categoryCount)).map { it*categoryCount })
+                categoryList.addAll((0 until (2000/categoryCount)).map { it*categoryCount })
             }
             SCPConstants.Category.TALES -> {
                 // 1021

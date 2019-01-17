@@ -48,32 +48,35 @@ object SCPConstants {
         const val TALES_BY_TIME = 15
     }
 
-    object SaveType {
+    object ScpType {
         // save type
-        const val SAVE_SERIES = "Series"
-        const val SAVE_SERIES_CN = "SeriesCn"
-        const val SAVE_SERIES_STORY_1 = "SeriesStory1"
-        const val SAVE_SERIES_STORY_2 = "SeriesStory2"
-        const val SAVE_SERIES_STORY_3 = "SeriesStory3"
-        const val SAVE_JOKE = "joke"
-        const val SAVE_JOKE_CN = "jokeCn"
-        const val SAVE_EX = "ex"
-        const val SAVE_ARCHIVED = "archived"
-        const val SAVE_REMOVED = "removed"
-        const val SAVE_DECOMMISSIONED = "decommissioned"
-        const val SAVE_INFO = "information"
-        const val SAVE_ABNORMAL = "abnormal"
+        const val SINGLE_PAGE = 0 // 单页面
+        const val SAVE_INFO = 102 // 其中的网站说明类页面, faq，新手指南之类
+        const val SAVE_ABNORMAL = 103 // 其中的设定说明类页面，异常物品超长事件等
+
+        const val SAVE_SERIES = 1
+        const val SAVE_SERIES_CN = 2
+
+        const val SAVE_TALES = 3
+        const val SAVE_TALES_CN = 4
+        const val SAVE_TALES_BY_TIME = 101
+
+        const val SAVE_JOKE = 5
+        const val SAVE_JOKE_CN = 6
+        const val SAVE_EX = 8
+        const val SAVE_ARCHIVED = 7
+        const val SAVE_REMOVED = 11
+        const val SAVE_DECOMMISSIONED = 10
         // 后面加字母
-        const val SAVE_TALES_PREFIX = "tales_"
-        const val SAVE_TALES_CN_PREFIX = "talesCn_"
-        const val SAVE_STORY_SERIES = "storySeries"
-        const val SAVE_STORY_SERIES_CN = "storySeriesCn"
-        const val SAVE_SETTINGS = "settings"
-        const val SAVE_SETTINGS_CN = "settingsCn"
-        const val SAVE_CONTEST = "contest"
-        const val SAVE_CONTEST_CN = "contestCn"
-        const val SAVE_EVENT = "event"
-        const val SAVE_TALES_BY_TIME = "talesByTime"
+
+        const val SAVE_STORY_SERIES = 19
+        const val SAVE_STORY_SERIES_CN = 20
+        const val SAVE_SETTINGS = 13
+        const val SAVE_SETTINGS_CN = 14
+        const val SAVE_CONTEST = 16
+        const val SAVE_CONTEST_CN = 18
+
+
     }
 
     const val BMOB_API_URL = "https://api.bmob.cn/"

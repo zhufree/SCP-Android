@@ -43,7 +43,7 @@ object ScpTable {
             "$DETAIL_HTML TEXT, $NOT_FOUND INTEGER," +
             "$SCP_TYPE INTEGER, $DOWNLOAD_TYPE INTEGER," +
             "$SUB_TEXT VARCHAR, $SNIPPET VARCHAR, $DESC VARCHAR," +
-            "$AUTHOR VARCHAR, $CREATOR VARCHAR" +
+            "$AUTHOR VARCHAR, $CREATOR VARCHAR," +
             "$CREATED_TIME VARCHAR, $PAGE_CODE VARCHAR, " +
             "$CONTEST_NAME VARCHAR, $CONTEST_LINK VARCHAR," +
             "$EVENT_TYPE VARCHAR, $MONTH VARCHAR, " +
@@ -59,8 +59,8 @@ object ScpTable {
 
     const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +
             "$ID,$INDEX, $LINK, $TITLE, $DETAIL_HTML, $NOT_FOUND, $SCP_TYPE, $DOWNLOAD_TYPE," +
-            "$SUB_TEXT , $SNIPPET , $DESC , $AUTHOR, $CREATOR" +
-            "$CREATED_TIME,$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK ,  " +
+            "$SUB_TEXT , $SNIPPET , $DESC, $AUTHOR, $CREATOR, " +
+            "$CREATED_TIME,$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK," +
             "$EVENT_TYPE, $MONTH, $TAGS, $SUB_LINKS, $IS_COLLECTION, " +
             "$LIKE, $HAS_READ) " +
             "VALUES (?,?,?,?,?,?," +

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.Logger
@@ -283,7 +284,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return null
     }
 
-    fun getScpByTypeAndRange(type: String, start: Int, range: Int): MutableList<ScpModel> {
+    fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpModel> {
         val end = start + range
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
@@ -291,12 +292,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 val cursor: Cursor? =
                         if (PreferenceUtil.getIfHideFinished()) {
                             this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                                    + ScpTable.SCP_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0",
-                                    arrayOf(type))
+                                    + ScpTable.SCP_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0 ",
+                                    arrayOf(type.toString()))
                         } else {
                             this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                                    + ScpTable.SCP_TYPE + "=? ",
-                                    arrayOf(type))
+                                    + ScpTable.SCP_TYPE + "=?",
+                                    arrayOf(type.toString()))
                         }
                 with(cursor) {
                     this?.let {
@@ -304,6 +305,16 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                             resultList.add(extractScp(it))
                         }
                     }
+                }
+            }
+            if (type == SERIES) {
+                resultList.sortBy {
+                    if (it.link.split("-").isEmpty()) it.link.split("-")[1]
+                    else it.link.substring(0, 4)
+                }
+            } else {
+                resultList.sortBy {
+                    it.link.split("-")[2].toInt()
                 }
             }
             return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)
@@ -314,13 +325,13 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    fun getScpByType(type: String): MutableList<ScpModel> {
+    fun getScpByType(type: Int): MutableList<ScpModel> {
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=?;",
-                        arrayOf(type))
+                        arrayOf(type.toString()))
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {
@@ -336,6 +347,30 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
         return resultList
     }
+
+    fun getTaleByTypeAndLetter(type: Int, pageCode: String): MutableList<ScpModel> {
+        val resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.SCP_TYPE + "=? AND "+ ScpTable.PAGE_CODE + " = ?;",
+                        arrayOf(type.toString(), pageCode))
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
+                }
+            }
+            return resultList
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
 
     fun getDetailById(id: String): String {
         try {
@@ -555,12 +590,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return scpModel
     }
 
-    fun getScpByTypeAndNumber(type: String, number: String): ScpModel? {
+    fun getScpByTypeAndNumber(type: Int, number: String): ScpModel? {
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
-                        arrayOf(type, "%$number%"))
+                        arrayOf(type.toString(), "%$number%"))
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {

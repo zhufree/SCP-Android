@@ -135,6 +135,7 @@ class UpdateManager(private var activity: BaseActivity) {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
                 progressDialog?.progress = progress
+                Logger.i("$progress")
                 if (progress > 90) {
                     progressDialog?.setMessage("写入数据库中")
                 }

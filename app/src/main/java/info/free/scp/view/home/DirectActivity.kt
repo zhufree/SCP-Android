@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import info.free.scp.R
 import android.widget.ArrayAdapter
-import info.free.scp.SCPConstants.SaveType.SAVE_JOKE
-import info.free.scp.SCPConstants.SaveType.SAVE_JOKE_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
 import info.free.scp.db.ScpDao
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity

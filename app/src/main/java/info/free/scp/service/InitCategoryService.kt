@@ -9,25 +9,6 @@ import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
-import info.free.scp.SCPConstants.SaveType.SAVE_ABNORMAL
-import info.free.scp.SCPConstants.SaveType.SAVE_INFO
-import info.free.scp.SCPConstants.SaveType.SAVE_ARCHIVED
-import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST
-import info.free.scp.SCPConstants.SaveType.SAVE_CONTEST_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_DECOMMISSIONED
-import info.free.scp.SCPConstants.SaveType.SAVE_EVENT
-import info.free.scp.SCPConstants.SaveType.SAVE_EX
-import info.free.scp.SCPConstants.SaveType.SAVE_JOKE
-import info.free.scp.SCPConstants.SaveType.SAVE_JOKE_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_REMOVED
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES
-import info.free.scp.SCPConstants.SaveType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.SaveType.SAVE_SETTINGS_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES
-import info.free.scp.SCPConstants.SaveType.SAVE_STORY_SERIES_CN
-import info.free.scp.SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
-import info.free.scp.SCPConstants.SaveType.SAVE_TALES_PREFIX
 import info.free.scp.db.ScpDao
 
 
@@ -52,6 +33,7 @@ class InitCategoryService : IntentService("initDataService") {
     private fun finishCategoryLoad() {
         ScpDao.getInstance().insertCategoryData(scpModels)
         PreferenceUtil.setInitCategoryFinish(true)
+        sendThreadStatus(100)
     }
 
     private fun sendThreadStatus(progress: Int) {

@@ -78,67 +78,67 @@ class ScpListFragment : BaseFragment() {
                 // 0,499,999
                 val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
                 val limit = categoryCount
-                scpList?.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.SaveType.SAVE_SERIES, start, limit))
+                scpList?.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.ScpType.SAVE_SERIES, start, limit))
             }
             SCPConstants.Category.SERIES_CN -> {
                 val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
                 val limit = categoryCount
-                scpList?.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.SaveType.SAVE_SERIES_CN, start, limit))
+                scpList?.addAll(ScpDao.getInstance().getScpByTypeAndRange(SCPConstants.ScpType.SAVE_SERIES_CN, start, limit))
 
             }
             SCPConstants.Category.SCP_EX -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_EX))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
             }
             SCPConstants.Category.SCP_ABNORMAL -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_INFO))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INFO))
             }
 
             SCPConstants.Category.SCP_ARCHIVED -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_ARCHIVED))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
             }
             SCPConstants.Category.SCP_DECOMMISSIONED -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_DECOMMISSIONED))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
             }
             SCPConstants.Category.SCP_REMOVED -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_REMOVED))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
             }
             SCPConstants.Category.TALES -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_PREFIX
-                        + taleCategory[clickPosition]))
+                scpList?.addAll(ScpDao.getInstance().getTaleByTypeAndLetter(SCPConstants.ScpType.SAVE_TALES
+                        , taleCategory[clickPosition]))
             }
             SCPConstants.Category.TALES_CN -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_CN_PREFIX
-                        + taleCategory[clickPosition]))
+                scpList?.addAll(ScpDao.getInstance().getTaleByTypeAndLetter(SCPConstants.ScpType.SAVE_TALES_CN
+                        ,taleCategory[clickPosition]))
             }
             SCPConstants.Category.STORY_SERIES -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_STORY_SERIES))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES))
             }
             SCPConstants.Category.STORY_SERIES_CN -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_STORY_SERIES_CN))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES_CN))
             }
             SCPConstants.Category.JOKE -> {
                 // 内容较少，直接全部加载
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE))
             }
             SCPConstants.Category.JOKE_CN -> {
                 // 内容较少，直接全部加载
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_JOKE_CN))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE_CN))
             }
             SCPConstants.Category.SETTINGS -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_SETTINGS))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS))
             }
             SCPConstants.Category.SETTINGS_CN -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_SETTINGS_CN))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
             }
             SCPConstants.Category.CONTEST -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_CONTEST))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST))
             }
             SCPConstants.Category.CONTEST_CN -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_CONTEST_CN))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
             }
             SCPConstants.Category.TALES_BY_TIME -> {
                 if (taleTimeList.isEmpty()) {
-                    taleTimeList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.SaveType.SAVE_TALES_BY_TIME))
+                    taleTimeList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_TALES_CN))
                 }
                 when (clickPosition) {
                     0 -> {

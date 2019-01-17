@@ -74,14 +74,14 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             // TODO 显示更新时间
-            findPreference("download_scp").summary = getString(R.string.download_summary,
-                    PreferenceUtil.getDetailLastLoadTime(0), "")
-            findPreference("download_scp_cn").summary = getString(R.string.download_summary,
-                    PreferenceUtil.getDetailLastLoadTime(1), "")
-            findPreference("download_tale").summary = getString(R.string.download_summary,
-                    PreferenceUtil.getDetailLastLoadTime(2), "")
-            findPreference("download_other").summary = getString(R.string.download_summary,
-                    PreferenceUtil.getDetailLastLoadTime(3), "")
+            findPreference("download_scp").summary = getString(R.string.download_summary,"",
+                    PreferenceUtil.getDetailLastLoadTime(0))
+            findPreference("download_scp_cn").summary = getString(R.string.download_summary,"",
+                    PreferenceUtil.getDetailLastLoadTime(1))
+            findPreference("download_tale").summary = getString(R.string.download_summary,"",
+                    PreferenceUtil.getDetailLastLoadTime(2))
+            findPreference("download_other").summary = getString(R.string.download_summary,"",
+                    PreferenceUtil.getDetailLastLoadTime(3))
             findPreference("download_scp").setOnPreferenceClickListener {
 //                EventUtil.onEvent(context, EventUtil.hideReadContent)
                 showNoticeDialog(DOWNLOAD_SCP)

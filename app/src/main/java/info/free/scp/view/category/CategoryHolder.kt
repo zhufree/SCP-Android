@@ -29,12 +29,12 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     fun setData(data: Any, type: Int) {
         when (type) {
             SERIES -> {
-                val start = data as Int
-                itemView.tvScpTitle.text = "SCP系列${start+1}~${start+categoryCount}"
+                val start = data.toString()
+                itemView.tvScpTitle.text = "SCP系列${if (start == "0") "0" else start.substring(0,start.length - 2)}██"
             }
             SERIES_CN -> {
-                val start = data as Int
-                itemView.tvScpTitle.text = "SCP-CN系列${start+1}~${start+categoryCount}"
+                val start = data.toString()
+                itemView.tvScpTitle.text = "SCP-CN系列${if (start == "0") "0" else start.substring(0,start.length - 2)}██"
             }
             else -> {
                 itemView.tvScpTitle.text = data as String

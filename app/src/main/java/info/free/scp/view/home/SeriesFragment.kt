@@ -69,7 +69,6 @@ class SeriesFragment : BaseFragment() {
             goToDocPage(SCPConstants.Entry.ABOUT_STUFF)
         }
         tv_direct_doc?.setOnClickListener{
-            // TODO 直达
             activity?.startActivity(Intent(activity, DirectActivity::class.java))
         }
         tv_random?.setOnClickListener {

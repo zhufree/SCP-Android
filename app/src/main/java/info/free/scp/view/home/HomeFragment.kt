@@ -69,9 +69,6 @@ class HomeFragment : BaseFragment() {
         home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         home_toolbar?.setOnMenuItemClickListener{
             when (it.itemId) {
-                R.id.cn_page -> {
-                    libraryFragment.changePage()
-                }
                 R.id.search -> {
                     activity?.startActivity(Intent(activity, SearchActivity::class.java))
                 }

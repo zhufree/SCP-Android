@@ -73,15 +73,13 @@ class LibraryFragment : BaseFragment() {
             goToDocPage(SCPConstants.Entry.SETTINGS_DOC)
         }
         view.tv_more_about?.setOnClickListener {
+            // TODO ?
             goToDocPage(SCPConstants.Entry.MORE_ABOUT)
         }
         view.tvEssayContest?.setOnClickListener {
-            if (isCnPage) {
-                listener?.onCategoryClick(CONTEST_CN)
-            } else {
-                listener?.onCategoryClick(CONTEST)
-            }
+            goToDocPage(SCPConstants.Entry.MORE_ABOUT)
         }
+        // TODO
         view.tvEventRecord?.setOnClickListener {
             listener?.onCategoryClick(EVENT)
         }
@@ -91,25 +89,6 @@ class LibraryFragment : BaseFragment() {
             } else {
                 Toast.makeText(ScpApplication.context, "更多功能敬请期待", LENGTH_SHORT).show()
             }
-        }
-    }
-
-    fun changePage() {
-        isCnPage = !isCnPage
-        if (isCnPage) {
-            tv_joke_doc?.setText(R.string.title_settings)
-            tv_more_about?.setText(R.string.title_scp_settings_cn)
-            tv_settings_doc?.setText(R.string.title_scp_story_series_cn)
-            tvEssayContest?.setText(R.string.title_scp_essay_cn)
-            tvEventRecord?.setText(R.string.title_scp_event)
-            tvMore?.setText(R.string.title_scp_story_by_time)
-        } else {
-            tv_joke_doc?.setText(R.string.title_joke_scp)
-            tv_more_about?.setText(R.string.title_scp_settings)
-            tv_settings_doc?.setText(R.string.title_scp_story_series)
-            tvEssayContest?.setText(R.string.title_scp_essay)
-            tvEventRecord?.setText(R.string.title_scp_event)
-            tvMore?.setText(R.string.title_more_function)
         }
     }
 

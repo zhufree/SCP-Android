@@ -8,6 +8,8 @@ import android.view.View.VISIBLE
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.ABOUT_STUFF
+import info.free.scp.SCPConstants.Category.CONTEST
+import info.free.scp.SCPConstants.Category.CONTEST_CN
 import info.free.scp.SCPConstants.Category.JOKE
 import info.free.scp.SCPConstants.Category.JOKE_CN
 import info.free.scp.SCPConstants.Category.SCP_ABNORMAL
@@ -125,6 +127,10 @@ class SeriesDocActivity : BaseActivity() {
             MORE_ABOUT -> {
                 // TODO 更多相关
                 supportActionBar?.setTitle(R.string.title_more_about)
+                fragmentList = arrayOf(ScpListFragment.newInstance(CONTEST, 0),
+                        ScpListFragment.newInstance(CONTEST_CN, 0))
+                        .toList()
+                titleList = arrayOf("征文竞赛", "中国分部征文竞赛").toList()
             }
         }
         if (fragmentList.isNotEmpty()) {

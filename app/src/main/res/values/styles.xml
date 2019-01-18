@@ -23,20 +23,20 @@
 
     <style name="DayTheme" parent="AppTheme">
         <item name="toolbarBg">@color/colorPrimaryDark</item>
-        <item name="containerBg">#fff</item>
+        <item name="containerBg">@color/white</item>
         <item name="itemBg">@color/itemBg</item>
         <!--浅色底深色字-->
-        <item name="darkText">#333</item>
+        <item name="darkText">@color/darkText</item>
         <!--深色底浅色字-->
-        <item name="lightText">#999</item>
+        <item name="lightText">@color/lightText</item>
     </style>
     <style name="NightTheme" parent="AppTheme">
-        <item name="toolbarBg">#191919</item>
-        <item name="containerBg">#222</item>
-        <item name="itemBg">#202020</item>
+        <item name="toolbarBg">@color/toolbarBgNight</item>
+        <item name="containerBg">@color/containerBgNight</item>
+        <item name="itemBg">@color/itemBgNight</item>
         <!--浅色底深色字-->
-        <item name="darkText">#999</item>
+        <item name="darkText">@color/darkText</item>
         <!--深色底浅色字-->
-        <item name="lightText">#333</item>
+        <item name="lightText">@color/lightText</item>
     </style>
 </resources>

@@ -16,6 +16,7 @@
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="UMENG_CHANNEL"

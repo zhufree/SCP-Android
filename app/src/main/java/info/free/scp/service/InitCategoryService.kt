@@ -21,7 +21,7 @@ class InitCategoryService : IntentService("initDataService") {
         set(value) {
             Log.i("loading", "requestCount = $value")
             field = value
-            sendThreadStatus(5*value)
+            sendThreadStatus(4*value)
         }
 
     override fun onCreate() {

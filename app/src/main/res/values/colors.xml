@@ -3,8 +3,22 @@
     <color name="colorPrimary">#3f51b5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#600</color>
+
     <color name="itemBg">#e0f7fa</color>
     <color name="textColor">#333</color>
+    <color name="containerBg">#fff</color>
+    <!--浅色底深色字-->
+    <color name="darkText">#333</color>
+    <!--深色底浅色字-->
+    <color name="lightText">#999</color>
+    <color name="disabledBg">#dcdcdc</color>
+    <color name="toolbarBgNight">#191919</color>
+    <color name="containerBgNight">#222</color>
+    <color name="itemBgNight">#202020</color>
+    <!--浅色底深色字-->
+    <!--<item name="darkTextNight">#999</item>-->
+    <!--深色底浅色字-->
+    <!--<item name="lightTextNight">#333</item>-->
 
     <color name="white">#fff</color>
 </resources>

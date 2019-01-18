@@ -8,8 +8,10 @@ import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
@@ -22,6 +24,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
+import info.free.scp.R.style.AppTheme
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
@@ -255,12 +258,7 @@ class DetailActivity : BaseActivity() {
                         Toaster.show("已复制到剪贴板")
                     }
                     R.id.like -> {
-                        EventUtil.onEvent(this, EventUtil.clickLike, s.link)
-                        PreferenceUtil.addPoints(2)
-                        s.like = if (s.like == 1) 0 else 1
-                        ScpDao.getInstance().insertLikeAndReadInfo(s)
-                        it.setIcon(if (s.like == 1) R.drawable.ic_star_white_24dp
-                        else R.drawable.ic_star_border_white_24dp)
+                        likeScp()
                     }
                     R.id.share_picture -> {
                         // 截屏分享
@@ -310,6 +308,16 @@ class DetailActivity : BaseActivity() {
             }
             true
         }
+    }
+
+    private fun likeScp() {
+        scp?.let {s->
+            EventUtil.onEvent(this, EventUtil.clickLike, s.link)
+            PreferenceUtil.addPoints(2)
+            s.like = if (s.like == 1) 0 else 1
+            ScpDao.getInstance().insertLikeAndReadInfo(s)
+        }
+        invalidateOptionsMenu()
     }
 
     private fun toNextArticle() {
@@ -374,6 +382,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setHasRead() {
+        val readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         scp?.let { s ->
             if (s.hasRead == 0) {
                 // 标记已读
@@ -382,6 +391,13 @@ class DetailActivity : BaseActivity() {
                 s.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
                 tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
+                Logger.i(ThemeUtil.lightText.toString())
+                tv_bottom_set_has_read?.setBackgroundColor(resources.getColor(R.color.disabledBg))
+                readBtnLp?.endToEnd = -1
+                readBtnLp?.startToStart = -1
+                readBtnLp?.endToStart = R.id.gl_detail_center
+                tv_bottom_set_has_read?.layoutParams = readBtnLp
+                tv_bottom_like?.visibility = VISIBLE
             } else {
                 // 取消已读
                 EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link ?: "")
@@ -389,6 +405,8 @@ class DetailActivity : BaseActivity() {
                 s.hasRead = 0
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
                 tv_bottom_set_has_read?.setText(R.string.set_has_read)
+                Logger.i(ThemeUtil.itemBg.toString())
+                tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.itemBg)
             }
         }
     }
@@ -406,6 +424,7 @@ class DetailActivity : BaseActivity() {
             setHasRead()
         }
 
+        tv_bottom_like?.setOnClickListener { likeScp() }
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

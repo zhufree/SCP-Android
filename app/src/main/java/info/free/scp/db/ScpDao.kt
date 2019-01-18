@@ -371,6 +371,37 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
+    fun getSinglePageByType(type: Int): MutableList<ScpModel> {
+        val infoPageList = arrayOf("/faq", "/guide-for-newbies", "/how-to-write-an-scp")
+        var resultList = emptyList<ScpModel>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                        + ScpTable.SCP_TYPE + "="+ SCPConstants.ScpType.SINGLE_PAGE, null)
+                with(cursor) {
+                    this?.let {
+                        while (it.moveToNext()) {
+                            resultList.add(extractScp(it))
+                        }
+                    }
+                }
+            }
+            resultList = resultList.filter {
+                if (type == SCPConstants.ScpType.SAVE_INFO) {
+                    infoPageList.contains(it.link)
+                } else {
+                    !infoPageList.contains(it.link)
+                }
+            }.toMutableList()
+
+            return resultList
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return resultList
+    }
+
 
     fun getDetailById(id: String): String {
         try {

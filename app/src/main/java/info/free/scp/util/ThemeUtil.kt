@@ -44,6 +44,7 @@ object ThemeUtil {
             1 -> application.setTheme(R.style.NightTheme)
             else -> application.setTheme(R.style.DayTheme)
         }
+        initColor(application)
     }
 
 

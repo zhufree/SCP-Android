@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/containerBg"
+
     tools:context="info.free.scp.view.detail.DetailActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -95,43 +96,68 @@
                 />
         </android.support.constraint.ConstraintLayout>
     </android.support.v4.widget.NestedScrollView>
-    <TextView
-        android:id="@+id/tv_bottom_preview"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="16dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/itemBg"
-        android:gravity="center"
-        android:text="@string/preview_article"
-        android:textColor="?attr/darkText"
-        android:textStyle="bold"
-        android:layout_gravity="start|bottom" />
+        >
+        <TextView
+            android:id="@+id/tv_bottom_preview"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:background="?attr/itemBg"
+            android:gravity="center"
+            android:text="@string/preview_article"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_bottom_set_has_read"
-        android:layout_width="80dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/itemBg"
-        android:gravity="center"
-        android:text="@string/set_has_read"
-        android:textColor="?attr/darkText"
-        android:textStyle="bold"
-        android:layout_gravity="center_horizontal|bottom"/>
+        <android.support.constraint.Guideline
+            android:id="@+id/gl_detail_center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintGuide_percent="0.5"
+            android:orientation="vertical"/>
+        <TextView
+            android:id="@+id/tv_bottom_set_has_read"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="?attr/itemBg"
+            android:gravity="center"
+            android:text="@string/set_has_read"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <TextView
-        android:id="@+id/tv_bottom_next"
-        android:layout_width="60dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:background="?attr/itemBg"
-        android:gravity="center"
-        android:text="@string/next_article"
-        android:textColor="?attr/darkText"
-        android:textStyle="bold"
-        android:layout_gravity="end|bottom"/>
+        <TextView
+            android:id="@+id/tv_bottom_like"
+            android:layout_width="80dp"
+            android:layout_height="30dp"
+            android:background="?attr/itemBg"
+            android:gravity="center"
+            android:text="@string/menu_like"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/gl_detail_center"
+            android:visibility="gone"
+            />
+
+        <TextView
+            android:id="@+id/tv_bottom_next"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:background="?attr/itemBg"
+            android:gravity="center"
+            android:text="@string/next_article"
+            android:textColor="?attr/darkText"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.design.widget.CoordinatorLayout>

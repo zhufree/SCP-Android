@@ -44,27 +44,24 @@ class ScpItemFragment : BaseFragment() {
     private fun initScpItemAdapter() {
         categoryType = arguments?.getInt("category_type") ?: -1
         clickPosition = arguments?.getInt("click_position") ?: -1
-        if (scpAdapter == null) {
-            Log.i(tag, "初始化scpAdapter")
-            getScpList()
-            scpList?.let {
-                scpAdapter = ScpAdapter(mContext!!, it)
-            }
-            scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                override fun onItemClick(view: View, position: Int) {
-                    scpList?.let {
-                        PreferenceUtil.addPoints(2)
-                        val intent = Intent()
-                        intent.putExtra("link", it[position].link)
-                        intent.putExtra("sId", it[position].sId)
-                        intent.setClass(mContext, DetailActivity::class.java)
-                        startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
-                    }
+        Log.i(tag, "初始化scpAdapter")
+        getScpList()
+        scpList?.let {
+            scpAdapter = ScpAdapter(mContext!!, it)
+            rv_category_list?.adapter = scpAdapter
+        }
+        scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                scpList?.let {
+                    PreferenceUtil.addPoints(2)
+                    val intent = Intent()
+                    intent.putExtra("link", it[position].link)
+                    intent.putExtra("sId", it[position].sId)
+                    intent.setClass(mContext, DetailActivity::class.java)
+                    startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                 }
             }
         }
-        rv_category_list?.adapter = scpAdapter
-        scpAdapter?.notifyDataSetChanged()
     }
 
     private fun getScpList() {
@@ -73,7 +70,7 @@ class ScpItemFragment : BaseFragment() {
         when (categoryType) {
             SCPConstants.Category.ABOUT_STUFF -> {
                 // 相关材料
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INFO))
+                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
             }
         }
         if (scpList?.size == 0) {

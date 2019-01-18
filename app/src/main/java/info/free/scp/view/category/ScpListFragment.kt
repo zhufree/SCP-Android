@@ -90,7 +90,7 @@ class ScpListFragment : BaseFragment() {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
             }
             SCPConstants.Category.SCP_ABNORMAL -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INFO))
+                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
             }
 
             SCPConstants.Category.SCP_ARCHIVED -> {

@@ -31,13 +31,11 @@ import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
-//    private val feedFragment = FeedFragment.newInstance()
+    //    private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
-    private var isDownloadingDetail = false
-
-    var progressDialog: ProgressDialog? = null
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var fragmentInit = false;
 
 
     private var themeReceiver = object : BroadcastReceiver() {
@@ -59,15 +57,15 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
                 }
                 currentFragment = homeFragment
             }
-        //            R.id.navigation_feed -> {
-        //                if (feedFragment.isAdded) {
-        //                    transaction.show(feedFragment)
-        //                } else {
-        //                    transaction.add(R.id.flMainContainer, feedFragment)
-        //                }
-        //                currentFragment = feedFragment
-        //                return@OnNavigationItemSelectedListener true
-        //            }
+            //            R.id.navigation_feed -> {
+            //                if (feedFragment.isAdded) {
+            //                    transaction.show(feedFragment)
+            //                } else {
+            //                    transaction.add(R.id.flMainContainer, feedFragment)
+            //                }
+            //                currentFragment = feedFragment
+            //                return@OnNavigationItemSelectedListener true
+            //            }
             R.id.navigation_about -> {
                 if (userFragment.isAdded) {
                     transaction?.show(userFragment)
@@ -93,22 +91,31 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         }
 
         // 设置默认fragment
-        val transaction = supportFragmentManager?.beginTransaction()
-        if (currentFragment != null) {
-            if (currentFragment?.isAdded == true) {
-                transaction?.show(currentFragment!!)
-            } else {
-                transaction?.add(R.id.flMainContainer, currentFragment!!)
-            }
-        } else {
-            transaction?.add(R.id.flMainContainer, homeFragment)
-            currentFragment = homeFragment
-        }
-        transaction?.commit()
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         Logger.local = true
-        UpdateManager.getInstance(this).checkAppData()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (!fragmentInit) {
+            // 设置默认fragment
+            val transaction = supportFragmentManager?.beginTransaction()
+            if (currentFragment != null) {
+                if (currentFragment?.isAdded == true) {
+                    transaction?.show(currentFragment!!)
+                } else {
+                    transaction?.add(R.id.flMainContainer, currentFragment!!)
+                }
+            } else {
+                transaction?.add(R.id.flMainContainer, homeFragment)
+                currentFragment = homeFragment
+            }
+            transaction?.commit()
+            UpdateManager.getInstance(this).checkAppData()
+            fragmentInit = true
+        }
     }
 
     /**
@@ -125,36 +132,12 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
     }
 
 
-
-
-
     override fun onSaveInstanceState(outState: Bundle) {
         currentFragment?.let {
             supportFragmentManager.putFragment(outState, "currentFragment", it)
         }
         super.onSaveInstanceState(outState)
     }
-
-    /**
-     * 初始化数据
-     */
-    private fun initCategoryData() {
-        val intent = Intent(this, InitCategoryService::class.java)
-        startService(intent)
-        progressDialog = ProgressDialog(this)
-        progressDialog?.max = 100
-        progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog?.setMessage("与基金会通信中")
-        progressDialog?.setCancelable(false)
-        progressDialog?.show()
-    }
-
-    private fun initDetailData() {
-        val intent = Intent(this, InitDetailService::class.java)
-        startService(intent)
-        isDownloadingDetail = true
-    }
-
 
     fun refreshTheme() {
         navigation.setBackgroundColor(ThemeUtil.containerBg)

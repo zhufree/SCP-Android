@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/cn_page"
-        android:title="@string/menu_cn"
-        app:showAsAction="ifRoom"/>
-
-    <item
         android:id="@+id/search"
         android:title="@string/menu_search"
         android:icon="@drawable/ic_search_white_24dp"

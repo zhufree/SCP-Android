@@ -29,6 +29,7 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)
+        itemView?.btn_read_later?.visibility = VISIBLE
     }
 
     fun setData(model: ScpModel) {

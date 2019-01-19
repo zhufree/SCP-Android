@@ -19,6 +19,8 @@
     <!--<item name="darkTextNight">#999</item>-->
     <!--深色底浅色字-->
     <!--<item name="lightTextNight">#333</item>-->
+    <color name="unClickBtn">#8abcd1</color>
+    <color name="clickedBtn">#2775b6</color>
 
     <color name="white">#fff</color>
 </resources>

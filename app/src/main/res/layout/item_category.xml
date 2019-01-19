@@ -41,11 +41,20 @@
             android:contentDescription="@string/app_name"
             android:src="@drawable/icon_read"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@+id/btn_read_later"
             android:layout_marginEnd="5dp"
             android:layout_marginBottom="5dp"
             android:visibility="gone"
             tools:visibility="visible"/>
+        <ImageButton
+            android:id="@+id/btn_read_later"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_watch_later_white_24dp"
+            android:background="@color/unClickBtn"
+            android:visibility="gone"
+            />
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

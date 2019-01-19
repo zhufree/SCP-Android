@@ -23,7 +23,7 @@ import java.util.*
 
 
 const val DB_NAME = "scp_info.db"
-const val DB_VERSION = 3
+const val DB_VERSION = 4 // 已+1
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
     var randomCount = 0
@@ -32,6 +32,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         db?.execSQL(ScpTable.CREATE_TABLE_SQL)
         db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
         db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
+        db?.execSQL(ScpTable.CREATE_VIEW_LIST_TABLE_SQL)
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
@@ -41,6 +42,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             db?.execSQL(ScpTable.CREATE_TABLE_SQL)
             db?.execSQL(ScpTable.CREATE_DETAIL_TABLE_SQL)
             db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
+            db?.execSQL(ScpTable.CREATE_VIEW_LIST_TABLE_SQL)
         }
     }
 
@@ -199,7 +201,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     /**
-     * 网络请求到数据时保存一次
+     * 更新读过和like信息
      * 返回更新后的model
      */
     private fun replaceScpModel(model: ScpModel?) {
@@ -690,6 +692,33 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
     }
 
+    fun insertViewListItem(db: SQLiteDatabase, model: ScpModel, viewType: Int) {
+        db.execSQL(ScpTable.INSERT_VIEW_LIST_SQL, arrayOf(model.link, model.title, viewType))
+//        val cv = ContentValues()
+//        if (model.link.isNotEmpty()) {
+//            cv.put(ScpTable.LINK, model.link)
+//        }
+//        if (model.title.isNotEmpty()) {
+//            cv.put(ScpTable.TITLE, model.title)
+//        }
+//        cv.put(ScpTable.VIEW_LIST_TYPE, viewType)
+//        db.beginTransaction()
+//        try {
+//            db.insert(ScpTable.VIEW_LIST_TABLE_NAME, null, cv)
+//            db.setTransactionSuccessful()
+//        } finally {
+//            db.endTransaction()
+//        }
+    }
+
+    fun deleteViewListItem(db: SQLiteDatabase, model: ScpModel, viewType: Int) {
+        db.execSQL("DELETE FROM " + ScpTable.VIEW_LIST_TABLE_NAME + " WHERE " + ScpTable.LINK
+                + model.link + " AND " + ScpTable.VIEW_LIST_TYPE + " = " + viewType)
+    }
+
+    /**
+     * 删除目录表，在重新同步目录时调用
+     */
     fun resetCategoryData() {
         with(writableDatabase) {
             PreferenceUtil.setInitCategoryFinish(false)

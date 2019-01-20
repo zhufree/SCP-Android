@@ -1,42 +1,29 @@
 package info.free.scp
 
-import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.*
-import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
-import android.view.LayoutInflater
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
-import info.free.scp.SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH
-import info.free.scp.db.ScpDao
-import info.free.scp.service.HttpManager
-import info.free.scp.service.InitCategoryService
-import info.free.scp.service.InitDetailService
 import info.free.scp.util.*
-import info.free.scp.util.EventUtil.chooseJob
 import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.ScpListActivity
 import info.free.scp.view.home.HomeFragment
-import info.free.scp.view.home.SeriesFragment
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
-class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
+class MainActivity : BaseActivity() {
     private var currentFragment: BaseFragment? = null
-    private val homeFragment = SeriesFragment.newInstance()
+    private val homeFragment = HomeFragment.newInstance()
     //    private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var fragmentInit = false;
+    private var fragmentInit = false
 
 
     private var themeReceiver = object : BroadcastReceiver() {
@@ -94,7 +81,7 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         // 设置默认fragment
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
-        Logger.local = true
+//        Logger.local = true
     }
 
     override fun onResume() {
@@ -144,21 +131,5 @@ class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
-    }
-
-    override fun onCategoryClick(type: Int) {
-        val intent = Intent()
-        intent.putExtra("saveType", type)
-        intent.setClass(this, ScpListActivity::class.java)
-        startActivity(intent)
-    }
-
-    override fun onInitDataClick() {
-        UpdateManager.getInstance(this).showChooseDbDialog()
-    }
-
-    override fun onResetDataClick() {
-        // 重新加载
-        UpdateManager.getInstance(this).checkInitData(true)
     }
 }

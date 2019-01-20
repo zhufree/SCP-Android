@@ -2,6 +2,9 @@ package info.free.scp.view.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.ContextMenu
+import android.view.Menu
+import android.view.View
 import info.free.scp.R
 import android.widget.ArrayAdapter
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
@@ -12,6 +15,7 @@ import info.free.scp.db.ScpDao
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
+import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_direct.*
 
 
@@ -33,6 +37,7 @@ class DirectActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_direct)
+        initToolbar()
         val numberList = arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "<-") //准备字符串数组or别的什么
         val numberAdapter = ArrayAdapter(this, R.layout.item_direct_number, R.id.tv_direct_number, numberList)
         gv_direct_number?.adapter = numberAdapter
@@ -76,6 +81,29 @@ class DirectActivity : BaseActivity() {
             }?:Toaster.show("没有这篇文章")
 
         }
+    }
+
+    private fun initToolbar() {
+        setSupportActionBar(direct_toolbar)
+        supportActionBar?.setTitle(R.string.title_direct)
+        direct_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        direct_toolbar?.setNavigationOnClickListener {
+            finish()
+        }
+        direct_toolbar?.inflateMenu(R.menu.direct_menu) //设置右上角的填充菜单
+        direct_toolbar?.setOnMenuItemClickListener {
+            when(it.itemId) {
+                R.id.random -> {
+                    startActivity(Intent(this, DetailActivity::class.java))
+                }
+            }
+            true
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.direct_menu, menu)
+        return true
     }
 
     private fun updateExpress() {

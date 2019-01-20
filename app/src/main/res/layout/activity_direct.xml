@@ -6,6 +6,21 @@
     android:layout_height="match_parent"
     tools:context="info.free.scp.view.home.DirectActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/ablToolbarWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        android:theme="@style/AppTheme.AppBarOverlay">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/direct_toolbar"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_width="match_parent"
+            android:background="?attr/toolbarBg"
+            app:popupTheme="@style/ToolbarPopupTheme">
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
     <TextView
         android:id="@+id/tv_direct_title"
         android:layout_width="0dp"
@@ -19,9 +34,10 @@
         android:background="?attr/containerBg"
         android:textColor="@color/textColor"
         android:textSize="32sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"
         app:layout_constraintBottom_toTopOf="@+id/btn_direct_cn"
         app:layout_constraintVertical_chainStyle="spread"/>
 
@@ -33,6 +49,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="CN"
+        android:textStyle="bold"
         android:background="?attr/itemBg"
         android:textColor="?attr/darkText"
         android:textSize="20sp"
@@ -50,6 +67,7 @@
         android:gravity="center"
         android:padding="10dp"
         android:text="J"
+        android:textStyle="bold"
         android:background="?attr/itemBg"
         android:textColor="?attr/darkText"
         android:textSize="20sp"

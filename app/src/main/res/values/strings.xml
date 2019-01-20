@@ -96,23 +96,23 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
-    <string name="extra_content">额外内容</string>
+    <string name="about_view_content">浏览相关</string>
     <string name="like_list">收藏列表</string>
     <string name="history_list">历史记录</string>
     <string name="game_list">游戏列表</string>
     <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
     <string name="read_settings">阅读设置</string>
-    <string name="download_settings">离线设置</string>
+    <string name="download_settings">离线及同步设置</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
-    <string name="about_developer">关于开发者</string>
+    <string name="about_developer">支持开发者</string>
     <string name="copyright_explained">版权说明</string>
-    <string name="query_enter">用户调查问卷（每次更新版本时更新）</string>
-    <string name="data">数据</string>
+    <string name="query_enter">用户调查问卷v0.0.9</string>
+    <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
-    <string name="sync_data">同步云端数据</string>
+    <string name="sync_data">强制重新同步云端数据</string>
     <string name="backup_data">备份本地数据库</string>
     <string name="restore_data">恢复本地数据库</string>
     <string name="title_activity_settings">设置</string>
@@ -126,6 +126,7 @@
     <string name="download_scp_cn_title">SCP-CN系列</string>
     <string name="download_tale_title">基金会故事</string>
     <string name="download_other_title">其他文档</string>
+    <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
     <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>
 </resources>

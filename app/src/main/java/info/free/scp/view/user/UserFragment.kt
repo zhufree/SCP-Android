@@ -1,7 +1,6 @@
 package info.free.scp.view.user
 
 
-import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -16,7 +15,7 @@ import info.free.scp.db.ScpDao
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_about.*
+import kotlinx.android.synthetic.main.fragment_user.*
 import java.util.*
 //import kotlin.random.Random
 
@@ -27,24 +26,15 @@ import java.util.*
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
 class UserFragment : BaseFragment() {
-    private var listener: AboutListener? = null
 
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is AboutListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about, container, false)
+        return inflater.inflate(R.layout.fragment_user, container, false)
     }
 
     private fun getRank(point: Int): String {
@@ -98,9 +88,21 @@ class UserFragment : BaseFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
+    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
+        super.setUserVisibleHint(isVisibleToUser)
+        if (isVisibleToUser) {
+            //相当于Fragment的onResume
+            if (PreferenceUtil.getNickname().isNotEmpty()) {
+                tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                        "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
+                        "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
+            } else {
+                UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
+            }
+        } else {
+            //相当于Fragment的onPause
+        }
     }
 
     fun refreshTheme() {
@@ -131,10 +133,6 @@ class UserFragment : BaseFragment() {
         Log.i("user", "requestCode = $requestCode")
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
 
     companion object {
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -158,11 +156,6 @@ class UserFragment : BaseFragment() {
 //            fragment.arguments = args
             return fragment
         }
-    }
-
-    interface AboutListener {
-        fun onInitDataClick()
-        fun onResetDataClick()
     }
 
 } // Required empty public constructor

@@ -5,66 +5,45 @@ import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.view.ViewPager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_home.*
+import info.free.scp.view.search.SearchActivity
+import info.free.scp.view.user.LaterAndHistoryActivity
+import kotlinx.android.synthetic.main.fragment_series.*
 
 
 /**
  * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
- * 首页，一级子页面是SCP系列和SCP图书馆两个
+ *
  */
 class HomeFragment : BaseFragment() {
-    private var listener: CategoryListener? = null
-    private val seriesFragment = SeriesFragment.newInstance()
-    private val libraryFragment = LibraryFragment.newInstance()
-    private var fragmentList = arrayOf(seriesFragment, libraryFragment).toList()
-    private var titleList = arrayOf("SCP系列", "SCP图书馆").toList()
 
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
     override fun onAttach(context: Context?) {
+        mContext = context
         super.onAttach(context)
-        if (context is CategoryListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context!!.toString() + " must implement OnFragmentInteractionListener")
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_series, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        seriesFragment.listener = listener
-        libraryFragment.listener = listener
-        val scpPagerAdapter = HomeFragmentPager(childFragmentManager, fragmentList, titleList)
-        vpHome?.adapter = scpPagerAdapter
-        tabHome?.setupWithViewPager(vpHome)
-
-        vpHome?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {
-            }
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-            }
-
-            override fun onPageSelected(position: Int) {
-            }
-        })
         home_toolbar?.setTitle(R.string.app_name)
         home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         home_toolbar?.setOnMenuItemClickListener{
@@ -75,20 +54,48 @@ class HomeFragment : BaseFragment() {
             }
             true
         }
-
+        tv_series_doc?.background?.alpha = 90
+        tv_story_doc?.background?.alpha = 90
+        tv_about_doc?.background?.alpha = 90
+        tv_read_later?.background?.alpha = 90
+        tv_joke_doc?.background?.alpha = 90
+        tv_direct?.background?.alpha = 90
+        tv_series_doc?.setOnClickListener {
+            goToDocPage(SCPConstants.Entry.SCP_DOC)
+        }
+        tv_story_doc?.setOnClickListener{
+            goToDocPage(SCPConstants.Entry.STORY_DOC)
+        }
+        tv_about_doc?.setOnClickListener{
+            goToDocPage(SCPConstants.Entry.ABOUT_SCP_DOC)
+        }
+        tv_read_later?.setOnClickListener{
+            val laterIntent = Intent(activity, LaterAndHistoryActivity::class.java)
+            laterIntent.putExtra("view_type", LATER_TYPE)
+            activity?.startActivity(laterIntent)
+        }
+        tv_joke_doc?.setOnClickListener{
+            goToDocPage(SCPConstants.Entry.JOKE_DOC)
+        }
+        tv_direct?.setOnClickListener {
+            // TODO 改成直达事件
+            EventUtil.onEvent(activity, EventUtil.clickRandom)
+            PreferenceUtil.addPoints(2)
+            activity?.startActivity(Intent(activity, DirectActivity::class.java))
+        }
     }
 
     fun refreshTheme() {
-        tabHome?.setBackgroundColor(ThemeUtil.containerBg)
-        home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
-        seriesFragment.refreshTheme()
-        libraryFragment.refreshTheme()
+        view?.setBackgroundColor(ThemeUtil.containerBg)
+        tv_series_doc?.setTextColor(ThemeUtil.darkText)
+        tv_story_doc?.setTextColor(ThemeUtil.darkText)
+
+        tv_about_doc?.setTextColor(ThemeUtil.darkText)
+        tv_read_later?.setTextColor(ThemeUtil.darkText)
+        tv_joke_doc?.setTextColor(ThemeUtil.darkText)
+        tv_direct?.setTextColor(ThemeUtil.darkText)
     }
 
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
-    }
 
     companion object {
         // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -112,10 +119,6 @@ class HomeFragment : BaseFragment() {
 //            fragment.arguments = args
             return fragment
         }
-    }
-
-    interface CategoryListener {
-        fun onCategoryClick(type: Int)
     }
 
 } // Required empty public constructor

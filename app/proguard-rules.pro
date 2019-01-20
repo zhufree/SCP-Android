@@ -21,10 +21,28 @@
 #-renamesourcefileattribute SourceFile
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.SerializationKt
--keep,includedescriptorclasses class com.yourcompany.yourpackage.**$$serializer { *; } # <-- change package name to your app's
--keepclassmembers class com.yourcompany.yourpackage.** { # <-- change package name to your app's
+-keep,includedescriptorclasses class info.free.scp.**$$serializer { *; } # <-- change package name to your app's
+-keepclassmembers class info.free.scp.** { # <-- change package name to your app's
     *** Companion;
 }
--keepclasseswithmembers class com.yourcompany.yourpackage.** { # <-- change package name to your app's
+-keepclasseswithmembers class info.free.scp.** { # <-- change package name to your app's
     kotlinx.serialization.KSerializer serializer(...);
 }
+
+# Retrofit
+-dontnote retrofit2.Platform
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+-dontwarn retrofit2.Platform$Java8
+-keepattributes Signature
+-keepattributes Exceptions
+
+# okhttp
+-dontwarn okio.**
+-dontwarn com.squareup.okhttp3.**
+-dontwarn org.conscrypt.*
+-keep class com.squareup.okhttp3.** { *; }
+-keep interface com.squareup.okhttp3.** { *; }
+-dontwarn javax.annotation.**
+
+# Gson
+-keep class info.free.scp.bean.**{*;} # 自定义数据模型的bean目录

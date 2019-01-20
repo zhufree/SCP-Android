@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/containerBg"
-    tools:context="info.free.scp.view.home.HomeFragment">
+    android:background="?attr/containerBg">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"

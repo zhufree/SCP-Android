@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory
-        android:title="@string/extra_content">
+        android:title="@string/about_view_content">
         <Preference
             android:textColor="?attr/lightText"
             android:title="@string/like_list">
@@ -13,11 +13,7 @@
             android:title="@string/history_list">
             <intent android:action="info.free.scp.view.user.LaterAndHistoryActivity" />
         </Preference>
-        <Preference
-            android:textColor="?attr/lightText"
-            android:title="@string/game_list">
-            <intent android:action="info.free.scp.view.game.GameListActivity" />
-        </Preference>
+
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -61,32 +57,20 @@
         </Preference>
     </PreferenceCategory>
     <PreferenceCategory
-        android:title="@string/data">
+        android:title="@string/other_setting">
         <Preference
-            android:key="sync_data"
             android:textColor="?attr/lightText"
-            android:title="@string/sync_data">
-
+            android:title="@string/game_list">
+            <intent android:action="info.free.scp.view.game.GameListActivity" />
         </Preference>
         <Preference
-            android:key="backup_data"
+            android:key="query_enter"
             android:textColor="?attr/lightText"
-            android:title="@string/backup_data">
-
-        </Preference>
-        <Preference
-            android:key="restore_data"
-            android:textColor="?attr/lightText"
-            android:title="@string/restore_data">
-
+            android:title="@string/query_enter">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://freeescp.mikecrm.com/IXVGgmc" />
         </Preference>
     </PreferenceCategory>
-    <Preference
-        android:key="query_enter"
-        android:textColor="?attr/lightText"
-        android:title="@string/query_enter">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="http://freeescp.mikecrm.com/IXVGgmc" />
-    </Preference>
+
 </PreferenceScreen>

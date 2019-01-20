@@ -1,9 +1,11 @@
 package info.free.scp.util
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
+import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
@@ -23,6 +25,9 @@ import io.reactivex.ObservableOnSubscribe
 
 class UpdateManager(private var activity: BaseActivity) {
 
+    fun Activity.showToast(msg: String) {
+        Toaster.show(msg)
+    }
     init {
         manager = this
         initReceiver()
@@ -117,7 +122,11 @@ class UpdateManager(private var activity: BaseActivity) {
                     .subscribe{
                         // it表示的是有没有新版本
                         Logger.i("check new version result = $it")
-                        if (!it) checkInitData(false)
+                        if (!it) {
+                            activity.runOnUiThread {
+                                checkInitData(false)
+                            }
+                        }
                     }
         }
     }
@@ -134,14 +143,12 @@ class UpdateManager(private var activity: BaseActivity) {
         mInitCategoryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
-                progressDialog?.progress = progress
                 Logger.i("$progress")
                 if (progress > 90) {
-                    progressDialog?.setMessage("写入数据库中")
+                    Toaster.show("写入数据库中")
                 }
                 if (progress == 100) {
                     Logger.i("init category finish")
-                    progressDialog?.dismiss()
                     if (Utils.onlyEnabled4G(activity) && !activity.isFinishing) {
                         AlertDialog.Builder(activity)
                                 .setTitle("数据初始化")
@@ -180,7 +187,7 @@ class UpdateManager(private var activity: BaseActivity) {
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
         val chooseList =  arrayOf(false,false,false,false,false).toBooleanArray()
         AlertDialog.Builder(activity)
-                .setTitle("选择你想要离线的内容")
+                .setTitle("选择你想要离线的内容（没有离线内容时将直接加载网页）")
                 .setMultiChoiceItems(dbList, chooseList){ _, which, isChecked ->
                     chooseList[which] = isChecked
                 }
@@ -236,7 +243,6 @@ class UpdateManager(private var activity: BaseActivity) {
         }
     }
 
-    var progressDialog: ProgressDialog? = null
     /**
      * 初始化目录
      */
@@ -244,13 +250,7 @@ class UpdateManager(private var activity: BaseActivity) {
         Logger.i("start init category")
         val intent = Intent(activity, InitCategoryService::class.java)
         activity.startService(intent)
-        progressDialog = ProgressDialog(activity)
-        progressDialog?.max = 100
-        progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-        progressDialog?.setMessage("与基金会通信中")
-        // 设置强制显示
-        progressDialog?.setCancelable(false)
-        progressDialog?.show()
+        Toaster.show("与基金会通信中，请稍候")
     }
 
     fun initDetailData(downloadType: Int) {

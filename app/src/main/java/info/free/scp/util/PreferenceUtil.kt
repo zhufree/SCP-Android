@@ -129,8 +129,8 @@ object PreferenceUtil {
         setStringValue("update", dbIndex, time)
     }
 
-    fun getServerLastUpdateTime(dbIndex: String): String {
-        return getStringValue("update", dbIndex)
+    fun getServerLastUpdateTime(dbIndex: Int): String {
+        return getStringValue("update", "last_update_time_$dbIndex")
     }
 
     /**
@@ -202,7 +202,7 @@ object PreferenceUtil {
                 tactical[level]
             }
             else ->{
-                outer[level]
+                ""
             }
         }
     }

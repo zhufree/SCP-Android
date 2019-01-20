@@ -52,4 +52,5 @@ open class BaseActivity : AppCompatActivity() {
         intent.setClass(this, activity)
         startActivity(intent)
     }
+
 }

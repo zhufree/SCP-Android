@@ -11,10 +11,7 @@ import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
 import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
 import info.free.scp.db.ScpDao
-import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.UpdateManager
-import info.free.scp.util.Utils
+import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*
 
@@ -74,14 +71,21 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             // TODO 显示更新时间
-            findPreference("download_scp").summary = getString(R.string.download_summary,"",
+            findPreference("download_scp").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getServerLastUpdateTime(0),
                     PreferenceUtil.getDetailLastLoadTime(0))
-            findPreference("download_scp_cn").summary = getString(R.string.download_summary,"",
+            findPreference("download_scp_cn").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getServerLastUpdateTime(1),
                     PreferenceUtil.getDetailLastLoadTime(1))
-            findPreference("download_tale").summary = getString(R.string.download_summary,"",
+            findPreference("download_tale").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getServerLastUpdateTime(2),
                     PreferenceUtil.getDetailLastLoadTime(2))
-            findPreference("download_other").summary = getString(R.string.download_summary,"",
+            findPreference("download_other").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getServerLastUpdateTime(3),
                     PreferenceUtil.getDetailLastLoadTime(3))
+            findPreference("download_collection").summary = getString(R.string.download_summary,
+                    PreferenceUtil.getServerLastUpdateTime(4),
+                    PreferenceUtil.getDetailLastLoadTime(4))
             findPreference("download_scp").setOnPreferenceClickListener {
 //                EventUtil.onEvent(context, EventUtil.hideReadContent)
                 showNoticeDialog(DOWNLOAD_SCP)
@@ -105,6 +109,50 @@ class SettingsActivity : BaseActivity() {
             findPreference("sync_category").setOnPreferenceClickListener {
                 ScpDao.getInstance().resetCategoryData()
                 UpdateManager.getInstance(activity as BaseActivity).initCategoryData()
+                true
+            }
+
+            if (!BackupHelper.getInstance(context!!).checkBackUpFileExist()) {
+                findPreference("restore_data").isEnabled = false
+            }
+            findPreference("backup_data").title = "备份数据库${if (BackupHelper.getInstance(context!!)
+                            .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
+            findPreference("restore_data").title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
+                            .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
+
+            findPreference("backup_data")?.setOnPreferenceClickListener {
+                context?.let {ctx->
+                    EventUtil.onEvent(ctx, EventUtil.clickBackUpData)
+                    BackupHelper.getInstance(ctx).backupDB()
+                    findPreference("restore_data").isEnabled = true
+                }
+                true
+            }
+            findPreference("restore_data")?.setOnPreferenceClickListener {
+                context?.let {ctx->
+                    EventUtil.onEvent(ctx, EventUtil.clickRestoreData)
+                    BackupHelper.getInstance(ctx).restoreDB()
+                }
+                true
+            }
+
+            findPreference("sync_data")?.setOnPreferenceClickListener {
+                if (PreferenceUtil.getInitCategoryFinish()) {
+                    AlertDialog.Builder(activity)
+                            .setTitle("注意")
+                            .setMessage("该选项将删除所有目录及正文数据并重新加载，是否确定？")
+                            .setPositiveButton("确定") { dialog, _ ->
+                                EventUtil.onEvent(activity, EventUtil.clickSyncData)
+                                UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
+                                dialog.dismiss()
+                            }
+                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                            .create().show()
+                } else {
+                    EventUtil.onEvent(activity, EventUtil.clickSyncData)
+                    UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
+                    // 只允许点击一次
+                }
                 true
             }
         }

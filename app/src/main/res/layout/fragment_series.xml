@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.home.SeriesFragment"
+    tools:context="info.free.scp.view.home.HomeFragment"
     android:background="?attr/containerBg">
 
     <android.support.design.widget.AppBarLayout
@@ -91,7 +91,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:text="@string/title_joke_scp"
+        android:text="@string/later_list"
         android:textColor="?attr/darkText"
         app:layout_constraintBottom_toTopOf="@+id/tv_direct"
         app:layout_constraintDimensionRatio="1:1"
@@ -110,7 +110,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:text="@string/title_direct"
+        android:text="@string/title_joke_scp"
         android:textColor="?attr/darkText"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toStartOf="@+id/tv_direct"
@@ -128,7 +128,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:text="@string/menu_random"
+        android:text="@string/title_direct"
         android:textColor="?attr/darkText"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"

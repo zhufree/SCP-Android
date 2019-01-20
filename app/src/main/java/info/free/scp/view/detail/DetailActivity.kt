@@ -141,7 +141,7 @@ class DetailActivity : BaseActivity() {
                         }
                     }
                 }
-                return true
+                return false
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {

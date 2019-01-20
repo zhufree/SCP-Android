@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
@@ -629,7 +631,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
-                        arrayOf(type.toString(), "%$number%"))
+                        arrayOf(type.toString(), if (type == SAVE_JOKE || type == SAVE_JOKE_CN)
+                            "%-$number-%" else "%-$number%"))
                 with(cursor) {
                     this?.let {
                         while (it.moveToNext()) {

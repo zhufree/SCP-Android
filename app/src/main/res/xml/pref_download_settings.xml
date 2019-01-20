@@ -20,8 +20,31 @@
         android:title="@string/download_other_title">
     </Preference>
     <Preference
+        android:key="download_collection"
+        android:textColor="?attr/lightText"
+        android:title="@string/download_collection">
+    </Preference>
+    <Preference
         android:key="sync_category"
         android:textColor="?attr/lightText"
         android:title="@string/sync_category_title">
+    </Preference>
+    <Preference
+        android:key="backup_data"
+        android:textColor="?attr/lightText"
+        android:title="@string/backup_data">
+
+    </Preference>
+    <Preference
+        android:key="restore_data"
+        android:textColor="?attr/lightText"
+        android:title="@string/restore_data">
+
+    </Preference>
+    <Preference
+        android:key="sync_data"
+        android:textColor="?attr/lightText"
+        android:title="@string/sync_data">
+
     </Preference>
 </PreferenceScreen>

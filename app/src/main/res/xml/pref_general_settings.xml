@@ -8,6 +8,12 @@
             <intent android:action="info.free.scp.view.user.LikeActivity" />
         </Preference>
         <Preference
+            android:key="history_list"
+            android:textColor="?attr/lightText"
+            android:title="@string/history_list">
+            <intent android:action="info.free.scp.view.user.LaterAndHistoryActivity" />
+        </Preference>
+        <Preference
             android:textColor="?attr/lightText"
             android:title="@string/game_list">
             <intent android:action="info.free.scp.view.game.GameListActivity" />

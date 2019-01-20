@@ -25,7 +25,7 @@ class ScpListFragment : BaseFragment() {
     private var categoryType = -1
     private var clickPosition = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
-    private val scpList: MutableList<ScpModel>? = emptyList<ScpModel>().toMutableList()
+    private val scpList: MutableList<ScpModel?>? = emptyList<ScpModel>().toMutableList()
     private var scpAdapter: ScpAdapter? = null
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var currentScrollPosition = -1
@@ -58,8 +58,8 @@ class ScpListFragment : BaseFragment() {
                     scpList?.let {
                         PreferenceUtil.addPoints(2)
                         val intent = Intent()
-                        intent.putExtra("link", it[position].link)
-                        intent.putExtra("sId", it[position].sId)
+                        intent.putExtra("link", it[position]?.link)
+                        intent.putExtra("sId", it[position]?.sId)
                         intent.setClass(mContext, DetailActivity::class.java)
                         startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                     }
@@ -88,19 +88,25 @@ class ScpListFragment : BaseFragment() {
             }
             SCPConstants.Category.SCP_EX -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
             }
+//            SCPConstants.Category.SCP_EX_CN -> {
+//                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
+//            }
             SCPConstants.Category.SCP_ABNORMAL -> {
                 scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
+                // 三句话外围
+                scpList?.add(ScpDao.getInstance().getOneScpModelByLink("/short-stories"))
             }
 
-            SCPConstants.Category.SCP_ARCHIVED -> {
+            SCPConstants.Category.SCP_ARCHIVES -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
+                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
             }
             SCPConstants.Category.SCP_DECOMMISSIONED -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
             }
             SCPConstants.Category.SCP_REMOVED -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
             }
             SCPConstants.Category.TALES -> {
                 scpList?.addAll(ScpDao.getInstance().getTaleByTypeAndLetter(SCPConstants.ScpType.SAVE_TALES
@@ -135,6 +141,10 @@ class ScpListFragment : BaseFragment() {
             }
             SCPConstants.Category.CONTEST_CN -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
+            }
+            SCPConstants.Category.ABOUT_STUFF -> {
+                // 相关材料
+                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
             }
             SCPConstants.Category.TALES_BY_TIME -> {
                 if (taleTimeList.isEmpty()) {

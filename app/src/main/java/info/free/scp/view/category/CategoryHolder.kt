@@ -15,7 +15,6 @@ import kotlinx.android.synthetic.main.item_category.view.*
  */
 
 class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
-    private val categoryCount = PreferenceUtil.getCategoryCount()
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
 
@@ -30,14 +29,14 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
         when (type) {
             SERIES -> {
                 val start = data.toString()
-                itemView.tvScpTitle.text = "SCP系列${if (start == "0") "0" else start.substring(0,start.length - 2)}██"
+                itemView.tv_scp_title.text = "SCP系列${if (start == "0") "0" else start.substring(0,start.length - 2)}00+"
             }
             SERIES_CN -> {
                 val start = data.toString()
-                itemView.tvScpTitle.text = "SCP-CN系列${if (start == "0") "0" else start.substring(0,start.length - 2)}██"
+                itemView.tv_scp_title.text = "SCP-CN系列${if (start == "0") "0" else start.substring(0,start.length - 2)}00+"
             }
             else -> {
-                itemView.tvScpTitle.text = data as String
+                itemView.tv_scp_title.text = data as String
             }
         }
     }

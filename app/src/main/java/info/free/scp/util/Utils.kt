@@ -85,7 +85,7 @@ object Utils {
     }
 
     fun formatDate(time: Long): String {
-        val format =  SimpleDateFormat.getDateInstance(FULL)
+        val format =  SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
         return format.format(time)
     }
 

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.SimpleScp
 import info.free.scp.view.base.BaseAdapter
 
 /**
@@ -12,12 +13,11 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
-class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
-    : BaseAdapter<SearchHolder, ScpModel?>(mContext, dataList) {
+class SimpleScpAdapter(mContext: Context, dataList: MutableList<SimpleScp?>)
+    : BaseAdapter<SearchHolder, SimpleScp?>(mContext, dataList) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_search, parent, false)
-        //        val newHolder = CategoryHolder(view)
         view?.setOnLongClickListener(this)
         view?.setOnClickListener(this)
         return SearchHolder(view)
@@ -25,6 +25,6 @@ class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
 
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         holder.itemView.tag = position
-        holder.setData(dataList[position]?.title, null)
+        holder.setData(dataList[position]?.title, dataList[position]?.viewTime)
     }
 }

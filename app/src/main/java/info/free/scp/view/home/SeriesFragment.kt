@@ -10,13 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.home.HomeFragment.CategoryListener
+import info.free.scp.view.search.SearchActivity
+import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_series.*
 
 
@@ -50,43 +52,56 @@ class SeriesFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        home_toolbar?.setTitle(R.string.app_name)
+        home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
+        home_toolbar?.setOnMenuItemClickListener{
+            when (it.itemId) {
+                R.id.search -> {
+                    activity?.startActivity(Intent(activity, SearchActivity::class.java))
+                }
+            }
+            true
+        }
         tv_series_doc?.background?.alpha = 90
-        tv_other_doc?.background?.alpha = 90
         tv_story_doc?.background?.alpha = 90
         tv_about_doc?.background?.alpha = 90
-        tv_direct_doc?.background?.alpha = 90
-        tv_random?.background?.alpha = 90
+        tv_read_later?.background?.alpha = 90
+        tv_joke_doc?.background?.alpha = 90
+        tv_direct?.background?.alpha = 90
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
-        }
-        tv_other_doc?.setOnClickListener{
-            goToDocPage(SCPConstants.Entry.OTHER_DOC)
         }
         tv_story_doc?.setOnClickListener{
             goToDocPage(SCPConstants.Entry.STORY_DOC)
         }
         tv_about_doc?.setOnClickListener{
-            goToDocPage(SCPConstants.Entry.ABOUT_STUFF)
+            goToDocPage(SCPConstants.Entry.ABOUT_SCP_DOC)
         }
-        tv_direct_doc?.setOnClickListener{
-            activity?.startActivity(Intent(activity, DirectActivity::class.java))
+        tv_read_later?.setOnClickListener{
+            val laterIntent = Intent(activity, LaterAndHistoryActivity::class.java)
+            laterIntent.putExtra("view_type", LATER_TYPE)
+            activity?.startActivity(laterIntent)
         }
-        tv_random?.setOnClickListener {
+        tv_joke_doc?.setOnClickListener{
+            goToDocPage(SCPConstants.Entry.JOKE_DOC)
+        }
+        tv_direct?.setOnClickListener {
+            // TODO 改成直达事件
             EventUtil.onEvent(activity, EventUtil.clickRandom)
             PreferenceUtil.addPoints(2)
-            activity?.startActivity(Intent(activity, DetailActivity::class.java))
+            activity?.startActivity(Intent(activity, DirectActivity::class.java))
         }
     }
 
     fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
         tv_series_doc?.setTextColor(ThemeUtil.darkText)
-        tv_other_doc?.setTextColor(ThemeUtil.darkText)
-
         tv_story_doc?.setTextColor(ThemeUtil.darkText)
+
         tv_about_doc?.setTextColor(ThemeUtil.darkText)
-        tv_direct_doc?.setTextColor(ThemeUtil.darkText)
-        tv_random?.setTextColor(ThemeUtil.darkText)
+        tv_read_later?.setTextColor(ThemeUtil.darkText)
+        tv_joke_doc?.setTextColor(ThemeUtil.darkText)
+        tv_direct?.setTextColor(ThemeUtil.darkText)
     }
 
     override fun onDetach() {

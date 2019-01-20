@@ -9,13 +9,10 @@ object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
     // category type
     object Entry {
-        const val SCP_DOC = 0 // SCP文档
-        const val OTHER_DOC = 1 // 其他文档
-        const val STORY_DOC = 2 // 故事外围
-        const val ABOUT_STUFF = 3 // 相关材料，全部单页面
+        const val SCP_DOC = 0 // SCP文档，包含其他文档
+        const val STORY_DOC = 1 // 故事外围
+        const val ABOUT_SCP_DOC = 3 // 关于基金会 设定中心，GOI、hub等，相关材料，艺作、传承、精品、竞赛、征文等
         const val JOKE_DOC = 4 // 搞笑作品
-        const val SETTINGS_DOC = 5 // 设定中心，GOI、hub等
-        const val MORE_ABOUT = 6 // 艺作、传承、精品、竞赛、征文等
     }
     object Download {
         const val DOWNLOAD_SCP = 0
@@ -28,8 +25,9 @@ object SCPConstants {
     object Category {
         const val SERIES = 1
         const val SERIES_CN = 2
-        const val SCP_EX = 16
-        const val SCP_ARCHIVED = 17
+        const val SCP_EX = 3
+        const val SCP_EX_CN = 4
+        const val SCP_ARCHIVES = 17
         const val SCP_REMOVED = 18
         const val SCP_DECOMMISSIONED = 19
         const val SCP_ABNORMAL = 20
@@ -63,10 +61,11 @@ object SCPConstants {
 
         const val SAVE_JOKE = 5
         const val SAVE_JOKE_CN = 6
-        const val SAVE_EX = 8
         const val SAVE_ARCHIVED = 7
-        const val SAVE_REMOVED = 11
+        const val SAVE_EX = 8
+        const val SAVE_EX_CN = 9
         const val SAVE_DECOMMISSIONED = 10
+        const val SAVE_REMOVED = 11
         // 后面加字母
 
         const val SAVE_STORY_SERIES = 19
@@ -93,4 +92,7 @@ object SCPConstants {
     object RequestCode {
         const val CATEGORY_TO_DETAIL = 0
     }
+
+    const val HISTORY_TYPE = 0
+    const val LATER_TYPE = 1
 }

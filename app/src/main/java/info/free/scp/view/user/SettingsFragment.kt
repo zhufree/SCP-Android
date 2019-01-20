@@ -58,6 +58,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             activity?.startActivity(intent)
             true
         }
+//        findPreference("history_list").setOnPreferenceClickListener {
+//            val intent = Intent(activity, LaterAndHistoryActivity::class.java)
+//            intent.putExtra("view_type", 0)
+//            activity?.startActivity(intent)
+//            true
+//        }
 
 
         findPreference("sync_data")?.setOnPreferenceClickListener {

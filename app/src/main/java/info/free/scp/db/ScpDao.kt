@@ -9,6 +9,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.SimpleScp
 import info.free.scp.util.Logger
 import info.free.scp.util.PreferenceUtil
 import java.util.*
@@ -257,7 +258,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     /**
      * 收藏列表只展示一个
      */
-    private fun getOneScpModelByLink(link: String): ScpModel? {
+    fun getOneScpModelByLink(link: String): ScpModel? {
         return getScpModelByLink(link)[0]
     }
 
@@ -311,8 +312,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             }
             if (type == SERIES) {
                 resultList.sortBy {
-                    if (it.link.split("-").isEmpty()) it.link.split("-")[1]
-                    else it.link.substring(0, 4)
+                    if (it.link.startsWith("/scp") && !it.link.split("-").isEmpty())
+                        it.link.split("-")[1].toInt()
+                    else it.link.substring(1, 5).toInt()
                 }
             } else {
                 resultList.sortBy {
@@ -501,22 +503,21 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             randomCount = 0
             return null
         }
-        val randomIndex = Random().nextInt(12000)
         var scpModel: ScpModel? = null
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
-                    + ScpTable.INDEX + "=? ", arrayOf(randomIndex.toString()))
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    val link = getCursorString(cursor, ScpTable.LINK)
-                    Log.i("random", link)
-                    val detailHtml = getDetailByLink(link)
-                    scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-                        getRandomScp() else extractScp(cursor)
-                } else {
-                    scpModel = getRandomScp()
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.DETAIL_TABLE_NAME, null)
+            if (cursor != null && cursor.count > 0) {
+                val randomIndex = Random().nextInt(cursor.count)
+                while (cursor.moveToNext()){
+                    if (cursor.position == randomIndex){
+                        val link = getCursorString(cursor, ScpTable.LINK)
+                        Log.i("random", link)
+                        val detailHtml = getDetailByLink(link)
+                        scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
+                            getRandomScp() else getOneScpModelByLink(link)
+                        cursor.close()
+                    }
                 }
-                cursor.close()
             }
             return scpModel
         } catch (e: Exception) {
@@ -692,28 +693,39 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
     }
 
-    fun insertViewListItem(db: SQLiteDatabase, model: ScpModel, viewType: Int) {
-        db.execSQL(ScpTable.INSERT_VIEW_LIST_SQL, arrayOf(model.link, model.title, viewType))
-//        val cv = ContentValues()
-//        if (model.link.isNotEmpty()) {
-//            cv.put(ScpTable.LINK, model.link)
-//        }
-//        if (model.title.isNotEmpty()) {
-//            cv.put(ScpTable.TITLE, model.title)
-//        }
-//        cv.put(ScpTable.VIEW_LIST_TYPE, viewType)
-//        db.beginTransaction()
-//        try {
-//            db.insert(ScpTable.VIEW_LIST_TABLE_NAME, null, cv)
-//            db.setTransactionSuccessful()
-//        } finally {
-//            db.endTransaction()
-//        }
+    fun insertViewListItem(model: ScpModel, viewType: Int) {
+        with(writableDatabase) {
+            this.execSQL(ScpTable.INSERT_VIEW_LIST_SQL, arrayOf(model.link, model.title, viewType))
+        }
     }
 
-    fun deleteViewListItem(db: SQLiteDatabase, model: ScpModel, viewType: Int) {
-        db.execSQL("DELETE FROM " + ScpTable.VIEW_LIST_TABLE_NAME + " WHERE " + ScpTable.LINK
-                + model.link + " AND " + ScpTable.VIEW_LIST_TYPE + " = " + viewType)
+    fun deleteViewListItem(model: ScpModel, viewType: Int) {
+        with(writableDatabase) {
+            this.execSQL("DELETE FROM " + ScpTable.VIEW_LIST_TABLE_NAME + " WHERE " + ScpTable.LINK
+                    + " = ?" + " AND " + ScpTable.VIEW_LIST_TYPE + " = " + viewType, arrayOf(model.link))
+        }
+    }
+
+    fun getViewListByTypeAndOrder(type: Int, order: Int): MutableList<SimpleScp>{
+        val resultList = emptyList<SimpleScp>().toMutableList()
+        try {
+            with(readableDatabase) {
+                val cursor = this.rawQuery("SELECT * FROM " + ScpTable.VIEW_LIST_TABLE_NAME + " WHERE " +
+                        ScpTable.VIEW_LIST_TYPE + " = ? ORDER BY " + ScpTable.VIEW_TIME + if (order == 0) " ASC" else " DESC",
+                        arrayOf(type.toString()))
+                with(cursor) {
+                    while (this.moveToNext()) {
+                        val link = getCursorString(cursor, ScpTable.LINK)
+                        val title = getCursorString(cursor, ScpTable.TITLE)
+                        val time = getCursorString(cursor, ScpTable.VIEW_TIME)
+                        resultList.add(SimpleScp(link, title, time))
+                    }
+                }
+            }
+            return resultList
+        } catch (e: Exception) {
+        }
+        return resultList
     }
 
     /**
@@ -748,6 +760,14 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     private fun getCursorInt(cursor: Cursor?, columnIndex: String): Int {
         return if (cursor?.getColumnIndex(columnIndex)?.compareTo(0) == 1) {
             cursor.getInt(cursor.getColumnIndex(columnIndex))
+        } else {
+            0
+        }
+    }
+
+    private fun getCursorLong(cursor: Cursor?, columnIndex: String): Long {
+        return if (cursor?.getColumnIndex(columnIndex)?.compareTo(0) == 1) {
+            cursor.getLong(cursor.getColumnIndex(columnIndex))
         } else {
             0
         }

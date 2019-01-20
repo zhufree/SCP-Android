@@ -66,7 +66,8 @@ object ScpTable {
     const val CREATE_VIEW_LIST_TABLE_SQL = "create table IF NOT EXISTS $VIEW_LIST_TABLE_NAME (" +
             "$LINK VARCHAR PRIMARY KEY, $TITLE VARCHAR, $VIEW_LIST_TYPE INTEGER, " +
             // timestamp DEFAULT CURRENT_TIMESTAMP，在初始化时自动设置时间戳
-            "$VIEW_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
+            "$VIEW_TIME TIMESTAMP DEFAULT (datetime(CURRENT_TIMESTAMP,'localtime')) " +
+            "UPDATE (datetime(CURRENT_TIMESTAMP,'localtime'))" +
             ")"
 
     const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +
@@ -86,7 +87,7 @@ object ScpTable {
     const val INSERT_LIKE_SQL = "INSERT INTO $LIKE_AND_READ_TABLE_NAME (" +
             "$LINK, $TITLE, $LIKE, $HAS_READ) VALUES (?,?,?,?)"
 
-    const val INSERT_VIEW_LIST_SQL = "INSERT INTO $VIEW_LIST_TABLE_NAME (" +
+    const val INSERT_VIEW_LIST_SQL = "REPLACE INTO $VIEW_LIST_TABLE_NAME (" +
             "$LINK, $TITLE, $VIEW_LIST_TYPE) VALUES (?,?,?)"
 
     const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME"

@@ -66,30 +66,6 @@ class LibraryFragment : BaseFragment() {
         tv_settings_doc?.background?.alpha = 90
         tvEssayContest?.background?.alpha = 90
         tvEventRecord?.background?.alpha = 90
-        view.tv_joke_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.JOKE_DOC)
-        }
-        view.tv_settings_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.SETTINGS_DOC)
-        }
-        view.tv_more_about?.setOnClickListener {
-            // TODO ?
-            goToDocPage(SCPConstants.Entry.MORE_ABOUT)
-        }
-        view.tvEssayContest?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.MORE_ABOUT)
-        }
-        // TODO
-        view.tvEventRecord?.setOnClickListener {
-            listener?.onCategoryClick(EVENT)
-        }
-        view.tvMore?.setOnClickListener {
-            if (isCnPage) {
-                listener?.onCategoryClick(TALES_BY_TIME)
-            } else {
-                Toast.makeText(ScpApplication.context, "更多功能敬请期待", LENGTH_SHORT).show()
-            }
-        }
     }
 
     fun refreshTheme() {

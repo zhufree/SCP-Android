@@ -56,7 +56,7 @@ object ThemeUtil {
             setTheme(activity)
             initColor(activity)
         }
-        LocalBroadcastManager.getInstance(ScpApplication.context!!).sendBroadcast(Intent(ACTION_CHANGE_THEME))
+        LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
     }
 
     private fun initColor(context: Context) {

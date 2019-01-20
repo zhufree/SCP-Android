@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.fragment_category.*
  */
 class CategoryFragment : BaseFragment() {
     private var categoryType = -1
+    private var subPosition = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
     private var categoryAdapter: CategoryAdapter? = null
@@ -38,14 +39,16 @@ class CategoryFragment : BaseFragment() {
 
     private fun initData() {
         categoryType = arguments?.getInt("category_type")?:-1
+        subPosition = arguments?.getInt("sub_position")?:-1
         categoryList.clear()
         // 一级目录
         when (categoryType) {
             SCPConstants.Category.SERIES -> {
-                categoryList.addAll((0 until (5000/categoryCount)).map { it*categoryCount })
+                // count = 100 0..10->001~900
+                categoryList.addAll((0 until (1000/categoryCount)).map { (it+subPosition*10)*categoryCount })
             }
             SCPConstants.Category.SERIES_CN -> {
-                categoryList.addAll((0 until (2000/categoryCount)).map { it*categoryCount })
+                categoryList.addAll((0 until (1000/categoryCount)).map { (it+subPosition*10)*categoryCount })
             }
             SCPConstants.Category.TALES -> {
                 // 1021
@@ -75,7 +78,7 @@ class CategoryFragment : BaseFragment() {
                         currentCategoryPosition = position
                         val subCateIntent = Intent(it, ScpListActivity::class.java)
                         subCateIntent.putExtra("category_type", categoryType)
-                        subCateIntent.putExtra("click_position", position)
+                        subCateIntent.putExtra("click_position", (subPosition*10)+position)
                         startActivity(subCateIntent)
                     }
                 }
@@ -100,10 +103,11 @@ class CategoryFragment : BaseFragment() {
 
     companion object {
 
-        fun newInstance(categoryType: Int): CategoryFragment {
+        fun newInstance(categoryType: Int, subPosition: Int): CategoryFragment {
             val fragment = CategoryFragment()
             val args = Bundle()
             args.putInt("category_type", categoryType)
+            args.putInt("sub_position", subPosition)
 //            args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
             return fragment

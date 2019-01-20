@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.fragment_category.*
 class ScpItemFragment : BaseFragment() {
     private var categoryType = -1
     private var clickPosition = -1
-    private val scpList: MutableList<ScpModel>? = emptyList<ScpModel>().toMutableList()
+    private val scpList: MutableList<ScpModel?>? = emptyList<ScpModel>().toMutableList()
     private var scpAdapter: ScpAdapter? = null
     private var currentScrollPosition = -1
 
@@ -55,8 +55,8 @@ class ScpItemFragment : BaseFragment() {
                 scpList?.let {
                     PreferenceUtil.addPoints(2)
                     val intent = Intent()
-                    intent.putExtra("link", it[position].link)
-                    intent.putExtra("sId", it[position].sId)
+                    intent.putExtra("link", it[position]?.link)
+                    intent.putExtra("sId", it[position]?.sId)
                     intent.setClass(mContext, DetailActivity::class.java)
                     startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                 }

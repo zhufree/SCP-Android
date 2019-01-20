@@ -8,15 +8,15 @@
 
     <string name="title_scp_documents">SCP文档</string>
     <string name="title_other_documents">其他文档</string>
-    <string name="title_about_documents">相关材料</string>
     <string name="title_more_about">更多相关</string>
-    <string name="title_direct">编号直达</string>
+    <string name="title_direct">编号直达/随机</string>
 
 
     <string name="title_series_about">相关信息</string>
 
 
     <string name="title_scp_story">故事外围</string>
+    <string name="title_about_scp">关于基金会</string>
     <string name="title_joke_scp">搞笑作品</string>
     <string name="title_settings">基金会设定</string>
     <string name="title_scp_settings">设定中心</string>
@@ -27,6 +27,7 @@
     <string name="title_scp_essay_cn">征文竞赛(CN)</string>
     <string name="title_scp_event">事故记录</string>
     <string name="title_scp_story_by_time">按时间排序(CN)</string>
+    <string name="later_list">稍后阅读</string>
 
     <string name="title_more_function">更多功能开发中</string>
 
@@ -97,6 +98,7 @@
 
     <string name="extra_content">额外内容</string>
     <string name="like_list">收藏列表</string>
+    <string name="history_list">历史记录</string>
     <string name="game_list">游戏列表</string>
     <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>

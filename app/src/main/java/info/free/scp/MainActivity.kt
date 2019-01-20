@@ -24,13 +24,14 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.ScpListActivity
 import info.free.scp.view.home.HomeFragment
+import info.free.scp.view.home.SeriesFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class MainActivity : BaseActivity(), HomeFragment.CategoryListener, UserFragment.AboutListener {
     private var currentFragment: BaseFragment? = null
-    private val homeFragment = HomeFragment.newInstance()
+    private val homeFragment = SeriesFragment.newInstance()
     //    private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 

@@ -67,6 +67,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.user.LaterAndHistoryActivity">
+            <intent-filter>
+                <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".view.game.GameListActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.game.GameListActivity" />
@@ -84,7 +91,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.category.SeriesDocActivity" />
-        <activity android:name=".view.home.DirectActivity"></activity>
+        <activity android:name=".view.home.DirectActivity"/>
     </application>
 
 </manifest>

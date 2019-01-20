@@ -26,6 +26,7 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.R.style.AppTheme
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDao
 import info.free.scp.util.*
@@ -101,9 +102,10 @@ class DetailActivity : BaseActivity() {
             readType = 1
             scp = ScpDao.getInstance().getRandomScp()
         } else {
+            sId = intent?.getStringExtra("sId")?:""
+            scp = if(sId.isNotEmpty()) ScpDao.getInstance().getScpModelById(sId) else
+                ScpDao.getInstance().getOneScpModelByLink(url)
             url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
-            sId = intent.getStringExtra("sId")
-            scp = ScpDao.getInstance().getScpModelById(sId)
         }
 
         scp?.let {
@@ -165,7 +167,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setData(scp: ScpModel?) {
         scp?.let {
-
+            ScpDao.getInstance().insertViewListItem(it, HISTORY_TYPE)
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
             // 更新标题

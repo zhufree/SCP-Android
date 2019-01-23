@@ -79,10 +79,10 @@ class SeriesDocActivity : BaseActivity() {
                         CategoryFragment.newInstance(SERIES_CN, 0),
                         CategoryFragment.newInstance(SERIES_CN, 1),
                         ScpListFragment.newInstance(SCP_EX, 0), // cn合并
-                        ScpListFragment.newInstance(SCP_ARCHIVES, 0)
+                        CategoryFragment.newInstance(SCP_ARCHIVES, 0)
                 )
                         .toList()
-                titleList = arrayOf("SCP系列1", "SCP-CN系列2", "SCP-CN系列3", "SCP-CN系列4", "SCP-CN系列5",
+                titleList = arrayOf("SCP系列1", "SCP系列2", "SCP系列3", "SCP系列4", "SCP系列5",
                         "SCP-CN系列1", "SCP-CN系列2", "已解明SCP", "其他SCP").toList()
             }
             STORY_DOC -> {

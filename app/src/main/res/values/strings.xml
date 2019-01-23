@@ -27,7 +27,7 @@
     <string name="title_scp_essay_cn">征文竞赛(CN)</string>
     <string name="title_scp_event">事故记录</string>
     <string name="title_scp_story_by_time">按时间排序(CN)</string>
-    <string name="later_list">稍后阅读</string>
+    <string name="later_list">未读列表</string>
 
     <string name="title_more_function">更多功能开发中</string>
 
@@ -108,7 +108,6 @@
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
     <string name="about_developer">支持开发者</string>
-    <string name="copyright_explained">版权说明</string>
     <string name="query_enter">用户调查问卷v0.0.9</string>
     <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
@@ -121,6 +120,7 @@
     <string name="category_height">目录条目高度</string>
     <string name="category_interval">目录条目间距</string>
     <string name="font_size_setting">字体设置</string>
+    <string name="copyright_notice">"除非特别注明，本站所有内容采用Creative Commons Attribution-ShareAlike 3.0 License授权。"</string>
 
     <string name="download_scp_title">SCP系列</string>
     <string name="download_scp_cn_title">SCP-CN系列</string>

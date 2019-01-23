@@ -50,6 +50,9 @@ class CategoryFragment : BaseFragment() {
             SCPConstants.Category.SERIES_CN -> {
                 categoryList.addAll((0 until (1000/categoryCount)).map { (it+subPosition*10)*categoryCount })
             }
+            SCPConstants.Category.SCP_ARCHIVES -> {
+                categoryList.addAll(arrayOf("已归档SCP", "废弃SCP", "删除SCP"))
+            }
             SCPConstants.Category.TALES -> {
                 // 1021
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",

@@ -180,7 +180,7 @@ class DetailActivity : BaseActivity() {
             } else {
                 pbLoading.visibility = GONE
                 webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                        + jsScript + detailHtml + copyRightHtml,
+                        + jsScript + detailHtml,
                         "text/html", "utf-8", null)
             }
             nsv_web_wrapper?.scrollTo(0, 0)
@@ -193,7 +193,7 @@ class DetailActivity : BaseActivity() {
     private fun refreshStyle() {
         currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
         webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                + jsScript + detailHtml + copyRightHtml,
+                + jsScript + detailHtml,
                 "text/html", "utf-8", null)
     }
 
@@ -222,7 +222,7 @@ class DetailActivity : BaseActivity() {
                             onlineMode = 0
                             it.setTitle(R.string.online_mode)
                             webView?.loadDataWithBaseURL("file:///android_asset/",
-                                    currentTextStyle + detailHtml + copyRightHtml,
+                                    currentTextStyle + detailHtml,
                                     "text/html", "utf-8", null)
                         }
                     }

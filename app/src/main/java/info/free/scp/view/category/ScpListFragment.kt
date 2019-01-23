@@ -100,13 +100,11 @@ class ScpListFragment : BaseFragment() {
             }
 
             SCPConstants.Category.SCP_ARCHIVES -> {
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
-                scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
-            }
-            SCPConstants.Category.SCP_DECOMMISSIONED -> {
-            }
-            SCPConstants.Category.SCP_REMOVED -> {
+                when (clickPosition) {
+                    0->scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
+                    1->scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
+                    2->scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
+                }
             }
             SCPConstants.Category.TALES -> {
                 scpList?.addAll(ScpDao.getInstance().getTaleByTypeAndLetter(SCPConstants.ScpType.SAVE_TALES

@@ -43,18 +43,16 @@
             <intent android:action="info.free.scp.view.user.AboutAppActivity" />
         </Preference>
         <Preference
+            android:key="copyright"
+            android:textColor="?attr/lightText"
+            android:title="@string/copyright">
+        </Preference>
+        <Preference
             android:textColor="?attr/lightText"
             android:title="@string/about_developer">
             <intent android:action="info.free.scp.view.user.AboutMeActivity" />
         </Preference>
-        <Preference
-            android:key="query_enter"
-            android:textColor="?attr/lightText"
-            android:title="@string/query_enter">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="http://freeescp.mikecrm.com/IXVGgmc" />
-        </Preference>
+
 
     </PreferenceCategory>
     <PreferenceCategory
@@ -65,12 +63,12 @@
             <intent android:action="info.free.scp.view.game.GameListActivity" />
         </Preference>
         <Preference
-            android:key="copyright"
+            android:key="query_enter"
             android:textColor="?attr/lightText"
-            android:title="@string/copyright_notice">
+            android:title="@string/query_enter">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://scp-wiki-cn.wikidot.com/licensing-guide" />
+                android:data="http://freeescp.mikecrm.com/IXVGgmc" />
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

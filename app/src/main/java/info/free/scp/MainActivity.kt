@@ -40,6 +40,7 @@ class MainActivity : BaseActivity() {
             R.id.navigation_home -> {
                 if (homeFragment.isAdded) {
                     transaction?.show(homeFragment)
+                    transaction?.hide(userFragment)
                 } else {
                     transaction?.add(R.id.flMainContainer, homeFragment)
                 }
@@ -57,6 +58,7 @@ class MainActivity : BaseActivity() {
             R.id.navigation_about -> {
                 if (userFragment.isAdded) {
                     transaction?.show(userFragment)
+                    transaction?.hide(homeFragment)
                 } else {
                     transaction?.add(R.id.flMainContainer, userFragment)
                 }

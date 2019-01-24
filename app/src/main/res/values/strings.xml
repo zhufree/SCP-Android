@@ -80,6 +80,8 @@
     <string name="menu_search">搜索</string>
     <string name="menu_random">随机</string>
 
+    <string name="menu_download_help">下载页说明</string>
+
     <string name="job_desc_1">收容专家在基金会设施有两个主要职责。首先，收容小组会响应呼叫并对异常项目，
         个体或现象的异常活动状态进行判断，并确保和建立初次收容，然后将它们运送到最近的基金会收容site。
         另外，基金会收容工程师和技师负责对基金会设施内的异常项目，个体或现象的收容单位和方案进行设计，改进和维护。</string>
@@ -107,6 +109,7 @@
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
+    <string name="copyright">版权说明</string>
     <string name="about_developer">支持开发者</string>
     <string name="query_enter">用户调查问卷v0.0.9</string>
     <string name="other_setting">其他</string>
@@ -120,7 +123,9 @@
     <string name="category_height">目录条目高度</string>
     <string name="category_interval">目录条目间距</string>
     <string name="font_size_setting">字体设置</string>
-    <string name="copyright_notice">"除非特别注明，本站所有内容采用Creative Commons Attribution-ShareAlike 3.0 License授权。"</string>
+    <string name="copyright_notice_1">APP内容来源自SCP基金会：http://scp-wiki-cn.wikidot.com/</string>
+    <string name="copyright_notice_2">除非特别注明，文章内容采用CC-BY-SA 3.0协议：https://creativecommons.org/licenses/by-sa/3.0/deed.zh</string>
+    <string name="copyright_notice_3">欲了解更多信息，查看授权指南：http://scp-wiki-cn.wikidot.com/licensing-guide</string>
 
     <string name="download_scp_title">SCP系列</string>
     <string name="download_scp_cn_title">SCP-CN系列</string>
@@ -129,4 +134,7 @@
     <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
     <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>
+    <string name="download_explain">更新目录功能将更新所有入口中的scp列表，带有更新时间的选项是离线的正文部分，如果没有离线正文，
+        依然可以请求网页链接查看正文，但如果没有目录将无法查看任何内容。\n当云端有更新时，可以选择单独更新某一部分正文内容。\n
+        强制同步云端数据将清空所有本地数据并重新下载，一般情况下不需要使用。\n</string>
 </resources>

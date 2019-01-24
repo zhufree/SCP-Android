@@ -143,25 +143,28 @@ class UpdateManager(private var activity: BaseActivity) {
         mInitCategoryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
-                Logger.i("$progress")
-                if (progress > 90) {
-                    Toaster.show("写入数据库中")
-                }
-                if (progress == 100) {
-                    Logger.i("init category finish")
-                    if (Utils.onlyEnabled4G(activity) && !activity.isFinishing) {
-                        AlertDialog.Builder(activity)
-                                .setTitle("数据初始化")
-                                .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                                .setPositiveButton("确定") { _, _ ->
-                                    if (!activity.isFinishing) {
-                                        showChooseDbDialog()
+                activity.runOnUiThread {
+                    progressDialog?.progress = progress
+                    if (progress > 90) {
+                        progressDialog?.setMessage("写入数据库中")
+                    }
+                    if (progress == 100) {
+                        Logger.i("init category finish")
+                        progressDialog?.dismiss()
+                        if (Utils.onlyEnabled4G(activity) && !activity.isFinishing) {
+                            AlertDialog.Builder(activity)
+                                    .setTitle("数据初始化")
+                                    .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+                                    .setPositiveButton("确定") { _, _ ->
+                                        if (!activity.isFinishing) {
+                                            showChooseDbDialog()
+                                        }
                                     }
-                                }
-                                .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                                .create().show()
-                    } else if (Utils.enabledWifi(activity) && !activity.isFinishing) {
-                        showChooseDbDialog()
+                                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+                                    .create().show()
+                        } else if (Utils.enabledWifi(activity) && !activity.isFinishing) {
+                            showChooseDbDialog()
+                        }
                     }
                 }
             }
@@ -243,6 +246,7 @@ class UpdateManager(private var activity: BaseActivity) {
         }
     }
 
+    var progressDialog: ProgressDialog? = null
     /**
      * 初始化目录
      */
@@ -250,7 +254,15 @@ class UpdateManager(private var activity: BaseActivity) {
         Logger.i("start init category")
         val intent = Intent(activity, InitCategoryService::class.java)
         activity.startService(intent)
-        Toaster.show("与基金会通信中，请稍候")
+        activity.runOnUiThread {
+            progressDialog = ProgressDialog(activity)
+            progressDialog?.max = 100
+            progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            progressDialog?.setMessage("与基金会通信中")
+            // 设置强制显示
+            progressDialog?.setCancelable(false)
+            progressDialog?.show()
+        }
     }
 
     fun initDetailData(downloadType: Int) {
@@ -265,7 +277,7 @@ class UpdateManager(private var activity: BaseActivity) {
         if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()) {
             val inputView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_report, null)
             val nameInputDialog = AlertDialog.Builder(activity)
-                    .setTitle("欢迎来到SCP基金会，调查员，请输入你的名字")
+                    .setTitle("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）")
                     .setView(inputView)
                     .setPositiveButton("OK") { _, _ -> }
                     .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }

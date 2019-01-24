@@ -1,7 +1,6 @@
 package info.free.scp.view.user
 
 
-import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -17,7 +16,6 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_user.*
 import java.util.*
-//import kotlin.random.Random
 
 
 /**
@@ -88,20 +86,16 @@ class UserFragment : BaseFragment() {
         }
     }
 
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        if (isVisibleToUser) {
-            //相当于Fragment的onResume
-            if (PreferenceUtil.getNickname().isNotEmpty()) {
-                tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                        "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
-                tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
-                        "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
-            } else {
-                UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
-            }
+    override fun onResume() {
+        super.onResume()
+        Logger.i("onresume")
+        if (PreferenceUtil.getNickname().isNotEmpty()) {
+            tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                    "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+            tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
+                    "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
         } else {
-            //相当于Fragment的onPause
+            UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
         }
     }
 

@@ -40,11 +40,12 @@
                 android:background="@null"
                 android:layout_gravity="end"
                 android:layout_marginEnd="16dp"
-                android:contentDescription="TODO" />
+                android:contentDescription="@string/app_name" />
             <TextView
                 android:id="@+id/tv_search_switch"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:textSize="12sp"
                 android:text="标题搜索"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="16dp"/>

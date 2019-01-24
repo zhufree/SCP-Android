@@ -102,8 +102,8 @@ class DetailActivity : BaseActivity() {
             readType = 1
             scp = ScpDao.getInstance().getRandomScp()
         } else {
-            sId = intent?.getStringExtra("sId")?:""
-            scp = if(sId.isNotEmpty()) ScpDao.getInstance().getScpModelById(sId) else
+            sId = intent?.getStringExtra("sId") ?: ""
+            scp = if (sId.isNotEmpty()) ScpDao.getInstance().getScpModelById(sId) else
                 ScpDao.getInstance().getOneScpModelByLink(url)
             url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
         }
@@ -170,9 +170,9 @@ class DetailActivity : BaseActivity() {
             ScpDao.getInstance().insertViewListItem(it, HISTORY_TYPE)
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
+            refreshReadBtnStatus(it.hasRead)
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            tv_bottom_set_has_read?.setText(if (it.hasRead == 1) R.string.set_has_not_read else R.string.set_has_read)
             detail_toolbar?.title = it.title
             detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
             if (detailHtml.isEmpty()) {
@@ -313,7 +313,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun likeScp() {
-        scp?.let {s->
+        scp?.let { s ->
             EventUtil.onEvent(this, EventUtil.clickLike, s.link)
             PreferenceUtil.addPoints(2)
             s.like = if (s.like == 1) 0 else 1
@@ -330,11 +330,11 @@ class DetailActivity : BaseActivity() {
                     scp = ScpDao.getInstance().getNextScp(s.index)
                     scp?.let {
                         setData(scp)
-                    }?:Toaster.show("已经是最后一篇了")
+                    } ?: Toaster.show("已经是最后一篇了")
                 }
             }
             1 -> {
-                if (randomIndex < randomList.size-1) {
+                if (randomIndex < randomList.size - 1) {
                     scp = randomList[++randomIndex]
                     scp?.let {
                         setData(it)
@@ -383,8 +383,9 @@ class DetailActivity : BaseActivity() {
 
     }
 
+    var readBtnLp: ConstraintLayout.LayoutParams? = null
+
     private fun setHasRead() {
-        val readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         scp?.let { s ->
             if (s.hasRead == 0) {
                 // 标记已读
@@ -392,24 +393,37 @@ class DetailActivity : BaseActivity() {
                 PreferenceUtil.addPoints(5)
                 s.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
-                tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
                 Logger.i(ThemeUtil.lightText.toString())
-                tv_bottom_set_has_read?.setBackgroundColor(resources.getColor(R.color.disabledBg))
-                readBtnLp?.endToEnd = -1
-                readBtnLp?.startToStart = -1
-                readBtnLp?.endToStart = R.id.gl_detail_center
-                tv_bottom_set_has_read?.layoutParams = readBtnLp
-                tv_bottom_like?.visibility = VISIBLE
+                refreshReadBtnStatus(1)
             } else {
                 // 取消已读
                 EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link ?: "")
                 PreferenceUtil.reducePoints(5)
                 s.hasRead = 0
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
-                tv_bottom_set_has_read?.setText(R.string.set_has_read)
-                Logger.i(ThemeUtil.itemBg.toString())
-                tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.itemBg)
+                refreshReadBtnStatus(0)
             }
+        }
+    }
+
+    private fun refreshReadBtnStatus(hasRead: Int) {
+        readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
+        if (hasRead == 1) {
+            tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
+            tv_bottom_set_has_read?.setBackgroundColor(resources.getColor(R.color.disabledBg))
+            readBtnLp?.endToEnd = -1
+            readBtnLp?.startToStart = -1
+            readBtnLp?.endToStart = R.id.gl_detail_center
+            tv_bottom_set_has_read?.layoutParams = readBtnLp
+            tv_bottom_like?.visibility = VISIBLE
+        } else {
+            tv_bottom_set_has_read?.setText(R.string.set_has_read)
+            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.itemBg)
+            readBtnLp?.endToEnd = 0
+            readBtnLp?.startToStart = 0
+            readBtnLp?.endToStart = -1
+            tv_bottom_set_has_read?.layoutParams = readBtnLp
+            tv_bottom_like?.visibility = GONE
         }
     }
 

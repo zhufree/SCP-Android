@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
+import android.os.Build
 import android.os.Handler
 import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
@@ -123,8 +124,15 @@ class UpdateManager(private var activity: BaseActivity) {
                         // it表示的是有没有新版本
                         Logger.i("check new version result = $it")
                         if (!it) {
-                            activity.runOnUiThread {
-                                checkInitData(false)
+                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
+                                activity.runOnUiThread {
+                                    checkInitData(true)
+                                }
+                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
+                            } else {
+                                activity.runOnUiThread {
+                                    checkInitData(false)
+                                }
                             }
                         }
                     }

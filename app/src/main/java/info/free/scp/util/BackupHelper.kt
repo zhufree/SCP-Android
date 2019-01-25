@@ -99,12 +99,14 @@ class BackupHelper(val mContext: Context) {
                 dbFile?.let {
                     val backDbFile = File(bkFolderFile.absolutePath + sp
                             + it.name)
+                    backDbFile.deleteOnExit()
                     backDbFile.createNewFile()
                     isOk = fileCopy(backDbFile, it.absoluteFile)
                 }
                 prefFile?.let {
                     val backPrefFile = File(bkFolderFile.absolutePath + sp
                             + it.name)
+                    backPrefFile.deleteOnExit()
                     backPrefFile.createNewFile()
                     isOk = fileCopy(backPrefFile, it.absoluteFile)
                 }

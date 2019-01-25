@@ -13,8 +13,8 @@ android {
         applicationId "info.free.scp"
         minSdkVersion 19
         targetSdkVersion
-        versionCode 10
-        versionName "0.0.9"
+        versionCode 11
+        versionName "0.1.1"
         flavorDimensions "versionCode"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true

@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.view.Menu
 import info.free.scp.R
-import info.free.scp.SCPConstants.Category.ABOUT_STUFF
+import info.free.scp.SCPConstants.Category.ABOUT_INFO
+import info.free.scp.SCPConstants.Category.ABOUT_INTRO
 import info.free.scp.SCPConstants.Category.CONTEST
 import info.free.scp.SCPConstants.Category.CONTEST_CN
 import info.free.scp.SCPConstants.Category.JOKE
@@ -103,9 +104,11 @@ class SeriesDocActivity : BaseActivity() {
                         ScpListFragment.newInstance(SETTINGS_CN, 0),
                         ScpListFragment.newInstance(CONTEST, 0),
                         ScpListFragment.newInstance(CONTEST_CN, 0),
-                        ScpListFragment.newInstance(ABOUT_STUFF, 0))
+                        ScpListFragment.newInstance(ABOUT_INFO, 0),
+                        ScpListFragment.newInstance(ABOUT_INTRO, 0))
                         .toList()
-                titleList = arrayOf("平行世界观（设定中心）", "中国分部设定中心", "征文竞赛", "中国分部征文竞赛", "入门简介").toList()
+                titleList = arrayOf("平行世界观（设定中心）", "中国分部设定中心", "征文竞赛", "中国分部征文竞赛",
+                        "基金会设定", "入门简介").toList()
             }
             JOKE_DOC -> {
                 supportActionBar?.setTitle(R.string.title_joke_scp)

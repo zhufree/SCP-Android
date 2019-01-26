@@ -68,7 +68,7 @@ class ScpItemFragment : BaseFragment() {
         Log.i("category", "加载scp列表")
         scpList?.clear()
         when (categoryType) {
-            SCPConstants.Category.ABOUT_STUFF -> {
+            SCPConstants.Category.ABOUT_INFO -> {
                 // 相关材料
                 scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
             }

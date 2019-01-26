@@ -31,7 +31,8 @@ object SCPConstants {
         const val SCP_REMOVED = 18
         const val SCP_DECOMMISSIONED = 19
         const val SCP_ABNORMAL = 20
-        const val ABOUT_STUFF = 5
+        const val ABOUT_INFO = 5
+        const val ABOUT_INTRO = 16
         const val TALES = 6
         const val TALES_CN = 7
         const val STORY_SERIES = 8
@@ -49,8 +50,9 @@ object SCPConstants {
     object ScpType {
         // save type
         const val SINGLE_PAGE = 0 // 单页面
-        const val SAVE_INFO = 102 // 其中的网站说明类页面, faq，新手指南之类
-        const val SAVE_ABNORMAL = 103 // 其中的设定说明类页面，异常物品超长事件等
+        const val SAVE_INFO = 102 // 设定说明类页面
+        const val SAVE_ABNORMAL = 103 // 其中的异常物品超长事件等
+        const val SAVE_INTRO = 104 // 其中 faq，新手指南之类
 
         const val SAVE_SERIES = 1
         const val SAVE_SERIES_CN = 2

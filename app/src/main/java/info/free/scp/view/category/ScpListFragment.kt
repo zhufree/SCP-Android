@@ -98,6 +98,14 @@ class ScpListFragment : BaseFragment() {
                 // 三句话外围
                 scpList?.add(ScpDao.getInstance().getOneScpModelByLink("/short-stories"))
             }
+            SCPConstants.Category.ABOUT_INFO -> {
+                // 相关材料
+                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
+            }
+            SCPConstants.Category.ABOUT_INTRO -> {
+                // 相关材料
+                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INTRO))
+            }
 
             SCPConstants.Category.SCP_ARCHIVES -> {
                 when (clickPosition) {
@@ -140,10 +148,7 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.Category.CONTEST_CN -> {
                 scpList?.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
             }
-            SCPConstants.Category.ABOUT_STUFF -> {
-                // 相关材料
-                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
-            }
+
             SCPConstants.Category.TALES_BY_TIME -> {
                 if (taleTimeList.isEmpty()) {
                     taleTimeList.addAll(ScpDao.getInstance().getScpByType(SCPConstants.ScpType.SAVE_TALES_CN))

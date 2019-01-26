@@ -21,6 +21,8 @@
     <!--<item name="lightTextNight">#333</item>-->
     <color name="unClickBtn">#8abcd1</color>
     <color name="clickedBtn">#2775b6</color>
+    <color name="unClickBtnNight">#2e317c</color>
+    <color name="clickedBtnNight">#1c2938</color>
 
     <color name="white">#fff</color>
 </resources>

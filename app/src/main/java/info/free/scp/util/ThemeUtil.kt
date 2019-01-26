@@ -22,6 +22,8 @@ object ThemeUtil {
     var itemBg: Int = -1
     var darkText: Int = -1
     var lightText: Int = -1
+    var unClickBtn: Int = -1
+    var clickedBtn: Int = -1
 
     var currentTheme: Int = -1
 
@@ -65,13 +67,17 @@ object ThemeUtil {
                 R.attr.containerBg,
                 R.attr.itemBg,
                 R.attr.darkText,
-                R.attr.lightText
+                R.attr.lightText,
+                R.attr.unClickBtn,
+                R.attr.clickedBtn
         ))
         toolbarBg = allColor.getColor(0, Color.WHITE)
         containerBg = allColor.getColor(1, Color.WHITE)
         itemBg = allColor.getColor(2, Color.WHITE)
         darkText = allColor.getColor(3, Color.WHITE)
         lightText = allColor.getColor(4, Color.WHITE)
+        unClickBtn = allColor.getColor(5, Color.WHITE)
+        clickedBtn = allColor.getColor(6, Color.WHITE)
         allColor.recycle()
     }
 }

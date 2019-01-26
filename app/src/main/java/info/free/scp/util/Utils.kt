@@ -109,7 +109,7 @@ object Utils {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-        val contentResolver = ScpApplication.context?.contentResolver
+        val contentResolver = ScpApplication.context.contentResolver
         val values = ContentValues(4)
         values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
         values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
@@ -122,7 +122,7 @@ object Utils {
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                ScpApplication.context?.grantUriPermission(ScpApplication.context?.packageName,
+                ScpApplication.context.grantUriPermission(ScpApplication.context.packageName,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, FLAG_GRANT_WRITE_URI_PERMISSION)
             }
             url = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
@@ -263,6 +263,7 @@ object Utils {
             SCPConstants.Download.DOWNLOAD_SCP_CN -> "SCP-CN系列"
             SCPConstants.Download.DOWNLOAD_TALE -> "基金会故事"
             SCPConstants.Download.DOWNLOAD_ARCHIVES -> "其他文档"
+            SCPConstants.Download.DOWNLOAD_COLLECTIONS -> "故事系列，设定中心，正文竞赛等"
             else -> "正文"
         }
     }

@@ -65,7 +65,7 @@ class BackupHelper(val mContext: Context) {
     fun backupDB() {
         AlertDialog.Builder(mContext)
                 .setTitle("是否备份数据库")
-                .setMessage("仅包括文档和读过、收藏数据，职位，ID等信息不会保存")
+                .setMessage("包括文档和读过、收藏数据以及职位，编号，等级等信息")
                 .setPositiveButton("确定") { _, _ ->
                     Toaster.show("开始备份")
                     Flowable.create<String>({ emitter ->

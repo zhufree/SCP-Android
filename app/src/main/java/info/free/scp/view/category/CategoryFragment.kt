@@ -100,9 +100,6 @@ class CategoryFragment : BaseFragment() {
         categoryAdapter?.notifyDataSetChanged()
     }
 
-    fun refreshTheme() {
-
-    }
 
     companion object {
 

@@ -87,10 +87,6 @@ class ScpItemFragment : BaseFragment() {
     }
 
 
-    fun refreshTheme() {
-
-    }
-
     companion object {
 
         fun newInstance(categoryType: Int, clickPosition: Int): ScpItemFragment {

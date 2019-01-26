@@ -176,6 +176,7 @@ class ScpListFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        getScpList()
         if (currentScrollPosition > -1 && currentScrollPosition < scpList?.size ?: 0) {
             rv_category_list?.scrollToPosition(currentScrollPosition)
         }
@@ -186,9 +187,6 @@ class ScpListFragment : BaseFragment() {
         scpAdapter?.notifyDataSetChanged()
     }
 
-    fun refreshTheme() {
-
-    }
 
     companion object {
 

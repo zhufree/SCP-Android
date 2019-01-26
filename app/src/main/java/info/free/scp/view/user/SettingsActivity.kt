@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import info.free.scp.R
 import info.free.scp.SCPConstants.Download.DOWNLOAD_ARCHIVES
+import info.free.scp.SCPConstants.Download.DOWNLOAD_COLLECTIONS
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
 import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
@@ -106,23 +107,23 @@ class SettingsActivity : BaseActivity() {
                     PreferenceUtil.getServerLastUpdateTime(4),
                     PreferenceUtil.getDetailLastLoadTime(4))
             findPreference("download_scp").setOnPreferenceClickListener {
-//                EventUtil.onEvent(context, EventUtil.hideReadContent)
                 showNoticeDialog(DOWNLOAD_SCP)
                 true
             }
             findPreference("download_scp_cn").setOnPreferenceClickListener {
-//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 showNoticeDialog(DOWNLOAD_SCP_CN)
                 true
             }
             findPreference("download_tale").setOnPreferenceClickListener {
-//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 showNoticeDialog(DOWNLOAD_TALE)
                 true
             }
             findPreference("download_other").setOnPreferenceClickListener {
-//                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 showNoticeDialog(DOWNLOAD_ARCHIVES)
+                true
+            }
+            findPreference("download_collection").setOnPreferenceClickListener {
+                showNoticeDialog(DOWNLOAD_COLLECTIONS)
                 true
             }
             findPreference("sync_category").setOnPreferenceClickListener {

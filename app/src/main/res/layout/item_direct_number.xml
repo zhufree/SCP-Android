@@ -4,12 +4,12 @@
     android:layout_height="60dp"
     android:gravity="center"
     android:orientation="vertical"
-    android:background="@color/itemBg">
+    android:background="?attr/itemBg">
     <TextView
         android:id="@+id/tv_direct_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/textColor"/>
+        android:textColor="?attr/darkText"/>
 </LinearLayout>

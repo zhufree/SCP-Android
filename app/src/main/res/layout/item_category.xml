@@ -58,7 +58,7 @@
             android:layout_height="match_parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:src="@drawable/ic_watch_later_white_24dp"
-            android:background="@color/unClickBtn"
+            android:background="?attr/unClickBtn"
             android:visibility="gone"
             android:contentDescription="@string/later_list"
             />

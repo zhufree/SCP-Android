@@ -2,9 +2,7 @@ package info.free.scp.view.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.Menu
-import android.view.View
 import info.free.scp.R
 import android.widget.ArrayAdapter
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
@@ -15,7 +13,6 @@ import info.free.scp.db.ScpDao
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_direct.*
 
 
@@ -23,15 +20,21 @@ class DirectActivity : BaseActivity() {
     private var chooseType = 0 // 0 scp 1 cn 2 J 3 cn-j
         set(value) {
             field = value
-            typeString = when (value) {
-                0 -> "-"
-                1 -> "-CN"
+            cnString = when (value) {
+                0 -> ""
+                1 -> "CN-"
+                3 -> "CN-"
+                else -> ""
+            }
+            jString = when (value) {
+                0 -> ""
                 2 -> "-J"
-                3 -> "-CN-J"
-                else -> "-"
+                3 -> "-J"
+                else -> ""
             }
         }
-    private var typeString = "" // CN / J
+    private var cnString = "" // CN / J
+    private var jString = "" // CN / J
     private var numberString = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +52,7 @@ class DirectActivity : BaseActivity() {
             } else if (position == 9) {
                 chooseType = 0
                 numberString = ""
-                typeString = ""
+                cnString = ""
             } else if (position == 11) {
                 numberString = numberString.substring(0, numberString.length - 1)
             }
@@ -109,6 +112,6 @@ class DirectActivity : BaseActivity() {
     }
 
     private fun updateExpress() {
-        tv_direct_title.text = "SCP$typeString-$numberString"
+        tv_direct_title.text = "SCP-$cnString$numberString$jString"
     }
 }

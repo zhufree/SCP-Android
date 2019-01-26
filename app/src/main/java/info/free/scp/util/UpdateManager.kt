@@ -22,6 +22,7 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.ObservableOnSubscribe
+import okhttp3.internal.Util
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -136,6 +137,8 @@ class UpdateManager(private var activity: BaseActivity) {
                             }
                         }
                     }
+        } else if (Utils.enabledWifi(activity)) {
+            checkDownloadFinish()
         }
     }
 
@@ -251,6 +254,17 @@ class UpdateManager(private var activity: BaseActivity) {
                         .setPositiveButton("确定") { _, _ -> }
                         .create().show()
             }
+        } else {
+            checkDownloadFinish()
+        }
+    }
+
+    private fun checkDownloadFinish() {
+        Logger.i("check download finish")
+        for (i in 0 .. SCPConstants.Download.DOWNLOAD_TOTAL) {
+            if (!PreferenceUtil.getDetailDataLoadFinish(i)) {
+                initDetailData(i)
+            }
         }
     }
 
@@ -274,7 +288,7 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     fun initDetailData(downloadType: Int) {
-        Logger.i("start init db, download type = $downloadType")
+        Logger.i("start init download service, download type = $downloadType")
         val intent = Intent(activity, InitDetailService::class.java)
         intent.putExtra("download_type", downloadType)
         activity.startService(intent)

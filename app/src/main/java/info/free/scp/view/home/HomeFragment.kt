@@ -80,8 +80,9 @@ class HomeFragment : BaseFragment() {
         }
     }
 
-    fun refreshTheme() {
-        view?.setBackgroundColor(ThemeUtil.containerBg)
+    override fun refreshTheme() {
+        super.refreshTheme()
+        home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_series_doc?.setTextColor(ThemeUtil.darkText)
         tv_story_doc?.setTextColor(ThemeUtil.darkText)
 

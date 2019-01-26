@@ -98,8 +98,8 @@ class UserFragment : BaseFragment() {
         }
     }
 
-    fun refreshTheme() {
-        view?.setBackgroundColor(ThemeUtil.containerBg)
+    override fun refreshTheme() {
+        super.refreshTheme()
         about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(ThemeUtil.lightText)

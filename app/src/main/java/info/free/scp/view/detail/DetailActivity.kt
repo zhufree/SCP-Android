@@ -138,6 +138,7 @@ class DetailActivity : BaseActivity() {
                             }
                             setData(scp)
                         } else {
+                            pbLoading.visibility = VISIBLE
                             view.loadUrl(url)
                         }
                     }
@@ -177,6 +178,8 @@ class DetailActivity : BaseActivity() {
             detail_toolbar?.title = it.title
             detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
             if (detailHtml.isEmpty()) {
+                pbLoading.visibility = VISIBLE
+                url = if (it.link.contains("http")) it.link else "http://scp-wiki-cn.wikidot.com${it.link}"
                 webView.loadUrl(url)
             } else {
                 pbLoading.visibility = GONE
@@ -446,7 +449,8 @@ class DetailActivity : BaseActivity() {
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
             if (historyIndex > 0) {
-                setData(historyList[historyIndex - 1])
+                scp = historyList[historyIndex - 1]
+                setData(scp)
                 historyList.removeAt(historyIndex)
                 historyIndex--
                 return true
@@ -473,6 +477,8 @@ class DetailActivity : BaseActivity() {
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
             tv_bottom_like?.text = if (it.like == 1) "取消收藏" else "收藏"
+            tv_bottom_like?.setBackgroundColor(resources.getColor(if (it.like == 1)
+                R.color.disabledBg else R.color.itemBg))
         }
         return super.onPrepareOptionsMenu(menu)
     }

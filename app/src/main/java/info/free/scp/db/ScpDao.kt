@@ -169,7 +169,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 stmt.bindString(1, model.link)
                 stmt.bindString(2, model.detailHtml)
                 stmt.bindLong(3, model.downloadType.toLong())
-                Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()
             }
@@ -378,7 +377,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun getSinglePageByType(type: Int): MutableList<ScpModel> {
-        val infoPageList = arrayOf("/faq", "/guide-for-newbies", "/how-to-write-an-scp")
+        val abnormalPageList = arrayOf("/log-of-extranormal-events", "/log-of-extranormal-events-cn",
+            "/log-of-anomalous-items", "/log-of-anomalous-items-cn")
         var resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
@@ -394,9 +394,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             }
             resultList = resultList.filter {
                 if (type == SCPConstants.ScpType.SAVE_INFO) {
-                    infoPageList.contains(it.link)
+                    !abnormalPageList.contains(it.link)
                 } else {
-                    !infoPageList.contains(it.link)
+                    abnormalPageList.contains(it.link)
                 }
             }.toMutableList()
 

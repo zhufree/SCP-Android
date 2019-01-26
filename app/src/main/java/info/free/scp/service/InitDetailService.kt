@@ -11,6 +11,7 @@ import info.free.scp.util.PreferenceUtil
 import android.support.v4.content.LocalBroadcastManager
 import info.free.scp.R
 import info.free.scp.db.ScpDao
+import info.free.scp.util.Logger
 import info.free.scp.util.Utils
 
 
@@ -96,9 +97,11 @@ class InitDetailService : IntentService("initDataService") {
             PreferenceUtil.addSingleDbLoadCount(downloadType)
             createNotification(downloadType, index*500+it.size)
             if (it.size == 500) {
+                Logger.i("get next 500 item")
                 getPartDetail(downloadType, index+1)
             } else {
                 // 标记下载完成
+                Logger.i("download type $downloadType finish ")
                 PreferenceUtil.setDetailDataLoadFinish(downloadType, true)
 
                 var allFinish = true

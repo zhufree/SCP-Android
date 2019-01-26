@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/containerBg"
     tools:context="info.free.scp.view.game.GameListActivity">
     <android.support.design.widget.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
@@ -25,7 +26,6 @@
         android:id="@+id/tabGame"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:background="?attr/containerBg"
         app:tabTextColor="?attr/darkText"
         app:tabSelectedTextColor="?attr/lightText"
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"/>

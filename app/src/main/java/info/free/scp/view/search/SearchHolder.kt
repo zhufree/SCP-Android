@@ -9,6 +9,7 @@ import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDao
+import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
 import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.item_search.view.*
@@ -34,22 +35,20 @@ class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
             itemView.btn_search_read_later.visibility = VISIBLE
             var isInLaterViewList = link in l.map { it.link }
             if (isInLaterViewList) {
-                itemView.btn_search_read_later.setBackgroundColor(mContext?.resources?.getColor(R.color.clickedBtn)
-                        ?: 0)
+                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.clickedBtn)
             } else {
-                itemView.btn_search_read_later.setBackgroundColor(mContext?.resources?.getColor(R.color.unClickBtn)
-                        ?: 0)
+                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.unClickBtn)
             }
             itemView.btn_search_read_later.setOnClickListener {
                 if (isInLaterViewList) {
                     ScpDao.getInstance().deleteViewListItem(link, LATER_TYPE)
                     isInLaterViewList = false
-                    it.setBackgroundColor(mContext?.resources?.getColor(R.color.unClickBtn) ?: 0)
+                    it.setBackgroundColor(ThemeUtil.unClickBtn)
                 } else {
                     ScpDao.getInstance().insertViewListItem(link, title, LATER_TYPE)
                     Toaster.show("已加入待读列表")
                     isInLaterViewList = true
-                    it.setBackgroundColor(mContext?.resources?.getColor(R.color.clickedBtn) ?: 0)
+                    it.setBackgroundColor(ThemeUtil.clickedBtn)
                 }
 
             }

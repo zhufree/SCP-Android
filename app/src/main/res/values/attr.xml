@@ -5,4 +5,6 @@
     <attr name="itemBg" format = "color"/>
     <attr name="darkText" format = "color"/>
     <attr name="lightText" format = "color"/>
+    <attr name="unClickBtn" format = "color"/>
+    <attr name="clickedBtn" format = "color"/>
 </resources>

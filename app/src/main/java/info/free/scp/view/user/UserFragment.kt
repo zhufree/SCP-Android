@@ -88,7 +88,6 @@ class UserFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        Logger.i("onresume")
         if (PreferenceUtil.getNickname().isNotEmpty()) {
             tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                     "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"

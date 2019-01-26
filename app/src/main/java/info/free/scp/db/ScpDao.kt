@@ -29,7 +29,7 @@ const val DB_NAME = "scp_info.db"
 const val DB_VERSION = 4 // 已+1
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
-    var randomCount = 0
+    private var randomCount = 0
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(ScpTable.CREATE_TABLE_SQL)
@@ -696,16 +696,16 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
     }
 
-    fun insertViewListItem(model: ScpModel, viewType: Int) {
+    fun insertViewListItem(link: String, title: String, viewType: Int) {
         with(writableDatabase) {
-            this.execSQL(ScpTable.INSERT_VIEW_LIST_SQL, arrayOf(model.link, model.title, viewType))
+            this.execSQL(ScpTable.INSERT_VIEW_LIST_SQL, arrayOf(link, title, viewType))
         }
     }
 
-    fun deleteViewListItem(model: ScpModel, viewType: Int) {
+    fun deleteViewListItem(link: String, viewType: Int) {
         with(writableDatabase) {
             this.execSQL("DELETE FROM " + ScpTable.VIEW_LIST_TABLE_NAME + " WHERE " + ScpTable.LINK
-                    + " = ?" + " AND " + ScpTable.VIEW_LIST_TYPE + " = " + viewType, arrayOf(model.link))
+                    + " = ?" + " AND " + ScpTable.VIEW_LIST_TYPE + " = " + viewType, arrayOf(link))
         }
     }
 

@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.item_pc_game.view.*
  */
 
 class GameHolder(view: View) : RecyclerView.ViewHolder(view) {
-    var expandStatus = 0 // 0 收起 1 展开
+    private var expandStatus = 0 // 0 收起 1 展开
 
     fun setData(model: GameModel) {
         itemView.tv_game_title?.text = model.name

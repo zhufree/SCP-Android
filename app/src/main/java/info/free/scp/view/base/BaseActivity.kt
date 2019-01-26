@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.util.ThemeUtil
 
@@ -21,11 +22,13 @@ open class BaseActivity : AppCompatActivity() {
     public override fun onResume() {
         super.onResume()
         MobclickAgent.onResume(this)
+        TCAgent.onPageStart(this, localClassName)
     }
 
     public override fun onPause() {
         super.onPause()
         MobclickAgent.onPause(this)
+        TCAgent.onPageEnd(this, localClassName)
     }
 
     /**

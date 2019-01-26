@@ -73,9 +73,11 @@ dependencies {
     implementation 'com.umeng.sdk:common:1.5.3'
     implementation 'com.umeng.sdk:analytics:7.5.3'
     implementation 'com.android.support:multidex:1.0.3'
-
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation files('libs/TalkingdataAnalytics.jar')
+    // 打google play包用下面这个
+//    implementation files('libs/GooglePlayTalkingdataAnalytics.jar')
 }
 
 repositories {

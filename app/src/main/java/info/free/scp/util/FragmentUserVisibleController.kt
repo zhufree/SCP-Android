@@ -208,7 +208,7 @@ class FragmentUserVisibleController(private val fragment: Fragment, private val 
     }
 
     companion object {
-        private val TAG = "FragmentUserVisibleController"
+        private const val TAG = "FragmentUserVisibleController"
         var DEBUG = true
     }
 }

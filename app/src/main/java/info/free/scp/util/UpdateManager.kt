@@ -196,7 +196,7 @@ class UpdateManager(private var activity: BaseActivity) {
                 "搞笑作品，其他文档（解明，废除，删除，归档等）", "故事系列，设定中心等")
 //        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
-        val chooseList =  arrayOf(false,false,false,false,false).toBooleanArray()
+        val chooseList =  arrayOf(true,true,false,false,false).toBooleanArray()
         AlertDialog.Builder(activity)
                 .setTitle("选择你想要离线的内容（没有离线内容时将直接加载网页）")
                 .setMultiChoiceItems(dbList, chooseList){ _, which, isChecked ->

@@ -42,8 +42,10 @@ class DirectActivity : BaseActivity() {
         val numberAdapter = ArrayAdapter(this, R.layout.item_direct_number, R.id.tv_direct_number, numberList)
         gv_direct_number?.adapter = numberAdapter
         gv_direct_number?.setOnItemClickListener { _, _, position, _ ->
-            if (position < 9 || position == 10) {
+            if (position < 9) {
                 numberString += (position + 1)
+            } else if (position == 10) {
+                numberString += "0"
             } else if (position == 9) {
                 chooseType = 0
                 numberString = ""

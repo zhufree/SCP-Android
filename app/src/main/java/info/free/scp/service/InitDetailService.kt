@@ -15,10 +15,10 @@ import info.free.scp.util.Utils
 
 
 class InitDetailService : IntentService("initDataService") {
-    val LOAD_DETAIL_FINISH = "loadDetailFinish"
+    private val LOAD_DETAIL_FINISH = "loadDetailFinish"
     private var notificationManager: NotificationManager? = null
     private val DOWNLOAD_DETAIL_NOTIFICATION = R.string.download_detail_service
-    val channelID = "info.free.scp"
+    private val channelID = "info.free.scp"
     private var downloadList = emptyList<Int>().toMutableList()
     private var isDownloading = false
 

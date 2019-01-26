@@ -8,10 +8,10 @@ import java.io.File
 object Logger {
     private val sp = File.separator
     private const val logDirName = "log"
-    private val appFolderName = "SCP"
+    private const val appFolderName = "SCP"
     var local = false
 
-    var logString = SpannableStringBuilder()
+    private var logString = SpannableStringBuilder()
     fun i(msg: String) {
         Log.i("freescp", msg)
         if (local) {

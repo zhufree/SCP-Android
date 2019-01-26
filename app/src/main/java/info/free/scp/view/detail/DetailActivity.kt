@@ -22,6 +22,7 @@ import android.view.View.VISIBLE
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.R.style.AppTheme
@@ -167,7 +168,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setData(scp: ScpModel?) {
         scp?.let {
-            ScpDao.getInstance().insertViewListItem(it, HISTORY_TYPE)
+            ScpDao.getInstance().insertViewListItem(it.link, it.title, HISTORY_TYPE)
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
             refreshReadBtnStatus(it.hasRead)
@@ -240,6 +241,7 @@ class DetailActivity : BaseActivity() {
                             val reportString = reportView.et_report.text.toString()
                             Log.i("report", reportString)
                             MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
+                            TCAgent.onError(this@DetailActivity, Throwable("url: $url, detail: $reportString"))
                             reportDialog.dismiss()
                         }
                     }
@@ -264,6 +266,7 @@ class DetailActivity : BaseActivity() {
                     }
                     R.id.share_picture -> {
                         // 截屏分享
+                        EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
                         Toaster.show("生成图片中...", context = this)
                         gp_share_content?.visibility = VISIBLE
                         cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
@@ -314,7 +317,6 @@ class DetailActivity : BaseActivity() {
 
     private fun likeScp() {
         scp?.let { s ->
-            EventUtil.onEvent(this, EventUtil.clickLike, s.link)
             PreferenceUtil.addPoints(2)
             s.like = if (s.like == 1) 0 else 1
             ScpDao.getInstance().insertLikeAndReadInfo(s)
@@ -383,13 +385,12 @@ class DetailActivity : BaseActivity() {
 
     }
 
-    var readBtnLp: ConstraintLayout.LayoutParams? = null
+    private var readBtnLp: ConstraintLayout.LayoutParams? = null
 
     private fun setHasRead() {
         scp?.let { s ->
             if (s.hasRead == 0) {
                 // 标记已读
-                EventUtil.onEvent(this, EventUtil.finishRead)
                 PreferenceUtil.addPoints(5)
                 s.hasRead = 1
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
@@ -397,7 +398,6 @@ class DetailActivity : BaseActivity() {
                 refreshReadBtnStatus(1)
             } else {
                 // 取消已读
-                EventUtil.onEvent(this, EventUtil.cancelRead, scp?.link ?: "")
                 PreferenceUtil.reducePoints(5)
                 s.hasRead = 0
                 ScpDao.getInstance().insertLikeAndReadInfo(s)
@@ -472,6 +472,7 @@ class DetailActivity : BaseActivity() {
                 val menuItem = menu?.getItem(0)
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
+            tv_bottom_like?.text = if (it.like == 1) "取消收藏" else "收藏"
         }
         return super.onPrepareOptionsMenu(menu)
     }

@@ -1,7 +1,6 @@
 package info.free.scp.view.home
 
 
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
@@ -21,7 +19,6 @@ import kotlinx.android.synthetic.main.fragment_series.*
 
 
 /**
- * A simple [Fragment] subclass.
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
@@ -78,8 +75,6 @@ class HomeFragment : BaseFragment() {
             goToDocPage(SCPConstants.Entry.JOKE_DOC)
         }
         tv_direct?.setOnClickListener {
-            // TODO 改成直达事件
-            EventUtil.onEvent(activity, EventUtil.clickRandom)
             PreferenceUtil.addPoints(2)
             activity?.startActivity(Intent(activity, DirectActivity::class.java))
         }

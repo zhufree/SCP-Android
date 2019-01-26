@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_like.*
 class LikeActivity : BaseActivity() {
     val likeList = emptyList<ScpModel?>().toMutableList()
     var adapter : SearchResultAdapter? = null
-    var orderType = 0 // 0 默认顺序 1 按编号
+    private var orderType = 0 // 0 默认顺序 1 按编号
         set(value) {
             field = value
             likeList.clear()
@@ -31,6 +31,7 @@ class LikeActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_like)
+        EventUtil.onEvent(this, EventUtil.clickLikeList)
         initToolbar()
 
         val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)

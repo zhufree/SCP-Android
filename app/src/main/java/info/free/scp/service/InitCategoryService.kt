@@ -16,8 +16,8 @@ class InitCategoryService : IntentService("initDataService") {
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
 
-    var scpModels: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    var requestCount = 0
+    private var scpModels: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private var requestCount = 0
         set(value) {
             Log.i("loading", "requestCount = $value")
             field = value

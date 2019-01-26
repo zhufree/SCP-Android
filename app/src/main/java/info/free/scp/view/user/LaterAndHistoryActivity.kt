@@ -9,6 +9,8 @@ import info.free.scp.R
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDao
+import info.free.scp.util.EventUtil
+import info.free.scp.util.EventUtil.clickHistoryList
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
@@ -19,18 +21,20 @@ import kotlinx.android.synthetic.main.activity_like.*
  * 待读列表
  */
 class LaterAndHistoryActivity : BaseActivity() {
-    var viewType = -1
+    private var viewType = -1
         set(value) {
             field = value
             viewItemList.clear()
             viewItemList.addAll(ScpDao.getInstance().getViewListByTypeAndOrder(value, orderType))
             supportActionBar?.title = if (value == HISTORY_TYPE) "历史阅读记录" else "待读列表"
-
+            if (value == HISTORY_TYPE) {
+                EventUtil.onEvent(this, clickHistoryList)
+            }
             adapter?.notifyDataSetChanged()
         }
     val viewItemList = emptyList<SimpleScp?>().toMutableList()
     var adapter : SimpleScpAdapter? = null
-    var orderType = 0 // 0 時間正序，倒序
+    private var orderType = 0 // 0 時間正序，倒序
         set(value) {
             field = value
             viewItemList.clear()

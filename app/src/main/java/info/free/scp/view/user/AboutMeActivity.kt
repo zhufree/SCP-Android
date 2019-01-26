@@ -22,14 +22,8 @@ import android.os.Build
 import android.content.pm.PackageInfo
 
 
-
-
-
-
 class AboutMeActivity : BaseActivity() {
     private var payType = 0; // 0 wechat 1 zhi
-    val ALIPAY_PACKAGE_NAME = "com.eg.android.AlipayGphone";
-    val WECHAT_PACKAGE_NAME = "com.eg.android.AlipayGphone";
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +66,7 @@ class AboutMeActivity : BaseActivity() {
         }
     }
 
-    fun openAlipayScan(context: Context) {
+    private fun openAlipayScan(context: Context) {
         try {
             val uri = Uri.parse("alipayqr://platformapi/startapp?saId=10000007")
             val intent = Intent(Intent.ACTION_VIEW, uri)

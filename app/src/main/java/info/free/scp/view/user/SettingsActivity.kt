@@ -141,7 +141,6 @@ class SettingsActivity : BaseActivity() {
 
             findPreference("backup_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
-                    EventUtil.onEvent(ctx, EventUtil.clickBackUpData)
                     BackupHelper.getInstance(ctx).backupDB()
                     findPreference("restore_data").isEnabled = true
                 }
@@ -149,7 +148,6 @@ class SettingsActivity : BaseActivity() {
             }
             findPreference("restore_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
-                    EventUtil.onEvent(ctx, EventUtil.clickRestoreData)
                     BackupHelper.getInstance(ctx).restoreDB()
                 }
                 true
@@ -170,7 +168,6 @@ class SettingsActivity : BaseActivity() {
                 } else {
                     EventUtil.onEvent(activity, EventUtil.clickSyncData)
                     UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
-                    // 只允许点击一次
                 }
                 true
             }

@@ -17,7 +17,7 @@ import info.free.scp.view.base.BaseAdapter
 
 class ScpAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
     : BaseAdapter<ScpHolder, ScpModel?>(mContext, dataList) {
-    var laterViewList = emptyList<SimpleScp>().toMutableList()
+    private var laterViewList = emptyList<SimpleScp>().toMutableList()
 
     init {
         laterViewList = ScpDao.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)

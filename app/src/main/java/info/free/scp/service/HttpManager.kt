@@ -21,7 +21,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 class HttpManager {
     private val TAG = javaClass.name
 
-    val contentType = MediaType.parse("application/json")!!
+    private val contentType = MediaType.parse("application/json")!!
     val json = JSON
     private val retrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SCPConstants.BMOB_API_URL)

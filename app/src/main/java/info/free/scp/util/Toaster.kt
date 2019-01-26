@@ -13,7 +13,7 @@ import info.free.scp.ScpApplication
 
 object Toaster {
 
-    var toast: Toast? = null
+    private var toast: Toast? = null
 
     fun show(message: String, len: Int = LENGTH_SHORT, context: Context? = ScpApplication.context) {
         toast = Toast.makeText(context, message, len)

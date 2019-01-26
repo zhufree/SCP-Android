@@ -17,6 +17,9 @@ import android.view.View
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.util.*
+import info.free.scp.util.EventUtil.clickCopyright
+import info.free.scp.util.EventUtil.clickDownloadSetting
+import info.free.scp.util.EventUtil.clickReadSetting
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 
 
@@ -41,18 +44,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference("read_settings").setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickReadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 0)
             activity?.startActivity(intent)
             true
         }
         findPreference("download_settings").setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickDownloadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 1)
             activity?.startActivity(intent)
             true
         }
         findPreference("copyright").setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickCopyright)
             val copyrightView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_copyright, null)
             val copySpan1 = SpannableString(getString(R.string.copyright_notice_1))
             val copySpan2 = SpannableString(getString(R.string.copyright_notice_2))

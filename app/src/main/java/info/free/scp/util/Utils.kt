@@ -1,3 +1,5 @@
+@file:Suppress("SpellCheckingInspection")
+
 package info.free.scp.util
 
 import android.app.Activity
@@ -84,7 +86,7 @@ object Utils {
         return enabledNetwork(context) && !enabledWifi(context)
     }
 
-    fun formatDate(time: Long): String {
+    private fun formatDate(time: Long): String {
         val format =  SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
         return format.format(time)
     }
@@ -123,14 +125,16 @@ object Utils {
                 ScpApplication.context?.grantUriPermission(ScpApplication.context?.packageName,
                         MediaStore.Images.Media.EXTERNAL_CONTENT_URI, FLAG_GRANT_WRITE_URI_PERMISSION)
             }
-            url = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values) //其实质是返回 Image.Meida.DATA中图片路径path的转变而成的uri
+            url = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            //其实质是返回 Image.Media.DATA中图片路径path的转变而成的uri
             val imageOut = contentResolver?.openOutputStream(url)
             imageOut?.use {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut)
             }
 
             val id = ContentUris.parseId(url)
-            MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND, null)//获取缩略图
+            MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND,
+                    null)//获取缩略图
 
         } catch (e: Exception) {
             if (url != null) {

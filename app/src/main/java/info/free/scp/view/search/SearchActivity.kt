@@ -24,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_search.*
 class SearchActivity : BaseActivity() {
     var resultList: MutableList<ScpModel?> = emptyList<ScpModel>().toMutableList()
     var adapter: SearchResultAdapter? = null
-    var searchMode = 0 // 0 标题 1 全文
+    private var searchMode = 0 // 0 标题 1 全文
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

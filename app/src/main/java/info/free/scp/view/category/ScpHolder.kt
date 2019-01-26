@@ -68,11 +68,11 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
         }
         itemView.btn_read_later.setOnClickListener {
             if (isInLaterViewList) {
-                ScpDao.getInstance().deleteViewListItem(model, LATER_TYPE)
+                ScpDao.getInstance().deleteViewListItem(model.link, LATER_TYPE)
                 isInLaterViewList = false
                 it.setBackgroundColor(mContext?.resources?.getColor(R.color.unClickBtn)?:0)
             } else {
-                ScpDao.getInstance().insertViewListItem(model, LATER_TYPE)
+                ScpDao.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
                 Toaster.show("已加入待读列表")
                 isInLaterViewList = true
                 it.setBackgroundColor(mContext?.resources?.getColor(R.color.clickedBtn)?:0)

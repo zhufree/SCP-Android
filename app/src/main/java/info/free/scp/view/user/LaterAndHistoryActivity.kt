@@ -34,12 +34,11 @@ class LaterAndHistoryActivity : BaseActivity() {
         }
     val viewItemList = emptyList<SimpleScp?>().toMutableList()
     var adapter : SimpleScpAdapter? = null
-    private var orderType = 0 // 0 時間正序，倒序
+    private var orderType = 1 // 0 時間正序，倒序
         set(value) {
             field = value
             viewItemList.clear()
             viewItemList.addAll(ScpDao.getInstance().getViewListByTypeAndOrder(viewType, value))
-
             adapter?.notifyDataSetChanged()
         }
 

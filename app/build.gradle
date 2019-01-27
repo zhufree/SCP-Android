@@ -77,7 +77,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation files('libs/TalkingdataAnalytics.jar')
     // 打google play包用下面这个
-//    implementation files('libs/GooglePlayTalkingdataAnalytics.jar')
+//    implementation files('libs/GooglePlayTalkingDataAppAnalytics.jar')
 }
 
 repositories {

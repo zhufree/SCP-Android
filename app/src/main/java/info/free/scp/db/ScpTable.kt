@@ -66,7 +66,7 @@ object ScpTable {
     const val CREATE_VIEW_LIST_TABLE_SQL = "create table IF NOT EXISTS $VIEW_LIST_TABLE_NAME (" +
             "$LINK VARCHAR PRIMARY KEY, $TITLE VARCHAR, $VIEW_LIST_TYPE INTEGER, " +
             // timestamp DEFAULT CURRENT_TIMESTAMP，在初始化时自动设置时间戳
-            "$VIEW_TIME TIMESTAMP" +
+            "$VIEW_TIME TIMESTAMP NOT NULL DEFAULT (datetime('now','localtime'))" +
             ")"
 
     const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +

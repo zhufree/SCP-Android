@@ -15,7 +15,7 @@ import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.user.LaterAndHistoryActivity
-import kotlinx.android.synthetic.main.fragment_series.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
 /**
@@ -36,7 +36,7 @@ class HomeFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_series, container, false)
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

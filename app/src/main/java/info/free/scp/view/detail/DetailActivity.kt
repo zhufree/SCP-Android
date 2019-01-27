@@ -59,12 +59,12 @@ class DetailActivity : BaseActivity() {
             field = value
             PreferenceUtil.setDetailTextSize(value)
             nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-                    "$currentTextSize;line-height:30px;}* {color:#a0a0a0;}</style>"
+                    "$currentTextSize;line-height:30px;}* {color:#444;}</style>"
             dayTextStyle = "<style>p {font-size:$currentTextSize}" +
                     ";line-height:30px;}* {color:#000;}</style>"
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;line-height:30px;}* {color:#a0a0a0;}</style>"
+            "$currentTextSize;line-height:30px;}* {color:#444;}</style>"
     private var dayTextStyle = "<style>p {font-size:$currentTextSize;line-height:30px;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
@@ -413,7 +413,7 @@ class DetailActivity : BaseActivity() {
         readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead == 1) {
             tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
-            tv_bottom_set_has_read?.setBackgroundColor(resources.getColor(R.color.disabledBg))
+            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.disabledBg)
             readBtnLp?.endToEnd = -1
             readBtnLp?.startToStart = -1
             readBtnLp?.endToStart = R.id.gl_detail_center
@@ -477,8 +477,8 @@ class DetailActivity : BaseActivity() {
                 menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             }
             tv_bottom_like?.text = if (it.like == 1) "取消收藏" else "收藏"
-            tv_bottom_like?.setBackgroundColor(resources.getColor(if (it.like == 1)
-                R.color.disabledBg else R.color.itemBg))
+            tv_bottom_like?.setBackgroundColor(if (it.like == 1)
+                ThemeUtil.disabledBg else ThemeUtil.itemBg)
         }
         return super.onPrepareOptionsMenu(menu)
     }

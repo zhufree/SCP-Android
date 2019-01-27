@@ -53,7 +53,7 @@ class DirectActivity : BaseActivity() {
                 chooseType = 0
                 numberString = ""
                 cnString = ""
-            } else if (position == 11) {
+            } else if (position == 11 && numberString.isNotEmpty()) {
                 numberString = numberString.substring(0, numberString.length - 1)
             }
             updateExpress()

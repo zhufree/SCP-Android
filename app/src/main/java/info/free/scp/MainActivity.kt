@@ -38,11 +38,11 @@ class MainActivity : BaseActivity() {
         transaction?.hide(currentFragment as Fragment)
         when (item.itemId) {
             R.id.navigation_home -> {
-                if (homeFragment.isAdded) {
+                if (!homeFragment.isAdded && null == supportFragmentManager?.findFragmentByTag("home")) {
+                    transaction?.add(R.id.flMainContainer, homeFragment, "home")
+                } else {
                     transaction?.show(homeFragment)
                     transaction?.hide(userFragment)
-                } else {
-                    transaction?.add(R.id.flMainContainer, homeFragment)
                 }
                 currentFragment = homeFragment
             }
@@ -56,16 +56,16 @@ class MainActivity : BaseActivity() {
             //                return@OnNavigationItemSelectedListener true
             //            }
             R.id.navigation_about -> {
-                if (userFragment.isAdded) {
+                if (!userFragment.isAdded && null == supportFragmentManager?.findFragmentByTag("user")) {
+                    transaction?.add(R.id.flMainContainer, userFragment, "user")
+                } else {
                     transaction?.show(userFragment)
                     transaction?.hide(homeFragment)
-                } else {
-                    transaction?.add(R.id.flMainContainer, userFragment)
                 }
                 currentFragment = userFragment
             }
         }
-        transaction?.commit()
+        transaction?.commitAllowingStateLoss()
         true
     }
 

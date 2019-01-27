@@ -7,4 +7,5 @@
     <attr name="lightText" format = "color"/>
     <attr name="unClickBtn" format = "color"/>
     <attr name="clickedBtn" format = "color"/>
+    <attr name="disabledBg" format = "color"/>
 </resources>

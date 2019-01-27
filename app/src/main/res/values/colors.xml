@@ -9,9 +9,11 @@
     <color name="containerBg">#fff</color>
     <!--浅色底深色字-->
     <color name="darkText">#333</color>
+    <color name="darkTextNight">#444</color>
     <!--深色底浅色字-->
     <color name="lightText">#999</color>
     <color name="disabledBg">#dcdcdc</color>
+    <color name="disabledBgNight">#555</color>
     <color name="toolbarBgNight">#191919</color>
     <color name="containerBgNight">#222</color>
     <color name="itemBgNight">#202020</color>

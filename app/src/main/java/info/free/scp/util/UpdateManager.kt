@@ -30,25 +30,26 @@ class UpdateManager(private var activity: BaseActivity) {
     fun Activity.showToast(msg: String) {
         Toaster.show(msg)
     }
+
     init {
         manager = this
         initReceiver()
     }
 
     companion object {
-        var manager : UpdateManager? = null
+        var manager: UpdateManager? = null
 
         fun getInstance(newActivity: BaseActivity): UpdateManager {
             manager?.activity = newActivity
-            return manager?:UpdateManager(newActivity)
+            return manager ?: UpdateManager(newActivity)
         }
     }
 
     private val currentVersionCode = BuildConfig.VERSION_CODE
     private var isDownloadingDetail = false
 
-    private var mInitCategoryReceiver : BroadcastReceiver? = null
-    private var mInitDetailReceiver : BroadcastReceiver? = null
+    private var mInitCategoryReceiver: BroadcastReceiver? = null
+    private var mInitDetailReceiver: BroadcastReceiver? = null
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
 
     /**
@@ -99,8 +100,8 @@ class UpdateManager(private var activity: BaseActivity) {
                             PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
                         }
                     }
-                    if (currentVersionCode < newVersionCode) {
-                        Logger.i( "current = $currentVersionCode, new = $newVersionCode, 需要升级")
+                    if (currentVersionCode < newVersionCode && !activity.isFinishing) {
+                        Logger.i("current = $currentVersionCode, new = $newVersionCode, 需要升级")
                         AlertDialog.Builder(activity)
                                 .setTitle("发现新版本")
                                 .setMessage(updateDesc)
@@ -121,10 +122,10 @@ class UpdateManager(private var activity: BaseActivity) {
                 }
             }).subscribeOn(Schedulers.newThread())
                     .observeOn(Schedulers.newThread())
-                    .subscribe{
+                    .subscribe {
                         // it表示的是有没有新版本
                         Logger.i("check new version result = $it")
-                        if (!it) {
+                        if (!it && !activity.isFinishing) {
                             if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
                                 activity.runOnUiThread {
                                     checkInitData(true)
@@ -185,7 +186,9 @@ class UpdateManager(private var activity: BaseActivity) {
             override fun onReceive(context: Context?, intent: Intent?) {
                 Toaster.show("离线完毕")
                 isDownloadingDetail = false
-                BackupHelper.getInstance(activity).backupDB()
+                if (!activity.isFinishing) {
+                    BackupHelper.getInstance(activity).backupDB()
+                }
             }
         }
         registerBroadCastReceivers()
@@ -195,14 +198,14 @@ class UpdateManager(private var activity: BaseActivity) {
      * 显示分库下载的多选框
      */
     fun showChooseDbDialog() {
-        val dbList = arrayOf("SCP系列1-4999","SCP-CN系列1-1999","基金会故事",
+        val dbList = arrayOf("SCP系列1-4999", "SCP-CN系列1-1999", "基金会故事",
                 "搞笑作品，其他文档（解明，废除，删除，归档等）", "故事系列，设定中心等")
 //        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
-        val chooseList =  arrayOf(true,true,false,false,false).toBooleanArray()
+        val chooseList = arrayOf(true, true, false, false, false).toBooleanArray()
         AlertDialog.Builder(activity)
                 .setTitle("选择你想要离线的内容（没有离线内容时将直接加载网页）")
-                .setMultiChoiceItems(dbList, chooseList){ _, which, isChecked ->
+                .setMultiChoiceItems(dbList, chooseList) { _, which, isChecked ->
                     chooseList[which] = isChecked
                 }
                 .setPositiveButton("OK") { _, _ ->
@@ -261,7 +264,7 @@ class UpdateManager(private var activity: BaseActivity) {
 
     private fun checkDownloadFinish() {
         Logger.i("check download finish")
-        for (i in 0 .. SCPConstants.Download.DOWNLOAD_TOTAL) {
+        for (i in 0..SCPConstants.Download.DOWNLOAD_TOTAL) {
             if (!PreferenceUtil.getDetailDataLoadFinish(i)) {
                 initDetailData(i)
             }
@@ -296,7 +299,8 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     fun checkUserInfo() {
-        if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()) {
+        if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()
+                && !activity.isFinishing) {
             val inputView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_report, null)
             val nameInputDialog = AlertDialog.Builder(activity)
                     .setTitle("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）")
@@ -315,11 +319,12 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     private fun checkJob() {
-        if (PreferenceUtil.getNickname().isNotEmpty() && PreferenceUtil.getJob().isEmpty()) {
-            val jobList = arrayOf("收容专家","研究员","安全人员","战术反应人员","外勤特工","机动特遣队作业员")
+        if (PreferenceUtil.getNickname().isNotEmpty() && PreferenceUtil.getJob().isEmpty()
+                && !activity.isFinishing) {
+            val jobList = arrayOf("收容专家", "研究员", "安全人员", "战术反应人员", "外勤特工", "机动特遣队作业员")
             AlertDialog.Builder(activity)
                     .setTitle("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业")
-                    .setItems(jobList){ out, which ->
+                    .setItems(jobList) { out, which ->
                         val field = out?.javaClass?.superclass?.getDeclaredField(
                                 "mShowing")
                         field?.isAccessible = true

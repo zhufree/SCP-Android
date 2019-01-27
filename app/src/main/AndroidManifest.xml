@@ -22,6 +22,7 @@
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
         <!--<meta-data android:name="TD_CHANNEL_ID" android:value="${UMENG_CHANNEL_VALUE}" />-->
+        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing" android:value="true"/>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -38,12 +39,10 @@
 
         <service
             android:name=".service.InitCategoryService"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true"/>
         <service
             android:name=".service.InitDetailService"
-            android:enabled="true"
-            android:exported="true" />
+            android:enabled="true"/>
 
         <activity android:name=".view.user.AboutAppActivity">
             <intent-filter>

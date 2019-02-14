@@ -12,7 +12,7 @@ android {
     defaultConfig {
         applicationId "info.free.scp"
         minSdkVersion 19
-        targetSdkVersion
+        targetSdkVersion 28
         versionCode 11
         versionName "0.1.0"
         flavorDimensions "versionCode"
@@ -75,9 +75,9 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
-    implementation files('libs/TalkingdataAnalytics.jar')
+//    implementation files('libs/TalkingdataAnalytics.jar')
     // 打google play包用下面这个
-//    implementation files('libs/GooglePlayTalkingDataAppAnalytics.jar')
+    implementation files('libs/GooglePlayTalkingDataAppAnalytics.jar')
 }
 
 repositories {

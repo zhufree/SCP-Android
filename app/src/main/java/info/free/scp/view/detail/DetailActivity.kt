@@ -176,15 +176,15 @@ class DetailActivity : BaseActivity() {
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
             detail_toolbar?.title = it.title
+            url = if (it.link.contains("http")) it.link else "http://scp-wiki-cn.wikidot.com${it.link}"
             detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
             if (detailHtml.isEmpty()) {
                 pbLoading.visibility = VISIBLE
-                url = if (it.link.contains("http")) it.link else "http://scp-wiki-cn.wikidot.com${it.link}"
                 webView.loadUrl(url)
             } else {
                 pbLoading.visibility = GONE
                 webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                        + jsScript + detailHtml,
+                         + detailHtml + jsScript,
                         "text/html", "utf-8", null)
             }
             nsv_web_wrapper?.scrollTo(0, 0)
@@ -197,7 +197,7 @@ class DetailActivity : BaseActivity() {
     private fun refreshStyle() {
         currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
         webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                + jsScript + detailHtml,
+                + detailHtml + jsScript,
                 "text/html", "utf-8", null)
     }
 
@@ -226,7 +226,7 @@ class DetailActivity : BaseActivity() {
                             onlineMode = 0
                             it.setTitle(R.string.online_mode)
                             webView?.loadDataWithBaseURL("file:///android_asset/",
-                                    currentTextStyle + detailHtml,
+                                    currentTextStyle + detailHtml + jsScript,
                                     "text/html", "utf-8", null)
                         }
                     }

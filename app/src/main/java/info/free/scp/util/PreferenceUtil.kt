@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import java.util.*
-import java.util.Calendar.YEAR
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -265,7 +264,24 @@ object PreferenceUtil {
         setStringValue("read_settings", "detail_text_size", size)
     }
 
+    /**
+     * 草稿临时储存
+     * 数据库换架构时再加多个草稿列表
+     */
+    fun saveDraftContent(content: String) {
+        setStringValue("level", "draft_content", content)
+    }
 
+    fun getDraftContent(): String {
+        return getStringValue("level", "draft_content")
+    }
+    fun saveDraftTitle(title: String) {
+        setStringValue("level", "draft_title", title)
+    }
+
+    fun getDraftTitle(): String {
+        return getStringValue("level", "draft_title")
+    }
     /**
      * 工具方法
      */

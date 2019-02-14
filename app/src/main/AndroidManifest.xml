@@ -11,18 +11,21 @@
     <application
         android:name=".ScpApplication"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
-        <!--<meta-data android:name="TD_CHANNEL_ID" android:value="${UMENG_CHANNEL_VALUE}" />-->
-        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing" android:value="true"/>
+        <!-- <meta-data android:name="TD_CHANNEL_ID" android:value="${UMENG_CHANNEL_VALUE}" /> -->
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
+
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -39,10 +42,10 @@
 
         <service
             android:name=".service.InitCategoryService"
-            android:enabled="true"/>
+            android:enabled="true" />
         <service
             android:name=".service.InitDetailService"
-            android:enabled="true"/>
+            android:enabled="true" />
 
         <activity android:name=".view.user.AboutAppActivity">
             <intent-filter>
@@ -85,12 +88,17 @@
             android:label="@string/title_activity_settings">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.SettingsActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity android:name=".view.category.SeriesDocActivity" />
-        <activity android:name=".view.home.DirectActivity"/>
+        <activity android:name=".view.home.DirectActivity" />
+        <activity android:name=".view.draft.DraftEditActivity">
+            <intent-filter>
+                <action android:name="info.free.scp.view.draft.DraftEditActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

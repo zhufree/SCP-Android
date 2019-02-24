@@ -1,10 +1,15 @@
 package info.free.scp.view.home
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import info.free.scp.R
 import android.widget.ArrayAdapter
+import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
@@ -14,6 +19,7 @@ import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
+import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class DirectActivity : BaseActivity() {
@@ -77,13 +83,13 @@ class DirectActivity : BaseActivity() {
                 3 -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_JOKE_CN, numberString)
                 else -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
             }
-            scp?.let {s->
+            scp?.let { s ->
                 val intent = Intent()
                 intent.putExtra("link", s.link)
                 intent.putExtra("sId", s.sId)
                 intent.setClass(this, DetailActivity::class.java)
                 startActivity(intent)
-            }?:Toaster.show("没有这篇文章")
+            } ?: Toaster.show("没有这篇文章")
 
         }
     }
@@ -97,9 +103,12 @@ class DirectActivity : BaseActivity() {
         }
         direct_toolbar?.inflateMenu(R.menu.direct_menu) //设置右上角的填充菜单
         direct_toolbar?.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.random -> {
                     startActivity(Intent(this, DetailActivity::class.java))
+                }
+                R.id.import_read_list -> {
+                    showInputListDialog()
                 }
             }
             true
@@ -113,5 +122,53 @@ class DirectActivity : BaseActivity() {
 
     private fun updateExpress() {
         tv_direct_title.text = "SCP-$cnString$numberString$jString"
+    }
+
+    private fun showInputListDialog() {
+        val inputView = LayoutInflater.from(this)
+                .inflate(R.layout.layout_dialog_input_large, null)
+        val inputDialog = AlertDialog.Builder(this)
+                .setTitle(R.string.menu_import_read_list)
+                .setMessage("导入的文章标题用逗号分隔，标题内需要包含cn，j等关键词作为区分")
+                .setView(inputView)
+                .setPositiveButton("OK") { _, _ -> }
+                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                .create()
+        inputDialog.show()
+        inputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+            val inputString = inputView.et_report.text.toString()
+            Log.i("readlist", inputString)
+            splitReadList(inputString)
+            inputDialog.dismiss()
+            Toaster.show("导入完成")
+        }
+    }
+
+    private fun splitReadList(input: String) {
+        val titleList = input.split(",")
+        if (titleList.isEmpty()) return
+        titleList.forEach { str ->
+            var type = SAVE_SERIES
+            var numberString = ""
+            if (str.contains("cn") || str.contains("CN")) {
+                type = SAVE_SERIES_CN
+            }
+            str.forEach {
+                if (it.isDigit()) {
+                    numberString += it
+                } else {
+                    if (it == 'j' || it == 'J') {
+                        type = if (type == SAVE_SERIES) SAVE_JOKE else SAVE_JOKE_CN
+                    }
+                }
+            }
+            if (numberString.isNotEmpty()) {
+                val targetScp = ScpDao.getInstance().getScpByTypeAndNumber(type, numberString)
+                if (targetScp != null) {
+                    print(targetScp)
+                    ScpDao.getInstance().insertViewListItem(targetScp.link, targetScp.title, LATER_TYPE)
+                }
+            }
+        }
     }
 }

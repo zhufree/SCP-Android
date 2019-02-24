@@ -12,6 +12,12 @@ import java.util.*
  */
 
 object PreferenceUtil {
+
+    const val INIT_SP = "init"
+    const val DOWNLOAD_SP = "download"
+    const val UPDATE_SP = "update"
+    const val APP_SP = "app"
+
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context.getSharedPreferences(name, Context.MODE_PRIVATE)
     }
@@ -23,11 +29,11 @@ object PreferenceUtil {
      * 目录和数据库是否离线完成，用boolean记录
      */
     fun getInitCategoryFinish(): Boolean {
-        return getBooleanValue("init", "init_category")
+        return getBooleanValue(INIT_SP, "init_category")
     }
 
     fun setInitCategoryFinish(finish: Boolean) {
-        setBooleanValue("init", "init_category", finish)
+        setBooleanValue(INIT_SP, "init_category", finish)
     }
 
     /**
@@ -37,24 +43,24 @@ object PreferenceUtil {
         if (value) {
             setDetailLastLoadTime(downloadType, Utils.formatNow())
         }
-        setBooleanValue("init", downloadType.toString(), value)
+        setBooleanValue(INIT_SP, downloadType.toString(), value)
     }
     fun getDetailDataLoadFinish(downloadType: Int): Boolean {
-        return getBooleanValue("init", downloadType.toString(), true)
+        return getBooleanValue(INIT_SP, downloadType.toString(), true)
     }
 
     /**
      * 下载进度记录
      */
     fun getSingleDbLoadCount(downloadType: Int): Int {
-        return getIntValue("download", downloadType.toString())
+        return getIntValue(DOWNLOAD_SP, downloadType.toString())
     }
     fun setSingleDbLoadCount(downloadType: Int, progress: Int) {
-        setIntValue("download", downloadType.toString(), progress)
+        setIntValue(DOWNLOAD_SP, downloadType.toString(), progress)
     }
 
     fun addSingleDbLoadCount(downloadType: Int) {
-        setIntValue("download", downloadType.toString(), getSingleDbLoadCount(downloadType) +1)
+        setIntValue(DOWNLOAD_SP, downloadType.toString(), getSingleDbLoadCount(downloadType) +1)
     }
     fun resetSingleDbLoadCount(downloadType: Int) {
         setSingleDbLoadCount(downloadType, 0)
@@ -63,10 +69,10 @@ object PreferenceUtil {
      * 数据更新时间相关
      */
     fun getDetailLastLoadTime(downloadType: Int): String {
-        return getStringValue("download","${downloadType}_time" )
+        return getStringValue(DOWNLOAD_SP,"${downloadType}_time" )
     }
     fun setDetailLastLoadTime(downloadType: Int, time: String) {
-        setStringValue("download", "${downloadType}_time", time)
+        setStringValue(DOWNLOAD_SP, "${downloadType}_time", time)
     }
 
 
@@ -74,12 +80,12 @@ object PreferenceUtil {
      * 检测当前版本是不是第一次启动
      */
     fun getFirstOpenCurrentVersion(versionCode: String): Boolean {
-        val sp = getPrivateSharedPreference("init")
+        val sp = getPrivateSharedPreference(INIT_SP)
         return sp?.getBoolean(versionCode, true)?:true
     }
 
     fun setFirstOpenCurrentVersion(versionCode: String) {
-        val sp = getPrivateSharedPreference("init")
+        val sp = getPrivateSharedPreference(INIT_SP)
         sp?.edit()?.putBoolean(versionCode, false)?.apply()
     }
 
@@ -87,11 +93,11 @@ object PreferenceUtil {
      * 第一次进正文是否显示过提示
      */
     fun getShownDetailNotice(): Boolean {
-        val sp = getPrivateSharedPreference("init")
+        val sp = getPrivateSharedPreference(INIT_SP)
         return sp?.getBoolean("shownDetailNotice", false)?:false
     }
     fun setShownDetailNotice() {
-        val sp = getPrivateSharedPreference("init")
+        val sp = getPrivateSharedPreference(INIT_SP)
         sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
     }
 
@@ -111,11 +117,28 @@ object PreferenceUtil {
      * 检测更新，一天只检测一次，重新安装后要重置
      */
     fun setLastCheckUpdateTime(time: Long) {
-        setLongValue("update", "lastCheckUpdateTime", time)
+        setLongValue(UPDATE_SP, "lastCheckUpdateTime", time)
     }
 
     fun checkNeedShowUpdateNotice(): Boolean {
-        val lastTime = getLongValue("update", "lastCheckUpdateTime")
+        val lastTime = getLongValue(UPDATE_SP, "lastCheckUpdateTime")
+        val cal = Calendar.getInstance()
+        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0)
+        val beginOfDate = cal.timeInMillis
+        return lastTime < beginOfDate
+    }
+
+    /**
+     * 检测小组件当天是否更新
+     */
+
+    fun setLastUpdateWidgetTime(time: Long) {
+        setLongValue(APP_SP, "lastUpdateWidgetTime", time)
+    }
+
+    fun checkNeedUpdateWidget(): Boolean {
+        val lastTime = getLongValue(APP_SP, "lastUpdateWidgetTime")
         val cal = Calendar.getInstance()
         cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
                 0, 0, 0)
@@ -125,11 +148,11 @@ object PreferenceUtil {
 
 
     fun setServerLastUpdateTime(dbIndex: String, time: String) {
-        setStringValue("update", dbIndex, time)
+        setStringValue(UPDATE_SP, dbIndex, time)
     }
 
     fun getServerLastUpdateTime(dbIndex: Int): String {
-        return getStringValue("update", "last_update_time_$dbIndex")
+        return getStringValue(UPDATE_SP, "last_update_time_$dbIndex")
     }
 
     /**

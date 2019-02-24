@@ -77,7 +77,9 @@ object SCPConstants {
         const val SAVE_CONTEST = 16
         const val SAVE_CONTEST_CN = 18
 
-
+        // android
+        const val SAVE_OFFSET = 21
+        const val SAVE_COLLECTION_ITEM = 22
     }
 
     const val BMOB_API_URL = "https://api.bmob.cn/"

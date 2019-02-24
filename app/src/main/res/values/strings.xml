@@ -77,7 +77,7 @@
     <string name="set_has_not_read">取消已读</string>
 
     <string name="menu_reverse">逆序</string>
-    <string name="menu_cn">cn</string>
+    <string name="menu_import_read_list">导入待读列表</string>
 
     <string name="menu_search">搜索</string>
     <string name="menu_random">随机</string>
@@ -133,7 +133,7 @@
     <string name="download_scp_title">SCP系列</string>
     <string name="download_scp_cn_title">SCP-CN系列</string>
     <string name="download_tale_title">基金会故事</string>
-    <string name="download_other_title">其他文档</string>
+    <string name="download_other_title">其他文档和offset部分</string>
     <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
     <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>

@@ -12,6 +12,9 @@ import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.db.ScpDao
 
 
+/**
+ * 获取目录的service
+ */
 class InitCategoryService : IntentService("initDataService") {
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null

@@ -199,7 +199,7 @@ class UpdateManager(private var activity: BaseActivity) {
      */
     fun showChooseDbDialog() {
         val dbList = arrayOf("SCP系列1-4999", "SCP-CN系列1-1999", "基金会故事",
-                "搞笑作品，其他文档（解明，废除，删除，归档等）", "故事系列，设定中心等")
+                "搞笑作品，其他文档（解明，废除，删除，归档等）,offset", "故事系列，设定中心等")
 //        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
         val chooseList = arrayOf(true, true, false, false, false).toBooleanArray()

@@ -5,8 +5,9 @@
         android:id="@+id/random"
         android:title="@string/menu_random"
         app:showAsAction="always" />
-    <!--<item-->
-        <!--android:id="@+id/cn_page"-->
-        <!--android:title="@string/menu_cn"-->
-        <!--app:showAsAction="ifRoom"/>-->
+    <item
+        android:id="@+id/import_read_list"
+        android:title="@string/menu_import_read_list"
+        android:icon="@drawable/ic_import_white_24dp"
+        app:showAsAction="ifRoom"/>
 </menu>

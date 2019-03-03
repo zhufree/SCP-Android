@@ -104,11 +104,36 @@ class DirectActivity : BaseActivity() {
         direct_toolbar?.inflateMenu(R.menu.direct_menu) //设置右上角的填充菜单
         direct_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.random -> {
+                R.id.random_all -> {
                     startActivity(Intent(this, DetailActivity::class.java))
                 }
-                R.id.import_read_list -> {
-                    showInputListDialog()
+                // FIXME 这部分逻辑还是要放到正文里，因为上下章切换要保持在范围内
+                R.id.random_scp -> {
+                    val targetScp = ScpDao.getInstance().getRandomScp("1,2")
+                    targetScp?.let {
+                        val intent = Intent()
+                        intent.putExtra("link", targetScp.link)
+                        intent.setClass(this, DetailActivity::class.java)
+                        startActivity(intent)
+                    }?: Toaster.show("没有离线的该部分内容，无法随机")
+                }
+                R.id.random_tales -> {
+                    val targetScp = ScpDao.getInstance().getRandomScp("3,4")
+                    targetScp?.let {
+                        val intent = Intent()
+                        intent.putExtra("link", targetScp.link)
+                        intent.setClass(this, DetailActivity::class.java)
+                        startActivity(intent)
+                    }?: Toaster.show("没有离线的该部分内容，无法随机")
+                }
+                R.id.random_joke -> {
+                    val targetScp = ScpDao.getInstance().getRandomScp("5,6")
+                    targetScp?.let {
+                        val intent = Intent()
+                        intent.putExtra("link", targetScp.link)
+                        intent.setClass(this, DetailActivity::class.java)
+                        startActivity(intent)
+                    }?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
             }
             true
@@ -122,53 +147,5 @@ class DirectActivity : BaseActivity() {
 
     private fun updateExpress() {
         tv_direct_title.text = "SCP-$cnString$numberString$jString"
-    }
-
-    private fun showInputListDialog() {
-        val inputView = LayoutInflater.from(this)
-                .inflate(R.layout.layout_dialog_input_large, null)
-        val inputDialog = AlertDialog.Builder(this)
-                .setTitle(R.string.menu_import_read_list)
-                .setMessage("导入的文章标题用逗号分隔，标题内需要包含cn，j等关键词作为区分")
-                .setView(inputView)
-                .setPositiveButton("OK") { _, _ -> }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                .create()
-        inputDialog.show()
-        inputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            val inputString = inputView.et_report.text.toString()
-            Log.i("readlist", inputString)
-            splitReadList(inputString)
-            inputDialog.dismiss()
-            Toaster.show("导入完成")
-        }
-    }
-
-    private fun splitReadList(input: String) {
-        val titleList = input.split(",")
-        if (titleList.isEmpty()) return
-        titleList.forEach { str ->
-            var type = SAVE_SERIES
-            var numberString = ""
-            if (str.contains("cn") || str.contains("CN")) {
-                type = SAVE_SERIES_CN
-            }
-            str.forEach {
-                if (it.isDigit()) {
-                    numberString += it
-                } else {
-                    if (it == 'j' || it == 'J') {
-                        type = if (type == SAVE_SERIES) SAVE_JOKE else SAVE_JOKE_CN
-                    }
-                }
-            }
-            if (numberString.isNotEmpty()) {
-                val targetScp = ScpDao.getInstance().getScpByTypeAndNumber(type, numberString)
-                if (targetScp != null) {
-                    print(targetScp)
-                    ScpDao.getInstance().insertViewListItem(targetScp.link, targetScp.title, LATER_TYPE)
-                }
-            }
-        }
     }
 }

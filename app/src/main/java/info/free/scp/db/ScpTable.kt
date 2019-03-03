@@ -6,7 +6,7 @@ package info.free.scp.db
  */
 
 object ScpTable {
-    const val TABLE_NAME = "ScpTable" // 目录表
+    const val SCP_TABLE_NAME = "ScpTable" // 目录表
     const val DETAIL_TABLE_NAME = "DetailTable" // 正文表
     const val LIKE_AND_READ_TABLE_NAME = "LikeAndReadTable" // 收藏和读过表
     const val VIEW_LIST_TABLE_NAME = "LaterAndHistoryTable" // 待读列表和历史阅读记录表
@@ -43,7 +43,7 @@ object ScpTable {
     const val VIEW_TIME = "viewTime" // 上次阅读的历史时间/加入待读列表的时间,根据type判断
     const val VIEW_LIST_TYPE = "viewListType" // 待读还是读过的type，用一个表
 
-    const val CREATE_TABLE_SQL = "create table IF NOT EXISTS $TABLE_NAME (" +
+    const val CREATE_TABLE_SQL = "create table IF NOT EXISTS $SCP_TABLE_NAME (" +
             "$ID VARCHAR PRIMARY KEY, $INDEX INTEGER," +
             "$LINK VARCHAR, $TITLE VARCHAR, " +
             "$DETAIL_HTML TEXT, $NOT_FOUND INTEGER," +
@@ -69,7 +69,7 @@ object ScpTable {
             "$VIEW_TIME TIMESTAMP NOT NULL DEFAULT (datetime('now','localtime'))" +
             ")"
 
-    const val INSERT_SCP_SQL = "INSERT INTO $TABLE_NAME (" +
+    const val INSERT_SCP_SQL = "INSERT INTO $SCP_TABLE_NAME (" +
             "$ID,$INDEX, $LINK, $TITLE, $DETAIL_HTML, $NOT_FOUND, $SCP_TYPE, $DOWNLOAD_TYPE," +
             "$SUB_TEXT , $SNIPPET , $DESC, $AUTHOR, $CREATOR, " +
             "$CREATED_TIME,$PAGE_CODE , $CONTEST_NAME , $CONTEST_LINK," +
@@ -89,7 +89,7 @@ object ScpTable {
     const val INSERT_VIEW_LIST_SQL = "REPLACE INTO $VIEW_LIST_TABLE_NAME (" +
             "$LINK, $TITLE, $VIEW_LIST_TYPE) VALUES (?,?,?)"
 
-    const val dropScpTableSQL = "DROP TABLE IF EXISTS $TABLE_NAME"
+    const val dropScpTableSQL = "DROP TABLE IF EXISTS $SCP_TABLE_NAME"
 
     const val dropDetailTableSQL = "DROP TABLE IF EXISTS $DETAIL_TABLE_NAME"
 

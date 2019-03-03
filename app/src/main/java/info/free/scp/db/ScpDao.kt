@@ -216,10 +216,10 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             val cv = packScp(model)
             if (getScpModelById(model.sId) == null) {
                 // 如果之前没有，直接存储
-                db.insert(ScpTable.TABLE_NAME, null, cv)
+                db.insert(ScpTable.SCP_TABLE_NAME, null, cv)
             } else {
                 // 如果之前有了，更新字段，阅读的信息只有新数据> 0时才会更新，所以不会覆盖
-                db.update(ScpTable.TABLE_NAME, cv, ScpTable.ID + "=?",
+                db.update(ScpTable.SCP_TABLE_NAME, cv, ScpTable.ID + "=?",
                         arrayOf(model.sId))
             }
             db.setTransactionSuccessful()
@@ -238,7 +238,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         }
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.LINK + "=?", arrayOf(link))
                 with(cursor) {
                     this?.let {
@@ -270,7 +270,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             var scpModel: ScpModel? = null
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.ID + "=?", arrayOf(id))
                 with(cursor) {
                     this?.let {
@@ -295,11 +295,11 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             with(readableDatabase) {
                 val cursor: Cursor? =
                         if (PreferenceUtil.getIfHideFinished()) {
-                            this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                            this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                                     + ScpTable.SCP_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0 ",
                                     arrayOf(type.toString()))
                         } else {
-                            this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                            this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                                     + ScpTable.SCP_TYPE + "=?",
                                     arrayOf(type.toString()))
                         }
@@ -334,7 +334,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=?;",
                         arrayOf(type.toString()))
                 with(cursor) {
@@ -357,7 +357,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=? AND " + ScpTable.PAGE_CODE + " = ?;",
                         arrayOf(type.toString(), pageCode))
                 with(cursor) {
@@ -385,7 +385,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         var resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=" + SCPConstants.ScpType.SINGLE_PAGE, null)
                 with(cursor) {
                     this?.let {
@@ -459,7 +459,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.TITLE + " LIKE ?;",
                         arrayOf("%$keyword%"))
                 with(cursor) {
@@ -484,7 +484,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM "
-                        + ScpTable.TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME + " as detail on " +
+                        + ScpTable.SCP_TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME + " as detail on " +
                         "scp.sId = detail.sId WHERE detail.detailHtml LIKE ?;",
                         arrayOf("%$keyword%"))
                 with(cursor) {
@@ -503,28 +503,38 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         return resultList
     }
 
-    fun getRandomScp(): ScpModel? {
+    fun getRandomScp(typeRange: String = ""): ScpModel? {
         randomCount++
-        if (randomCount > 50) {
+        if (randomCount > 20) {
             randomCount = 0
             return null
         }
         var scpModel: ScpModel? = null
+        var link = ""
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.DETAIL_TABLE_NAME, null)
-            if (cursor != null && cursor.count > 0) {
-                val randomIndex = Random().nextInt(cursor.count)
-                while (cursor.moveToNext()) {
-                    if (cursor.position == randomIndex) {
-                        val link = getCursorString(cursor, ScpTable.LINK)
-                        Log.i("random", link)
-                        val detailHtml = getDetailByLink(link)
-                        scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-                            getRandomScp() else getOneScpModelByLink(link)
-                        cursor.close()
+            with(readableDatabase) {
+                var cursor: Cursor? = null
+                if (typeRange.isEmpty()) {
+                    cursor = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.DETAIL_TABLE_NAME, null)
+                } else {
+                    cursor = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME +
+                            " WHERE " + ScpTable.SCP_TYPE + " IN ($typeRange);", null)
+                }
+                if (cursor != null && cursor.count > 0) {
+                    val randomIndex = Random().nextInt(cursor.count)
+                    while (cursor.moveToNext()) {
+                        if (cursor.position == randomIndex) {
+                            link = getCursorString(cursor, ScpTable.LINK)
+                            Log.i("random", link)
+                            cursor.close()
+                            break
+                        }
                     }
                 }
             }
+            val detailHtml = getDetailByLink(link)
+            scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
+                getRandomScp(typeRange) else getOneScpModelByLink(link)
             return scpModel
         } catch (e: Exception) {
             e.printStackTrace()
@@ -559,7 +569,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " as like_scp "
-                        + " left join " + ScpTable.TABLE_NAME + " as scp on like_scp.link = scp.link WHERE like_scp."
+                        + " left join " + ScpTable.SCP_TABLE_NAME + " as scp on like_scp.link = scp.link WHERE like_scp."
                         + ScpTable.LIKE + "=? ORDER BY scp." + ScpTable.SCP_TYPE + ", scp." + ScpTable.INDEX + ";",
                         arrayOf("1"))
                 with(cursor) {
@@ -597,7 +607,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun getNextScp(index: Int): ScpModel? {
         var scpModel: ScpModel? = null
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                     + ScpTable.INDEX + "=? ", arrayOf("${index + 1}"))
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -615,7 +625,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun getPreviewScp(index: Int): ScpModel? {
         var scpModel: ScpModel? = null
         try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                     + ScpTable.INDEX + "=? ", arrayOf("${index - 1}"))
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
@@ -633,7 +643,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     fun getScpByTypeAndNumber(type: Int, number: String): ScpModel? {
         try {
             with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.TABLE_NAME + " WHERE "
+                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
                         + ScpTable.SCP_TYPE + "=? AND " + ScpTable.TITLE + " LIKE ?;",
                         arrayOf(type.toString(), if (type == SAVE_JOKE || type == SAVE_JOKE_CN)
                             "%-$number-%" else "%-$number%"))

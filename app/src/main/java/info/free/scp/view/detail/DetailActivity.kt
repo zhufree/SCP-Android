@@ -268,11 +268,9 @@ class DetailActivity : BaseActivity() {
                         likeScp()
                     }
                     R.id.add_read_later -> {
-                        scp?.let {s ->
-                            ScpDao.getInstance().insertViewListItem(s.link, s.title,
-                                    SCPConstants.LATER_TYPE)
-                            Toaster.show("已加入待读列表")
-                        }
+                        ScpDao.getInstance().insertViewListItem(s.link, s.title,
+                                SCPConstants.LATER_TYPE)
+                        Toaster.show("已加入待读列表")
                     }
                     R.id.share_picture -> {
                         // 截屏分享

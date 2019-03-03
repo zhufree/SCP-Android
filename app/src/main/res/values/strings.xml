@@ -80,7 +80,7 @@
     <string name="menu_import_read_list">导入待读列表</string>
 
     <string name="menu_search">搜索</string>
-    <string name="menu_random">随机</string>
+    <string name="menu_random">▼|随机</string>
 
     <string name="menu_download_help">下载页说明</string>
 

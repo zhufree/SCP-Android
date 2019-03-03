@@ -4,10 +4,23 @@
     <item
         android:id="@+id/random"
         android:title="@string/menu_random"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/import_read_list"
-        android:title="@string/menu_import_read_list"
-        android:icon="@drawable/ic_import_white_24dp"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always" >
+        <menu>
+            <!--随机SCP
+                随机故事
+                随机搞笑-->
+            <item android:id="@+id/random_all"
+                android:title="随机全部"
+                app:showAsAction="ifRoom|withText"/>
+            <item android:id="@+id/random_scp"
+                android:title="随机SCP"
+                app:showAsAction="ifRoom|withText"/>
+            <item android:id="@+id/random_tales"
+                android:title="随机故事"
+                app:showAsAction="ifRoom|withText"/>
+            <item android:id="@+id/random_joke"
+                android:title="随机搞笑"
+                app:showAsAction="ifRoom|withText"/>
+        </menu>
+    </item>
 </menu>

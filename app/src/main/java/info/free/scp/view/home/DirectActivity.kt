@@ -113,6 +113,8 @@ class DirectActivity : BaseActivity() {
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)
+                        intent.putExtra("read_type", 1)
+                        intent.putExtra("random_type", 1)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
                     }?: Toaster.show("没有离线的该部分内容，无法随机")
@@ -122,6 +124,8 @@ class DirectActivity : BaseActivity() {
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)
+                        intent.putExtra("read_type", 1)
+                        intent.putExtra("random_type", 2)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
                     }?: Toaster.show("没有离线的该部分内容，无法随机")
@@ -131,6 +135,8 @@ class DirectActivity : BaseActivity() {
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)
+                        intent.putExtra("read_type", 1)
+                        intent.putExtra("random_type", 3)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
                     }?: Toaster.show("没有离线的该部分内容，无法随机")

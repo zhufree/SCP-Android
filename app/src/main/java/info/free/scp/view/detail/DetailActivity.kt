@@ -44,6 +44,7 @@ class DetailActivity : BaseActivity() {
 
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
+    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -97,6 +98,8 @@ class DetailActivity : BaseActivity() {
         webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
+        readType = intent.getIntExtra("read_type", 0)
+        randomType = intent.getIntExtra("random_type", 0)
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 随机文档
@@ -350,7 +353,13 @@ class DetailActivity : BaseActivity() {
                         setData(it)
                     }
                 } else {
-                    scp = ScpDao.getInstance().getRandomScp()
+                    val randomRange = when (randomType) {
+                        1 -> "1,2"
+                        2 -> "3,4"
+                        3 -> "5,6"
+                        else -> ""
+                    }
+                    scp = ScpDao.getInstance().getRandomScp(randomRange)
                     scp?.let {
                         randomList.add(it)
                         randomIndex++

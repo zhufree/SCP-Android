@@ -3,7 +3,7 @@ package info.free.scp.view.user
 import android.app.AlertDialog
 import android.os.Bundle
 import android.preference.PreferenceActivity
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceFragmentCompat
 import android.view.Menu
 import android.view.View
 import info.free.scp.R

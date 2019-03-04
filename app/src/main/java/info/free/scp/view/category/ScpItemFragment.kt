@@ -2,8 +2,8 @@ package info.free.scp.view.category
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +36,7 @@ class ScpItemFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val lm = GridLayoutManager(mContext, 2, LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.GridLayoutManager(mContext, 2, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_category_list?.layoutManager = lm
         initScpItemAdapter()
     }

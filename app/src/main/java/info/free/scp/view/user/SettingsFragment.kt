@@ -6,8 +6,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
-import android.support.v7.preference.PreferenceFragmentCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.preference.PreferenceFragmentCompat
 import android.text.SpannableString
 import android.text.Spanned.SPAN_INCLUSIVE_EXCLUSIVE
 import android.text.method.LinkMovementMethod
@@ -93,7 +93,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    class CopySpan(val url: String, val activity: FragmentActivity?) : ClickableSpan() {
+    class CopySpan(val url: String, val activity: androidx.fragment.app.FragmentActivity?) : ClickableSpan() {
         override fun onClick(widget: View) {
             val copyrightIntent = Intent()
             copyrightIntent.action = "android.intent.action.VIEW"

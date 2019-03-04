@@ -1,7 +1,7 @@
 package info.free.scp.view.search
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.VISIBLE
 import info.free.scp.R
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_search.view.*
  * 搜索结果item
  */
 
-class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
+class SearchHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     private var mContext: Context? = null
 
     init {

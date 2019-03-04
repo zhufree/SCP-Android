@@ -4,7 +4,7 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -56,7 +56,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         setContentView(R.layout.activity_like)
         initToolbar()
 
-        val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_like?.layoutManager = lm
         adapter = SimpleScpAdapter(this, viewItemList)
         rv_like?.adapter = adapter

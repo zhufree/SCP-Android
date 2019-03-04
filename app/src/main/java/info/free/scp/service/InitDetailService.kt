@@ -6,9 +6,9 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
-import android.support.annotation.RequiresApi
+import androidx.annotation.RequiresApi
 import info.free.scp.util.PreferenceUtil
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
 import info.free.scp.db.ScpDao
 import info.free.scp.util.Logger
@@ -23,11 +23,11 @@ class InitDetailService : IntentService("initDataService") {
     private var downloadList = emptyList<Int>().toMutableList()
     private var isDownloading = false
 
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     override fun onCreate() {
         super.onCreate()
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
     }
 
 

@@ -7,7 +7,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import info.free.scp.BuildConfig
@@ -50,7 +50,7 @@ class UpdateManager(private var activity: BaseActivity) {
 
     private var mInitCategoryReceiver: BroadcastReceiver? = null
     private var mInitDetailReceiver: BroadcastReceiver? = null
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     /**
      * 检测更新和数据初始化
@@ -144,7 +144,7 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     private fun registerBroadCastReceivers() {
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity)
+        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(activity)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver!!, IntentFilter(SCPConstants.BroadCastAction.INIT_PROGRESS))

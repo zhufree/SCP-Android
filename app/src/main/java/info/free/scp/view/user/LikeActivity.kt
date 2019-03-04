@@ -2,7 +2,7 @@ package info.free.scp.view.user
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.View
@@ -34,7 +34,7 @@ class LikeActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.clickLikeList)
         initToolbar()
 
-        val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_like?.layoutManager = lm
         likeList.addAll(ScpDao.getInstance().getLikeScpList())
         Log.i("search", likeList.size.toString())

@@ -2,7 +2,7 @@ package info.free.scp.view.search
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
@@ -31,7 +31,7 @@ class SearchActivity : BaseActivity() {
         setContentView(R.layout.activity_search)
         initToolbar()
 
-        val lm = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_search_result?.layoutManager = lm
         btn_search?.setOnClickListener {
             val keyword = et_search_input?.text?.toString()?:""

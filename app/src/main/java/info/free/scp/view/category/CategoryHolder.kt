@@ -1,6 +1,6 @@
 package info.free.scp.view.category
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.widget.FrameLayout
 import info.free.scp.SCPConstants.Category.SERIES
@@ -14,14 +14,14 @@ import kotlinx.android.synthetic.main.item_category.view.*
  *
  */
 
-class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
+class CategoryHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
 
     init {
         val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
         rlLp.height = Utils.dp2px(categoryHeight)
-        val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
+        val lp = itemView.cv_category_item.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)
     }

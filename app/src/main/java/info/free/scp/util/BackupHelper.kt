@@ -2,7 +2,7 @@ package info.free.scp.util
 
 import android.content.Context
 import android.os.Environment
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable

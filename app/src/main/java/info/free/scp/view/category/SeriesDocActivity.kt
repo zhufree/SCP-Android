@@ -1,7 +1,7 @@
 package info.free.scp.view.category
 
 import android.os.Bundle
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.view.Menu
 import info.free.scp.R
 import info.free.scp.SCPConstants.Category.ABOUT_INFO
@@ -126,7 +126,7 @@ class SeriesDocActivity : BaseActivity() {
         tab_series_doc?.setupWithViewPager(vp_series_doc)
         tab_series_doc?.tabMode
 
-        vp_series_doc?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        vp_series_doc?.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
             }
 

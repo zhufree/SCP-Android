@@ -2,7 +2,7 @@ package info.free.scp.view.category
 
 import android.app.AlertDialog
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.item_category.view.*
  *
  */
 
-class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
+class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
     private var mContext: Context? = null
@@ -28,7 +28,7 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
     init {
         val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
         rlLp.height = Utils.dp2px(categoryHeight)
-        val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
+        val lp = itemView.cv_category_item.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)
         itemView.btn_read_later?.visibility = VISIBLE

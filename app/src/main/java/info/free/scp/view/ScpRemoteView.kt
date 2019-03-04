@@ -3,7 +3,6 @@ package info.free.scp.view
 import android.app.PendingIntent
 import android.content.Intent
 import android.widget.RemoteViews
-import info.free.scp.MainActivity
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDao

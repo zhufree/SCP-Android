@@ -1,7 +1,7 @@
 package info.free.scp.view.base
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 
@@ -14,8 +14,8 @@ import android.view.View
  * 继承时要指定
  */
 
-abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
-    : RecyclerView.Adapter<H>(),
+abstract class BaseAdapter<H: androidx.recyclerview.widget.RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
+    : androidx.recyclerview.widget.RecyclerView.Adapter<H>(),
         View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null
     private var mOnItemLongClickListener: OnItemLongClickListener? = null

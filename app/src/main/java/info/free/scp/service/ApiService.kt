@@ -59,6 +59,9 @@ interface ApiService {
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
 
+    @GET("/latest_cn/{pageIndex}")
+    fun getLatestCn(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",

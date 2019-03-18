@@ -8,11 +8,11 @@ import androidx.fragment.app.FragmentPagerAdapter
  * Created by zhufree on 2018/8/28.
  *
  */
-class HomeFragmentPager(fragmentManager: androidx.fragment.app.FragmentManager, fragmentList: List<androidx.fragment.app.Fragment>,
-                        titleList: List<String>) : androidx.fragment.app.FragmentPagerAdapter(fragmentManager) {
-    private var mFragmentList: List<androidx.fragment.app.Fragment> = fragmentList
+class TabFragmentPager(fragmentManager: FragmentManager, fragmentList: List<Fragment>,
+                       titleList: List<String>) : FragmentPagerAdapter(fragmentManager) {
+    private var mFragmentList: List<Fragment> = fragmentList
     private var mTitleList: List<String> = titleList
-    override fun getItem(position: Int): androidx.fragment.app.Fragment {
+    override fun getItem(position: Int): Fragment {
         return mFragmentList[position]
     }
 

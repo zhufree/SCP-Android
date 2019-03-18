@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationCo
 //import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ApiBean
+import info.free.scp.bean.FeedModel
 import info.free.scp.bean.ScpModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -82,10 +83,10 @@ class HttpManager {
                 })
     }
 
-    fun getLatestCn(pageIndex: Int = 1, updateView: (eventList: List<ScpModel>) -> Unit) {
+    fun getLatestCn(pageIndex: Int = 1, updateView: (eventList: List<FeedModel>) -> Unit) {
         feedApiService.getLatestCn(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
                         updateView(t.results)
                     }
                 })

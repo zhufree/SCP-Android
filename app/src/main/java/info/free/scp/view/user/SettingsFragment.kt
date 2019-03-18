@@ -1,12 +1,10 @@
 package info.free.scp.view.user
 
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
 import androidx.preference.PreferenceFragmentCompat
 import android.text.SpannableString
 import android.text.Spanned.SPAN_INCLUSIVE_EXCLUSIVE
@@ -14,9 +12,9 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.LayoutInflater
 import android.view.View
-import androidx.preference.DialogPreference
+import androidx.preference.Preference
+import androidx.preference.SwitchPreference
 import info.free.scp.R
-import info.free.scp.ScpApplication
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
 import info.free.scp.util.EventUtil.clickDownloadSetting
@@ -37,28 +35,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
-        (findPreference("dark_mode") as DialogPreference).setDefaultValue(ThemeUtil.currentTheme == 1)
+        (findPreference("dark_mode") as SwitchPreference).setDefaultValue(ThemeUtil.currentTheme == 1)
 
-        (findPreference("dark_mode") as DialogPreference).setOnPreferenceClickListener {
+        (findPreference("dark_mode") as SwitchPreference).setOnPreferenceClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
             true
         }
 
-        (findPreference("read_settings") as DialogPreference).setOnPreferenceClickListener {
+        (findPreference("read_settings") as Preference).setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 0)
             activity?.startActivity(intent)
             true
         }
-        (findPreference("download_settings") as DialogPreference).setOnPreferenceClickListener {
+        (findPreference("download_settings") as Preference).setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickDownloadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 1)
             activity?.startActivity(intent)
             true
         }
-        (findPreference("copyright") as DialogPreference).setOnPreferenceClickListener {
+        (findPreference("copyright") as Preference).setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickCopyright)
             val copyrightView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_copyright, null)
             val copySpan1 = SpannableString(getString(R.string.copyright_notice_1))

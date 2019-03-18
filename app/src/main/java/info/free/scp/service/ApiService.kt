@@ -2,6 +2,7 @@ package info.free.scp.service
 
 import info.free.scp.PrivateConstants
 import info.free.scp.bean.ApiBean
+import info.free.scp.bean.FeedModel
 import info.free.scp.bean.ScpModel
 import io.reactivex.Observable
 import okhttp3.RequestBody
@@ -60,7 +61,7 @@ interface ApiService {
 
 
     @GET("/latest_cn/{pageIndex}")
-    fun getLatestCn(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<ScpModel>>
+    fun getLatestCn(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
 
     @Headers(
             "Content-Type:application/json",

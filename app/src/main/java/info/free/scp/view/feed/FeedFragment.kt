@@ -2,7 +2,6 @@ package info.free.scp.view.feed
 
 
 import android.app.Fragment
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +10,8 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.home.TabFragmentPager
+import kotlinx.android.synthetic.main.fragment_feed.*
 
 
 /**
@@ -20,7 +21,6 @@ import info.free.scp.view.base.BaseFragment
  * 最新，包括最新，和评分三个部分
  */
 class FeedFragment : BaseFragment() {
-    private var listener: CategoryListener? = null
 
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
@@ -33,14 +33,14 @@ class FeedFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        HttpManager.instance.getLatestCn {
-            Log.i("feed", it.toString())
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        listener = null
+        val fragmentList = arrayListOf(SubFeedFragment.newInstance(), SubFeedFragment.newInstance())
+        val titleList = arrayListOf("最近原创", "最近翻译")
+        val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
+        vp_feed?.adapter = feedPagerAdapter
+        tab_feed?.setupWithViewPager(vp_feed)
+//        HttpManager.instance.getLatestCn {
+//            Log.i("feed", it.toString())
+//        }
     }
 
     companion object {
@@ -65,10 +65,6 @@ class FeedFragment : BaseFragment() {
 //            fragment.arguments = args
             return fragment
         }
-    }
-
-    interface CategoryListener {
-        fun onCategoryClick(type: Int)
     }
 
 } // Required empty public constructor

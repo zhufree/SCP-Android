@@ -7,10 +7,10 @@ import info.free.scp.service.HttpManager
 class FeedRepository {
     var feedList = MutableLiveData<ArrayList<FeedModel>>()
 
-    fun loadFeedList() {
+    fun loadFeedList(feedType: Int) {
 //        feedList = articleDao.loadAll()
-        HttpManager.instance.getLatestCn {
-            feedList?.value = it as ArrayList<FeedModel>
+        HttpManager.instance.getLatest(feedType) {
+            feedList.value = it as ArrayList<FeedModel>
         }
     }
 }

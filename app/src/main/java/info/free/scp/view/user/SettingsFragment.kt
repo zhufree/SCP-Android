@@ -35,28 +35,28 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
-        (findPreference("dark_mode") as SwitchPreference).setDefaultValue(ThemeUtil.currentTheme == 1)
+        findPreference<SwitchPreference>("dark_mode")?.setDefaultValue(ThemeUtil.currentTheme == 1)
 
-        (findPreference("dark_mode") as SwitchPreference).setOnPreferenceClickListener {
+        findPreference<SwitchPreference>("dark_mode")?.setOnPreferenceClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
             true
         }
 
-        (findPreference("read_settings") as Preference).setOnPreferenceClickListener {
+        findPreference<SwitchPreference>("read_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 0)
             activity?.startActivity(intent)
             true
         }
-        (findPreference("download_settings") as Preference).setOnPreferenceClickListener {
+        findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickDownloadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 1)
             activity?.startActivity(intent)
             true
         }
-        (findPreference("copyright") as Preference).setOnPreferenceClickListener {
+        findPreference<Preference>("copyright")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickCopyright)
             val copyrightView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_copyright, null)
             val copySpan1 = SpannableString(getString(R.string.copyright_notice_1))

@@ -100,4 +100,7 @@ object SCPConstants {
 
     const val HISTORY_TYPE = 0
     const val LATER_TYPE = 1
+
+    const val LATEST_CREATED = 0
+    const val LATEST_TRANSLATED = 1
 }

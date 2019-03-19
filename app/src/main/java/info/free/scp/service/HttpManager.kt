@@ -3,6 +3,8 @@ package info.free.scp.service
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
 //import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.LATEST_CREATED
+import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.bean.ApiBean
 import info.free.scp.bean.FeedModel
 import info.free.scp.bean.ScpModel
@@ -83,13 +85,26 @@ class HttpManager {
                 })
     }
 
-    fun getLatestCn(pageIndex: Int = 1, updateView: (eventList: List<FeedModel>) -> Unit) {
-        feedApiService.getLatestCn(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
-                        updateView(t.results)
-                    }
-                })
+    fun getLatest(feedType: Int = LATEST_CREATED, pageIndex: Int = 1, updateView: (eventList: List<FeedModel>) -> Unit) {
+        when (feedType) {
+            LATEST_CREATED -> {
+                feedApiService.getLatestCn(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
+                            override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
+                                updateView(t.results)
+                            }
+                        })
+            }
+            LATEST_TRANSLATED -> {
+                feedApiService.getLatestTranslated(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
+                            override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
+                                updateView(t.results)
+                            }
+                        })
+            }
+        }
+
     }
 
 

@@ -2,19 +2,29 @@ package info.free.scp.view.feed
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import info.free.scp.SCPConstants.LATEST_CREATED
 
 import info.free.scp.databinding.SubFeedFragmentBinding
 import info.free.scp.util.InjectorUtils
 
 class SubFeedFragment : Fragment() {
 
+    var feedType = LATEST_CREATED
+
     companion object {
-        fun newInstance() = SubFeedFragment()
+        fun newInstance(feedType: Int): SubFeedFragment {
+            val fragment = SubFeedFragment()
+            val args = Bundle()
+            args.putInt("feedType", feedType)
+            fragment.arguments = args
+            return fragment
+        }
     }
 
     private lateinit var viewModel: FeedListViewModel
@@ -33,6 +43,9 @@ class SubFeedFragment : Fragment() {
         val feedAdapter = FeedAdapter()
         binding.rvFeed.adapter = feedAdapter
         subscribeUi(feedAdapter)
+        binding.slFeed.setOnRefreshListener {
+            binding.slFeed.isRefreshing = false
+        }
         return binding.root
     }
 
@@ -46,16 +59,18 @@ class SubFeedFragment : Fragment() {
         val factory = InjectorUtils.provideFeedListViewModelFactory(requireContext())
         viewModel = ViewModelProviders.of(this, factory)
                 .get(FeedListViewModel::class.java)
-
-        viewModel.getFeed()?.observe(viewLifecycleOwner, Observer { result ->
+        feedType = arguments?.getInt("feedType")?: LATEST_CREATED
+        Log.i("feed", "type = $feedType")
+        viewModel.getFeed(feedType)?.observe(viewLifecycleOwner, Observer { result ->
             if (result != null && result.isNotEmpty())
                 adapter.submitList(result)
         })
-        viewModel.loadFeed()
+        viewModel.loadFeed(feedType)
+
     }
 
     fun refresh() {
-        viewModel.loadFeed()
+        viewModel.loadFeed(feedType)
     }
 
 }

@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel;
 import info.free.scp.bean.FeedModel
 
 class FeedListViewModel(private val feedRepo: FeedRepository) : ViewModel() {
-    fun getFeed(): MutableLiveData<ArrayList<FeedModel>>? {
-        loadFeed()
+    fun getFeed(feedType: Int): MutableLiveData<ArrayList<FeedModel>>? {
+        loadFeed(feedType)
         return feedRepo.feedList
     }
 
-    fun loadFeed() {
-        feedRepo.loadFeedList()
+    fun loadFeed(feedType: Int) {
+        feedRepo.loadFeedList(feedType)
     }
 }

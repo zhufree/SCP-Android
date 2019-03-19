@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.View
 import androidx.preference.DialogPreference
 import androidx.preference.Preference
+import androidx.preference.SwitchPreference
 import info.free.scp.R
 import info.free.scp.SCPConstants.Download.DOWNLOAD_ARCHIVES
 import info.free.scp.SCPConstants.Download.DOWNLOAD_COLLECTIONS
@@ -74,11 +75,11 @@ class SettingsActivity : BaseActivity() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            (findPreference("hide_finished_article") as DialogPreference).setOnPreferenceClickListener {
+            findPreference<SwitchPreference>("hide_finished_article")?.setOnPreferenceClickListener {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 true
             }
-            (findPreference("category_count") as DialogPreference).setOnPreferenceChangeListener { _, any ->
+            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { _, any ->
                 EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 true
             }
@@ -93,70 +94,70 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             // TODO 显示更新时间
-            (findPreference("download_scp") as Preference).summary = getString(R.string.download_summary,
+            findPreference<Preference>("download_scp")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(0),
                     PreferenceUtil.getDetailLastLoadTime(0))
-            (findPreference("download_scp_cn") as Preference).summary = getString(R.string.download_summary,
+            findPreference<Preference>("download_scp_cn")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(1),
                     PreferenceUtil.getDetailLastLoadTime(1))
-            (findPreference("download_tale") as Preference).summary = getString(R.string.download_summary,
+            findPreference<Preference>("download_tale")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(2),
                     PreferenceUtil.getDetailLastLoadTime(2))
-            (findPreference("download_other") as Preference).summary = getString(R.string.download_summary,
+            findPreference<Preference>("download_other")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(3),
                     PreferenceUtil.getDetailLastLoadTime(3))
-            (findPreference("download_collection") as Preference).summary = getString(R.string.download_summary,
+            findPreference<Preference>("download_collection")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(4),
                     PreferenceUtil.getDetailLastLoadTime(4))
-            (findPreference("download_scp") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("download_scp")?.setOnPreferenceClickListener {
                 showNoticeDialog(DOWNLOAD_SCP)
                 true
             }
-            (findPreference("download_scp_cn") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("download_scp_cn")?.setOnPreferenceClickListener {
                 showNoticeDialog(DOWNLOAD_SCP_CN)
                 true
             }
-            (findPreference("download_tale") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("download_tale")?.setOnPreferenceClickListener {
                 showNoticeDialog(DOWNLOAD_TALE)
                 true
             }
-            (findPreference("download_other") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("download_other")?.setOnPreferenceClickListener {
                 showNoticeDialog(DOWNLOAD_ARCHIVES)
                 true
             }
-            (findPreference("download_collection") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("download_collection")?.setOnPreferenceClickListener {
                 showNoticeDialog(DOWNLOAD_COLLECTIONS)
                 true
             }
-            (findPreference("sync_category") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("sync_category")?.setOnPreferenceClickListener {
                 ScpDao.getInstance().resetCategoryData()
                 UpdateManager.getInstance(activity as BaseActivity).initCategoryData()
                 true
             }
 
             if (!BackupHelper.getInstance(context!!).checkBackUpFileExist()) {
-                (findPreference("restore_data") as Preference).isEnabled = false
+                findPreference<Preference>("restore_data")?.isEnabled = false
             }
-            (findPreference("backup_data") as Preference).title = "备份数据库${if (BackupHelper.getInstance(context!!)
+            findPreference<Preference>("backup_data")?.title = "备份数据库${if (BackupHelper.getInstance(context!!)
                             .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
-            (findPreference("restore_data") as Preference).title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
+            findPreference<Preference>("restore_data")?.title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
                             .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
 
-            (findPreference("backup_data") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("backup_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
                     BackupHelper.getInstance(ctx).backupDB()
-                    (findPreference("restore_data") as Preference).isEnabled = true
+                    findPreference<Preference>("restore_data")?.isEnabled = true
                 }
                 true
             }
-            (findPreference("restore_data") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("restore_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
                     BackupHelper.getInstance(ctx).restoreDB()
                 }
                 true
             }
 
-            (findPreference("sync_data") as Preference).setOnPreferenceClickListener {
+            findPreference<Preference>("sync_data")?.setOnPreferenceClickListener {
                 if (PreferenceUtil.getInitCategoryFinish()) {
                     AlertDialog.Builder(activity)
                             .setTitle("注意")

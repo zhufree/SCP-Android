@@ -8,6 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
+import info.free.scp.SCPConstants.LATEST_CREATED
+import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
@@ -33,12 +35,13 @@ class FeedFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fragmentList = arrayListOf(SubFeedFragment.newInstance(), SubFeedFragment.newInstance())
+        val fragmentList = arrayListOf(SubFeedFragment.newInstance(LATEST_CREATED),
+                SubFeedFragment.newInstance(LATEST_TRANSLATED))
         val titleList = arrayListOf("最近原创", "最近翻译")
         val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_feed?.adapter = feedPagerAdapter
         tab_feed?.setupWithViewPager(vp_feed)
-//        HttpManager.instance.getLatestCn {
+//        HttpManager.instance.getLatest {
 //            Log.i("feed", it.toString())
 //        }
     }

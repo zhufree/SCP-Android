@@ -63,6 +63,9 @@ interface ApiService {
     @GET("/latest_cn/{pageIndex}")
     fun getLatestCn(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
 
+    @GET("/latest_translated/{pageIndex}")
+    fun getLatestTranslated(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
+
     @Headers(
             "Content-Type:application/json",
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",

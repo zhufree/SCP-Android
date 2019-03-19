@@ -42,7 +42,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<SwitchPreference>("read_settings")?.setOnPreferenceClickListener {
+        findPreference<Preference>("read_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
             val intent = Intent(activity, SettingsActivity::class.java)
             intent.putExtra("setting_type", 0)

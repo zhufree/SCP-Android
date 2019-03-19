@@ -102,7 +102,7 @@ class MainActivity : BaseActivity() {
                     transaction.add(R.id.flMainContainer, currentFragment!!)
                 }
             } else {
-                transaction.add(R.id.flMainContainer, homeFragment)
+                transaction.add(R.id.flMainContainer, homeFragment, "home")
                 currentFragment = homeFragment
             }
             transaction.commit()

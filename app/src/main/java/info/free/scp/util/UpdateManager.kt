@@ -126,16 +126,16 @@ class UpdateManager(private var activity: BaseActivity) {
                         // it表示的是有没有新版本
                         Logger.i("check new version result = $it")
                         if (!it && !activity.isFinishing) {
-                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
-                                activity.runOnUiThread {
-                                    checkInitData(true)
-                                }
-                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
-                            } else {
+//                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
+//                                activity.runOnUiThread {
+//                                    checkInitData(true)
+//                                }
+//                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
+//                            } else {
                                 activity.runOnUiThread {
                                     checkInitData(false)
                                 }
-                            }
+//                            }
                         }
                     }
         } else if (Utils.enabledWifi(activity)) {

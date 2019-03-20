@@ -171,16 +171,16 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setData(scp: ScpModel?) {
-        scp?.let {
-            ScpDao.getInstance().insertViewListItem(it.link, it.title, HISTORY_TYPE)
+        if (scp != null) {
+            ScpDao.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
-            refreshReadBtnStatus(it.hasRead)
+            refreshReadBtnStatus(scp.hasRead)
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            detail_toolbar?.title = it.title
-            url = if (it.link.contains("http")) it.link else "http://scp-wiki-cn.wikidot.com${it.link}"
-            detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
+            detail_toolbar?.title = scp.title
+            url = if (scp.link.contains("http")) scp.link else "http://scp-wiki-cn.wikidot.com${scp.link}"
+            detailHtml = ScpDao.getInstance().getDetailByLink(scp.link)
             if (detailHtml.isEmpty()) {
                 pbLoading.visibility = VISIBLE
                 webView.loadUrl(url)
@@ -190,6 +190,10 @@ class DetailActivity : BaseActivity() {
                          + detailHtml + jsScript,
                         "text/html", "utf-8", null)
             }
+            nsv_web_wrapper?.scrollTo(0, 0)
+        } else if (url.isNotEmpty()){
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(url)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
     }

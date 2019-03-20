@@ -260,7 +260,8 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
      * 收藏列表只展示一个
      */
     fun getOneScpModelByLink(link: String): ScpModel? {
-        return getScpModelByLink(link)[0]
+        val resultScps = getScpModelByLink(link)
+        return if (resultScps.size > 0) resultScps[0] else null
     }
 
     fun getScpModelById(id: String?): ScpModel? {

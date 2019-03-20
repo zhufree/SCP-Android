@@ -1,3 +1,6 @@
+[![forthebadge](https://forthebadge.com/images/badges/built-for-android.svg)](https://forthebadge.com)
+
+
 SCP Android 第三方客户端
 
 `kotlin`

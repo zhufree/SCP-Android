@@ -13,10 +13,6 @@ import kotlinx.io.ByteArrayOutputStream
 import kotlinx.io.IOException
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import java.io.BufferedOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import android.util.DisplayMetrics
 import android.content.ContentUris
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
@@ -26,6 +22,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
+import java.io.*
 import java.text.DateFormat.*
 import java.text.SimpleDateFormat
 
@@ -154,6 +151,8 @@ object Utils {
             val outputStream = BufferedOutputStream(FileOutputStream(newFile))
             outputStream.write(file.readBytes())
             outputStream.close()
+        } catch (e: FileNotFoundException) {
+            Toaster.show("未开启SD卡读取权限，需要手动开启。")
         } catch (e: IOException) {
             e.printStackTrace()
         }

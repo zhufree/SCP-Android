@@ -101,7 +101,7 @@ class LaterAndHistoryActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.category_menu, menu)
+        menuInflater.inflate(R.menu.menu_read_list, menu)
         return true
     }
 
@@ -110,7 +110,7 @@ class LaterAndHistoryActivity : BaseActivity() {
                 .inflate(R.layout.layout_dialog_input_large, null)
         val inputDialog = AlertDialog.Builder(this)
                 .setTitle(R.string.menu_import_read_list)
-                .setMessage("导入的文章标题用逗号分隔，标题内需要包含cn，j等关键词作为区分")
+                .setMessage("导入的文章标题用逗号分隔，标题内需要包含cn，j等关键词作为区分，可能会出错，请及时向开发者反馈，谢谢。")
                 .setView(inputView)
                 .setPositiveButton("OK") { _, _ -> }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }

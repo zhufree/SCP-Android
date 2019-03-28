@@ -107,7 +107,6 @@ class DirectActivity : BaseActivity() {
                 R.id.random_all -> {
                     startActivity(Intent(this, DetailActivity::class.java))
                 }
-                // FIXME 这部分逻辑还是要放到正文里，因为上下章切换要保持在范围内
                 R.id.random_scp -> {
                     val targetScp = ScpDao.getInstance().getRandomScp("1,2")
                     targetScp?.let {

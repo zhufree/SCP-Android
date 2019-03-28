@@ -1,6 +1,7 @@
 package info.free.scp
 
 import android.content.*
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -78,10 +79,6 @@ class MainActivity : BaseActivity() {
         registerBroadCastReceivers()
 
         setContentView(R.layout.activity_main)
-        // 恢复意外退出的数据（不知道有没有用）
-        savedInstanceState?.let {
-            currentFragment = supportFragmentManager.getFragment(savedInstanceState, "currentFragment") as BaseFragment
-        }
 
         // 设置默认fragment
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -94,20 +91,20 @@ class MainActivity : BaseActivity() {
 
         if (!fragmentInit) {
             // 设置默认fragment
+            fragmentInit = true
             val transaction = supportFragmentManager.beginTransaction()
-            if (currentFragment != null) {
-                if (currentFragment?.isAdded == true) {
-                    transaction.show(currentFragment!!)
+            currentFragment?.let {
+                if (it.isAdded) {
+                    transaction.show(it)
                 } else {
-                    transaction.add(R.id.flMainContainer, currentFragment!!)
+                    transaction.add(R.id.flMainContainer, it)
                 }
-            } else {
+            } ?:run {
                 transaction.add(R.id.flMainContainer, homeFragment, "home")
                 currentFragment = homeFragment
             }
             transaction.commit()
             UpdateManager.getInstance(this).checkAppData()
-            fragmentInit = true
         }
     }
 
@@ -122,14 +119,6 @@ class MainActivity : BaseActivity() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
-    }
-
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        currentFragment?.let {
-            supportFragmentManager.putFragment(outState, "currentFragment", it)
-        }
-        super.onSaveInstanceState(outState)
     }
 
     fun refreshTheme() {

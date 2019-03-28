@@ -5,9 +5,6 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import info.free.scp.BuildConfig
@@ -22,7 +19,6 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.ObservableOnSubscribe
-import okhttp3.internal.Util
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -155,7 +151,7 @@ class UpdateManager(private var activity: BaseActivity) {
         mInitCategoryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
-                activity.runOnUiThread {
+                activity?.runOnUiThread {
                     progressDialog?.progress = progress
                     if (progress > 90) {
                         progressDialog?.setMessage("写入数据库中")

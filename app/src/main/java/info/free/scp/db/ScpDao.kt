@@ -480,13 +480,12 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
     }
 
     fun searchScpInDetailByKeyword(keyword: String): MutableList<ScpModel> {
-        val sIdList = emptyList<String>().toMutableList()
         val resultList = emptyList<ScpModel>().toMutableList()
         try {
             with(readableDatabase) {
                 val cursor: Cursor? = this.rawQuery("SELECT * FROM "
                         + ScpTable.SCP_TABLE_NAME + " as scp left join " + ScpTable.DETAIL_TABLE_NAME + " as detail on " +
-                        "scp.sId = detail.sId WHERE detail.detailHtml LIKE ?;",
+                        "scp.link = detail.link WHERE detail.detailHtml LIKE ?;",
                         arrayOf("%$keyword%"))
                 with(cursor) {
                     this?.let {

@@ -13,6 +13,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDao
 import info.free.scp.util.*
+import info.free.scp.util.EventUtil.addLater
 import kotlinx.android.synthetic.main.item_category.view.*
 
 /**
@@ -71,6 +72,7 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
             } else {
                 ScpDao.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
                 Toaster.show("已加入待读列表")
+                EventUtil.onEvent(mContext, addLater)
                 isInLaterViewList = true
                 it.setBackgroundColor(ThemeUtil.clickedBtn)
             }

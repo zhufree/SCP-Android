@@ -15,6 +15,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
 import info.free.scp.db.ScpDao
+import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
@@ -84,6 +85,7 @@ class DirectActivity : BaseActivity() {
                 else -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
             }
             scp?.let { s ->
+                EventUtil.onEvent(this, EventUtil.clickDirect)
                 val intent = Intent()
                 intent.putExtra("link", s.link)
                 intent.putExtra("sId", s.sId)
@@ -105,9 +107,11 @@ class DirectActivity : BaseActivity() {
         direct_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.random_all -> {
+                    EventUtil.onEvent(this, EventUtil.clickRandomAll)
                     startActivity(Intent(this, DetailActivity::class.java))
                 }
                 R.id.random_scp -> {
+                    EventUtil.onEvent(this, EventUtil.clickRandomScp)
                     val targetScp = ScpDao.getInstance().getRandomScp("1,2")
                     targetScp?.let {
                         val intent = Intent()
@@ -119,6 +123,7 @@ class DirectActivity : BaseActivity() {
                     }?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_tales -> {
+                    EventUtil.onEvent(this, EventUtil.clickRandomTale)
                     val targetScp = ScpDao.getInstance().getRandomScp("3,4")
                     targetScp?.let {
                         val intent = Intent()
@@ -130,6 +135,7 @@ class DirectActivity : BaseActivity() {
                     }?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_joke -> {
+                    EventUtil.onEvent(this, EventUtil.clickRandomJoke)
                     val targetScp = ScpDao.getInstance().getRandomScp("5,6")
                     targetScp?.let {
                         val intent = Intent()

@@ -17,6 +17,8 @@ import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDao
 import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
+import info.free.scp.util.EventUtil.clickLaterList
+import info.free.scp.util.EventUtil.importReadList
 import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
@@ -37,6 +39,8 @@ class LaterAndHistoryActivity : BaseActivity() {
             supportActionBar?.title = if (value == HISTORY_TYPE) "历史阅读记录" else "待读列表"
             if (value == HISTORY_TYPE) {
                 EventUtil.onEvent(this, clickHistoryList)
+            } else {
+                EventUtil.onEvent(this, clickLaterList)
             }
             adapter?.notifyDataSetChanged()
         }
@@ -118,10 +122,10 @@ class LaterAndHistoryActivity : BaseActivity() {
         inputDialog.show()
         inputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
             val inputString = inputView.et_report.text.toString()
-            Log.i("readlist", inputString)
             splitReadList(inputString)
             inputDialog.dismiss()
             Toaster.show("导入完成")
+            EventUtil.onEvent(this, importReadList)
         }
     }
 

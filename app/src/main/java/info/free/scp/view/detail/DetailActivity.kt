@@ -89,7 +89,7 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
         initSwitchBtn()
-
+        EventUtil.onEvent(this, EventUtil.clickReadDetail)
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
         webView?.setBackgroundColor(ThemeUtil.containerBg)

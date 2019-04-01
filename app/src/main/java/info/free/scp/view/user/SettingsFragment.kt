@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 class SettingsFragment : PreferenceFragmentCompat() {
 
 
-
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         // Load the preferences from an XML resource
         setPreferencesFromResource(R.xml.pref_general_settings, rootKey)
@@ -88,6 +87,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             copyrightDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
                 copyrightDialog.dismiss()
             }
+            true
+        }
+
+        findPreference<Preference>("draft")?.setOnPreferenceClickListener {
+            EventUtil.onEvent(context, EventUtil.clickDraft)
             true
         }
     }

@@ -125,5 +125,6 @@ class MainActivity : BaseActivity() {
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
+        feedFragment.refreshTheme()
     }
 }

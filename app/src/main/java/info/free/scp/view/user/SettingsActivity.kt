@@ -93,7 +93,6 @@ class SettingsActivity : BaseActivity() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            // TODO 显示更新时间
             findPreference<Preference>("download_scp")?.summary = getString(R.string.download_summary,
                     PreferenceUtil.getServerLastUpdateTime(0),
                     PreferenceUtil.getDetailLastLoadTime(0))

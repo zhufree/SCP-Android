@@ -3,7 +3,10 @@ package info.free.scp.service
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationConverterFactory
 //import com.jakewharton.retrofit2.converter.kotlinx.serialization.stringBased
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.LATEST_CREATED
+import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.bean.ApiBean
+import info.free.scp.bean.FeedModel
 import info.free.scp.bean.ScpModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,16 +26,26 @@ class HttpManager {
 
     private val contentType = MediaType.parse("application/json")!!
     val json = JSON
-    private val retrofit: Retrofit = Retrofit.Builder()
+    private val bmobRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SCPConstants.BMOB_API_URL)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(serializationConverterFactory(contentType, JSON))
 //            .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
             .build()
-    private val apiService = retrofit.create(ApiService::class.java)
+    private val feedRetrofit: Retrofit = Retrofit.Builder()
+            .baseUrl(SCPConstants.FEED_API_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(serializationConverterFactory(contentType, JSON))
+//            .addConverterFactory(stringBased(contentType, json::parse, json::stringify))
+            .build()
+
+    private val bmobApiService = bmobRetrofit.create(ApiService::class.java)
+    private val feedApiService = feedRetrofit.create(ApiService::class.java)
+
+
 
     fun getAppConfig(handleConfig: (configList: List<ApiBean.ConfigResponse>) -> Unit) {
-        apiService.getAppConfig().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        bmobApiService.getAppConfig().subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ApiBean.ConfigResponse>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ApiBean.ConfigResponse>) {
                        handleConfig(t.results)
@@ -41,7 +54,7 @@ class HttpManager {
     }
 //
     fun getAllScp(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getAllScp(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        bmobApiService.getAllScp(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
@@ -55,7 +68,7 @@ class HttpManager {
 
     fun getPartDetail(skip:Int, limit: Int, download_type: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
         val where = "{\"download_type\":$download_type}"
-        apiService.getPartDetail(skip, limit, where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        bmobApiService.getPartDetail(skip, limit, where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
@@ -64,12 +77,34 @@ class HttpManager {
     }
 
     fun getDetail(skip:Int, limit: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
-        apiService.getScpDetail(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        bmobApiService.getScpDetail(skip, limit).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
                     override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
                         updateView(t.results)
                     }
                 })
+    }
+
+    fun getLatest(feedType: Int = LATEST_CREATED, pageIndex: Int = 1, updateView: (eventList: List<FeedModel>) -> Unit) {
+        when (feedType) {
+            LATEST_CREATED -> {
+                feedApiService.getLatestCn(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
+                            override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
+                                updateView(t.results)
+                            }
+                        })
+            }
+            LATEST_TRANSLATED -> {
+                feedApiService.getLatestTranslated(pageIndex).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(object : BaseObserver<ApiBean.ApiListResponse<FeedModel>>() {
+                            override fun onNext(t: ApiBean.ApiListResponse<FeedModel>) {
+                                updateView(t.results)
+                            }
+                        })
+            }
+        }
+
     }
 
 

@@ -5,9 +5,6 @@ import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
-import android.os.Build
-import android.os.Handler
-import android.support.v4.content.LocalBroadcastManager
 import android.util.Log
 import android.view.LayoutInflater
 import info.free.scp.BuildConfig
@@ -22,7 +19,6 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.ObservableOnSubscribe
-import okhttp3.internal.Util
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -50,7 +46,7 @@ class UpdateManager(private var activity: BaseActivity) {
 
     private var mInitCategoryReceiver: BroadcastReceiver? = null
     private var mInitDetailReceiver: BroadcastReceiver? = null
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     /**
      * 检测更新和数据初始化
@@ -126,16 +122,16 @@ class UpdateManager(private var activity: BaseActivity) {
                         // it表示的是有没有新版本
                         Logger.i("check new version result = $it")
                         if (!it && !activity.isFinishing) {
-                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
-                                activity.runOnUiThread {
-                                    checkInitData(true)
-                                }
-                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
-                            } else {
+//                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
+//                                activity.runOnUiThread {
+//                                    checkInitData(true)
+//                                }
+//                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
+//                            } else {
                                 activity.runOnUiThread {
                                     checkInitData(false)
                                 }
-                            }
+//                            }
                         }
                     }
         } else if (Utils.enabledWifi(activity)) {
@@ -144,7 +140,7 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     private fun registerBroadCastReceivers() {
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(activity)
+        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(activity)
         val intentFilter = IntentFilter()
         intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver!!, IntentFilter(SCPConstants.BroadCastAction.INIT_PROGRESS))
@@ -155,7 +151,7 @@ class UpdateManager(private var activity: BaseActivity) {
         mInitCategoryReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val progress = intent?.getIntExtra("progress", 0) ?: 0
-                activity.runOnUiThread {
+                activity?.runOnUiThread {
                     progressDialog?.progress = progress
                     if (progress > 90) {
                         progressDialog?.setMessage("写入数据库中")
@@ -199,7 +195,7 @@ class UpdateManager(private var activity: BaseActivity) {
      */
     fun showChooseDbDialog() {
         val dbList = arrayOf("SCP系列1-4999", "SCP-CN系列1-1999", "基金会故事",
-                "搞笑作品，其他文档（解明，废除，删除，归档等）", "故事系列，设定中心等")
+                "搞笑作品，其他文档（解明，废除，删除，归档等）,offset", "故事系列，设定中心等")
 //        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
 //                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
         val chooseList = arrayOf(true, true, false, false, false).toBooleanArray()

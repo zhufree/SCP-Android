@@ -1,7 +1,6 @@
 package info.free.scp.view.category
 
 import android.os.Bundle
-import android.support.v4.view.ViewPager
 import android.view.Menu
 import info.free.scp.R
 import info.free.scp.SCPConstants.Category.ABOUT_INFO
@@ -27,7 +26,7 @@ import info.free.scp.SCPConstants.Entry.SCP_DOC
 import info.free.scp.SCPConstants.Entry.STORY_DOC
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.home.HomeFragmentPager
+import info.free.scp.view.home.TabFragmentPager
 import kotlinx.android.synthetic.main.activity_series.*
 
 /**
@@ -121,12 +120,11 @@ class SeriesDocActivity : BaseActivity() {
         if (fragmentList.isNotEmpty()) {
             currentFragment = fragmentList[0]
         }
-        val scpPagerAdapter = HomeFragmentPager(supportFragmentManager, fragmentList, titleList)
+        val scpPagerAdapter = TabFragmentPager(supportFragmentManager, fragmentList, titleList)
         vp_series_doc?.adapter = scpPagerAdapter
         tab_series_doc?.setupWithViewPager(vp_series_doc)
-        tab_series_doc?.tabMode
 
-        vp_series_doc?.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+        vp_series_doc?.addOnPageChangeListener(object : androidx.viewpager.widget.ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
             }
 

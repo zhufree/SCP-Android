@@ -77,11 +77,14 @@ object SCPConstants {
         const val SAVE_CONTEST = 16
         const val SAVE_CONTEST_CN = 18
 
-
+        // android
+        const val SAVE_OFFSET = 21
+        const val SAVE_COLLECTION_ITEM = 22
     }
 
     const val BMOB_API_URL = "https://api.bmob.cn/"
     const val SCP_SITE_URL = "http://scp-wiki-cn.wikidot.com"
+    const val FEED_API_URL = "http://95.169.12.185"
 
     // 广播类型
     object BroadCastAction {
@@ -97,4 +100,7 @@ object SCPConstants {
 
     const val HISTORY_TYPE = 0
     const val LATER_TYPE = 1
+
+    const val LATEST_CREATED = 0
+    const val LATEST_TRANSLATED = 1
 }

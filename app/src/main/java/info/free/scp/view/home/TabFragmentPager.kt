@@ -1,15 +1,15 @@
 package info.free.scp.view.home
 
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 
 /**
  * Created by zhufree on 2018/8/28.
  *
  */
-class HomeFragmentPager(fragmentManager: FragmentManager, fragmentList: List<Fragment>,
-                        titleList: List<String>) : FragmentPagerAdapter(fragmentManager) {
+class TabFragmentPager(fragmentManager: FragmentManager, fragmentList: List<Fragment>,
+                       titleList: List<String>) : FragmentPagerAdapter(fragmentManager) {
     private var mFragmentList: List<Fragment> = fragmentList
     private var mTitleList: List<String> = titleList
     override fun getItem(position: Int): Fragment {

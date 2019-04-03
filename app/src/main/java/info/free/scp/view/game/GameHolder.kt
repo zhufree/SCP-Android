@@ -3,7 +3,7 @@ package info.free.scp.view.game
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.net.Uri
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_pc_game.view.*
  *
  */
 
-class GameHolder(view: View) : RecyclerView.ViewHolder(view) {
+class GameHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
     private var expandStatus = 0 // 0 收起 1 展开
 
     fun setData(model: GameModel) {

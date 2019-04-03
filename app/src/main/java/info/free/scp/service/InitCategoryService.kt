@@ -6,15 +6,18 @@ import android.os.IBinder
 import android.util.Log
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
-import android.support.v4.content.LocalBroadcastManager
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.db.ScpDao
 
 
+/**
+ * 获取目录的service
+ */
 class InitCategoryService : IntentService("initDataService") {
 
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
+    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     private var scpModels: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var requestCount = 0
@@ -27,7 +30,7 @@ class InitCategoryService : IntentService("initDataService") {
     override fun onCreate() {
         super.onCreate()
         // 0-499,500-999
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
+        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
     }
 
     private fun finishCategoryLoad() {

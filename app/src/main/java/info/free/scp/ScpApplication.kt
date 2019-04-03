@@ -1,7 +1,7 @@
 package info.free.scp
 
 import android.content.Context
-import android.support.multidex.MultiDexApplication
+import androidx.multidex.MultiDexApplication
 import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure

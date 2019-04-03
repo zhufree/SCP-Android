@@ -1,11 +1,11 @@
 package info.free.scp.view.game
 
 import android.content.Context
-import android.support.v4.view.PagerAdapter
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.LinearLayoutManager.VERTICAL
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
+import androidx.viewpager.widget.PagerAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.bean.GameModel
@@ -15,8 +15,8 @@ import info.free.scp.bean.GameModel
  *
  */
 
-class GamePagerAdapter(val mContext: Context) : PagerAdapter() {
-    private var gameTypeList: MutableList<RecyclerView> = emptyList<RecyclerView>().toMutableList()
+class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerAdapter() {
+    private var gameTypeList: MutableList<androidx.recyclerview.widget.RecyclerView> = emptyList<androidx.recyclerview.widget.RecyclerView>().toMutableList()
     private var pcGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var mobileGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var pcGameAdapter: GameListAdapter? = null
@@ -88,15 +88,15 @@ class GamePagerAdapter(val mContext: Context) : PagerAdapter() {
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         if (position == 0) {
-            val rvPcGame = RecyclerView(mContext)
-            val lm = LinearLayoutManager(mContext, VERTICAL, false)
+            val rvPcGame = androidx.recyclerview.widget.RecyclerView(mContext)
+            val lm = androidx.recyclerview.widget.LinearLayoutManager(mContext, VERTICAL, false)
             rvPcGame.layoutManager = lm
             rvPcGame.adapter = pcGameAdapter
             container.addView(rvPcGame)
             return rvPcGame
         } else {
-            val rvMobileGame = RecyclerView(mContext)
-            val lm = StaggeredGridLayoutManager(2,  VERTICAL)
+            val rvMobileGame = androidx.recyclerview.widget.RecyclerView(mContext)
+            val lm = androidx.recyclerview.widget.StaggeredGridLayoutManager(2, VERTICAL)
             rvMobileGame.layoutManager = lm
             rvMobileGame.adapter = mobileGameAdapter
             container.addView(rvMobileGame)

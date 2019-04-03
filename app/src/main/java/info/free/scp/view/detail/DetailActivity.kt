@@ -8,10 +8,9 @@ import android.content.DialogInterface.BUTTON_POSITIVE
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
@@ -25,7 +24,6 @@ import android.webkit.WebViewClient
 import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
-import info.free.scp.R.style.AppTheme
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.ScpModel
@@ -44,6 +42,7 @@ class DetailActivity : BaseActivity() {
 
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
+    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private var url = ""
     private var sId = ""
     private var scp: ScpModel? = null
@@ -59,12 +58,12 @@ class DetailActivity : BaseActivity() {
             field = value
             PreferenceUtil.setDetailTextSize(value)
             nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-                    "$currentTextSize;line-height:30px;}* {color:#444;}</style>"
+                    "$currentTextSize;line-height:30px;}* {color:#aaa;}</style>"
             dayTextStyle = "<style>p {font-size:$currentTextSize}" +
                     ";line-height:30px;}* {color:#000;}</style>"
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;line-height:30px;}* {color:#444;}</style>"
+            "$currentTextSize;line-height:30px;}* {color:#aaa;}</style>"
     private var dayTextStyle = "<style>p {font-size:$currentTextSize;line-height:30px;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
@@ -90,13 +89,15 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
         initSwitchBtn()
-
+        EventUtil.onEvent(this, EventUtil.clickReadDetail)
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
         webView?.setBackgroundColor(ThemeUtil.containerBg)
         webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
+        readType = intent.getIntExtra("read_type", 0)
+        randomType = intent.getIntExtra("random_type", 0)
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 随机文档
@@ -168,16 +169,16 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setData(scp: ScpModel?) {
-        scp?.let {
-            ScpDao.getInstance().insertViewListItem(it.link, it.title, HISTORY_TYPE)
+        if (scp != null) {
+            ScpDao.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
             // 刷新toolbar（收藏状态
             invalidateOptionsMenu()
-            refreshReadBtnStatus(it.hasRead)
+            refreshReadBtnStatus(scp.hasRead)
             // 更新标题
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            detail_toolbar?.title = it.title
-            url = if (it.link.contains("http")) it.link else "http://scp-wiki-cn.wikidot.com${it.link}"
-            detailHtml = ScpDao.getInstance().getDetailByLink(it.link)
+            detail_toolbar?.title = scp.title
+            url = if (scp.link.contains("http")) scp.link else "http://scp-wiki-cn.wikidot.com${scp.link}"
+            detailHtml = ScpDao.getInstance().getDetailByLink(scp.link)
             if (detailHtml.isEmpty()) {
                 pbLoading.visibility = VISIBLE
                 webView.loadUrl(url)
@@ -187,6 +188,10 @@ class DetailActivity : BaseActivity() {
                          + detailHtml + jsScript,
                         "text/html", "utf-8", null)
             }
+            nsv_web_wrapper?.scrollTo(0, 0)
+        } else if (url.isNotEmpty()){
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(url)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
     }
@@ -267,6 +272,11 @@ class DetailActivity : BaseActivity() {
                     R.id.like -> {
                         likeScp()
                     }
+                    R.id.add_read_later -> {
+                        ScpDao.getInstance().insertViewListItem(s.link, s.title,
+                                SCPConstants.LATER_TYPE)
+                        Toaster.show("已加入待读列表")
+                    }
                     R.id.share_picture -> {
                         // 截屏分享
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
@@ -345,7 +355,13 @@ class DetailActivity : BaseActivity() {
                         setData(it)
                     }
                 } else {
-                    scp = ScpDao.getInstance().getRandomScp()
+                    val randomRange = when (randomType) {
+                        1 -> "1,2"
+                        2 -> "3,4"
+                        3 -> "5,6"
+                        else -> ""
+                    }
+                    scp = ScpDao.getInstance().getRandomScp(randomRange)
                     scp?.let {
                         randomList.add(it)
                         randomIndex++

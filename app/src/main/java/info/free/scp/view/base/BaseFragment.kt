@@ -4,7 +4,7 @@ package info.free.scp.view.base
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.View
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.category.SeriesDocActivity
@@ -13,11 +13,11 @@ import info.free.scp.view.category.SeriesDocActivity
 /**
  * A simple [Fragment] base class.
  */
-abstract class BaseFragment : Fragment() {
+abstract class BaseFragment : androidx.fragment.app.Fragment() {
     var mContext: Context? = null
 
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
     }

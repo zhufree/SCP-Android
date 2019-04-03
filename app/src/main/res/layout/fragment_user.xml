@@ -1,18 +1,18 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/containerBg">
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/about_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -29,15 +29,15 @@
                 android:visibility="gone"
                 android:src="@drawable/ic_share_white_24dp"
                 tools:ignore="ContentDescription" />
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <!--<ScrollView-->
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
         <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
@@ -127,7 +127,8 @@
                 android:id="@+id/v_blank"
                 android:layout_width="72dp"
                 android:layout_height="0dp"
-                app:layout_constraintEnd_toStartOf="@id/iv_user_head"/>
+                app:layout_constraintEnd_toStartOf="@id/iv_user_head"
+                app:layout_constraintTop_toTopOf="parent"/>
             <FrameLayout
                 android:id="@+id/fl_settings"
                 android:layout_width="0dp"
@@ -137,7 +138,7 @@
                 app:layout_constraintTop_toBottomOf="@id/iv_user_head"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="16dp"/>
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     <!--</ScrollView>-->
 
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

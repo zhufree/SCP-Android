@@ -28,10 +28,6 @@ class HomeFragment : BaseFragment() {
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
 
-    override fun onAttach(context: Context?) {
-        mContext = context
-        super.onAttach(context)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

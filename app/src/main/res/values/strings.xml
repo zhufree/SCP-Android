@@ -37,22 +37,18 @@
 
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
-        想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n
-        0.1.0版本更新：\n新增功能：\n
-        1.新增【编号直达】功能，输入编号就能直达目标文档；\n
-        2.新增【待读列表】，目录页和搜索结果右侧的按钮可以将这篇文档加入待读列表稍后阅读；\n
-        3.新增【阅读历史】，不用担心找不到最近读过的文档了；\n
-        3.新增【离线设置】，方便管理内容更新及数据备份等操作；\n
-        优化：\n
-        1.app整体架构大调整，减少了一级入口及页面，但整体内容没有减少；\n
-        2.优化了数据更新流程，可以分块离线想阅读的SCP文档，不需要全部离线；\n
-        3.支持正文内的tab功能；\n
-        4.在随机页阅读时，上一篇可返回之前阅读的文档而不是新的随机文档；\n
-        5.点击标记已读后增加UI上的变化；\n
-        其他修改：
-        1.随机页入口改到编号直达的右上角；\n
-        2.补充了一些之前漏掉的页面的夜间模式；\n
-        3.修复了一些bug；\n
+        想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
+        v0.1.1更新内容\n
+1.新增最近更新tab，可以查看最近原创和最近翻译（30条）\n
+2.正文右上角菜单添加【加入待读】功能\n
+3.沙盒功能初版(只能保存一个草稿)，列表功能后续迭代\n
+4.导入待读列表功能\n
+5.随机可以分【全部|SCP|故事|搞笑】不同板块内随机（需要已离线该部分内容\n
+6.添加一个随机小组件\n\n
+bug修复和优化\n
+1.tab功能修复\n
+2.横竖屏切换时fragment保存问题修复\n
+3.增加了对于sd卡没有权限的提示\n
         \n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师
         以及在群里勤奋测试的群友们\n
@@ -69,6 +65,7 @@
     <string name="menu_copy_link">复制链接</string>
     <string name="share_with_picture">图片分享</string>
     <string name="menu_like">收藏</string>
+    <string name="menu_add_read_later">加入待读列表</string>
 
     <string name="next_article">下一篇</string>
     <string name="preview_article">上一篇</string>
@@ -76,10 +73,10 @@
     <string name="set_has_not_read">取消已读</string>
 
     <string name="menu_reverse">逆序</string>
-    <string name="menu_cn">cn</string>
+    <string name="menu_import_read_list">导入待读列表</string>
 
     <string name="menu_search">搜索</string>
-    <string name="menu_random">随机</string>
+    <string name="menu_random">▼|随机</string>
 
     <string name="menu_download_help">下载页说明</string>
 
@@ -100,6 +97,7 @@
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
     <string name="about_view_content">浏览相关</string>
+    <string name="draft_list">草稿箱</string>
     <string name="like_list">收藏列表</string>
     <string name="history_list">历史记录</string>
     <string name="game_list">游戏列表</string>
@@ -112,7 +110,7 @@
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
     <string name="about_developer">支持开发者</string>
-    <string name="query_enter">用户调查问卷v0.1.0</string>
+    <string name="query_enter">用户调查问卷v0.1.1（开发者的话）</string>
     <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
     <string name="sync_data">强制重新同步云端数据</string>
@@ -131,7 +129,7 @@
     <string name="download_scp_title">SCP系列</string>
     <string name="download_scp_cn_title">SCP-CN系列</string>
     <string name="download_tale_title">基金会故事</string>
-    <string name="download_other_title">其他文档</string>
+    <string name="download_other_title">其他文档和offset部分</string>
     <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
     <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>

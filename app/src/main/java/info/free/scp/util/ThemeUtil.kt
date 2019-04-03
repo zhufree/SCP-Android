@@ -5,8 +5,8 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.support.v4.app.FragmentActivity
-import android.support.v4.content.LocalBroadcastManager
+import androidx.fragment.app.FragmentActivity
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
 import info.free.scp.ScpApplication
@@ -52,14 +52,14 @@ object ThemeUtil {
 
 
     /** 修改主题  */
-    fun changeTheme(activity: FragmentActivity?, theme: Int) {
+    fun changeTheme(activity: androidx.fragment.app.FragmentActivity?, theme: Int) {
         currentTheme = theme
         PreferenceUtil.setCurrentTheme(theme)
         activity?.let {
             setTheme(activity)
             initColor(activity)
         }
-        LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
+        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
     }
 
     private fun initColor(context: Context) {

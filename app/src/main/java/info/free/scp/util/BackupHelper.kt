@@ -2,8 +2,9 @@ package info.free.scp.util
 
 import android.content.Context
 import android.os.Environment
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
+import com.tendcloud.tenddata.TCAgent
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -11,7 +12,9 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.io.IOException
 import java.io.File
 import java.io.FileInputStream
+import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.nio.channels.FileChannel
 
 
 /**
@@ -36,6 +39,7 @@ class BackupHelper(val mContext: Context) {
     fun getBackUpFileName(): String {
         return "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
     }
+
     /**
      * 恢复数据的Dialog
      */
@@ -55,7 +59,7 @@ class BackupHelper(val mContext: Context) {
                         Toaster.show(resultMsg)
                     }
         }
-        builder.setNegativeButton("取消"){_,_->}
+        builder.setNegativeButton("取消") { _, _ -> }
         builder.show()
     }
 
@@ -68,14 +72,17 @@ class BackupHelper(val mContext: Context) {
                 .setMessage("包括文档和读过、收藏数据以及职位，编号，等级等信息")
                 .setPositiveButton("确定") { _, _ ->
                     Toaster.show("开始备份")
-                    Flowable.create<String>({ emitter ->
-                        backUp()
-                        emitter.onNext("finish")
+                    Flowable.create<Boolean>({ emitter ->
+                        emitter.onNext(backUp())
                         emitter.onComplete()
                     }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe {
-                                Toaster.show("备份完成")
+                                if (it) {
+                                    Toaster.show("备份完成")
+                                } else {
+                                    Toaster.show("备份失败，请检查SD卡读取权限。")
+                                }
                             }
                 }
                 .setNegativeButton("取消") { _, _ -> }
@@ -111,8 +118,10 @@ class BackupHelper(val mContext: Context) {
                     isOk = fileCopy(backPrefFile, it.absoluteFile)
                 }
                 return isOk
+            } catch (e: FileNotFoundException) {
+                isOk = false
             } catch (e: IOException) {
-                e.printStackTrace()
+                isOk = false
             }
 
         }
@@ -153,27 +162,26 @@ class BackupHelper(val mContext: Context) {
                 "$backUpFolderName$sp$prefFilename"
         val backUpDbFile = File(backUpDbPath)
         val backUpPrefFile = File(backUpPrefPath)
-        backUpDbFile?.let {
-            val dbFile = dbOk(it.name)
-            try {
-                dbFile?.let {_ ->
+        try {
+            backUpDbFile?.let {
+                val dbFile = dbOk(it.name)
+                dbFile?.let { _ ->
                     mContext.deleteDatabase(dbFilename)
                     isOk = fileCopy(dbFile, it.absoluteFile)
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
+
             }
-        }
-        backUpPrefFile?.let {
-            val prefFile = prefOk(it.name)
-            try {
+            backUpPrefFile?.let {
+                val prefFile = prefOk(it.name)
                 prefFile?.let { _ ->
                     mContext.deleteDatabase(prefFilename)
                     isOk = fileCopy(prefFile, it.absoluteFile)
                 }
-            } catch (e: IOException) {
-                e.printStackTrace()
             }
+        } catch (e: FileNotFoundException) {
+            isOk = false
+        } catch (e: IOException) {
+            isOk = false
         }
         return isOk
     }
@@ -220,26 +228,20 @@ class BackupHelper(val mContext: Context) {
     /**
      * 复制文件
      */
-    @Throws(IOException::class)
+    @Throws(IOException::class, FileNotFoundException::class)
     private fun fileCopy(outFile: File?, inFile: File?): Boolean {
         if (outFile == null || inFile == null) {
             return false
         }
         var isOk = true
-        val inChannel = FileInputStream(inFile).channel // 只读
-        val outChannel = FileOutputStream(outFile).channel // 只写
-        try {
-            val size = inChannel.transferTo(0, inChannel.size(), outChannel)
-            if (size <= 0) {
-                isOk = false
-            }
-        } catch (e: IOException) {
+        val inChannel: FileChannel = FileInputStream(inFile).channel // 只读
+        val outChannel: FileChannel = FileOutputStream(outFile).channel // 只写
+        val size = inChannel.transferTo(0, inChannel.size(), outChannel)
+        if (size <= 0) {
             isOk = false
-            e.printStackTrace()
-        } finally {
-            inChannel?.close()
-            outChannel?.close()
         }
+        inChannel.close()
+        outChannel.close()
         return isOk
     }
 }

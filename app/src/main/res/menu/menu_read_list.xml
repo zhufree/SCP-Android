@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/reverse"
+        android:icon="@drawable/ic_swap_vert_white_24dp"
+        android:title="@string/menu_reverse"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/import_read_list"
+        android:title="@string/menu_import_read_list"
+        android:icon="@drawable/ic_import_white_24dp"
+        app:showAsAction="ifRoom"/>
+</menu>

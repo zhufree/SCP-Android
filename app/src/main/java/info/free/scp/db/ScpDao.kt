@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.ScpApplication
@@ -25,7 +26,6 @@ import java.util.*
  */
 
 
-const val DB_NAME = "scp_info.db"
 const val DB_VERSION = 4 // 已+1
 
 class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
@@ -134,26 +134,18 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 stmt.bindLong(2, model.index.toLong())
                 stmt.bindString(3, model.link)
                 stmt.bindString(4, model.title)
-                stmt.bindString(5, model.detailHtml)
-                stmt.bindLong(6, model.notFound.toLong())
-                stmt.bindLong(7, model.scpType.toLong())
-                stmt.bindLong(8, model.downloadType.toLong())
-                stmt.bindString(9, model.subtext)
-                stmt.bindString(10, model.snippet)
-                stmt.bindString(11, model.desc)
-                stmt.bindString(12, model.author)
-                stmt.bindString(13, model.creator)
-                stmt.bindString(14, model.createdTime)
-                stmt.bindString(15, model.pageCode)
-                stmt.bindString(16, model.contestName)
-                stmt.bindString(17, model.contestLink)
-                stmt.bindString(18, model.eventType)
-                stmt.bindString(19, model.month)
-                stmt.bindString(20, model.tags)
-                stmt.bindString(21, model.subLinks)
-                stmt.bindLong(22, model.isCollection.toLong())
-                stmt.bindLong(23, model.like.toLong())
-                stmt.bindLong(24, model.hasRead.toLong())
+                stmt.bindLong(5, model.scpType.toLong())
+                stmt.bindLong(6, model.downloadType.toLong())
+                stmt.bindString(7, model.subtext)
+                stmt.bindString(8, model.snippet)
+                stmt.bindString(9, model.desc)
+                stmt.bindString(10, model.author)
+                stmt.bindString(11, model.creator)
+                stmt.bindString(12, model.createdTime)
+                stmt.bindString(13, model.tags)
+                stmt.bindString(14, model.subLinks)
+                stmt.bindLong(15, model.like.toLong())
+                stmt.bindLong(16, model.hasRead.toLong())
                 Log.i("loading", "sid = ${model.sId}")
                 stmt.execute()
                 stmt.clearBindings()
@@ -167,7 +159,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
             val stmt = compileStatement(ScpTable.INSERT_DETAIL_SQL)
             for (model in models) {
                 stmt.bindString(1, model.link)
-                stmt.bindString(2, model.detailHtml)
                 stmt.bindLong(3, model.downloadType.toLong())
                 stmt.execute()
                 stmt.clearBindings()
@@ -807,12 +798,6 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.title.isNotEmpty()) {
             cv.put(ScpTable.TITLE, model.title)
         }
-        if (model.detailHtml.isNotEmpty()) {
-            cv.put(ScpTable.DETAIL_HTML, model.detailHtml)
-        }
-        if (model.notFound > -1) {
-            cv.put(ScpTable.NOT_FOUND, model.notFound)
-        }
         if (model.scpType > -1) {
             cv.put(ScpTable.SCP_TYPE, model.scpType)
         }
@@ -838,31 +823,14 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
         if (model.createdTime.isNotEmpty()) {
             cv.put(ScpTable.CREATED_TIME, model.createdTime)
         }
-        if (model.pageCode.isNotEmpty()) {
-            cv.put(ScpTable.PAGE_CODE, model.pageCode)
-        }
-        if (model.contestName.isNotEmpty()) {
-            cv.put(ScpTable.CONTEST_NAME, model.contestName)
-        }
-        if (model.contestLink.isNotEmpty()) {
-            cv.put(ScpTable.CONTEST_LINK, model.contestLink)
-        }
 
-        if (model.eventType.isNotEmpty()) {
-            cv.put(ScpTable.EVENT_TYPE, model.eventType)
-        }
-        if (model.month.isNotEmpty()) {
-            cv.put(ScpTable.MONTH, model.month)
-        }
         if (model.tags.isNotEmpty()) {
             cv.put(ScpTable.TAGS, model.tags)
         }
         if (model.subLinks.isNotEmpty()) {
             cv.put(ScpTable.SUB_LINKS, model.subLinks)
         }
-        if (model.isCollection > -1) {
-            cv.put(ScpTable.IS_COLLECTION, model.isCollection)
-        }
+
         cv.put(ScpTable.HAS_READ, model.hasRead)
         cv.put(ScpTable.LIKE, model.like)
         return cv
@@ -877,8 +845,7 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorInt(cursor, ScpTable.INDEX),
                 "", "",
                 getCursorString(cursor, ScpTable.LINK),
-                getCursorString(cursor, ScpTable.TITLE), "",
-                getCursorInt(cursor, ScpTable.NOT_FOUND),
+                getCursorString(cursor, ScpTable.TITLE),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 getCursorInt(cursor, ScpTable.SCP_TYPE),
                 getCursorInt(cursor, ScpTable.DOWNLOAD_TYPE),
@@ -887,15 +854,9 @@ class ScpDao : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSIO
                 getCursorString(cursor, ScpTable.DESC),
                 getCursorString(cursor, ScpTable.AUTHOR),
                 getCursorString(cursor, ScpTable.CREATOR),
-                getCursorString(cursor, ScpTable.PAGE_CODE),
                 getCursorString(cursor, ScpTable.CREATED_TIME),
-                getCursorString(cursor, ScpTable.CONTEST_NAME),
-                getCursorString(cursor, ScpTable.CONTEST_LINK),
-                getCursorString(cursor, ScpTable.EVENT_TYPE),
-                getCursorString(cursor, ScpTable.MONTH),
                 getCursorString(cursor, ScpTable.TAGS),
                 getCursorString(cursor, ScpTable.SUB_LINKS),
-                getCursorInt(cursor, ScpTable.IS_COLLECTION),
                 getCursorInt(cursor, ScpTable.HAS_READ),
                 getCursorInt(cursor, ScpTable.LIKE)
         )

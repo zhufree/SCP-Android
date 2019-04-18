@@ -3,6 +3,7 @@ package info.free.scp.service
 import info.free.scp.PrivateConstants
 import info.free.scp.bean.ApiBean
 import info.free.scp.bean.FeedModel
+import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpModel
 import io.reactivex.Observable
 import okhttp3.RequestBody
@@ -23,12 +24,23 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ScpModelV4")
+    @GET("1/classes/ScpModel")
     fun getAllScp(@Query("skip") skip: Int,
                   @Query("limit") limit: Int,
-                  @Query("keys") keys: String="scp_type,not_found,contest_link,contest_name,created_time," +
-                          "desc,event_type,link,month,page_code,snippet,subtext,title,author,download_type,tags")
+                  @Query("keys") keys: String="title,index,link,download_type,scp_type,created_time," +
+                          "sub_scp_type,author,tags")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
+    @Headers(
+            "Content-Type:application/json",
+            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
+            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+    )
+    @GET("1/classes/ScpCollectionModel")
+    fun getAllCollection(@Query("limit") limit: Int = 500,
+                  @Query("keys") keys: String="title,index,link,download_type,scp_type,created_time," +
+                          "sub_scp_type,author,tags")
+            : Observable<ApiBean.ApiListResponse<ScpCollectionModel>>
+//    没有not_found字段的话在目录显示不出禁止访问提示
 
     // where "{\"download_type\":\"${download_type}\"}"
     @Headers(
@@ -36,11 +48,11 @@ interface ApiService {
             "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
             "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
     )
-    @GET("1/classes/ScpModelV4")
+    @GET("1/classes/DetailModel")
     fun getPartDetail(@Query("skip") skip: Int,
                       @Query("limit") limit: Int,
                       @Query("where") where: String,
-                      @Query("keys") keys: String="link,detail,download_type")
+                      @Query("keys") keys: String="link,detail,not_found")
             : Observable<ApiBean.ApiListResponse<ScpModel>>
 
 

@@ -15,7 +15,7 @@ import info.free.scp.SCPConstants.Download.DOWNLOAD_COLLECTIONS
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
 import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
 import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*
@@ -129,7 +129,7 @@ class SettingsActivity : BaseActivity() {
                 true
             }
             findPreference<Preference>("sync_category")?.setOnPreferenceClickListener {
-                ScpDao.getInstance().resetCategoryData()
+                ScpDataHelper.getInstance().resetCategoryData()
                 UpdateManager.getInstance(activity as BaseActivity).initCategoryData()
                 true
             }
@@ -184,7 +184,7 @@ class SettingsActivity : BaseActivity() {
                         .setPositiveButton("确定") { _, _ ->
                             PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
                             PreferenceUtil.setSingleDbLoadCount(downloadType, 0)
-                            ScpDao.getInstance().deleteDetailByDownloadType(downloadType)
+                            ScpDataHelper.getInstance().deleteDetailByDownloadType(downloadType)
                             UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }

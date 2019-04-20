@@ -1,26 +1,20 @@
 package info.free.scp.view.home
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.Menu
 import info.free.scp.R
 import android.widget.ArrayAdapter
-import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
 
 class DirectActivity : BaseActivity() {
@@ -77,12 +71,12 @@ class DirectActivity : BaseActivity() {
         tv_go_direst_btn?.setOnClickListener {
             val scp = when (chooseType) {
                 0 -> {
-                    ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
+                    ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
                 }
-                1 -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES_CN, numberString)
-                2 -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_JOKE, numberString)
-                3 -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_JOKE_CN, numberString)
-                else -> ScpDao.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
+                1 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES_CN, numberString)
+                2 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_JOKE, numberString)
+                3 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_JOKE_CN, numberString)
+                else -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
             }
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
@@ -108,11 +102,19 @@ class DirectActivity : BaseActivity() {
             when (it.itemId) {
                 R.id.random_all -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomAll)
-                    startActivity(Intent(this, DetailActivity::class.java))
+                    val targetScp = ScpDataHelper.getInstance().getRandomScp("")
+                    targetScp?.let {
+                        val intent = Intent()
+                        intent.putExtra("link", targetScp.link)
+                        intent.putExtra("read_type", 1)
+                        intent.putExtra("random_type", 0)
+                        intent.setClass(this, DetailActivity::class.java)
+                        startActivity(intent)
+                    }?: Toaster.show("没有离线的文档，无法随机")
                 }
                 R.id.random_scp -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomScp)
-                    val targetScp = ScpDao.getInstance().getRandomScp("1,2")
+                    val targetScp = ScpDataHelper.getInstance().getRandomScp("1,2")
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)
@@ -124,7 +126,7 @@ class DirectActivity : BaseActivity() {
                 }
                 R.id.random_tales -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomTale)
-                    val targetScp = ScpDao.getInstance().getRandomScp("3,4")
+                    val targetScp = ScpDataHelper.getInstance().getRandomScp("3,4")
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)
@@ -136,7 +138,7 @@ class DirectActivity : BaseActivity() {
                 }
                 R.id.random_joke -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomJoke)
-                    val targetScp = ScpDao.getInstance().getRandomScp("5,6")
+                    val targetScp = ScpDataHelper.getInstance().getRandomScp("5,6")
                     targetScp?.let {
                         val intent = Intent()
                         intent.putExtra("link", targetScp.link)

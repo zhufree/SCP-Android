@@ -1,10 +1,7 @@
 package info.free.scp.service
 
 import info.free.scp.PrivateConstants
-import info.free.scp.bean.ApiBean
-import info.free.scp.bean.FeedModel
-import info.free.scp.bean.ScpCollectionModel
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.*
 import io.reactivex.Observable
 import okhttp3.RequestBody
 import retrofit2.http.*
@@ -52,8 +49,8 @@ interface ApiService {
     fun getPartDetail(@Query("skip") skip: Int,
                       @Query("limit") limit: Int,
                       @Query("where") where: String,
-                      @Query("keys") keys: String="link,detail,not_found")
-            : Observable<ApiBean.ApiListResponse<ScpModel>>
+                      @Query("keys") keys: String="link,detail,download_type,not_found")
+            : Observable<ApiBean.ApiListResponse<ScpDetail>>
 
 
     // 获取正文

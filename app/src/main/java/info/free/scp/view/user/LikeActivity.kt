@@ -2,13 +2,12 @@ package info.free.scp.view.user
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.View
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
@@ -23,8 +22,8 @@ class LikeActivity : BaseActivity() {
         set(value) {
             field = value
             likeList.clear()
-            likeList.addAll(if (value == 0) ScpDao.getInstance().getLikeScpList() else
-                ScpDao.getInstance().getOrderedLikeList())
+            likeList.addAll(if (value == 0) ScpDataHelper.getInstance().getLikeScpList() else
+                ScpDataHelper.getInstance().getOrderedLikeList())
             adapter?.notifyDataSetChanged()
         }
 
@@ -36,7 +35,7 @@ class LikeActivity : BaseActivity() {
 
         val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
         rv_like?.layoutManager = lm
-        likeList.addAll(ScpDao.getInstance().getLikeScpList())
+        likeList.addAll(ScpDataHelper.getInstance().getLikeScpList())
         Log.i("search", likeList.size.toString())
         adapter = SearchResultAdapter(this, likeList)
         rv_like?.adapter = adapter

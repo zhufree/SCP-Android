@@ -4,8 +4,6 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
@@ -14,7 +12,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
 import info.free.scp.util.EventUtil.clickLaterList
@@ -35,7 +33,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         set(value) {
             field = value
             viewItemList.clear()
-            viewItemList.addAll(ScpDao.getInstance().getViewListByTypeAndOrder(value, orderType))
+            viewItemList.addAll(ScpDataHelper.getInstance().getViewListByTypeAndOrder(value, orderType))
             supportActionBar?.title = if (value == HISTORY_TYPE) "历史阅读记录" else "待读列表"
             if (value == HISTORY_TYPE) {
                 EventUtil.onEvent(this, clickHistoryList)
@@ -50,7 +48,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         set(value) {
             field = value
             viewItemList.clear()
-            viewItemList.addAll(ScpDao.getInstance().getViewListByTypeAndOrder(viewType, value))
+            viewItemList.addAll(ScpDataHelper.getInstance().getViewListByTypeAndOrder(viewType, value))
             adapter?.notifyDataSetChanged()
         }
 
@@ -78,7 +76,7 @@ class LaterAndHistoryActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewItemList.clear()
-        viewItemList.addAll(ScpDao.getInstance().getViewListByTypeAndOrder(viewType, orderType))
+        viewItemList.addAll(ScpDataHelper.getInstance().getViewListByTypeAndOrder(viewType, orderType))
         adapter?.notifyDataSetChanged()
     }
 
@@ -148,10 +146,10 @@ class LaterAndHistoryActivity : BaseActivity() {
                 }
             }
             if (numberString.isNotEmpty()) {
-                val targetScp = ScpDao.getInstance().getScpByTypeAndNumber(type, numberString)
+                val targetScp = ScpDataHelper.getInstance().getScpByTypeAndNumber(type, numberString)
                 if (targetScp != null) {
                     print(targetScp)
-                    ScpDao.getInstance().insertViewListItem(targetScp.link, targetScp.title, SCPConstants.LATER_TYPE)
+                    ScpDataHelper.getInstance().insertViewListItem(targetScp.link, targetScp.title, SCPConstants.LATER_TYPE)
                 }
             }
         }

@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
@@ -243,7 +243,7 @@ class UpdateManager(private var activity: BaseActivity) {
             // 目录没加载
             if (Utils.enabledNetwork(activity)) {
                 // 有网络的情况下，确保数据库重置，重新下载
-                ScpDao.getInstance().resetDb()
+                ScpDataHelper.getInstance().resetDb()
                 initCategoryData()
             } else {
                 AlertDialog.Builder(activity)

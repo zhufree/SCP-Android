@@ -4,10 +4,7 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.serializationCo
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
-import info.free.scp.bean.ApiBean
-import info.free.scp.bean.FeedModel
-import info.free.scp.bean.ScpCollectionModel
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.json.JSON
@@ -76,11 +73,11 @@ class HttpManager {
                 })
     }
 
-    fun getPartDetail(skip:Int, limit: Int, download_type: Int, updateView: (eventList: List<ScpModel>) -> Unit) {
+    fun getPartDetail(skip:Int, limit: Int, download_type: Int, updateView: (eventList: List<ScpDetail>) -> Unit) {
         val where = "{\"download_type\":$download_type}"
         bmobApiService.getPartDetail(skip, limit, where).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpModel>>() {
-                    override fun onNext(t: ApiBean.ApiListResponse<ScpModel>) {
+                .subscribe(object : BaseObserver<ApiBean.ApiListResponse<ScpDetail>>() {
+                    override fun onNext(t: ApiBean.ApiListResponse<ScpDetail>) {
                         updateView(t.results)
                     }
                 })

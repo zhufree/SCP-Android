@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Contacts
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.Log
 import android.view.KeyEvent
@@ -27,7 +28,8 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.ScpDao
+import info.free.scp.db.AppDatabase
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import io.reactivex.BackpressureStrategy
@@ -36,6 +38,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import kotlinx.coroutines.Deferred
+import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.custom.async
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 
 class DetailActivity : BaseActivity() {
@@ -44,6 +52,10 @@ class DetailActivity : BaseActivity() {
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
     private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private var url = ""
+        set(value) {
+            field = value
+            fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
+        }
     private var sId = ""
     private var scp: ScpModel? = null
     private var detailHtml = ""
@@ -81,6 +93,7 @@ class DetailActivity : BaseActivity() {
     private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var randomIndex = 0
     private var historyIndex = 0
+    private var fullUrl = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,29 +109,40 @@ class DetailActivity : BaseActivity() {
         webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
+        // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
+        // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
+
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
-            // 随机文档
-            readType = 1
-            scp = ScpDao.getInstance().getRandomScp()
+            // 入口都确定了有url，没有的话直接finish
+            finish()
         } else {
-            sId = intent?.getStringExtra("sId") ?: ""
-            scp = if (sId.isNotEmpty()) ScpDao.getInstance().getScpModelById(sId) else
-                ScpDao.getInstance().getOneScpModelByLink(url)
-            url = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
+//            sId = intent?.getStringExtra("sId") ?: ""
+//            scp = if (sId.isNotEmpty()) ScpDataHelper.getInstance().getScpModelById(sId) else
+//                ScpDataHelper.getInstance().getOneScpModelByLink(url)
+            scp = AppDatabase.getInstance(this@DetailActivity).scpDao()
+                    .getByLink(url)
         }
 
+        fullUrl = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
+
         scp?.let {
+            // 数据库取到
             historyIndex = historyList.size
             historyList.add(it)
             if (readType == 1) {
                 randomList.add(it)
             }
+            setData(it)
+        } ?: run {
+            // 数据库没有，加载链接
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(fullUrl)
+            nsv_web_wrapper?.scrollTo(0, 0)
         }
 
-        setData(scp)
         webView?.requestFocus()
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
@@ -128,20 +152,22 @@ class DetailActivity : BaseActivity() {
                     view.loadUrl(url)
                 } else {
                     if (url.startsWith("http://scp-wiki-cn.wikidot.com/")) {
+                        // 站内链接
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
-                        val scpList = ScpDao.getInstance().getScpModelByLink(postString.toString())
-                        if (scpList.isNotEmpty()) {
-                            scp = scpList[0]
-                            scp?.let {
-                                historyIndex = historyList.size
-                                historyList.add(it)
-                            }
+//                        val scpList = ScpDataHelper.getInstance().getScpModelByLink(postString.toString())
+                        val scp = AppDatabase.getInstance(this@DetailActivity).scpDao()
+                                .getByLink(postString.toString())
+                        scp?.let {
+                            historyIndex = historyList.size
+                            historyList.add(it)
                             setData(scp)
-                        } else {
+                        } ?: run {
                             pbLoading.visibility = VISIBLE
                             view.loadUrl(url)
                         }
+                    } else {
+                        view.loadUrl(url)
                     }
                 }
                 return false
@@ -168,32 +194,28 @@ class DetailActivity : BaseActivity() {
 
     }
 
-    private fun setData(scp: ScpModel?) {
-        if (scp != null) {
-            ScpDao.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
-            // 刷新toolbar（收藏状态
-            invalidateOptionsMenu()
-            refreshReadBtnStatus(scp.hasRead)
-            // 更新标题
-            supportActionBar?.setDisplayShowTitleEnabled(false)
-            detail_toolbar?.title = scp.title
-            url = if (scp.link.contains("http")) scp.link else "http://scp-wiki-cn.wikidot.com${scp.link}"
-            detailHtml = ScpDao.getInstance().getDetailByLink(scp.link)
-            if (detailHtml.isEmpty()) {
-                pbLoading.visibility = VISIBLE
-                webView.loadUrl(url)
-            } else {
-                pbLoading.visibility = GONE
-                webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                         + detailHtml + jsScript,
-                        "text/html", "utf-8", null)
-            }
-            nsv_web_wrapper?.scrollTo(0, 0)
-        } else if (url.isNotEmpty()){
+    private fun setData(scp: ScpModel) {
+        ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
+        // 刷新toolbar（收藏状态
+        invalidateOptionsMenu()
+        refreshReadBtnStatus(scp.hasRead)
+        // 更新标题
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        detail_toolbar?.title = scp.title
+        url = scp.link
+//            detailHtml = ScpDataHelper.getInstance().getDetailByLink(scp.link)
+        detailHtml = AppDatabase.getInstance(this@DetailActivity).detailDao()
+                .getDetail(scp.link)
+        if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
-            webView.loadUrl(url)
-            nsv_web_wrapper?.scrollTo(0, 0)
+            webView.loadUrl(fullUrl)
+        } else {
+            pbLoading.visibility = GONE
+            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                    + detailHtml + jsScript,
+                    "text/html", "utf-8", null)
         }
+        nsv_web_wrapper?.scrollTo(0, 0)
     }
 
     /**
@@ -223,7 +245,7 @@ class DetailActivity : BaseActivity() {
                                 pbLoading.visibility = VISIBLE
                                 onlineMode = 1
                                 it.setTitle(R.string.offline_mode)
-                                webView?.loadUrl(url)
+                                webView?.loadUrl(fullUrl)
                             } else {
                                 Toaster.show("请先开启网络")
                             }
@@ -258,14 +280,14 @@ class DetailActivity : BaseActivity() {
                         PreferenceUtil.addPoints(1)
                         val openIntent = Intent()
                         openIntent.action = "android.intent.action.VIEW"
-                        val openUrl = Uri.parse(SCPConstants.SCP_SITE_URL + s.link)
+                        val openUrl = Uri.parse(fullUrl)
                         openIntent.data = openUrl
                         startActivity(openIntent)
                     }
                     R.id.copy_link -> {
                         EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
                         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clipData = ClipData.newPlainText("scp_link", SCPConstants.SCP_SITE_URL + s.link)
+                        val clipData = ClipData.newPlainText("scp_link", fullUrl)
                         clipboardManager?.primaryClip = clipData
                         Toaster.show("已复制到剪贴板")
                     }
@@ -273,7 +295,7 @@ class DetailActivity : BaseActivity() {
                         likeScp()
                     }
                     R.id.add_read_later -> {
-                        ScpDao.getInstance().insertViewListItem(s.link, s.title,
+                        ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
                                 SCPConstants.LATER_TYPE)
                         Toaster.show("已加入待读列表")
                     }
@@ -286,21 +308,38 @@ class DetailActivity : BaseActivity() {
                                 ViewTreeObserver.OnGlobalLayoutListener {
                             override fun onGlobalLayout() {
                                 cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                                Flowable.create<String>({ emitter ->
+                                doAsync {
+                                    // Runs in background
                                     val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
                                             Bitmap.Config.RGB_565)
                                     //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                                     val canvas = Canvas(bitmap)
                                     cl_detail_container.draw(canvas)
                                     Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
-                                    emitter.onNext("finish")
-                                    emitter.onComplete()
-                                }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe {
-                                            Toaster.show("图片已保存")
-                                            gp_share_content?.visibility = GONE
-                                        }
+
+                                    // This code is executed on the UI thread
+                                    uiThread {
+                                        toast("图片已保存")
+                                        gp_share_content?.visibility = GONE
+                                    }
+                                }
+//                                Flowable.create<Boolean>({ emitter ->
+//                                    val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
+//                                            Bitmap.Config.RGB_565)
+//                                    //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
+//                                    val canvas = Canvas(bitmap)
+//                                    cl_detail_container.draw(canvas)
+//                                    Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
+//                                    emitter.onNext(true)
+//                                    emitter.onComplete()
+//                                }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+//                                        .observeOn(AndroidSchedulers.mainThread())
+//                                        .subscribe {
+//                                            if (it) {
+//                                                Toaster.show("图片已保存")
+//                                                gp_share_content?.visibility = GONE
+//                                            }
+//                                        }
                             }
                         })
                     }
@@ -332,21 +371,23 @@ class DetailActivity : BaseActivity() {
         scp?.let { s ->
             PreferenceUtil.addPoints(2)
             s.like = if (s.like == 1) 0 else 1
-            ScpDao.getInstance().insertLikeAndReadInfo(s)
+            ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
         }
         invalidateOptionsMenu()
     }
 
     private fun toNextArticle() {
+        if (scp == null) return
+        val index = scp?.index?:0
+        val scpType = scp?.scpType?:0
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                scp?.let { s ->
-                    scp = ScpDao.getInstance().getNextScp(s.index)
-                    scp?.let {
-                        setData(scp)
-                    } ?: Toaster.show("已经是最后一篇了")
-                }
+//                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
+                scp = AppDatabase.getInstance(this).scpDao().getNext(index, scpType)
+                scp?.let {
+                    setData(it)
+                } ?: Toaster.show("已经是最后一篇了")
             }
             1 -> {
                 if (randomIndex < randomList.size - 1) {
@@ -361,7 +402,7 @@ class DetailActivity : BaseActivity() {
                         3 -> "5,6"
                         else -> ""
                     }
-                    scp = ScpDao.getInstance().getRandomScp(randomRange)
+                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
                     scp?.let {
                         randomList.add(it)
                         randomIndex++
@@ -376,15 +417,19 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun toPreviewArticle() {
+        if (scp == null) return
+        val index = scp?.index?:0
+        val scpType = scp?.scpType?:0
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                scp?.let { s ->
-                    when (s.index) {
-                        0 -> Toaster.show("已经是第一篇了")
-                        else -> {
-                            scp = ScpDao.getInstance().getPreviewScp(s.index)
-                            setData(scp)
+                when (index) {
+                    0 -> Toaster.show("已经是第一篇了")
+                    else -> {
+//                        scp = ScpDataHelper.getInstance().getPreviewScp(index, scpType)
+                        scp = AppDatabase.getInstance(this).scpDao().getPreview(index, scpType)
+                        scp?.let {
+                            setData(it)
                         }
                     }
                 }
@@ -393,7 +438,9 @@ class DetailActivity : BaseActivity() {
                 if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
                     scp = randomList[--randomIndex]
                     Log.i("random", randomIndex.toString())
-                    setData(scp)
+                    scp?.let {
+                        setData(it)
+                    }
                 } else {
                     Toaster.show("已经是第一篇了")
                 }
@@ -412,14 +459,14 @@ class DetailActivity : BaseActivity() {
                 // 标记已读
                 PreferenceUtil.addPoints(5)
                 s.hasRead = 1
-                ScpDao.getInstance().insertLikeAndReadInfo(s)
+                ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
                 Logger.i(ThemeUtil.lightText.toString())
                 refreshReadBtnStatus(1)
             } else {
                 // 取消已读
                 PreferenceUtil.reducePoints(5)
                 s.hasRead = 0
-                ScpDao.getInstance().insertLikeAndReadInfo(s)
+                ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
                 refreshReadBtnStatus(0)
             }
         }
@@ -466,7 +513,9 @@ class DetailActivity : BaseActivity() {
         if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
             if (historyIndex > 0) {
                 scp = historyList[historyIndex - 1]
-                setData(scp)
+                scp?.let {
+                    setData(it)
+                }
                 historyList.removeAt(historyIndex)
                 historyIndex--
                 return true

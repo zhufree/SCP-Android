@@ -4,10 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants
-import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
 import info.free.scp.view.base.BaseAdapter
 
 /**

@@ -10,7 +10,8 @@ import androidx.annotation.RequiresApi
 import info.free.scp.util.PreferenceUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
-import info.free.scp.db.ScpDao
+import info.free.scp.ScpApplication
+import info.free.scp.db.AppDatabase
 import info.free.scp.util.Logger
 import info.free.scp.util.Utils
 
@@ -23,11 +24,11 @@ class InitDetailService : IntentService("initDataService") {
     private var downloadList = emptyList<Int>().toMutableList()
     private var isDownloading = false
 
-    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
+    private var mLocalBroadcastManager: LocalBroadcastManager? = null
 
     override fun onCreate() {
         super.onCreate()
-        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(this)
+        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
     }
 
 
@@ -91,13 +92,14 @@ class InitDetailService : IntentService("initDataService") {
 
 
     private fun getPartDetail(downloadType: Int, index: Int) {
-        HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
-            ScpDao.getInstance().insertDetailData(it)
+        HttpManager.instance.getPartDetail(index * 200, 200, downloadType) {
+//            ScpDataHelper.getInstance().insertDetailData(it)
+            AppDatabase.getInstance(ScpApplication.context).detailDao().saveAll(it)
             // 下载进度+1
             PreferenceUtil.addSingleDbLoadCount(downloadType)
-            createNotification(downloadType, index*500+it.size)
-            if (it.size == 500) {
-                Logger.i("get next 500 item")
+            createNotification(downloadType, index*200+it.size)
+            if (it.size == 200) {
+                Logger.i("get next 200 item")
                 getPartDetail(downloadType, index+1)
             } else {
                 // 标记下载完成

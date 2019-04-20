@@ -10,7 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
@@ -71,8 +71,8 @@ class UserFragment : BaseFragment() {
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                 "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
-        tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
-                "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
+        tv_data_desc?.text = "已研究项目：${ScpDataHelper.getInstance().getReadCount()}\n" +
+                "已跟踪项目：${ScpDataHelper.getInstance().getLikeCount()}"
 
         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
                 + "/scp_user_head.jpg"))
@@ -91,8 +91,8 @@ class UserFragment : BaseFragment() {
         if (PreferenceUtil.getNickname().isNotEmpty()) {
             tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                     "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
-            tv_data_desc?.text = "已研究项目：${ScpDao.getInstance().getReadCount()}\n" +
-                    "已跟踪项目：${ScpDao.getInstance().getLikeCount()}"
+            tv_data_desc?.text = "已研究项目：${ScpDataHelper.getInstance().getReadCount()}\n" +
+                    "已跟踪项目：${ScpDataHelper.getInstance().getLikeCount()}"
         } else {
             UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
         }

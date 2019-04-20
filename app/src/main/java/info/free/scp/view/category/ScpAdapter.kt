@@ -7,7 +7,7 @@ import info.free.scp.R
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.view.base.BaseAdapter
 
 /**
@@ -20,7 +20,7 @@ class ScpAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
     private var laterViewList = emptyList<SimpleScp>().toMutableList()
 
     init {
-        laterViewList = ScpDao.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
+        laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {

@@ -2,8 +2,6 @@ package info.free.scp.view.category
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +9,7 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseAdapter
@@ -70,7 +68,7 @@ class ScpItemFragment : BaseFragment() {
         when (categoryType) {
             SCPConstants.Category.ABOUT_INFO -> {
                 // 相关材料
-                scpList?.addAll(ScpDao.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
+                scpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
             }
         }
         if (scpList?.size == 0) {

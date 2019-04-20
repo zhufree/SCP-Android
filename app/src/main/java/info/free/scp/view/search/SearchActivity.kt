@@ -2,14 +2,13 @@ package info.free.scp.view.search
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
@@ -52,7 +51,7 @@ class SearchActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
-        resultList.addAll(ScpDao.getInstance().searchScpByKeyword(keyword))
+        resultList.addAll(ScpDataHelper.getInstance().searchScpByKeyword(keyword))
         if (resultList.size == 0) {
             Toaster.show("搜索结果为空")
         }
@@ -77,7 +76,7 @@ class SearchActivity : BaseActivity() {
         Flowable.create<MutableList<ScpModel>>({emitter->
             Log.i("search", "开始检索")
             EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
-            emitter.onNext(ScpDao.getInstance().searchScpInDetailByKeyword(keyword))
+            emitter.onNext(ScpDataHelper.getInstance().searchScpInDetailByKeyword(keyword))
             emitter.onComplete()
         }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

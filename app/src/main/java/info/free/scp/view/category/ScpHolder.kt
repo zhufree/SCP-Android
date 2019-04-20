@@ -2,16 +2,14 @@ package info.free.scp.view.category
 
 import android.app.AlertDialog
 import android.content.Context
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
-import info.free.scp.R
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.addLater
 import kotlinx.android.synthetic.main.item_category.view.*
@@ -50,7 +48,7 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
                     .setPositiveButton("确定") { _, _ ->
                         EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
                         model.hasRead = if (model.hasRead == 0) 1 else 0
-                        ScpDao.getInstance().insertLikeAndReadInfo(model)
+                        ScpDataHelper.getInstance().insertLikeAndReadInfo(model)
                         itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
                     }
                     .setNegativeButton("我手滑了") {dialog, _ ->
@@ -66,11 +64,11 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
         }
         itemView.btn_read_later.setOnClickListener {
             if (isInLaterViewList) {
-                ScpDao.getInstance().deleteViewListItem(model.link, LATER_TYPE)
+                ScpDataHelper.getInstance().deleteViewListItem(model.link, LATER_TYPE)
                 isInLaterViewList = false
                 it.setBackgroundColor(ThemeUtil.unClickBtn)
             } else {
-                ScpDao.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
+                ScpDataHelper.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
                 Toaster.show("已加入待读列表")
                 EventUtil.onEvent(mContext, addLater)
                 isInLaterViewList = true

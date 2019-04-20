@@ -7,7 +7,7 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.view.base.BaseAdapter
 
 /**
@@ -20,7 +20,7 @@ class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
     private var laterViewList = emptyList<SimpleScp>().toMutableList()
 
     init {
-        laterViewList = ScpDao.getInstance().getViewListByTypeAndOrder(SCPConstants.LATER_TYPE, 0)
+        laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(SCPConstants.LATER_TYPE, 0)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_search, parent, false)

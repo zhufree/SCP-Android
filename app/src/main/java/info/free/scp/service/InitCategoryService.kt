@@ -7,10 +7,10 @@ import android.util.Log
 import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
+import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpCollectionModel
-import info.free.scp.db.ScpDao
+import info.free.scp.db.AppDatabase
 
 
 /**
@@ -36,7 +36,7 @@ class InitCategoryService : IntentService("initDataService") {
 
     private fun finishCategoryLoad() {
         // TODO fix
-        ScpDao.getInstance().insertCategoryData(scpModels)
+//        ScpDataHelper.getInstance().insertCategoryData(scpModels)
         PreferenceUtil.setInitCategoryFinish(true)
         sendThreadStatus(100)
     }
@@ -53,15 +53,16 @@ class InitCategoryService : IntentService("initDataService") {
     }
 
     private fun getAllScpList(i: Int) {
-        HttpManager.instance.getAllScp(i*200, 200) {
+        HttpManager.instance.getAllScp(i*500, 500) {
             for (scp in it) {
                 Log.i("loading", "${scp.scpType} index = ${scp.index}")
             }
+            AppDatabase.getInstance(ScpApplication.context).scpDao().saveAll(it)
             scpModels.addAll(it)
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1
             val next = i + 1
-            if (it.size == 200) {
+            if (it.size == 500) {
                 getAllScpList(next)
             } else {
                 finishCategoryLoad()

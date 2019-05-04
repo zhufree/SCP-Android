@@ -122,7 +122,7 @@ class DetailActivity : BaseActivity() {
 //            sId = intent?.getStringExtra("sId") ?: ""
 //            scp = if (sId.isNotEmpty()) ScpDataHelper.getInstance().getScpModelById(sId) else
 //                ScpDataHelper.getInstance().getOneScpModelByLink(url)
-            scp = AppDatabase.getInstance(this@DetailActivity).scpDao()
+            scp = AppDatabase.getInstance().scpDao()
                     .getByLink(url)
         }
 
@@ -156,7 +156,7 @@ class DetailActivity : BaseActivity() {
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
 //                        val scpList = ScpDataHelper.getInstance().getScpModelByLink(postString.toString())
-                        val scp = AppDatabase.getInstance(this@DetailActivity).scpDao()
+                        val scp = AppDatabase.getInstance().scpDao()
                                 .getByLink(postString.toString())
                         scp?.let {
                             historyIndex = historyList.size
@@ -204,7 +204,7 @@ class DetailActivity : BaseActivity() {
         detail_toolbar?.title = scp.title
         url = scp.link
 //            detailHtml = ScpDataHelper.getInstance().getDetailByLink(scp.link)
-        detailHtml = AppDatabase.getInstance(this@DetailActivity).detailDao()
+        detailHtml = AppDatabase.getInstance().detailDao()
                 .getDetail(scp.link)
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
@@ -384,7 +384,7 @@ class DetailActivity : BaseActivity() {
         when (readType) {
             0 -> {
 //                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
-                scp = AppDatabase.getInstance(this).scpDao().getNext(index, scpType)
+                scp = AppDatabase.getInstance().scpDao().getNext(index, scpType)
                 scp?.let {
                     setData(it)
                 } ?: Toaster.show("已经是最后一篇了")
@@ -427,7 +427,7 @@ class DetailActivity : BaseActivity() {
                     0 -> Toaster.show("已经是第一篇了")
                     else -> {
 //                        scp = ScpDataHelper.getInstance().getPreviewScp(index, scpType)
-                        scp = AppDatabase.getInstance(this).scpDao().getPreview(index, scpType)
+                        scp = AppDatabase.getInstance().scpDao().getPreview(index, scpType)
                         scp?.let {
                             setData(it)
                         }

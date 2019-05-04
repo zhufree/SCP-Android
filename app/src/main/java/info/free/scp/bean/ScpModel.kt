@@ -20,6 +20,7 @@ data class ScpModel(@SerialName("objectId") @PrimaryKey val sId: String,
 //                    @Optional @SerialName("detail") var detailHtml: String = "", // 预留保存正文
 //                    @Optional @SerialName("not_found") var notFound: Int = -1,
                     @Optional @SerialName("scp_type") var scpType: Int = -1,
+                    @Optional @SerialName("sub_scp_type") var subScpType: String = "",
                     @Optional @SerialName("download_type") var downloadType: Int = -1,
                     @Optional var subtext: String = "",
                     @Optional var snippet: String = "",

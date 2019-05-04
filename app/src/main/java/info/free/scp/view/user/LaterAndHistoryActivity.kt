@@ -7,11 +7,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.bean.SimpleScp
+import info.free.scp.db.AppDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
@@ -58,7 +63,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         setContentView(R.layout.activity_like)
         initToolbar()
 
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
+        val lm = LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
         adapter = SimpleScpAdapter(this, viewItemList)
         rv_like?.adapter = adapter
@@ -141,15 +146,16 @@ class LaterAndHistoryActivity : BaseActivity() {
                     numberString += it
                 } else {
                     if (it == 'j' || it == 'J') {
-                        type = if (type == SCPConstants.ScpType.SAVE_SERIES) SCPConstants.ScpType.SAVE_JOKE else SCPConstants.ScpType.SAVE_JOKE_CN
+                        type = if (type == SCPConstants.ScpType.SAVE_SERIES) SAVE_JOKE else SAVE_JOKE_CN
                     }
                 }
             }
             if (numberString.isNotEmpty()) {
-                val targetScp = ScpDataHelper.getInstance().getScpByTypeAndNumber(type, numberString)
+                val targetScp = AppDatabase.getInstance().scpDao().getScpByNumber(type, if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
+                    "-$numberString-" else "-$numberString")
                 if (targetScp != null) {
                     print(targetScp)
-                    ScpDataHelper.getInstance().insertViewListItem(targetScp.link, targetScp.title, SCPConstants.LATER_TYPE)
+                    ScpDataHelper.getInstance().insertViewListItem(targetScp.link, targetScp.title, LATER_TYPE)
                 }
             }
         }

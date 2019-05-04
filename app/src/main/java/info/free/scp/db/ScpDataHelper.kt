@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
@@ -280,46 +279,21 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
         return null
     }
 
+    /**
+     * 获取某一type的scp list
+     */
     fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpModel> {
         val end = start + range
         val resultList = emptyList<ScpModel>().toMutableList()
-        try {
-            with(readableDatabase) {
-                val cursor: Cursor? =
-                        if (PreferenceUtil.getIfHideFinished()) {
-                            this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
-                                    + ScpTable.SCP_TYPE + "=? AND " + ScpTable.HAS_READ + " = 0 ",
-                                    arrayOf(type.toString()))
-                        } else {
-                            this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
-                                    + ScpTable.SCP_TYPE + "=?",
-                                    arrayOf(type.toString()))
-                        }
-                with(cursor) {
-                    this?.let {
-                        while (it.moveToNext()) {
-                            resultList.add(extractScp(it))
-                        }
-                    }
-                }
-            }
-            if (type == SERIES) {
-                resultList.sortBy {
-                    if (it.link.startsWith("/scp") && !it.link.split("-").isEmpty())
-                        it.link.split("-")[1].toInt()
-                    else it.link.substring(1, 5).toInt()
-                }
-            } else {
-                resultList.sortBy {
-                    it.link.split("-")[2].toInt()
-                }
-            }
-            return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)
-
-        } catch (e: Exception) {
-            e.printStackTrace()
+        if (PreferenceUtil.getIfHideFinished()) {
+            resultList.addAll(AppDatabase.getInstance().scpDao().getUnreadScpListByType(type))
+        } else {
+            resultList.addAll(AppDatabase.getInstance().scpDao().getAllScpListByType(type))
         }
-        return resultList
+        resultList.sortBy {
+            it.index
+        }
+        return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)// FIXME
     }
 
     fun getScpByType(type: Int): MutableList<ScpModel> {
@@ -369,38 +343,30 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
     }
 
     fun getSinglePageByType(type: Int): MutableList<ScpModel> {
-        val abnormalPageList = arrayOf("/log-of-extranormal-events", "/log-of-extranormal-events-cn",
-                "/log-of-anomalous-items", "/log-of-anomalous-items-cn")
-        val introPageList = arrayOf("/faq", "/guide-for-newbies", "/how-to-write-an-scp")
-        val infoPageList = arrayOf("/secure-facilities-locations", "/secure-facilities-locations-cn",
-                "/object-classes", "/security-clearance-levels", "/task-forces")
-        var resultList = emptyList<ScpModel>().toMutableList()
-        try {
-            with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME + " WHERE "
-                        + ScpTable.SCP_TYPE + "=" + SCPConstants.ScpType.SINGLE_PAGE, null)
-                with(cursor) {
-                    this?.let {
-                        while (it.moveToNext()) {
-                            resultList.add(extractScp(it))
-                        }
-                    }
-                }
+        val abnormalPageList = arrayOf(
+                "/log-of-extranormal-events",
+                "/log-of-extranormal-events-cn",
+                "/log-of-anomalous-items",
+                "/log-of-anomalous-items-cn")
+        val introPageList = arrayOf(
+                "/faq",
+                "/guide-for-newbies",
+                "/how-to-write-an-scp")
+        val infoPageList = arrayOf(
+                "/secure-facilities-locations",
+                "/secure-facilities-locations-cn",
+                "/object-classes",
+                "/security-clearance-levels",
+                "/task-forces")
+        var resultList = AppDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
+        resultList = resultList.filter {
+            when (type) {
+                SCPConstants.ScpType.SAVE_INFO -> infoPageList.contains(it.link)
+                SCPConstants.ScpType.SAVE_INTRO -> introPageList.contains(it.link)
+                SCPConstants.ScpType.SAVE_ABNORMAL -> abnormalPageList.contains(it.link)
+                else -> abnormalPageList.contains(it.link)
             }
-            resultList = resultList.filter {
-                when (type) {
-                    SCPConstants.ScpType.SAVE_INFO -> infoPageList.contains(it.link)
-                    SCPConstants.ScpType.SAVE_INTRO -> introPageList.contains(it.link)
-                    SCPConstants.ScpType.SAVE_ABNORMAL -> abnormalPageList.contains(it.link)
-                    else -> abnormalPageList.contains(it.link)
-                }
-            }.toMutableList()
-
-            return resultList
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        }.toMutableList()
         return resultList
     }
 
@@ -502,35 +468,15 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
         }
         var scpModel: ScpModel? = null
         var link = ""
-        try {
-            with(readableDatabase) {
-                var cursor: Cursor? = null
-                if (typeRange.isEmpty()) {
-                    cursor = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.DETAIL_TABLE_NAME, null)
-                } else {
-                    cursor = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.SCP_TABLE_NAME +
-                            " WHERE " + ScpTable.SCP_TYPE + " IN ($typeRange);", null)
-                }
-                if (cursor != null && cursor.count > 0) {
-                    val randomIndex = Random().nextInt(cursor.count)
-                    while (cursor.moveToNext()) {
-                        if (cursor.position == randomIndex) {
-                            link = getCursorString(cursor, ScpTable.LINK)
-                            Log.i("random", link)
-                            cursor.close()
-                            break
-                        }
-                    }
-                }
-            }
-            val detailHtml = getDetailByLink(link)
-            scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-                getRandomScp(typeRange) else getOneScpModelByLink(link)
-            return scpModel
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        scpModel = if (typeRange.isEmpty()) AppDatabase.getInstance().scpDao().getRandomScp()
+        else AppDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
+
+        link = scpModel.link
+        val detailHtml = AppDatabase.getInstance().detailDao().getDetail(link)
+        scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
+            getRandomScp(typeRange) else AppDatabase.getInstance().scpDao().getByLink(link)
         return scpModel
+
     }
 
     fun getLikeScpList(): MutableList<ScpModel?> {

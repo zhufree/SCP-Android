@@ -27,6 +27,30 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `index` = :index-1 AND scpType = :scpType LIMIT 1")
     fun getPreview(index: Int, scpType: Int): ScpModel?
 
+    @Query("SELECT * FROM scps WHERE `scpType` = :type")
+    fun getAllScpListByType(type: Int): List<ScpModel>
+
+    @Query("SELECT * FROM scps WHERE `scpType` = :type AND `hasRead` = 0 ")
+    fun getUnreadScpListByType(type: Int): List<ScpModel>
+
+    @Query("SELECT * FROM scps WHERE `scpType` = :type AND `subScpType` = :letterOrMonth ")
+    fun getTalesByTypeAndSubType(type: Int, letterOrMonth: String): List<ScpModel>
+
+    @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")
+    fun searchScpByTitle(keyword: String): List<ScpModel>
+
+    @Query("SELECT * FROM scps as scp left join details as detail on scp.link = detail.link WHERE detail.detail LIKE :keyword;")
+    fun searchScpByDetail(keyword: String): List<ScpModel>
+
+    @Query("SELECT * FROM scps WHERE scpType IN (:type) ORDER BY random() LIMIT 1;")
+    fun getRandomScpByType(type: String): ScpModel
+
+    @Query("SELECT * FROM scps ORDER BY random() LIMIT 1;")
+    fun getRandomScp(): ScpModel
+
+    @Query("SELECT * FROM scps WHERE scpType = :type AND title LIKE ?;")
+    fun getScpByNumber(type: Int, number: String): ScpModel?
+
     @Query("SELECT * FROM scps ORDER BY updatedAt DESC")
     fun loadAll(): List<ScpModel>
 

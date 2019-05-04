@@ -9,6 +9,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.db.AppDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
@@ -70,13 +71,11 @@ class DirectActivity : BaseActivity() {
         }
         tv_go_direst_btn?.setOnClickListener {
             val scp = when (chooseType) {
-                0 -> {
-                    ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
-                }
-                1 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES_CN, numberString)
-                2 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_JOKE, numberString)
-                3 -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_JOKE_CN, numberString)
-                else -> ScpDataHelper.getInstance().getScpByTypeAndNumber(SAVE_SERIES, numberString)
+                0 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
+                1 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES_CN, "-$numberString")
+                2 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE, "-$numberString-")
+                3 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE_CN, "-$numberString-")
+                else -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
             }
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
@@ -110,7 +109,7 @@ class DirectActivity : BaseActivity() {
                         intent.putExtra("random_type", 0)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
-                    }?: Toaster.show("没有离线的文档，无法随机")
+                    } ?: Toaster.show("没有离线的文档，无法随机")
                 }
                 R.id.random_scp -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomScp)
@@ -122,7 +121,7 @@ class DirectActivity : BaseActivity() {
                         intent.putExtra("random_type", 1)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
-                    }?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_tales -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomTale)
@@ -134,7 +133,7 @@ class DirectActivity : BaseActivity() {
                         intent.putExtra("random_type", 2)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
-                    }?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_joke -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomJoke)
@@ -146,7 +145,7 @@ class DirectActivity : BaseActivity() {
                         intent.putExtra("random_type", 3)
                         intent.setClass(this, DetailActivity::class.java)
                         startActivity(intent)
-                    }?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
             }
             true

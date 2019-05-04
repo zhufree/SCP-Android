@@ -8,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
+import info.free.scp.db.AppDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -19,6 +20,8 @@ import io.reactivex.*
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 class SearchActivity : BaseActivity() {
     var resultList: MutableList<ScpModel?> = emptyList<ScpModel>().toMutableList()
@@ -51,7 +54,7 @@ class SearchActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
-        resultList.addAll(ScpDataHelper.getInstance().searchScpByKeyword(keyword))
+        resultList.addAll(AppDatabase.getInstance().scpDao().searchScpByTitle(keyword))
         if (resultList.size == 0) {
             Toaster.show("搜索结果为空")
         }
@@ -73,34 +76,58 @@ class SearchActivity : BaseActivity() {
     }
     private fun searchByDetail(keyword:String) {
         pb_searching?.visibility = VISIBLE
-        Flowable.create<MutableList<ScpModel>>({emitter->
-            Log.i("search", "开始检索")
-            EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
-            emitter.onNext(ScpDataHelper.getInstance().searchScpInDetailByKeyword(keyword))
-            emitter.onComplete()
-        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {scpList->
-                    resultList.clear()
-                    resultList.addAll(scpList)
-                    Log.i("search", resultList.size.toString())
-                    if (adapter == null) {
-                        adapter = SearchResultAdapter(this@SearchActivity, resultList)
-                        rv_search_result?.adapter = adapter
-                        adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                            override fun onItemClick(view: View, position: Int) {
-                                val intent = Intent()
-                                intent.putExtra("link", resultList[position]?.link)
-                                intent.putExtra("sId", resultList[position]?.sId)
-                                intent.setClass(this@SearchActivity, DetailActivity::class.java)
-                                startActivity(intent)
-                            }
+        doAsync {
+            val scpList = AppDatabase.getInstance().scpDao().searchScpByDetail("%$keyword%")
+            uiThread {
+                resultList.clear()
+                resultList.addAll(scpList)
+                Log.i("search", resultList.size.toString())
+                if (adapter == null) {
+                    adapter = SearchResultAdapter(this@SearchActivity, resultList)
+                    rv_search_result?.adapter = adapter
+                    adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+                        override fun onItemClick(view: View, position: Int) {
+                            val intent = Intent()
+                            intent.putExtra("link", resultList[position]?.link)
+                            intent.putExtra("sId", resultList[position]?.sId)
+                            intent.setClass(this@SearchActivity, DetailActivity::class.java)
+                            startActivity(intent)
                         }
-                    } else {
-                        adapter?.notifyDataSetChanged()
                     }
-                    pb_searching?.visibility = GONE
+                } else {
+                    adapter?.notifyDataSetChanged()
                 }
+                pb_searching?.visibility = GONE
+            }
+        }
+//        Flowable.create<MutableList<ScpModel>>({emitter->
+//            Log.i("search", "开始检索")
+//            EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
+//            emitter.onNext(ScpDataHelper.getInstance().searchScpInDetailByKeyword(keyword))
+//            emitter.onComplete()
+//        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe {scpList->
+//                    resultList.clear()
+//                    resultList.addAll(scpList)
+//                    Log.i("search", resultList.size.toString())
+//                    if (adapter == null) {
+//                        adapter = SearchResultAdapter(this@SearchActivity, resultList)
+//                        rv_search_result?.adapter = adapter
+//                        adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
+//                            override fun onItemClick(view: View, position: Int) {
+//                                val intent = Intent()
+//                                intent.putExtra("link", resultList[position]?.link)
+//                                intent.putExtra("sId", resultList[position]?.sId)
+//                                intent.setClass(this@SearchActivity, DetailActivity::class.java)
+//                                startActivity(intent)
+//                            }
+//                        }
+//                    } else {
+//                        adapter?.notifyDataSetChanged()
+//                    }
+//                    pb_searching?.visibility = GONE
+//                }
         PreferenceUtil.addPoints(5)
     }
 

@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
 import info.free.scp.SCPConstants.DB_NAME
+import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpModel
 
@@ -18,9 +19,9 @@ abstract class AppDatabase : RoomDatabase() {
         private var INSTANCE: AppDatabase? = null
 
 
-        fun getInstance(context: Context): AppDatabase {
+        fun getInstance(): AppDatabase {
             if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java,
+                INSTANCE = Room.databaseBuilder(ScpApplication.context, AppDatabase::class.java,
                         DB_NAME)
                         .build()
             }

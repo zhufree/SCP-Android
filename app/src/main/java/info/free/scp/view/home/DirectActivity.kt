@@ -9,7 +9,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.db.AppDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.Toaster
@@ -71,11 +71,11 @@ class DirectActivity : BaseActivity() {
         }
         tv_go_direst_btn?.setOnClickListener {
             val scp = when (chooseType) {
-                0 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
-                1 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES_CN, "-$numberString")
-                2 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE, "-$numberString-")
-                3 -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE_CN, "-$numberString-")
-                else -> AppDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
+                0 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
+                1 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES_CN, "-$numberString")
+                2 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE, "-$numberString-")
+                3 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE_CN, "-$numberString-")
+                else -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
             }
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)

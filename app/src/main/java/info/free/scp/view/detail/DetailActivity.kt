@@ -10,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.provider.Contacts
 import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.Log
 import android.view.KeyEvent
@@ -28,19 +27,13 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.AppDatabase
+import info.free.scp.db.DetailDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import kotlinx.coroutines.Deferred
-import org.jetbrains.anko.coroutines.experimental.bg
-import org.jetbrains.anko.custom.async
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -122,7 +115,7 @@ class DetailActivity : BaseActivity() {
 //            sId = intent?.getStringExtra("sId") ?: ""
 //            scp = if (sId.isNotEmpty()) ScpDataHelper.getInstance().getScpModelById(sId) else
 //                ScpDataHelper.getInstance().getOneScpModelByLink(url)
-            scp = AppDatabase.getInstance().scpDao()
+            scp = ScpDatabase.getInstance().scpDao()
                     .getByLink(url)
         }
 
@@ -156,7 +149,7 @@ class DetailActivity : BaseActivity() {
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
 //                        val scpList = ScpDataHelper.getInstance().getScpModelByLink(postString.toString())
-                        val scp = AppDatabase.getInstance().scpDao()
+                        val scp = ScpDatabase.getInstance().scpDao()
                                 .getByLink(postString.toString())
                         scp?.let {
                             historyIndex = historyList.size
@@ -204,7 +197,7 @@ class DetailActivity : BaseActivity() {
         detail_toolbar?.title = scp.title
         url = scp.link
 //            detailHtml = ScpDataHelper.getInstance().getDetailByLink(scp.link)
-        detailHtml = AppDatabase.getInstance().detailDao()
+        detailHtml = DetailDatabase.getInstance().detailDao()
                 .getDetail(scp.link)
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
@@ -384,7 +377,7 @@ class DetailActivity : BaseActivity() {
         when (readType) {
             0 -> {
 //                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
-                scp = AppDatabase.getInstance().scpDao().getNext(index, scpType)
+                scp = ScpDatabase.getInstance().scpDao().getNext(index, scpType)
                 scp?.let {
                     setData(it)
                 } ?: Toaster.show("已经是最后一篇了")
@@ -427,7 +420,7 @@ class DetailActivity : BaseActivity() {
                     0 -> Toaster.show("已经是第一篇了")
                     else -> {
 //                        scp = ScpDataHelper.getInstance().getPreviewScp(index, scpType)
-                        scp = AppDatabase.getInstance().scpDao().getPreview(index, scpType)
+                        scp = ScpDatabase.getInstance().scpDao().getPreview(index, scpType)
                         scp?.let {
                             setData(it)
                         }

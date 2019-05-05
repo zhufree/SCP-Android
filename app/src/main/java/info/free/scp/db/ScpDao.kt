@@ -48,7 +48,7 @@ interface ScpDao {
     @Query("SELECT * FROM scps ORDER BY random() LIMIT 1;")
     fun getRandomScp(): ScpModel
 
-    @Query("SELECT * FROM scps WHERE scpType = :type AND title LIKE ?;")
+    @Query("SELECT * FROM scps WHERE scpType = :type AND title LIKE :number;")
     fun getScpByNumber(type: Int, number: String): ScpModel?
 
     @Query("SELECT * FROM scps ORDER BY updatedAt DESC")

@@ -10,7 +10,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpCollectionModel
-import info.free.scp.db.AppDatabase
+import info.free.scp.db.ScpDatabase
 
 
 /**
@@ -57,7 +57,7 @@ class InitCategoryService : IntentService("initDataService") {
             for (scp in it) {
                 Log.i("loading", "${scp.scpType} index = ${scp.index}")
             }
-            AppDatabase.getInstance(ScpApplication.context).scpDao().saveAll(it)
+            ScpDatabase.getInstance(ScpApplication.context).scpDao().saveAll(it)
             scpModels.addAll(it)
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1

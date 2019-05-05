@@ -16,6 +16,7 @@ import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import org.jetbrains.anko.alert
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
@@ -116,16 +117,17 @@ class UpdateManager(private var activity: BaseActivity) {
                     } else {
                         uiThread {
                             if (!activity.isFinishing) {
-                                checkInitData(false)
+                                checkInitData()
                             }
                         }
                     }
                 }
 
             }
-        } else if (Utils.enabledWifi(activity)) {
-            checkDownloadFinish()
         }
+//        else if (Utils.enabledWifi(activity)) {
+//            checkDownloadFinish()
+//        }
     }
 
     private fun registerBroadCastReceivers() {
@@ -133,7 +135,7 @@ class UpdateManager(private var activity: BaseActivity) {
         val intentFilter = IntentFilter()
         intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver!!, IntentFilter(SCPConstants.BroadCastAction.INIT_PROGRESS))
-        mLocalBroadcastManager?.registerReceiver(mInitDetailReceiver!!, IntentFilter(SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH))
+//        mLocalBroadcastManager?.registerReceiver(mInitDetailReceiver!!, IntentFilter(SCPConstants.BroadCastAction.LOAD_DETAIL_FINISH))
     }
 
     private fun initReceiver() {
@@ -148,20 +150,20 @@ class UpdateManager(private var activity: BaseActivity) {
                     if (progress == 100) {
                         Logger.i("init category finish")
                         progressDialog?.dismiss()
-                        if (Utils.onlyEnabled4G(activity) && !activity.isFinishing) {
-                            AlertDialog.Builder(activity)
-                                    .setTitle("数据初始化")
-                                    .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
-                                    .setPositiveButton("确定") { _, _ ->
-                                        if (!activity.isFinishing) {
-                                            showChooseDbDialog()
-                                        }
-                                    }
-                                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                                    .create().show()
-                        } else if (Utils.enabledWifi(activity) && !activity.isFinishing) {
-                            showChooseDbDialog()
-                        }
+//                        if (Utils.onlyEnabled4G(activity) && !activity.isFinishing) {
+//                            AlertDialog.Builder(activity)
+//                                    .setTitle("数据初始化")
+//                                    .setMessage("检测到你没有开启wifi，是否允许请求网络加载正文数据（可能消耗上百M流量）？")
+//                                    .setPositiveButton("确定") { _, _ ->
+//                                        if (!activity.isFinishing) {
+//                                            showChooseDbDialog()
+//                                        }
+//                                    }
+//                                    .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
+//                                    .create().show()
+//                        } else if (Utils.enabledWifi(activity) && !activity.isFinishing) {
+//                            showChooseDbDialog()
+//                        }
                     }
                 }
             }
@@ -182,51 +184,50 @@ class UpdateManager(private var activity: BaseActivity) {
     /**
      * 显示分库下载的多选框
      */
-    fun showChooseDbDialog() {
-        val dbList = arrayOf("SCP系列1-4999", "SCP-CN系列1-1999", "基金会故事",
-                "搞笑作品，其他文档（解明，废除，删除，归档等）,offset", "故事系列，设定中心等")
-//        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
-//                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
-        val chooseList = arrayOf(true, true, false, false, false).toBooleanArray()
-        AlertDialog.Builder(activity)
-                .setTitle("选择你想要离线的内容（没有离线内容时将直接加载网页）")
-                .setMultiChoiceItems(dbList, chooseList) { _, which, isChecked ->
-                    chooseList[which] = isChecked
-                }
-                .setPositiveButton("OK") { _, _ ->
-                    for (i in chooseList.indices) {
-                        if (chooseList[i]) {
-                            initDetailData(i)
-                        }
-                    }
-                }
-                .create().show()
-    }
+//    fun showChooseDbDialog() {
+//        val dbList = arrayOf("SCP系列1-4999", "SCP-CN系列1-1999", "基金会故事",
+//                "搞笑作品，其他文档（解明，废除，删除，归档等）,offset", "故事系列，设定中心等")
+////        val dbList = arrayOf("SCP系列1-5000","SCP-CN系列1-2000","基金会故事和设定中心",
+////                "搞笑作品，其他文档（解明，废除，删除，归档等）和offset")
+//        val chooseList = arrayOf(true, true, false, false, false).toBooleanArray()
+//        AlertDialog.Builder(activity)
+//                .setTitle("选择你想要离线的内容（没有离线内容时将直接加载网页）")
+//                .setMultiChoiceItems(dbList, chooseList) { _, which, isChecked ->
+//                    chooseList[which] = isChecked
+//                }
+//                .setPositiveButton("OK") { _, _ ->
+//                    for (i in chooseList.indices) {
+//                        if (chooseList[i]) {
+//                            initDetailData(i)
+//                        }
+//                    }
+//                }
+//                .create().show()
+//    }
 
 
     /**
-     * 数据初始化入口
+     * 数据初始化入口，检测本地是否有数据
+     * 第一次更新完数据之后，后续是否更新完全交给用户
      * 1.为了防止与后台数据库检测自动更新同时调用导致数据加载重复，确定没有版本更新才检测数据更新，否则先更新版本
      * 2.点击按钮手动检测时调用
-     * [forceInit] 强制更新，不强制更新的话可以直接使用备份数据
      */
-    fun checkInitData(forceInit: Boolean = false) {
-        if (!forceInit && !PreferenceUtil.getInitCategoryFinish() &&
-                BackupHelper.getInstance(activity).checkBackUpFileExist()) {
-            // 卸载重装后第一次检测，取备份文件恢复
+    fun checkInitData() {
+        if (!PreferenceUtil.getInitCategoryFinish() && BackupHelper.getInstance(activity).checkBackUpFileExist()) {
+            // 本地没有正文且有备份文件，取备份文件恢复
             Logger.i("use old db file to recover")
             if (BackupHelper.getInstance(activity).restore()) {
                 PreferenceUtil.setInitCategoryFinish(true)
                 for (i in 0..SCPConstants.Download.DOWNLOAD_TOTAL) {
-                    PreferenceUtil.setDetailDataLoadFinish(i, true)
+//                    PreferenceUtil.setDetailDataLoadFinish(i, true)
                 }
                 return
             }
         }
-        if (forceInit) {
-            Logger.i("force init")
-            PreferenceUtil.setInitCategoryFinish(false)
-        }
+//        if (forceInit) {
+//            Logger.i("force init")
+//            PreferenceUtil.setInitCategoryFinish(false)
+//        }
         // 没有初始化过
         if (!PreferenceUtil.getInitCategoryFinish()) {
             // 目录没加载
@@ -235,26 +236,24 @@ class UpdateManager(private var activity: BaseActivity) {
                 ScpDataHelper.getInstance().resetDb()
                 initCategoryData()
             } else {
-                AlertDialog.Builder(activity)
-                        .setTitle("数据初始化")
-                        .setMessage("检测到你没有开启网络，请手动开启网络后在【其他】页面选择同步云端数据" +
-                                "（本次初始化完成后到下次数据更新之间不需要再加载目录信息）")
-                        .setPositiveButton("确定") { _, _ -> }
-                        .create().show()
+                activity.alert("检测到你没有开启网络，请手动开启网络后在【其他】页面选择同步云端数据",
+                        "数据初始化") {
+                }.show()
             }
-        } else {
-            checkDownloadFinish()
         }
+//        else {
+//            checkDownloadFinish()
+//        }
     }
 
-    private fun checkDownloadFinish() {
-        Logger.i("check download finish")
-        for (i in 0..SCPConstants.Download.DOWNLOAD_TOTAL) {
-            if (!PreferenceUtil.getDetailDataLoadFinish(i)) {
-                initDetailData(i)
-            }
-        }
-    }
+//    private fun checkDownloadFinish() {
+//        Logger.i("check download finish")
+//        for (i in 0..SCPConstants.Download.DOWNLOAD_TOTAL) {
+//            if (!PreferenceUtil.getDetailDataLoadFinish(i)) {
+//                initDetailData(i)
+//            }
+//        }
+//    }
 
     var progressDialog: ProgressDialog? = null
     /**
@@ -265,6 +264,7 @@ class UpdateManager(private var activity: BaseActivity) {
         val intent = Intent(activity, InitCategoryService::class.java)
         activity.startService(intent)
         activity.runOnUiThread {
+//            progressDialog(message = "Please wait a bit…", title = "Fetching data")
             progressDialog = ProgressDialog(activity)
             progressDialog?.max = 100
             progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
@@ -275,13 +275,13 @@ class UpdateManager(private var activity: BaseActivity) {
         }
     }
 
-    fun initDetailData(downloadType: Int) {
-        Logger.i("start init download service, download type = $downloadType")
-        val intent = Intent(activity, InitDetailService::class.java)
-        intent.putExtra("download_type", downloadType)
-        activity.startService(intent)
-        isDownloadingDetail = true
-    }
+//    fun initDetailData(downloadType: Int) {
+//        Logger.i("start init download service, download type = $downloadType")
+//        val intent = Intent(activity, InitDetailService::class.java)
+//        intent.putExtra("download_type", downloadType)
+//        activity.startService(intent)
+//        isDownloadingDetail = true
+//    }
 
     fun checkUserInfo() {
         if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()

@@ -163,14 +163,14 @@ class SettingsActivity : BaseActivity() {
                             .setMessage("该选项将删除所有目录及正文数据并重新加载，是否确定？")
                             .setPositiveButton("确定") { dialog, _ ->
                                 EventUtil.onEvent(activity, EventUtil.clickSyncData)
-                                UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
+//                                UpdateManager.getInstance(activity as BaseActivity). checkInitData(true)
                                 dialog.dismiss()
                             }
                             .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                             .create().show()
                 } else {
                     EventUtil.onEvent(activity, EventUtil.clickSyncData)
-                    UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
+//                    UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
                 }
                 true
             }
@@ -182,10 +182,11 @@ class SettingsActivity : BaseActivity() {
                         .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
                         .setMessage("删除该部分本地数据并从云端重新下载最新数据？")
                         .setPositiveButton("确定") { _, _ ->
-                            PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
-                            PreferenceUtil.setSingleDbLoadCount(downloadType, 0)
-                            ScpDataHelper.getInstance().deleteDetailByDownloadType(downloadType)
-                            UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
+                            // TODO 离线数据库
+//                            PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
+//                            PreferenceUtil.setSingleDbLoadCount(downloadType, 0)
+//                            ScpDataHelper.getInstance().deleteDetailByDownloadType(downloadType)
+//                            UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
                         }
                         .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
                         .create().show()

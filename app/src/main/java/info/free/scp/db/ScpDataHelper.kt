@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.DB_NAME
+import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.ScpApplication
@@ -14,7 +14,6 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.util.Logger
 import info.free.scp.util.PreferenceUtil
-import java.util.*
 
 
 /**
@@ -27,7 +26,7 @@ import java.util.*
 
 const val DB_VERSION = 4
 
-class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB_VERSION) {
+class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null, DB_VERSION) {
     private var randomCount = 0
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -286,9 +285,9 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
         val end = start + range
         val resultList = emptyList<ScpModel>().toMutableList()
         if (PreferenceUtil.getIfHideFinished()) {
-            resultList.addAll(AppDatabase.getInstance().scpDao().getUnreadScpListByType(type))
+            resultList.addAll(ScpDatabase.getInstance().scpDao().getUnreadScpListByType(type))
         } else {
-            resultList.addAll(AppDatabase.getInstance().scpDao().getAllScpListByType(type))
+            resultList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
         }
         resultList.sortBy {
             it.index
@@ -358,7 +357,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
                 "/object-classes",
                 "/security-clearance-levels",
                 "/task-forces")
-        var resultList = AppDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
+        var resultList = ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
         resultList = resultList.filter {
             when (type) {
                 SCPConstants.ScpType.SAVE_INFO -> infoPageList.contains(it.link)
@@ -468,13 +467,13 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
         }
         var scpModel: ScpModel? = null
         var link = ""
-        scpModel = if (typeRange.isEmpty()) AppDatabase.getInstance().scpDao().getRandomScp()
-        else AppDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
+        scpModel = if (typeRange.isEmpty()) ScpDatabase.getInstance().scpDao().getRandomScp()
+        else ScpDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
 
         link = scpModel.link
-        val detailHtml = AppDatabase.getInstance().detailDao().getDetail(link)
+        val detailHtml = DetailDatabase.getInstance().detailDao().getDetail(link)
         scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-            getRandomScp(typeRange) else AppDatabase.getInstance().scpDao().getByLink(link)
+            getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
         return scpModel
 
     }

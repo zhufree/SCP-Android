@@ -16,7 +16,7 @@ import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.AppDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
@@ -151,7 +151,7 @@ class LaterAndHistoryActivity : BaseActivity() {
                 }
             }
             if (numberString.isNotEmpty()) {
-                val targetScp = AppDatabase.getInstance().scpDao().getScpByNumber(type, if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
+                val targetScp = ScpDatabase.getInstance().scpDao().getScpByNumber(type, if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
                     "-$numberString-" else "-$numberString")
                 if (targetScp != null) {
                     print(targetScp)

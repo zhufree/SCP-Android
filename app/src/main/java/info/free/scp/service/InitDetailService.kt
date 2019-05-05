@@ -10,8 +10,8 @@ import androidx.annotation.RequiresApi
 import info.free.scp.util.PreferenceUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
-import info.free.scp.ScpApplication
-import info.free.scp.db.AppDatabase
+import info.free.scp.db.DetailDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.Logger
 import info.free.scp.util.Utils
 
@@ -94,7 +94,7 @@ class InitDetailService : IntentService("initDataService") {
     private fun getPartDetail(downloadType: Int, index: Int) {
         HttpManager.instance.getPartDetail(index * 200, 200, downloadType) {
 //            ScpDataHelper.getInstance().insertDetailData(it)
-            AppDatabase.getInstance(ScpApplication.context).detailDao().saveAll(it)
+            DetailDatabase.getInstance().detailDao().saveAll(it)
             // 下载进度+1
             PreferenceUtil.addSingleDbLoadCount(downloadType)
             createNotification(downloadType, index*200+it.size)

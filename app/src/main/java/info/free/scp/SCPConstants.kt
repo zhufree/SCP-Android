@@ -7,7 +7,9 @@ package info.free.scp
 
 object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
-    const val DB_NAME = "scp_data.db"
+    const val SCP_DB_NAME = "scp_data.db"
+    const val DETAIL_DB_NAME = "scp_detail_data.db"
+    const val INFO_DB_NAME = "scp_info.db"
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档

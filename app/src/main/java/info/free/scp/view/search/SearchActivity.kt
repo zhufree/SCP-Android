@@ -8,17 +8,13 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.AppDatabase
-import info.free.scp.db.ScpDataHelper
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
-import io.reactivex.*
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -54,7 +50,7 @@ class SearchActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
-        resultList.addAll(AppDatabase.getInstance().scpDao().searchScpByTitle(keyword))
+        resultList.addAll(ScpDatabase.getInstance().scpDao().searchScpByTitle(keyword))
         if (resultList.size == 0) {
             Toaster.show("搜索结果为空")
         }
@@ -77,7 +73,7 @@ class SearchActivity : BaseActivity() {
     private fun searchByDetail(keyword:String) {
         pb_searching?.visibility = VISIBLE
         doAsync {
-            val scpList = AppDatabase.getInstance().scpDao().searchScpByDetail("%$keyword%")
+            val scpList = ScpDatabase.getInstance().scpDao().searchScpByDetail("%$keyword%")
             uiThread {
                 resultList.clear()
                 resultList.addAll(scpList)

@@ -794,6 +794,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, DB_NAME, null, DB
                 getCursorString(cursor, ScpTable.TITLE),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 getCursorInt(cursor, ScpTable.SCP_TYPE),
+                "",
                 getCursorInt(cursor, ScpTable.DOWNLOAD_TYPE),
                 getCursorString(cursor, ScpTable.SUB_TEXT),
                 getCursorString(cursor, ScpTable.SNIPPET),

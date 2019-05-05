@@ -26,6 +26,19 @@ object PreferenceUtil {
     /**
      * -------------------数据初始化----------------------
      */
+
+    /**
+     * 检测是不是第一次安装app
+     */
+    fun isFirstInstallApp(): Boolean {
+        val sp = getPrivateSharedPreference(INIT_SP)
+        return sp?.getBoolean("first_install", true)?:true
+    }
+
+    fun setFirstInstallApp() {
+        val sp = getPrivateSharedPreference(INIT_SP)
+        sp?.edit()?.putBoolean("first_install", false)?.apply()
+    }
     /**
      * 目录和数据库是否离线完成，用boolean记录
      */

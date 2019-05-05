@@ -15,17 +15,12 @@ import info.free.scp.service.HttpManager
 import info.free.scp.service.InitCategoryService
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
-import io.reactivex.Observable
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.ObservableOnSubscribe
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 
 class UpdateManager(private var activity: BaseActivity) {
-
-    fun Activity.showToast(msg: String) {
-        Toaster.show(msg)
-    }
 
     init {
         manager = this
@@ -51,6 +46,7 @@ class UpdateManager(private var activity: BaseActivity) {
     /**
      * 检测更新和数据初始化
      * ---start---
+     * 0. 第一次启动，进入新手引导流程，不检查更新
      * 1. 检测app版本，确保是最新版：checkUpdateAndCategory()
      * 2. 检测本地是否有备份数据，如果有，执行恢复并把初始化标记位都置为true，跳转5，否则转3
      * 3. 检测目录是否初始化，加载目录，完毕后加载正文
@@ -61,8 +57,14 @@ class UpdateManager(private var activity: BaseActivity) {
     fun checkAppData() {
 
         Logger.i("start checkAppData()")
-        // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
+        if (PreferenceUtil.isFirstInstallApp()) {
+            // 显示新人引导，下次再检测更新
+            PreferenceUtil.setFirstInstallApp()
+            NewbieManager.showLevelDialog(activity)
+            return
+        }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
+            // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
             PreferenceUtil.setLastCheckUpdateTime(0)
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
         }
@@ -74,7 +76,7 @@ class UpdateManager(private var activity: BaseActivity) {
             // 记录上次检测更新时间
             PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
-            Observable.create(ObservableOnSubscribe<Boolean> { e ->
+            doAsync {
                 // 检查更新信息
                 var newVersionCode = 0
                 var updateDesc: String? = ""
@@ -111,29 +113,16 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setNegativeButton("暂不升级") { _, _ -> }
                                 .create().show()
                         // 有新版本就不检查数据更新，知道更新到最新
-                        e.onNext(true)
                     } else {
-                        e.onNext(false)
-                    }
-                }
-            }).subscribeOn(Schedulers.newThread())
-                    .observeOn(Schedulers.newThread())
-                    .subscribe {
-                        // it表示的是有没有新版本
-                        Logger.i("check new version result = $it")
-                        if (!it && !activity.isFinishing) {
-//                            if (PreferenceUtil.getFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)) {
-//                                activity.runOnUiThread {
-//                                    checkInitData(true)
-//                                }
-//                                PreferenceUtil.setFirstOpenCurrentVersion(BuildConfig.VERSION_NAME)
-//                            } else {
-                                activity.runOnUiThread {
-                                    checkInitData(false)
-                                }
-//                            }
+                        uiThread {
+                            if (!activity.isFinishing) {
+                                checkInitData(false)
+                            }
                         }
                     }
+                }
+
+            }
         } else if (Utils.enabledWifi(activity)) {
             checkDownloadFinish()
         }

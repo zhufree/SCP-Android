@@ -44,7 +44,7 @@ class InitDetailService : IntentService("initDataService") {
             }
             if (!isDownloading) {
                 isDownloading = true
-                createNotification(it, downloadCount * 500)
+                createNotification(it, downloadCount * 50)
                 // 从之前的进度开始下载
                 getPartDetail(it, downloadCount)
             }
@@ -91,12 +91,12 @@ class InitDetailService : IntentService("initDataService") {
 
 
     private fun getPartDetail(downloadType: Int, index: Int) {
-        HttpManager.instance.getPartDetail(index * 500, 500, downloadType) {
+        HttpManager.instance.getPartDetail(index * 50, 50, downloadType) {
             ScpDao.getInstance().insertDetailData(it)
             // 下载进度+1
             PreferenceUtil.addSingleDbLoadCount(downloadType)
-            createNotification(downloadType, index*500+it.size)
-            if (it.size == 500) {
+            createNotification(downloadType, index*50+it.size)
+            if (it.size == 50) {
                 Logger.i("get next 500 item")
                 getPartDetail(downloadType, index+1)
             } else {

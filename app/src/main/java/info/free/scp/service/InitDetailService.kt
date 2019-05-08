@@ -94,7 +94,7 @@ class InitDetailService : IntentService("initDataService") {
     private fun getPartDetail(downloadType: Int, index: Int) {
         HttpManager.instance.getPartDetail(index * 200, 200, downloadType) {
 //            ScpDataHelper.getInstance().insertDetailData(it)
-            DetailDatabase.getInstance().detailDao().saveAll(it)
+            ScpDatabase.getInstance().detailDao().saveAll(it)
             // 下载进度+1
             PreferenceUtil.addSingleDbLoadCount(downloadType)
             createNotification(downloadType, index*200+it.size)

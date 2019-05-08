@@ -57,7 +57,7 @@ class InitCategoryService : IntentService("initDataService") {
             for (scp in it) {
                 Log.i("loading", "${scp.scpType} index = ${scp.index}")
             }
-            ScpDatabase.getInstance(ScpApplication.context).scpDao().saveAll(it)
+            ScpDatabase.getInstance().scpDao().saveAll(it)
             scpModels.addAll(it)
             Log.i("loading", "i = $i, size = ${scpModels.size}")
             requestCount += 1

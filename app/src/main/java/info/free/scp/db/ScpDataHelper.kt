@@ -471,7 +471,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
         else ScpDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
 
         link = scpModel.link
-        val detailHtml = DetailDatabase.getInstance().detailDao().getDetail(link)
+        val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
         scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
             getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
         return scpModel

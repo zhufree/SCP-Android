@@ -36,9 +36,9 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
 
     fun setData(model: ScpModel?, laterViewList: MutableList<SimpleScp>) {
         if (model == null) return
-        itemView.tv_scp_title?.text = if (model.notFound == 1 && !model.title.contains("拒绝访问")
-                && !model.title.contains("禁止访问"))
-            "${model.title}[禁止访问]" else model.title
+//        itemView.tv_scp_title?.text = if (model.notFound == 1 && !model.title.contains("拒绝访问")
+//                && !model.title.contains("禁止访问"))
+//            "${model.title}[禁止访问]" else model.title
         itemView.iv_like_star?.visibility = if (model.like == 1) VISIBLE else GONE
         itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
         itemView.iv_read_label.setOnClickListener {

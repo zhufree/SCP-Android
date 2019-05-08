@@ -60,7 +60,7 @@ class UpdateManager(private var activity: BaseActivity) {
         Logger.i("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
-            PreferenceUtil.setFirstInstallApp()
+//            PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
             return
         }

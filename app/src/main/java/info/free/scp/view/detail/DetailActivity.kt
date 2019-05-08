@@ -197,7 +197,7 @@ class DetailActivity : BaseActivity() {
         detail_toolbar?.title = scp.title
         url = scp.link
 //            detailHtml = ScpDataHelper.getInstance().getDetailByLink(scp.link)
-        detailHtml = DetailDatabase.getInstance().detailDao()
+        detailHtml = ScpDatabase.getInstance().detailDao()
                 .getDetail(scp.link)
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE

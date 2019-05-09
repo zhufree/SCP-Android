@@ -61,7 +61,7 @@ class SearchActivity : BaseActivity() {
                 override fun onItemClick(view: View, position: Int) {
                     val intent = Intent()
                     intent.putExtra("link", resultList[position]?.link)
-                    intent.putExtra("sId", resultList[position]?.sId)
+                    intent.putExtra("sId", resultList[position]?.id)
                     intent.setClass(this@SearchActivity, DetailActivity::class.java)
                     startActivity(intent)
                 }
@@ -85,7 +85,7 @@ class SearchActivity : BaseActivity() {
                         override fun onItemClick(view: View, position: Int) {
                             val intent = Intent()
                             intent.putExtra("link", resultList[position]?.link)
-                            intent.putExtra("sId", resultList[position]?.sId)
+                            intent.putExtra("sId", resultList[position]?.id)
                             intent.setClass(this@SearchActivity, DetailActivity::class.java)
                             startActivity(intent)
                         }

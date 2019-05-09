@@ -2,34 +2,22 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "285f1aa618bc820443507d56b0273715",
+    "identityHash": "dcc9756b212c66900b42f8d1ca0e5085",
     "entities": [
       {
         "tableName": "scps",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sId` TEXT NOT NULL, `index` INTEGER NOT NULL, `createdAt` TEXT NOT NULL, `updatedAt` TEXT NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scpType` INTEGER NOT NULL, `subScpType` TEXT NOT NULL, `downloadType` INTEGER NOT NULL, `subtext` TEXT NOT NULL, `snippet` TEXT NOT NULL, `desc` TEXT NOT NULL, `author` TEXT NOT NULL, `creator` TEXT NOT NULL, `createdTime` TEXT NOT NULL, `tags` TEXT NOT NULL, `subLinks` TEXT NOT NULL, `hasRead` INTEGER NOT NULL, `like` INTEGER NOT NULL, PRIMARY KEY(`sId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, `created_time` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
-            "fieldPath": "sId",
-            "columnName": "sId",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "index",
-            "columnName": "index",
+            "fieldPath": "id",
+            "columnName": "_id",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "createdAt",
-            "columnName": "createdAt",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "updatedAt",
-            "columnName": "updatedAt",
-            "affinity": "TEXT",
+            "fieldPath": "index",
+            "columnName": "_index",
+            "affinity": "INTEGER",
             "notNull": true
           },
           {
@@ -46,86 +34,38 @@
           },
           {
             "fieldPath": "scpType",
-            "columnName": "scpType",
+            "columnName": "scp_type",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
             "fieldPath": "subScpType",
-            "columnName": "subScpType",
+            "columnName": "sub_scp_type",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "downloadType",
-            "columnName": "downloadType",
+            "columnName": "download_type",
             "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "subtext",
-            "columnName": "subtext",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "snippet",
-            "columnName": "snippet",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "desc",
-            "columnName": "desc",
-            "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "author",
             "columnName": "author",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "creator",
-            "columnName": "creator",
-            "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "createdTime",
-            "columnName": "createdTime",
+            "columnName": "created_time",
             "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "tags",
-            "columnName": "tags",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "subLinks",
-            "columnName": "subLinks",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "hasRead",
-            "columnName": "hasRead",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "like",
-            "columnName": "like",
-            "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           }
         ],
         "primaryKey": {
           "columnNames": [
-            "sId"
+            "_id"
           ],
           "autoGenerate": false
         },
@@ -133,8 +73,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "details",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `detail` TEXT NOT NULL, `downloadType` INTEGER NOT NULL, `notFound` INTEGER NOT NULL, PRIMARY KEY(`link`))",
+        "tableName": "scp_detail",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `detail` TEXT NOT NULL, `not_found` INTEGER NOT NULL, PRIMARY KEY(`link`))",
         "fields": [
           {
             "fieldPath": "link",
@@ -149,14 +89,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "downloadType",
-            "columnName": "downloadType",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
             "fieldPath": "notFound",
-            "columnName": "notFound",
+            "columnName": "not_found",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -174,7 +108,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"285f1aa618bc820443507d56b0273715\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"dcc9756b212c66900b42f8d1ca0e5085\")"
     ]
   }
 }

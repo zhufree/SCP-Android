@@ -61,7 +61,7 @@ class ScpListFragment : BaseFragment() {
                         PreferenceUtil.addPoints(2)
                         val intent = Intent()
                         intent.putExtra("link", it[position]?.link)
-                        intent.putExtra("sId", it[position]?.sId)
+                        intent.putExtra("sId", it[position]?.id)
                         intent.setClass(mContext, DetailActivity::class.java)
                         startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                     }
@@ -157,19 +157,19 @@ class ScpListFragment : BaseFragment() {
                 }
                 when (clickPosition) {
                     0 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType.startsWith("2018") })
+                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2018") == true })
                     }
                     1 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType.startsWith("2017") })
+                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2017") == true })
                     }
                     2 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType.startsWith("2016") })
+                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2016") == true })
                     }
                     3 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType.startsWith("2015") })
+                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2015") == true })
                     }
                     4 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType.startsWith("2014") })
+                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2014") == true })
                     }
                 }
 

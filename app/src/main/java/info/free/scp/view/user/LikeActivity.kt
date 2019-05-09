@@ -43,7 +43,7 @@ class LikeActivity : BaseActivity() {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent()
                 intent.putExtra("link", likeList[position]?.link)
-                intent.putExtra("sId", likeList[position]?.sId)
+                intent.putExtra("sId", likeList[position]?.id)
                 intent.setClass(this@LikeActivity, DetailActivity::class.java)
                 startActivity(intent)
             }

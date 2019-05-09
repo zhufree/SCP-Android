@@ -12,11 +12,16 @@ import java.io.File
  * Created by zhufree on 2019/5/9.
  */
 
-object DownloadManager {
+object DownloadUtil {
+    object Status {
+        const val NONE = 0 // LTGRAY
+        const val FINISH = 1 // GREEN
+        const val DOWNLOADING = 2 // BLUE
+        const val NEED_UPDATE = 3 // YELLOW
+        const val ERROR = 4 // RED
+
+    }
     fun downloadDb(url :String) {
-        val builder = OkHttpClient.Builder()
-        val request:GetRequest<File> = OkGo.get(url)
-        val task = OkDownload.request(url, request).save()
-        task.start()
+
     }
 }

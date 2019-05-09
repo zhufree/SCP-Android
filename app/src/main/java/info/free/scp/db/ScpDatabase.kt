@@ -22,6 +22,7 @@ abstract class ScpDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                         SCP_DB_NAME)
+                        .allowMainThreadQueries()
                         .build()
             }
             return INSTANCE!!

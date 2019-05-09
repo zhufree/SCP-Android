@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.SCP_DB_NAME
+import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.ScpApplication
@@ -26,7 +26,7 @@ import info.free.scp.util.PreferenceUtil
 
 const val DB_VERSION = 4
 
-class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null, DB_VERSION) {
+class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, null, DB_VERSION) {
     private var randomCount = 0
 
     override fun onCreate(db: SQLiteDatabase?) {
@@ -90,7 +90,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
                         scpModels.forEach { scp ->
                             scp?.like = like
                             scp?.hasRead = hasRead
-                            replaceScpModel(scp)
+//                            replaceScpModel(scp)
                         }
                     }
                 }
@@ -117,7 +117,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
         db.beginTransaction()
         try {
             replaceLikeInfo(model)
-            replaceScpModel(model)
+//            replaceScpModel(model)
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -128,7 +128,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
         try {
             val stmt = compileStatement(ScpTable.INSERT_SCP_SQL)
             for (model in models) {
-                stmt.bindString(1, model.sId)
+                stmt.bindLong(1, model.id.toLong())
                 stmt.bindLong(2, model.index.toLong())
                 stmt.bindString(3, model.link)
                 stmt.bindString(4, model.title)
@@ -144,7 +144,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
                 stmt.bindString(14, model.subLinks)
                 stmt.bindLong(15, model.like.toLong())
                 stmt.bindLong(16, model.hasRead.toLong())
-                Log.i("loading", "sid = ${model.sId}")
+                Log.i("loading", "sid = ${model.id}")
                 stmt.execute()
                 stmt.clearBindings()
             }
@@ -195,27 +195,27 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
      * 更新读过和like信息
      * 返回更新后的model
      */
-    private fun replaceScpModel(model: ScpModel?) {
-        if (model == null || model.link.isEmpty()) {
-            return
-        }
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
-            val cv = packScp(model)
-            if (getScpModelById(model.sId) == null) {
-                // 如果之前没有，直接存储
-                db.insert(ScpTable.SCP_TABLE_NAME, null, cv)
-            } else {
-                // 如果之前有了，更新字段，阅读的信息只有新数据> 0时才会更新，所以不会覆盖
-                db.update(ScpTable.SCP_TABLE_NAME, cv, ScpTable.ID + "=?",
-                        arrayOf(model.sId))
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
-    }
+//    private fun replaceScpModel(model: ScpModel?) {
+//        if (model == null || model.link.isEmpty()) {
+//            return
+//        }
+//        val db = writableDatabase
+//        db.beginTransaction()
+//        try {
+//            val cv = packScp(model)
+//            if (getScpModelById(model.id) == null) {
+//                // 如果之前没有，直接存储
+//                db.insert(ScpTable.SCP_TABLE_NAME, null, cv)
+//            } else {
+//                // 如果之前有了，更新字段，阅读的信息只有新数据> 0时才会更新，所以不会覆盖
+//                db.update(ScpTable.SCP_TABLE_NAME, cv, ScpTable.ID + "=?",
+//                        arrayOf(model.id))
+//            }
+//            db.setTransactionSuccessful()
+//        } finally {
+//            db.endTransaction()
+//        }
+//    }
 
     /**
      * 通过链接获取scpModel，可能不止一个
@@ -731,8 +731,8 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
      */
     private fun packScp(model: ScpModel): ContentValues {
         val cv = ContentValues()
-        if (model.sId.isNotEmpty()) {
-            cv.put(ScpTable.ID, model.sId)
+        if (model.id > -1) {
+            cv.put(ScpTable.ID, model.id)
         }
         if (model.index > -1) {
             cv.put(ScpTable.INDEX, model.index)
@@ -759,13 +759,13 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
         if (model.desc.isNotEmpty()) {
             cv.put(ScpTable.DESC, model.desc)
         }
-        if (model.author.isNotEmpty()) {
+        if (model.author?.isNotEmpty() == true) {
             cv.put(ScpTable.AUTHOR, model.author)
         }
         if (model.creator.isNotEmpty()) {
             cv.put(ScpTable.CREATOR, model.creator)
         }
-        if (model.createdTime.isNotEmpty()) {
+        if (model.createdTime?.isNotEmpty() == true) {
             cv.put(ScpTable.CREATED_TIME, model.createdTime)
         }
 
@@ -786,11 +786,9 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, SCP_DB_NAME, null
      */
     private fun extractScp(cursor: Cursor): ScpModel {
         randomCount = 0
-        return ScpModel(getCursorString(cursor, ScpTable.ID),
+        return ScpModel(-1,
                 getCursorInt(cursor, ScpTable.INDEX),
                 "", "",
-                getCursorString(cursor, ScpTable.LINK),
-                getCursorString(cursor, ScpTable.TITLE),
                 // 正文数据量太大，先不取出来，点击时再从数据库拿
                 getCursorInt(cursor, ScpTable.SCP_TYPE),
                 "",

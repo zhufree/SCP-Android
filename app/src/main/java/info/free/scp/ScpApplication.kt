@@ -1,14 +1,18 @@
 package info.free.scp
 
 import android.content.Context
+import android.os.Environment
 import androidx.multidex.MultiDexApplication
 import com.lzy.okgo.OkGo
 import com.lzy.okserver.OkDownload
 import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.Logger
 import info.free.scp.util.ThemeUtil
+import org.jetbrains.anko.doAsync
+import java.io.File
 
 /**
  * Created by zhufree on 2018/8/27.
@@ -16,18 +20,22 @@ import info.free.scp.util.ThemeUtil
  */
 
 class ScpApplication : MultiDexApplication() {
-
+    private val sp = File.separator
     override fun onCreate() {
         super.onCreate()
 
         OkGo.getInstance().init(this)
-        OkDownload.getInstance().folder = filesDir.absolutePath
+        val absPath = Environment.getDataDirectory().absolutePath
+        // /data/data/packageName/databases
+        val dbPath = ("$absPath${sp}data$sp$packageName${sp}databases$sp")
+        OkDownload.getInstance().folder = dbPath
 
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
 //        MobclickAgent.openActivityDurationTrack(false)
         UMConfigure.setLogEnabled(true)
-//        MobclickAgent.setCatchUncaughtExceptions(false)
+        // FIXME
+        MobclickAgent.setCatchUncaughtExceptions(false)
         TCAgent.LOG_ON=true
         // App ID: 在TalkingData创建应用后，进入数据报表页中，在“系统设置”-“编辑应用”页面里查看App ID。
         // 渠道 ID: 是渠道标识符，可通过不同渠道单独追踪数据。

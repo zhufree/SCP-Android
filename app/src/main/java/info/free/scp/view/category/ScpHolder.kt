@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
+import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.SimpleScp
@@ -19,7 +20,7 @@ import kotlinx.android.synthetic.main.item_category.view.*
  *
  */
 
-class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view){
+class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
     private var mContext: Context? = null
@@ -27,7 +28,7 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
     init {
         val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
         rlLp.height = Utils.dp2px(categoryHeight)
-        val lp = itemView.cv_category_item.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
+        val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
         lp.bottomMargin = Utils.dp2px(categoryInterval/2)
         itemView.btn_read_later?.visibility = VISIBLE
@@ -36,7 +37,8 @@ class ScpHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHold
 
     fun setData(model: ScpModel?, laterViewList: MutableList<SimpleScp>) {
         if (model == null) return
-//        itemView.tv_scp_title?.text = if (model.notFound == 1 && !model.title.contains("拒绝访问")
+        itemView.tv_scp_title?.text = model.title
+//                if (model.notFound == 1 && !model.title.contains("拒绝访问")
 //                && !model.title.contains("禁止访问"))
 //            "${model.title}[禁止访问]" else model.title
         itemView.iv_like_star?.visibility = if (model.like == 1) VISIBLE else GONE

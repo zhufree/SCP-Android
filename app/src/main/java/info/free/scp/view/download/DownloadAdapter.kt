@@ -7,12 +7,22 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.lzy.okgo.OkGo
 import com.lzy.okgo.model.Progress
+import com.lzy.okgo.request.GetRequest
+import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
+import com.lzy.okserver.download.DownloadTask
 import info.free.scp.PrivateConstants
+import info.free.scp.SCPConstants
+import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
-import info.free.scp.util.DownloadManager
+import info.free.scp.util.DownloadUtil.Status.DOWNLOADING
+import info.free.scp.util.DownloadUtil.Status.ERROR
+import info.free.scp.util.DownloadUtil.Status.FINISH
+import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
+import info.free.scp.util.DownloadUtil.Status.NONE
 import info.free.scp.util.ThemeUtil
 import org.jetbrains.anko.dip
 import java.io.File
@@ -25,18 +35,26 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 LayoutInflater.from(parent.context), parent, false))
     }
 
+    // TODO 从服务器获取下载链接
+    // TODO 更新时间 离线完成时间
     override fun onBindViewHolder(holder: DownloadHolder, position: Int) {
         val download = getItem(position)
         // 绑定 holder
         holder.apply {
-            bind(createOnClickListener(download), download) // 点击事件
+            val request: GetRequest<File> = OkGo.get(PrivateConstants.SCP_DB_3_LINK)
+            val task = OkDownload.request(PrivateConstants.SCP_DB_3_LINK, request)
+                    .fileName(SCPConstants.SCP_DB_NAME)
+                    .register(ListDownloadListener(download.title, this))
+                    .save()
+            bind(createOnClickListener(task), download) // 点击事件
             itemView.tag = download
         }
     }
 
-    private fun createOnClickListener(download: DownloadModel): View.OnClickListener {
+    private fun createOnClickListener(task: DownloadTask): View.OnClickListener {
         return View.OnClickListener {
-            DownloadManager.downloadDb(PrivateConstants.SCP_DB_3_LINK)
+//            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
+            task.start()
         }
     }
 
@@ -63,8 +81,11 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
 
         fun refreshStatus(status: Int) {
             val fillColor = when (status) {
-                0 -> Color.GREEN
-                1 -> Color.LTGRAY
+                FINISH -> Color.GREEN
+                NONE -> Color.LTGRAY
+                DOWNLOADING -> Color.BLUE
+                NEED_UPDATE -> Color.YELLOW
+                ERROR -> Color.RED
                 else -> Color.LTGRAY
 
             }
@@ -72,16 +93,23 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 binding.vDownloadStatus.background = ThemeUtil.customShape(fillColor, fillColor, 0,
                         itemView.context.dip(5))
             }
+            if (status == FINISH) {
+                binding.tvDownloadProgress.text = ""
+            }
+        }
+
+        fun refreshProgress(progress: Progress?) {
+            binding.tvDownloadProgress.text = "${progress?.currentSize?.div(1000)}KB" +
+                    "/${progress?.totalSize?.div(1000000)}MB"
         }
     }
 
     class ListDownloadListener(tag: Any, val holder: DownloadHolder) : DownloadListener(tag) {
         override fun onFinish(t: File?, progress: Progress?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            holder.refreshStatus(FINISH)
         }
 
         override fun onRemove(progress: Progress?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         /**
@@ -94,17 +122,15 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
          * @param progress Progress?
          */
         override fun onProgress(progress: Progress?) {
-            if (progress?.status == Progress.LOADING) {
-
-            }
+            holder.refreshProgress(progress)
         }
 
         override fun onError(progress: Progress?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            holder.refreshStatus(ERROR)
         }
 
         override fun onStart(progress: Progress?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            holder.refreshStatus(DOWNLOADING)
         }
     }
 

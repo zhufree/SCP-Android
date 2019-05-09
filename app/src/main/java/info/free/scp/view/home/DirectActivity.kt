@@ -81,7 +81,7 @@ class DirectActivity : BaseActivity() {
                 EventUtil.onEvent(this, EventUtil.clickDirect)
                 val intent = Intent()
                 intent.putExtra("link", s.link)
-                intent.putExtra("sId", s.sId)
+                intent.putExtra("sId", s.id)
                 intent.setClass(this, DetailActivity::class.java)
                 startActivity(intent)
             } ?: Toaster.show("没有这篇文章")

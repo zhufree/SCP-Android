@@ -96,6 +96,9 @@ dependencies {
     implementation 'com.lzy.net:okgo:+'        //版本号使用 + 可以自动引用最新版
     implementation 'com.lzy.net:okrx:+'        //版本号使用 + 可以自动引用最新版
     implementation 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新版
+
+    'pub.devrel:easypermissions:3.0.0'
+
     implementation files('libs/TalkingdataAnalytics.jar')
     // 打google play包用下面这个
 //    implementation files('libs/GooglePlayTalkingDataAppAnalytics.jar')

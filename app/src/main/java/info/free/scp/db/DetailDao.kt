@@ -15,11 +15,9 @@ interface DetailDao {
     @Insert(onConflict = REPLACE)
     fun saveAll(scps: List<ScpDetail>)
 
-    @Query("SELECT detail FROM details WHERE link = :link")
+    @Query("SELECT detail FROM scp_detail WHERE link = :link")
     fun getDetail(link: String): String
 
-    @Query("DELETE FROM details")
-    fun clear()
     // AND last_update >= :timeout
 }
 

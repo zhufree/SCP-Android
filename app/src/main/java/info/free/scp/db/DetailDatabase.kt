@@ -4,10 +4,8 @@ import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
 import info.free.scp.SCPConstants.DETAIL_DB_NAME
-import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpDetail
-import info.free.scp.bean.ScpModel
 
 
 @Database(entities = [ScpDetail::class], version = 1)

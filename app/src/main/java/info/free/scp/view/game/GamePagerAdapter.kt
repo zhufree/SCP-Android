@@ -16,7 +16,7 @@ import info.free.scp.bean.GameModel
  */
 
 class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerAdapter() {
-    private var gameTypeList: MutableList<androidx.recyclerview.widget.RecyclerView> = emptyList<androidx.recyclerview.widget.RecyclerView>().toMutableList()
+    private var gameTypeList: MutableList<RecyclerView> = emptyList<RecyclerView>().toMutableList()
     private var pcGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var mobileGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var pcGameAdapter: GameListAdapter? = null

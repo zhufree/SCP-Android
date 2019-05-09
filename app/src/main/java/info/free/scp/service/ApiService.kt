@@ -4,6 +4,7 @@ import info.free.scp.PrivateConstants
 import info.free.scp.bean.*
 import io.reactivex.Observable
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.http.*
 
 /**
@@ -52,6 +53,9 @@ interface ApiService {
                       @Query("keys") keys: String="link,detail,download_type,not_found")
             : Observable<ApiBean.ApiListResponse<ScpDetail>>
 
+    @Streaming
+    @GET(PrivateConstants.SCP_DB_3_LINK)
+    fun getDb3() : Observable<ResponseBody>
 
     // 获取正文
     // --data-urlencode 'limit=200' \

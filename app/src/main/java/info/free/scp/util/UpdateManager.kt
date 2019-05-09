@@ -98,6 +98,10 @@ class UpdateManager(private var activity: BaseActivity) {
                         if (config.key.contains("last_update_time")) {
                             PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
                         }
+                        // 数据下载链接
+                        if (config.key.contains("db_link")) {
+                            PreferenceUtil.setDataDownloadLink(config.key, config.value)
+                        }
                     }
                     if (currentVersionCode < newVersionCode && !activity.isFinishing) {
                         Logger.i("current = $currentVersionCode, new = $newVersionCode, 需要升级")

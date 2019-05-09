@@ -161,13 +161,28 @@ object PreferenceUtil {
     }
 
 
+    /**
+     * 服务器数据更新时间，last_update_time_0/1/2/3/4
+     */
     fun setServerLastUpdateTime(dbIndex: String, time: String) {
         setStringValue(UPDATE_SP, dbIndex, time)
     }
 
     fun getServerLastUpdateTime(dbIndex: Int): String {
-        return getStringValue(UPDATE_SP, "last_update_time_$dbIndex")
+        return getStringValue(UPDATE_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
     }
+
+    /**
+     * 分库数据文件下载链接
+     * db_link_0/1/2/3/4/all
+     */
+    fun setDataDownloadLink(dbName: String, link: String) {
+        setStringValue(UPDATE_SP, dbName, link)
+    }
+    fun getDataDownloadLink(dbIndex: Int):String {
+        return getStringValue(UPDATE_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
+    }
+
 
     /**
      * 积分系统

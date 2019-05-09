@@ -19,7 +19,9 @@ import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
 import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
+import info.free.scp.view.download.DownloadActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
+import org.jetbrains.anko.startActivity
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -49,10 +51,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
-            EventUtil.onEvent(activity, clickDownloadSetting)
-            val intent = Intent(activity, SettingsActivity::class.java)
-            intent.putExtra("setting_type", 1)
-            activity?.startActivity(intent)
+            activity?.startActivity<DownloadActivity>()
             true
         }
         findPreference<Preference>("copyright")?.setOnPreferenceClickListener {

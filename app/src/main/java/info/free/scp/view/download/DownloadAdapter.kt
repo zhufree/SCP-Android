@@ -23,6 +23,7 @@ import info.free.scp.util.DownloadUtil.Status.ERROR
 import info.free.scp.util.DownloadUtil.Status.FINISH
 import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
 import info.free.scp.util.DownloadUtil.Status.NONE
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import org.jetbrains.anko.dip
 import java.io.File
@@ -35,14 +36,14 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 LayoutInflater.from(parent.context), parent, false))
     }
 
-    // TODO 从服务器获取下载链接
     // TODO 更新时间 离线完成时间
     override fun onBindViewHolder(holder: DownloadHolder, position: Int) {
         val download = getItem(position)
         // 绑定 holder
         holder.apply {
-            val request: GetRequest<File> = OkGo.get(PrivateConstants.SCP_DB_3_LINK)
-            val task = OkDownload.request(PrivateConstants.SCP_DB_3_LINK, request)
+            val link = PreferenceUtil.getDataDownloadLink(position-1)
+            val request: GetRequest<File> = OkGo.get(link)
+            val task = OkDownload.request(link, request)
                     .fileName(SCPConstants.SCP_DB_NAME)
                     .register(ListDownloadListener(download.title, this))
                     .save()
@@ -54,7 +55,11 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
     private fun createOnClickListener(task: DownloadTask): View.OnClickListener {
         return View.OnClickListener {
 //            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
-            task.start()
+            if (task.progress.status == 2) {
+                task.pause()
+            } else {
+                task.start()
+            }
         }
     }
 

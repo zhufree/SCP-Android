@@ -60,9 +60,10 @@ class UpdateManager(private var activity: BaseActivity) {
         Logger.i("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
-//            PreferenceUtil.setFirstInstallApp()
+            PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
-            return
+            // TODO 检查本地有没有备份数据库
+//            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
@@ -71,7 +72,9 @@ class UpdateManager(private var activity: BaseActivity) {
         }
 
         // 普通情况下一天检测一次更新
-        if (PreferenceUtil.checkNeedShowUpdateNotice() && Utils.enabledNetwork(activity)) {
+        if (
+//                PreferenceUtil.checkNeedShowUpdateNotice() &&
+                Utils.enabledNetwork(activity)) {
             PreferenceUtil.addPoints(1)
             Log.i("scp", "checkUpdate")
             // 记录上次检测更新时间
@@ -118,13 +121,14 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setNegativeButton("暂不升级") { _, _ -> }
                                 .create().show()
                         // 有新版本就不检查数据更新，知道更新到最新
-                    } else {
-                        uiThread {
-                            if (!activity.isFinishing) {
-                                checkInitData()
-                            }
-                        }
                     }
+//                    else {
+//                        uiThread {
+//                            if (!activity.isFinishing) {
+//                                checkInitData()
+//                            }
+//                        }
+//                    }
                 }
 
             }

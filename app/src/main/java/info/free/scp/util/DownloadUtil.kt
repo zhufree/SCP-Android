@@ -16,9 +16,10 @@ object DownloadUtil {
     object Status {
         const val NONE = 0 // LTGRAY
         const val FINISH = 1 // GREEN
-        const val DOWNLOADING = 2 // BLUE
-        const val NEED_UPDATE = 3 // YELLOW
-        const val ERROR = 4 // RED
+        const val DOWNLOADING = 2 // DKBLUE
+        const val PAUSE = 3 // LTBLUE
+        const val NEED_UPDATE = 4 // YELLOW
+        const val ERROR = 5 // RED
 
     }
     fun downloadDb(url :String) {

@@ -24,8 +24,8 @@ class DownloadRepository {
 
         // 从preference里面同步数据
         innerList.forEach {
-            it.lastDownloadTime = PreferenceUtil.getDetailLastLoadTime(it.type)
-            if (PreferenceUtil.getDetailDataLoadFinish(it.type)) {
+            it.lastDownloadTime = PreferenceUtil.getDetailLastLoadTime(it.dbIndex)
+            if (PreferenceUtil.getDetailDataLoadFinish(it.dbIndex)) {
                 it.status = 1 // 0 未下载 1 下载完成
             }
         }

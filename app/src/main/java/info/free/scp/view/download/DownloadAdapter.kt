@@ -14,6 +14,7 @@ import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
 import com.lzy.okserver.download.DownloadTask
 import info.free.scp.PrivateConstants
+import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
@@ -23,8 +24,11 @@ import info.free.scp.util.DownloadUtil.Status.ERROR
 import info.free.scp.util.DownloadUtil.Status.FINISH
 import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
 import info.free.scp.util.DownloadUtil.Status.NONE
+import info.free.scp.util.DownloadUtil.Status.PAUSE
+import info.free.scp.util.Logger
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import org.jetbrains.anko.dip
 import java.io.File
 
@@ -36,12 +40,12 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 LayoutInflater.from(parent.context), parent, false))
     }
 
-    // TODO 更新时间 离线完成时间
     override fun onBindViewHolder(holder: DownloadHolder, position: Int) {
         val download = getItem(position)
         // 绑定 holder
         holder.apply {
             val link = PreferenceUtil.getDataDownloadLink(position-1)
+            Logger.i("download: $position: $link")
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
                     .fileName(SCPConstants.SCP_DB_NAME)
@@ -65,11 +69,13 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
 
     class DownloadHolder(private val binding: ItemDownloadBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        var index = 0
         fun bind(listener: View.OnClickListener, item: DownloadModel) {
             // 具体绑定监听事件和数据
             binding.apply {
                 clickListener = listener
                 download = item
+                index = item.dbIndex
                 val fillColor = when (item.status) {
                     0 -> Color.GREEN
                     1 -> Color.LTGRAY
@@ -89,6 +95,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 FINISH -> Color.GREEN
                 NONE -> Color.LTGRAY
                 DOWNLOADING -> Color.BLUE
+                PAUSE -> itemView.context.resources.getColor(R.color.colorAccent)
                 NEED_UPDATE -> Color.YELLOW
                 ERROR -> Color.RED
                 else -> Color.LTGRAY
@@ -100,6 +107,8 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             }
             if (status == FINISH) {
                 binding.tvDownloadProgress.text = ""
+                // TODO 更新时间 离线完成时间
+                PreferenceUtil.setDetailLastLoadTime(index, Utils.formatNow())
             }
         }
 
@@ -112,6 +121,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
     class ListDownloadListener(tag: Any, val holder: DownloadHolder) : DownloadListener(tag) {
         override fun onFinish(t: File?, progress: Progress?) {
             holder.refreshStatus(FINISH)
+
         }
 
         override fun onRemove(progress: Progress?) {
@@ -128,6 +138,9 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
          */
         override fun onProgress(progress: Progress?) {
             holder.refreshProgress(progress)
+            if (progress?.status == Progress.PAUSE) {
+                holder.refreshStatus(PAUSE)
+            }
         }
 
         override fun onError(progress: Progress?) {

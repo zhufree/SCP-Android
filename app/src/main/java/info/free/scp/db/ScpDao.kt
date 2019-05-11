@@ -40,10 +40,10 @@ interface ScpDao {
     fun searchScpByDetail(keyword: String): List<ScpModel>
 
     @Query("SELECT * FROM scps WHERE scp_type IN (:type) ORDER BY random() LIMIT 1;")
-    fun getRandomScpByType(type: String): ScpModel
+    fun getRandomScpByType(type: String): ScpModel?
 
     @Query("SELECT * FROM scps ORDER BY random() LIMIT 1;")
-    fun getRandomScp(): ScpModel
+    fun getRandomScp(): ScpModel?
 
     @Query("SELECT * FROM scps WHERE scp_type = :type AND title LIKE :number;")
     fun getScpByNumber(type: Int, number: String): ScpModel?

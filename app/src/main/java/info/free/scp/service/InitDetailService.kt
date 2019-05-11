@@ -9,11 +9,19 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import info.free.scp.util.PreferenceUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.lzy.okgo.OkGo
+import com.lzy.okgo.model.Progress
+import com.lzy.okgo.request.GetRequest
+import com.lzy.okserver.OkDownload
+import com.lzy.okserver.download.DownloadListener
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.Logger
 import info.free.scp.util.Utils
+import info.free.scp.view.download.DownloadAdapter
+import java.io.File
 
 
 class InitDetailService : IntentService("initDataService") {
@@ -34,21 +42,35 @@ class InitDetailService : IntentService("initDataService") {
 
     override fun onHandleIntent(intent: Intent?) {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val downloadType = intent?.getIntExtra("download_type", 0)
-        downloadType?.let {
-            downloadList.add(it)
-            // 检查之前的进度
-            val downloadCount = PreferenceUtil.getSingleDbLoadCount(it)
-            if (downloadCount == 0) {
-                // 如果没有进度，标记为没有离线完
-                PreferenceUtil.setDetailDataLoadFinish(it, false)
-            }
-            if (!isDownloading) {
-                isDownloading = true
-                createNotification(it, downloadCount * 500)
-                // 从之前的进度开始下载
-                getPartDetail(it, downloadCount)
-            }
+        val link = PreferenceUtil.getDataDownloadLink(-1)
+        val request: GetRequest<File> = OkGo.get(link)
+        val task = OkDownload.request(link, request)
+                .fileName(SCPConstants.SCP_DB_NAME)
+                .register(ServiceDownloadListener())
+                .save()
+        task.start()
+    }
+
+    // TODO 通知显示
+    class ServiceDownloadListener: DownloadListener("download_full_db") {
+        override fun onFinish(t: File?, progress: Progress?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onRemove(progress: Progress?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onProgress(progress: Progress?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onError(progress: Progress?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onStart(progress: Progress?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
     }
 
@@ -80,7 +102,6 @@ class InitDetailService : IntentService("initDataService") {
                 // 内容文字
                 .setContentText("已离线数目：$count")
                 // 不会被滑动删除（常驻）
-                .setOngoing(true)
                 // 设置点击intent
         //设置通知栏的标题内容
         //创建通知

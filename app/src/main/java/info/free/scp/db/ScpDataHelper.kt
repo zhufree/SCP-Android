@@ -292,7 +292,10 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
         resultList.sortBy {
             it.index
         }
-        return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)// FIXME
+        if (resultList.size == 0 || start > resultList.size) {
+            return resultList
+        }
+        return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)
     }
 
     fun getScpByType(type: Int): MutableList<ScpModel> {
@@ -465,15 +468,17 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
             randomCount = 0
             return null
         }
-        var scpModel: ScpModel? = null
+        var scpModel: ScpModel?
         var link = ""
         scpModel = if (typeRange.isEmpty()) ScpDatabase.getInstance().scpDao().getRandomScp()
         else ScpDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
 
-        link = scpModel.link
-        val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
-        scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-            getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
+        if (scpModel != null) {
+            link = scpModel.link
+            val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
+            scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
+                getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
+        }
         return scpModel
 
     }

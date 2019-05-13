@@ -8,7 +8,6 @@ class DownloadRepository {
     var downloadList = MutableLiveData<ArrayList<DownloadModel>>()
 
     fun loadDownloadList() {
-        // TODO 初始化离线列表
         var innerList = downloadList.value
         if (innerList == null) {
             innerList = ArrayList()

@@ -9,11 +9,14 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpReadModel
 import info.free.scp.bean.SimpleScp
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.addLater
 import kotlinx.android.synthetic.main.item_category.view.*
+import org.jetbrains.anko.alert
 
 /**
  * Created by zhufree on 2018/8/22.
@@ -44,19 +47,32 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
         itemView.iv_like_star?.visibility = if (model.like == 1) VISIBLE else GONE
         itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
         itemView.iv_read_label.setOnClickListener {
-            AlertDialog.Builder(mContext)
-                    .setTitle("取消已读")
-                    .setMessage("是否确定取消已读这篇文档？")
-                    .setPositiveButton("确定") { _, _ ->
-                        EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
-                        model.hasRead = if (model.hasRead == 0) 1 else 0
-                        ScpDataHelper.getInstance().insertLikeAndReadInfo(model)
-                        itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
+            itemView.context.alert("是否确定取消已读这篇文档？", "取消已读") {
+                positiveButton("确定"){
+                    EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
+                    var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
+                    if (scpInfo == null) {
+                        scpInfo = ScpReadModel(model.link, model.title, false, false)
                     }
-                    .setNegativeButton("我手滑了") {dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .create().show()
+                    scpInfo.hasRead = !scpInfo.hasRead
+                    AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
+                    itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
+                }
+                negativeButton("我手滑了"){}
+            }.show()
+//            AlertDialog.Builder(mContext)
+//                    .setTitle("取消已读")
+//                    .setMessage("是否确定取消已读这篇文档？")
+//                    .setPositiveButton("确定") { _, _ ->
+//                        EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
+//                        model.hasRead = if (model.hasRead == 0) 1 else 0
+//                        ScpDataHelper.getInstance().insertLikeAndReadInfo(model)
+//                        itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
+//                    }
+//                    .setNegativeButton("我手滑了") {dialog, _ ->
+//                        dialog.dismiss()
+//                    }
+//                    .create().show()
         }
         var isInLaterViewList = model.link in laterViewList.map { it.link }
         if (isInLaterViewList) {

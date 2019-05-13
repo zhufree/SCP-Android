@@ -26,8 +26,10 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
+import info.free.scp.bean.ScpInfoModel
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.DetailDatabase
+import info.free.scp.bean.ScpReadModel
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
@@ -363,8 +365,12 @@ class DetailActivity : BaseActivity() {
     private fun likeScp() {
         scp?.let { s ->
             PreferenceUtil.addPoints(2)
-            s.like = if (s.like == 1) 0 else 1
-            ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
+            var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
+            if (scpInfo == null) {
+                scpInfo = ScpReadModel(s.link, s.title, false, false)
+            }
+            scpInfo.like = !scpInfo.like
+            AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
         }
         invalidateOptionsMenu()
     }
@@ -448,18 +454,21 @@ class DetailActivity : BaseActivity() {
 
     private fun setHasRead() {
         scp?.let { s ->
+            var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
+            if (scpInfo == null) {
+                scpInfo = ScpReadModel(s.link, s.title, false, false)
+            }
             if (s.hasRead == 0) {
                 // 标记已读
                 PreferenceUtil.addPoints(5)
-                s.hasRead = 1
-                ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
-                Logger.i(ThemeUtil.lightText.toString())
+                scpInfo.hasRead = true
+                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
                 refreshReadBtnStatus(1)
             } else {
                 // 取消已读
                 PreferenceUtil.reducePoints(5)
-                s.hasRead = 0
-                ScpDataHelper.getInstance().insertLikeAndReadInfo(s)
+                scpInfo.hasRead = false
+                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
                 refreshReadBtnStatus(0)
             }
         }

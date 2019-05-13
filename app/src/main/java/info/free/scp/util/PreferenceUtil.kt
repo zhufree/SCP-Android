@@ -93,7 +93,7 @@ object PreferenceUtil {
         setBooleanValue(INIT_SP, downloadType.toString(), value)
     }
     fun getDetailDataLoadFinish(downloadType: Int): Boolean {
-        return getBooleanValue(INIT_SP, downloadType.toString(), true)
+        return getBooleanValue(INIT_SP, downloadType.toString(), false)
     }
 
     /**

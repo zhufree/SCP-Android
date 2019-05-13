@@ -77,8 +77,9 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 download = item
                 index = item.dbIndex
                 val fillColor = when (item.status) {
-                    0 -> Color.GREEN
-                    1 -> Color.LTGRAY
+                    FINISH -> Color.GREEN
+                    NONE -> Color.LTGRAY
+                    DOWNLOADING -> Color.BLUE
                     else -> Color.LTGRAY
 
                 }

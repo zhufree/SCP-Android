@@ -25,18 +25,6 @@ import java.io.File
 
 
 class InitDetailService : IntentService("initDataService") {
-    private val LOAD_DETAIL_FINISH = "loadDetailFinish"
-//    var notificationManager: NotificationManager? = null
-//    private var downloadList = emptyList<Int>().toMutableList()
-//    private var isDownloading = false
-
-//    private var mLocalBroadcastManager: LocalBroadcastManager? = null
-
-    override fun onCreate() {
-        super.onCreate()
-//        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
-    }
-
 
     override fun onHandleIntent(intent: Intent?) {
         val link = PreferenceUtil.getDataDownloadLink(-1)
@@ -123,48 +111,6 @@ class InitDetailService : IntentService("initDataService") {
             }
         }
     }
-
-
-//    private fun getPartDetail(downloadType: Int, index: Int) {
-//        HttpManager.instance.getPartDetail(index * 200, 200, downloadType) {
-////            ScpDataHelper.getInstance().insertDetailData(it)
-//            ScpDatabase.getInstance().detailDao().saveAll(it)
-//            // 下载进度+1
-//            PreferenceUtil.addSingleDbLoadCount(downloadType)
-//            createNotification(downloadType, index*200+it.size)
-//            if (it.size == 200) {
-//                Logger.i("get next 200 item")
-//                getPartDetail(downloadType, index+1)
-//            } else {
-//                // 标记下载完成
-//                Logger.i("download type $downloadType finish ")
-//                PreferenceUtil.setDetailDataLoadFinish(downloadType, true)
-//
-//                var allFinish = true
-//                // 判断列表里还有没有要下载的
-//                for (i in downloadList) {
-//                    // 按数字大小判断下一个要下载的
-//                    if (i > downloadType) {
-//                        getPartDetail(i, 0)
-//                        createNotification(i, 0)
-//                        allFinish = false
-//                        break
-//                    }
-//                }
-//                // 全都下载完成
-//                if (allFinish) {
-//                    notificationManager?.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
-//                    notifyLoadFinish() // 发送广播通知
-//                }
-//            }
-//        }
-//    }
-
-
-//    private fun notifyLoadFinish() {
-//        val intent = Intent(LOAD_DETAIL_FINISH)
-//        mLocalBroadcastManager?.sendBroadcast(intent)
-//    }
 
     override fun onBind(intent: Intent): IBinder? {
         return null

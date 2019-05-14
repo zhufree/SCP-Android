@@ -99,6 +99,7 @@ object SCPConstants {
     // RequestCode
     object RequestCode {
         const val CATEGORY_TO_DETAIL = 0
+        const val REQUEST_FILE_PERMISSION = 1
     }
 
     const val HISTORY_TYPE = 0

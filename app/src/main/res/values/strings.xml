@@ -142,4 +142,5 @@ bug修复和优化\n
         因此只能六选一，第一次安装app时如果急着看内容可以选择后面5个之一，并允许app在有wifi的情况下离线和更新总数据库。
         总数据库包括所有已有的内容，是后面5个数据库的总和，离线完成后会替换之前的数据库使用。</string>
     <string name="allow_auto_download">允许wifi情况下自动离线总数据库</string>
+    <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
 </resources>

@@ -10,9 +10,10 @@ import android.os.Bundle
 import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.util.ThemeUtil
+import org.jetbrains.anko.AnkoLogger
 
 
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : AppCompatActivity(), AnkoLogger {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

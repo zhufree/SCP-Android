@@ -14,7 +14,6 @@ import info.free.scp.bean.ScpReadModel
 @Database(entities = [ScpInfoModel::class, ScpReadModel::class], version = 5)
 abstract class AppInfoDatabase : RoomDatabase() {
     abstract fun likeAndReadDao(): LikeAndReadDao
-    abstract fun detailDao(): DetailDao
 
     companion object {
         private var INSTANCE: AppInfoDatabase? = null

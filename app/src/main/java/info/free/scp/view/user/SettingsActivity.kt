@@ -134,24 +134,24 @@ class SettingsActivity : BaseActivity() {
                 true
             }
 
-            if (!BackupHelper.getInstance(context!!).checkBackUpFileExist()) {
+            if (!FileHelper.getInstance(context!!).checkBackUpFileExist()) {
                 findPreference<Preference>("restore_data")?.isEnabled = false
             }
-            findPreference<Preference>("backup_data")?.title = "备份数据库${if (BackupHelper.getInstance(context!!)
+            findPreference<Preference>("backup_data")?.title = "备份数据库${if (FileHelper.getInstance(context!!)
                             .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
-            findPreference<Preference>("restore_data")?.title = "恢复本地数据库${if (BackupHelper.getInstance(context!!)
+            findPreference<Preference>("restore_data")?.title = "恢复本地数据库${if (FileHelper.getInstance(context!!)
                             .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
 
             findPreference<Preference>("backup_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
-                    BackupHelper.getInstance(ctx).backupDB()
+                    FileHelper.getInstance(ctx).backupDB()
                     findPreference<Preference>("restore_data")?.isEnabled = true
                 }
                 true
             }
             findPreference<Preference>("restore_data")?.setOnPreferenceClickListener {
                 context?.let {ctx->
-                    BackupHelper.getInstance(ctx).restoreDB()
+                    FileHelper.getInstance(ctx).restoreDB()
                 }
                 true
             }

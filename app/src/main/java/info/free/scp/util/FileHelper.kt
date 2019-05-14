@@ -2,9 +2,9 @@ package info.free.scp.util
 
 import android.content.Context
 import android.os.Environment
+import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import android.widget.Toast
-import com.tendcloud.tenddata.TCAgent
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -22,17 +22,23 @@ import java.nio.channels.FileChannel
  * 备份工具类
  */
 
-class BackupHelper(val mContext: Context) {
+class FileHelper(val mContext: Context) {
     private var dbFilename = "scp_info.db"
+    private var newDbFilename = "scp_data.db"
     private var prefFilename = "level.xml" // 用户名和等级信息
     private val backUpFolderName = "backup"
     private val appFolderName = "SCP"
     private val sp = File.separator
+    private val absPath = Environment.getDataDirectory().absolutePath
+    private val pakName = mContext.packageName
+    private val cacheDir = mContext.cacheDir.absolutePath + sp // 'data/data/info.free.scp/cache/'
+    private val dbDir = "$absPath${sp}data$sp$pakName${sp}databases$sp"
+    // 'data/data/info.free.scp/databases/'
 
     companion object {
-        private var backupHelper: BackupHelper? = null
-        fun getInstance(context: Context): BackupHelper {
-            return backupHelper ?: BackupHelper(context)
+        private var fileHelper: FileHelper? = null
+        fun getInstance(context: Context): FileHelper {
+            return fileHelper ?: FileHelper(context)
         }
     }
 
@@ -40,6 +46,22 @@ class BackupHelper(val mContext: Context) {
         return "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
     }
 
+    /**
+     * 从缓存文件夹复制到数据库文件夹
+     */
+    fun copyDataBaseFile(dbName: String) {
+        Log.i("freescp", dbName)
+        if (dbName.isEmpty()) return
+        // /data/data/packageName/databases
+        try {
+            val cacheFile = File(cacheDir + dbName)
+            val destFile = File(dbDir + newDbFilename)
+            cacheFile.copyTo(destFile, true)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // TODO 出错提示
+        }
+    }
     /**
      * 恢复数据的Dialog
      */

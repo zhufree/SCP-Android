@@ -1,6 +1,8 @@
 package info.free.scp.view.download
 
+import android.app.Activity
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,17 +21,15 @@ import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
+import info.free.scp.util.*
 import info.free.scp.util.DownloadUtil.Status.DOWNLOADING
 import info.free.scp.util.DownloadUtil.Status.ERROR
 import info.free.scp.util.DownloadUtil.Status.FINISH
 import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
 import info.free.scp.util.DownloadUtil.Status.NONE
 import info.free.scp.util.DownloadUtil.Status.PAUSE
-import info.free.scp.util.Logger
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
-import org.jetbrains.anko.dip
+import info.free.scp.view.base.BaseActivity
+import org.jetbrains.anko.*
 import java.io.File
 
 class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolder>(DownloadDiffCallback()) {
@@ -48,11 +48,18 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Logger.i("download: $position: $link")
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
-                    .fileName(SCPConstants.SCP_DB_NAME)
+                    .fileName(getFileNameByIndex(position - 1))
                     .register(ListDownloadListener(download.title, this))
                     .save()
             bind(createOnClickListener(task), download) // 点击事件
             itemView.tag = download
+        }
+    }
+
+    private fun getFileNameByIndex(index: Int): String {
+        return when(index) {
+            -1 -> "full_scp_data.db"
+            else -> "only_scp_$index.db"
         }
     }
 
@@ -122,7 +129,15 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
     class ListDownloadListener(tag: Any, val holder: DownloadHolder) : DownloadListener(tag) {
         override fun onFinish(t: File?, progress: Progress?) {
             holder.refreshStatus(FINISH)
-
+            Log.i("freescp", "finish")
+            if (ScpApplication.currentActivity != null) {
+                Log.i("freescp", ScpApplication.currentActivity.toString())
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name?:""}吗？",
+                        "下载完成") {
+                    yesButton { FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name?:"") }
+                    noButton {  }
+                }?.show()
+            }
         }
 
         override fun onRemove(progress: Progress?) {

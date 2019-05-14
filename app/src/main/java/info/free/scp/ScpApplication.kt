@@ -1,6 +1,8 @@
 package info.free.scp
 
+import android.app.Activity
 import android.content.Context
+import android.os.Bundle
 import android.os.Environment
 import androidx.multidex.MultiDexApplication
 import com.lzy.okgo.OkGo
@@ -11,6 +13,8 @@ import com.umeng.commonsdk.UMConfigure
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.Logger
 import info.free.scp.util.ThemeUtil
+import info.free.scp.view.base.BaseActivity
+import org.jetbrains.anko.activityManager
 import org.jetbrains.anko.doAsync
 import java.io.File
 
@@ -20,15 +24,14 @@ import java.io.File
  */
 
 class ScpApplication : MultiDexApplication() {
-    private val sp = File.separator
+
     override fun onCreate() {
         super.onCreate()
 
         OkGo.getInstance().init(this)
-        val absPath = Environment.getDataDirectory().absolutePath
         // /data/data/packageName/databases
-        val dbPath = ("$absPath${sp}data$sp$packageName${sp}databases$sp")
-        OkDownload.getInstance().folder = dbPath
+//        val dbPath = ("$absPath${sp}data$sp$packageName${sp}databases$sp")
+        OkDownload.getInstance().folder = cacheDir.absolutePath
 
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL)
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
@@ -46,6 +49,29 @@ class ScpApplication : MultiDexApplication() {
         context = applicationContext
 
         ThemeUtil.setTheme(this)
+        registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
+            override fun onActivityPaused(activity: Activity?) {
+            }
+
+            override fun onActivityResumed(activity: Activity?) {
+            }
+
+            override fun onActivityStarted(activity: Activity?) {
+                currentActivity = activity
+            }
+
+            override fun onActivityDestroyed(activity: Activity?) {
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+            }
+
+            override fun onActivityStopped(activity: Activity?) {
+            }
+
+            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+            }
+        })
 
     }
 
@@ -56,5 +82,6 @@ class ScpApplication : MultiDexApplication() {
 
     companion object {
         lateinit var context: Context
+        var currentActivity: Activity? = null
     }
 }

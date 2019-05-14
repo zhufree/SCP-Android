@@ -59,6 +59,7 @@ class UpdateManager(private var activity: BaseActivity) {
             NewbieManager.showLevelDialog(activity)
             // TODO 检查本地有没有备份数据库
             // TODO 如果本地有数据库，同步like等信息
+            // TODO 把原数据库改名成info，然后删掉data类的信息
 //            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
@@ -153,7 +154,7 @@ class UpdateManager(private var activity: BaseActivity) {
                 Toaster.show("离线完毕")
                 isDownloadingDetail = false
                 if (!activity.isFinishing) {
-                    BackupHelper.getInstance(activity).backupDB()
+                    FileHelper.getInstance(activity).backupDB()
                 }
             }
         }
@@ -220,7 +221,7 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setPositiveButton("确定选择（暂时不可更改）") { inner, _ ->
                                     PreferenceUtil.setJob(jobList[which])
                                     EventUtil.onEvent(activity, EventUtil.chooseJob, jobList[which])
-                                    BackupHelper.getInstance(activity).backUp()
+                                    FileHelper.getInstance(activity).backUp()
                                     inner.dismiss()
                                     field?.set(out, true)
                                     out.dismiss()

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import info.free.scp.util.PreferenceUtil
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -16,11 +17,17 @@ import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.ScpApplication
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
+import info.free.scp.util.FileHelper
 import info.free.scp.util.Logger
 import info.free.scp.util.Utils
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.download.DownloadAdapter
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.yesButton
 import java.io.File
 
 
@@ -44,6 +51,7 @@ class InitDetailService : IntentService("initDataService") {
 
         override fun onFinish(t: File?, progress: Progress?) {
             PreferenceUtil.setDetailDataLoadFinish(-1, true)
+            FileHelper(context).copyDataBaseFile(t?.name?:"")
             notificationManager.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
         }
 

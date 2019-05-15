@@ -130,7 +130,6 @@ class SettingsActivity : BaseActivity() {
             }
             findPreference<Preference>("sync_category")?.setOnPreferenceClickListener {
                 ScpDataHelper.getInstance().resetCategoryData()
-                UpdateManager.getInstance(activity as BaseActivity).initCategoryData()
                 true
             }
 

@@ -24,15 +24,12 @@ class MainActivity : BaseActivity() {
     private val userFragment = UserFragment.newInstance()
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var fragmentInit = false
-
 
     private var themeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             refreshTheme()
         }
     }
-
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = supportFragmentManager.beginTransaction()
@@ -81,43 +78,28 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         // 设置默认fragment
-        navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
-//        Logger.local = true
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (!fragmentInit) {
-            // 设置默认fragment
-            fragmentInit = true
-            val transaction = supportFragmentManager.beginTransaction()
-            currentFragment?.let {
-                if (it.isAdded) {
-                    transaction.show(it)
-                } else {
-                    transaction.add(R.id.flMainContainer, it)
-                }
-            } ?:run {
-                transaction.add(R.id.flMainContainer, homeFragment, "home")
-                currentFragment = homeFragment
+        val transaction = supportFragmentManager.beginTransaction()
+        currentFragment?.let {
+            if (it.isAdded) {
+                transaction.show(it)
+            } else {
+                transaction.add(R.id.flMainContainer, it)
             }
-            transaction.commit()
-            UpdateManager.getInstance(this).checkAppData()
+        } ?:run {
+            transaction.add(R.id.flMainContainer, homeFragment, "home")
+            currentFragment = homeFragment
         }
+        transaction.commit()
+        UpdateManager.getInstance(this).checkAppData()
+
+        navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
     }
 
     /**
-     * 注册广播
-     * 1. 初始化目录
-     * 2. 加载正文
-     * 3. 主题
+     * 注册广播：主题
      */
     private fun registerBroadCastReceivers() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
     }
 

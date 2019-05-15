@@ -50,9 +50,6 @@
         <activity android:name=".view.base.BaseActivity" />
 
         <service
-            android:name=".service.InitCategoryService"
-            android:enabled="true" />
-        <service
             android:name=".service.InitDetailService"
             android:enabled="true" />
 

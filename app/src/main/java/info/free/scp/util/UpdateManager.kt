@@ -10,7 +10,6 @@ import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.service.HttpManager
-import info.free.scp.service.InitCategoryService
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import org.jetbrains.anko.doAsync
@@ -163,24 +162,6 @@ class UpdateManager(private var activity: BaseActivity) {
 
 
     var progressDialog: ProgressDialog? = null
-    /**
-     * 初始化目录
-     */
-    fun initCategoryData() {
-        Logger.i("start init category")
-        val intent = Intent(activity, InitCategoryService::class.java)
-        activity.startService(intent)
-        activity.runOnUiThread {
-//            progressDialog(message = "Please wait a bit…", title = "Fetching data")
-            progressDialog = ProgressDialog(activity)
-            progressDialog?.max = 100
-            progressDialog?.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
-            progressDialog?.setMessage("与基金会通信中")
-            // 设置强制显示
-            progressDialog?.setCancelable(false)
-            progressDialog?.show()
-        }
-    }
 
 
     fun checkUserInfo() {

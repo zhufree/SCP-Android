@@ -20,11 +20,10 @@ interface ApiService {
     @GET("/latest_translated/{pageIndex}")
     fun getLatestTranslated(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
 
-    // TODO 把key也放进常量里
     @Headers(
             "Content-Type:application/json",
-            "X-Bmob-Application-Id:${PrivateConstants.APP_ID}",
-            "X-Bmob-REST-API-Key:${PrivateConstants.API_KEY}"
+            PrivateConstants.APP_ID,
+            PrivateConstants.API_KEY
     )
     @GET("1/classes/Config")
     fun getAppConfig(): Observable<ApiBean.ApiListResponse<ApiBean.ConfigResponse>>

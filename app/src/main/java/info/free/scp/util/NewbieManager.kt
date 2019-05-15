@@ -44,7 +44,6 @@ object NewbieManager {
                 message = noticeMessage
                 yesButton {  }
                 neutralPressed("点击下载文档数据库") {
-                    // TODO 跳转
                     activity.startActivity<DownloadActivity>()
                 }
 

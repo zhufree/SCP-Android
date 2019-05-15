@@ -19,7 +19,6 @@ class UpdateManager(private var activity: BaseActivity) {
 
     init {
         manager = this
-        initReceiver()
     }
 
     companion object {
@@ -32,10 +31,7 @@ class UpdateManager(private var activity: BaseActivity) {
     }
 
     private val currentVersionCode = BuildConfig.VERSION_CODE
-    private var isDownloadingDetail = false
 
-    private var mInitCategoryReceiver: BroadcastReceiver? = null
-    private var mInitDetailReceiver: BroadcastReceiver? = null
     private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     /**
@@ -56,25 +52,24 @@ class UpdateManager(private var activity: BaseActivity) {
             // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
-            // TODO 检查本地有没有备份数据库
-            // TODO 如果本地有数据库，同步like等信息
-            // TODO 把原数据库改名成info，然后删掉data类的信息
+            FileHelper.getInstance(activity).restoreDB() // 第一次安装app时检测
+
 //            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
-            PreferenceUtil.setLastCheckUpdateTime(0)
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
+
+            // FIXME 打包后下版本开发删掉这块代码
+            // TODO 第一次安装这个新版本检测：如果本地有数据库，同步like等信息 第一次安装app和第一次安装这个版本区分一下
+            // TODO 把原数据库改名成info，然后删掉data类的信息
         }
 
         // 普通情况下一天检测一次更新
-        if (
-//                PreferenceUtil.checkNeedShowUpdateNotice() &&
-                Utils.enabledNetwork(activity)) {
+        if (Utils.enabledNetwork(activity)) {
             PreferenceUtil.addPoints(1)
             Log.i("scp", "checkUpdate")
             // 记录上次检测更新时间
-            PreferenceUtil.setLastCheckUpdateTime(System.currentTimeMillis())
             // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
             doAsync {
                 // 检查更新信息
@@ -123,45 +118,6 @@ class UpdateManager(private var activity: BaseActivity) {
             }
         }
     }
-
-    private fun registerBroadCastReceivers() {
-        mLocalBroadcastManager = androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(activity)
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(SCPConstants.BroadCastAction.INIT_PROGRESS)
-        mLocalBroadcastManager?.registerReceiver(mInitCategoryReceiver!!, IntentFilter(SCPConstants.BroadCastAction.INIT_PROGRESS))
-    }
-
-    private fun initReceiver() {
-        mInitCategoryReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                val progress = intent?.getIntExtra("progress", 0) ?: 0
-                activity?.runOnUiThread {
-                    progressDialog?.progress = progress
-                    if (progress > 90) {
-                        progressDialog?.setMessage("写入数据库中")
-                    }
-                    if (progress == 100) {
-                        Logger.i("init category finish")
-                        progressDialog?.dismiss()
-                    }
-                }
-            }
-        }
-
-        mInitDetailReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                Toaster.show("离线完毕")
-                isDownloadingDetail = false
-                if (!activity.isFinishing) {
-                    FileHelper.getInstance(activity).backupDB()
-                }
-            }
-        }
-        registerBroadCastReceivers()
-    }
-
-
-    var progressDialog: ProgressDialog? = null
 
 
     fun checkUserInfo() {
@@ -213,5 +169,4 @@ class UpdateManager(private var activity: BaseActivity) {
                     .create().show()
         }
     }
-
 }

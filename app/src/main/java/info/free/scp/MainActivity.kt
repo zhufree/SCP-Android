@@ -1,13 +1,11 @@
 package info.free.scp
 
 import android.content.*
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
-import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
 import info.free.scp.util.*
 import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity

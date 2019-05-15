@@ -10,6 +10,7 @@ import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.io.IOException
+import org.jetbrains.anko.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileNotFoundException
@@ -42,7 +43,7 @@ class FileHelper(val mContext: Context) {
         }
     }
 
-    fun getBackUpFileName(): String {
+    private fun getBackUpFileName(): String {
         return "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$dbFilename"
     }
 
@@ -56,33 +57,32 @@ class FileHelper(val mContext: Context) {
         try {
             val cacheFile = File(cacheDir + dbName)
             val destFile = File(dbDir + newDbFilename)
-            cacheFile.copyTo(destFile, true)
+            val backUpFile = File(getBackUpFileName())
+            cacheFile.copyTo(destFile, true) // 复制到数据库
+            cacheFile.copyTo(backUpFile, true) // 复制到备份文件夹
         } catch (e: Exception) {
             e.printStackTrace()
-            // TODO 出错提示
+            mContext.toast("文件复制出错：" + e.message)
         }
     }
+
     /**
      * 恢复数据的Dialog
      */
     fun restoreDB() {
-        val builder = AlertDialog.Builder(mContext)
-        builder.setTitle("恢复")
-        builder.setMessage("尝试从本地备份中恢复数据库")
-        builder.setPositiveButton("确定") { _, _ ->
-            Toaster.show("开始恢复")
-            Flowable.create<Boolean>({ emitter ->
-                emitter.onNext(restore())
-                emitter.onComplete()
-            }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe {
-                        val resultMsg = if (it) "恢复完成" else "恢复失败"
-                        Toaster.show(resultMsg)
+        val backUpFile = File(getBackUpFileName())
+        if (backUpFile.exists()) {
+            mContext.alert("检测到备份数据库，是否恢复", "恢复") {
+                yesButton {
+                    mContext.toast("开始恢复")
+                    doAsync {
+                        val resultMsg = if (restore()) "恢复完成" else "恢复失败"
+                        mContext.toast(resultMsg)
                     }
+                }
+                noButton { }
+            }.show()
         }
-        builder.setNegativeButton("取消") { _, _ -> }
-        builder.show()
     }
 
     /**

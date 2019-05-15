@@ -159,23 +159,6 @@ object PreferenceUtil {
         setIntValue("theme", "currentTheme", theme)
     }
 
-
-    /**
-     * 检测更新，一天只检测一次，重新安装后要重置
-     */
-    fun setLastCheckUpdateTime(time: Long) {
-        setLongValue(UPDATE_SP, "lastCheckUpdateTime", time)
-    }
-
-    fun checkNeedShowUpdateNotice(): Boolean {
-        val lastTime = getLongValue(UPDATE_SP, "lastCheckUpdateTime")
-        val cal = Calendar.getInstance()
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
-                0, 0, 0)
-        val beginOfDate = cal.timeInMillis
-        return lastTime < beginOfDate
-    }
-
     /**
      * 检测小组件当天是否更新
      */
@@ -192,8 +175,6 @@ object PreferenceUtil {
         val beginOfDate = cal.timeInMillis
         return lastTime < beginOfDate
     }
-
-
 
 
 

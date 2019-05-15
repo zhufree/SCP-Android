@@ -54,8 +54,8 @@ class SettingsActivity : BaseActivity() {
                 true
             }
         }
-        supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings, if (settingType == 0)
-            ReadSettingsFragment() else DownloadFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
+            ReadSettingsFragment()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -82,119 +82,6 @@ class SettingsActivity : BaseActivity() {
             findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { _, any ->
                 EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
                 true
-            }
-        }
-    }
-    class DownloadFragment : PreferenceFragmentCompat() {
-        override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
-            setPreferencesFromResource(R.xml.pref_download_settings, rootKey)
-            preferenceManager?.sharedPreferencesName = "download_settings"
-        }
-
-        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-            super.onViewCreated(view, savedInstanceState)
-            findPreference<Preference>("download_scp")?.summary = getString(R.string.download_summary,
-                    PreferenceUtil.getServerLastUpdateTime(0),
-                    PreferenceUtil.getDetailLastLoadTime(0))
-            findPreference<Preference>("download_scp_cn")?.summary = getString(R.string.download_summary,
-                    PreferenceUtil.getServerLastUpdateTime(1),
-                    PreferenceUtil.getDetailLastLoadTime(1))
-            findPreference<Preference>("download_tale")?.summary = getString(R.string.download_summary,
-                    PreferenceUtil.getServerLastUpdateTime(2),
-                    PreferenceUtil.getDetailLastLoadTime(2))
-            findPreference<Preference>("download_other")?.summary = getString(R.string.download_summary,
-                    PreferenceUtil.getServerLastUpdateTime(3),
-                    PreferenceUtil.getDetailLastLoadTime(3))
-            findPreference<Preference>("download_collection")?.summary = getString(R.string.download_summary,
-                    PreferenceUtil.getServerLastUpdateTime(4),
-                    PreferenceUtil.getDetailLastLoadTime(4))
-            findPreference<Preference>("download_scp")?.setOnPreferenceClickListener {
-                showNoticeDialog(DOWNLOAD_SCP)
-                true
-            }
-            findPreference<Preference>("download_scp_cn")?.setOnPreferenceClickListener {
-                showNoticeDialog(DOWNLOAD_SCP_CN)
-                true
-            }
-            findPreference<Preference>("download_tale")?.setOnPreferenceClickListener {
-                showNoticeDialog(DOWNLOAD_TALE)
-                true
-            }
-            findPreference<Preference>("download_other")?.setOnPreferenceClickListener {
-                showNoticeDialog(DOWNLOAD_ARCHIVES)
-                true
-            }
-            findPreference<Preference>("download_collection")?.setOnPreferenceClickListener {
-                showNoticeDialog(DOWNLOAD_COLLECTIONS)
-                true
-            }
-            findPreference<Preference>("sync_category")?.setOnPreferenceClickListener {
-                ScpDataHelper.getInstance().resetCategoryData()
-                true
-            }
-
-            if (!FileHelper.getInstance(context!!).checkBackUpFileExist()) {
-                findPreference<Preference>("restore_data")?.isEnabled = false
-            }
-            findPreference<Preference>("backup_data")?.title = "备份数据库${if (FileHelper.getInstance(context!!)
-                            .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
-            findPreference<Preference>("restore_data")?.title = "恢复本地数据库${if (FileHelper.getInstance(context!!)
-                            .checkBackUpFileExist()) "（已有旧的备份数据）" else ""}"
-
-            findPreference<Preference>("backup_data")?.setOnPreferenceClickListener {
-                context?.let {ctx->
-                    FileHelper.getInstance(ctx).backupDB()
-                    findPreference<Preference>("restore_data")?.isEnabled = true
-                }
-                true
-            }
-            findPreference<Preference>("restore_data")?.setOnPreferenceClickListener {
-                context?.let {ctx->
-                    FileHelper.getInstance(ctx).restoreDB()
-                }
-                true
-            }
-
-            findPreference<Preference>("sync_data")?.setOnPreferenceClickListener {
-                if (PreferenceUtil.getInitCategoryFinish()) {
-                    AlertDialog.Builder(activity)
-                            .setTitle("注意")
-                            .setMessage("该选项将删除所有目录及正文数据并重新加载，是否确定？")
-                            .setPositiveButton("确定") { dialog, _ ->
-                                EventUtil.onEvent(activity, EventUtil.clickSyncData)
-//                                UpdateManager.getInstance(activity as BaseActivity). checkInitData(true)
-                                dialog.dismiss()
-                            }
-                            .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                            .create().show()
-                } else {
-                    EventUtil.onEvent(activity, EventUtil.clickSyncData)
-//                    UpdateManager.getInstance(activity as BaseActivity).checkInitData(true)
-                }
-                true
-            }
-        }
-
-        private fun showNoticeDialog(downloadType: Int) {
-            if (PreferenceUtil.getDetailDataLoadFinish(downloadType)) {
-                AlertDialog.Builder(activity)
-                        .setTitle("同步${Utils.getDownloadTitleByType(downloadType)}")
-                        .setMessage("删除该部分本地数据并从云端重新下载最新数据？")
-                        .setPositiveButton("确定") { _, _ ->
-                            // TODO 离线数据库
-//                            PreferenceUtil.setDetailDataLoadFinish(downloadType, false)
-//                            PreferenceUtil.setSingleDbLoadCount(downloadType, 0)
-//                            ScpDataHelper.getInstance().deleteDetailByDownloadType(downloadType)
-//                            UpdateManager.getInstance(activity as BaseActivity).initDetailData(downloadType)
-                        }
-                        .setNegativeButton("取消") { dialog, _ -> dialog.dismiss() }
-                        .create().show()
-            } else {
-                AlertDialog.Builder(activity)
-                        .setTitle("Notice")
-                        .setMessage("当前离线未完成，请等待完成才可以选择更新（如果判断错误请选择同步云端数据重新离线）")
-                        .setPositiveButton("确定") { _, _ -> }
-                        .create().show()
             }
         }
     }

@@ -16,21 +16,21 @@ import info.free.scp.view.base.BaseAdapter
  */
 
 class ScpAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
-    : BaseAdapter<ScpHolder, ScpModel?>(mContext, dataList) {
+    : BaseAdapter<ScpCategoryHolder, ScpModel?>(mContext, dataList) {
     private var laterViewList = emptyList<SimpleScp>().toMutableList()
 
     init {
         laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpCategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)
         view?.setOnLongClickListener(this)
         view?.setOnClickListener(this)
-        return ScpHolder(view)
+        return ScpCategoryHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ScpHolder, position: Int) {
+    override fun onBindViewHolder(holder: ScpCategoryHolder, position: Int) {
         holder.itemView.tag = position
         holder.setData(dataList?.get(position), laterViewList)
     }

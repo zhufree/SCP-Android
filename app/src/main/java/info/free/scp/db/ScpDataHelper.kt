@@ -174,68 +174,6 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
 
     }
 
-    fun getLikeScpList(): MutableList<ScpModel?> {
-        val resultList = emptyList<ScpModel?>().toMutableList()
-        try {
-            with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " WHERE "
-                        + ScpTable.LIKE + "=?;",
-                        arrayOf("1"))
-                with(cursor) {
-                    this?.let {
-                        while (it.moveToNext()) {
-                            resultList.add(getOneScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
-                        }
-                    }
-                }
-            }
-            return resultList
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return resultList
-    }
-
-    fun getOrderedLikeList(): MutableList<ScpModel?> {
-        val resultList = emptyList<ScpModel?>().toMutableList()
-        try {
-            with(readableDatabase) {
-                val cursor: Cursor? = this.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME + " as like_scp "
-                        + " left join " + ScpTable.SCP_TABLE_NAME + " as scp on like_scp.link = scp.link WHERE like_scp."
-                        + ScpTable.LIKE + "=? ORDER BY scp." + ScpTable.SCP_TYPE + ", scp." + ScpTable.INDEX + ";",
-                        arrayOf("1"))
-                with(cursor) {
-                    this?.let {
-                        while (it.moveToNext()) {
-                            resultList.add(getOneScpModelByLink(getCursorString(cursor, ScpTable.LINK)))
-                        }
-                    }
-                }
-            }
-            return resultList
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return resultList
-    }
-
-    private fun getLikeInfoByLink(link: String): Boolean {
-        try {
-            val cursor: Cursor? = readableDatabase.rawQuery("SELECT * FROM " + ScpTable.LIKE_AND_READ_TABLE_NAME
-                    + " WHERE " + ScpTable.LINK + "=?", arrayOf(link))
-            if (cursor != null) {
-                if (cursor.moveToFirst()) {
-                    return true
-                }
-                cursor.close()
-            }
-            return false
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-        return false
-    }
-
 
     fun getLikeCount(): Int {
         var count = 0

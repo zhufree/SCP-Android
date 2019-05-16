@@ -26,7 +26,6 @@ import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
-import info.free.scp.view.search.SimpleScpAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 
@@ -48,7 +47,7 @@ class LaterAndHistoryActivity : BaseActivity() {
             adapter?.notifyDataSetChanged()
         }
     val viewItemList = emptyList<SimpleScp?>().toMutableList()
-    var adapter : SimpleScpAdapter? = null
+    var adapter : TimeScpAdapter? = null
     private var orderType = 1 // 0 時間正序，倒序
         set(value) {
             field = value
@@ -65,7 +64,7 @@ class LaterAndHistoryActivity : BaseActivity() {
 
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
-        adapter = SimpleScpAdapter(this, viewItemList)
+        adapter = TimeScpAdapter(this, viewItemList)
         rv_like?.adapter = adapter
         adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {

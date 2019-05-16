@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.bean.ScpLikeModel
@@ -20,14 +21,14 @@ import kotlinx.android.synthetic.main.activity_like.*
 
 class LikeActivity : BaseActivity() {
     val likeList = emptyList<ScpLikeModel?>().toMutableList()
-    var adapter : SearchResultAdapter? = null
+    var adapter : SimpleScpAdapter? = null
     private var orderType = 0 // 0 默认顺序 1 按编号
         set(value) {
             field = value
             likeList.clear()
-            // TODO
-//            likeList.addAll(if (value == 0) AppInfoDatabase.getInstance().likeAndReadDao().getLikeList() else
-//                ScpDataHelper.getInstance().getOrderedLikeList())
+            // TODO order改成拿到之后在总表里用index排序
+            likeList.addAll(if (value == 0) AppInfoDatabase.getInstance().likeAndReadDao().getLikeList() else
+                AppInfoDatabase.getInstance().likeAndReadDao().getOrderedLikeList())
             adapter?.notifyDataSetChanged()
         }
 
@@ -37,12 +38,12 @@ class LikeActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.clickLikeList)
         initToolbar()
 
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, VERTICAL, false)
+        val lm = LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
         likeList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getLikeList())
         Log.i("search", likeList.size.toString())
         // TODO
-//        adapter = SearchResultAdapter(this, likeList)
+        adapter = SimpleScpAdapter(this, likeList)
         rv_like?.adapter = adapter
         adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {

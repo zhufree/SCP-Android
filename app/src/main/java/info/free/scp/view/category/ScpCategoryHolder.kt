@@ -18,17 +18,20 @@ import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.alert
 
 /**
+ * 列表的item
+ * 有读过和收藏logo
+ * 有加入待读按钮
+ * TODO 样式待优化
  * Created by zhufree on 2018/8/22.
- *
  */
 
-class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
+class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
     private var mContext: Context? = null
 
     init {
-        val rlLp = itemView.rl_category_item.layoutParams as FrameLayout.LayoutParams
+        val rlLp = itemView.cl_category_item.layoutParams as FrameLayout.LayoutParams
         rlLp.height = Utils.dp2px(categoryHeight)
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)

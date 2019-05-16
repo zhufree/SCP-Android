@@ -3,6 +3,7 @@ package info.free.scp.view.search
 import android.content.Context
 import android.view.View
 import android.view.View.VISIBLE
+import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDataHelper
@@ -11,11 +12,15 @@ import info.free.scp.util.Toaster
 import kotlinx.android.synthetic.main.item_search.view.*
 
 /**
+ * 搜索结果：待读按钮
+ * 待读列表：时间
+ * 阅读历史：时间
+ * 收藏列表
  * Created by zhufree on 2018/10/25.
- * 搜索结果item
+ *
  */
 
-class SearchHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
     private var mContext: Context? = null
 
     init {
@@ -46,7 +51,6 @@ class SearchHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewH
                     isInLaterViewList = true
                     it.setBackgroundColor(ThemeUtil.clickedBtn)
                 }
-
             }
         }
     }

@@ -20,6 +20,12 @@ interface LikeAndReadDao {
     @Query("SELECT * FROM LikeAndReadTable WHERE `like` = 1")
     fun getLikeList(): List<ScpLikeModel>
 
+    @Query("SELECT * FROM LikeAndReadTable WHERE `like` = 1 ORDER BY title")
+    fun getOrderedLikeList(): List<ScpLikeModel>
+
+    @Query("SELECT count(*) FROM LikeAndReadTable WHERE `like` = 1")
+    fun getLikeCOunt(): List<ScpLikeModel>
+
     @Query("DELETE FROM LikeAndReadTable")
     fun clear()
     // AND last_update >= :timeout

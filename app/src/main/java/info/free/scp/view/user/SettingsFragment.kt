@@ -20,12 +20,12 @@ import info.free.scp.util.EventUtil.clickCopyright
 import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
+import info.free.scp.view.draft.DraftEditActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.startActivity
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         // Load the preferences from an XML resource
@@ -45,9 +45,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("read_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
-            val intent = Intent(activity, SettingsActivity::class.java)
-            intent.putExtra("setting_type", 0)
-            activity?.startActivity(intent)
+            activity?.startActivity<SettingsActivity>()
             true
         }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
@@ -91,6 +89,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("draft")?.setOnPreferenceClickListener {
             EventUtil.onEvent(context, EventUtil.clickDraft)
+            activity?.startActivity<DraftEditActivity>()
             true
         }
     }

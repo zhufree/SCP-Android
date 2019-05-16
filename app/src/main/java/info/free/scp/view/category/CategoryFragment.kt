@@ -33,7 +33,7 @@ class CategoryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(mContext, VERTICAL, false)
+        val lm = LinearLayoutManager(mContext, VERTICAL, false)
         rv_category_list?.layoutManager = lm
         initData()
     }

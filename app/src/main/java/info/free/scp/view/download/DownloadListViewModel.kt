@@ -16,7 +16,7 @@ class DownloadListViewModel(private val listRepo: DownloadRepository) : ViewMode
         return listRepo.downloadList
     }
 
-    fun loadDownloads() {
+    private fun loadDownloads() {
         listRepo.loadDownloadList()
     }
 }

@@ -17,7 +17,6 @@ class CategoryAdapter(mContext: Context, val type: Int, dataList: MutableList<An
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         val view = LayoutInflater.from(mContext).inflate(R.layout.item_category, parent, false)
-//        val newHolder = CategoryHolder(view)
         view?.setOnLongClickListener(this)
         view?.setOnClickListener(this)
         return CategoryHolder(view)

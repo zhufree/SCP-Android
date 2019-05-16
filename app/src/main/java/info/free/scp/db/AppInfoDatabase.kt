@@ -3,6 +3,7 @@ package info.free.scp.db
 import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
+import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import info.free.scp.SCPConstants.INFO_DB_NAME
@@ -14,6 +15,7 @@ import info.free.scp.db.ScpTable.dropScpTableSQL
 
 
 @Database(entities = [ScpRecordModel::class, ScpLikeModel::class], version = 5)
+@TypeConverters(Converters::class)
 abstract class AppInfoDatabase : RoomDatabase() {
     abstract fun likeAndReadDao(): LikeAndReadDao
     abstract fun readRecordDao(): ReadRecordDao

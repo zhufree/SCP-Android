@@ -15,7 +15,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted
 import info.free.scp.SCPConstants.RequestCode.REQUEST_FILE_PERMISSION
 
 
-class DownloadActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
+class DownloadActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,31 +40,5 @@ class DownloadActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                         adapter.submitList(downloads)
                     }
                 })
-        requireFilePermission()
-    }
-
-    @AfterPermissionGranted(REQUEST_FILE_PERMISSION)
-    private fun requireFilePermission() {
-        val perms = arrayOf(permission.WRITE_EXTERNAL_STORAGE)
-        if (EasyPermissions.hasPermissions(this, *perms)) {
-            // Already have permission, do the thing
-            // ...
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
-                    REQUEST_FILE_PERMISSION, *perms)
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
 }

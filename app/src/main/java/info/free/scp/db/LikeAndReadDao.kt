@@ -24,7 +24,10 @@ interface LikeAndReadDao {
     fun getOrderedLikeList(): List<ScpLikeModel>
 
     @Query("SELECT count(*) FROM LikeAndReadTable WHERE `like` = 1")
-    fun getLikeCOunt(): List<ScpLikeModel>
+    fun getLikeCount(): List<ScpLikeModel>
+
+    @Query("SELECT count(*) FROM LikeAndReadTable WHERE hasRead = 1")
+    fun getReadCount(): List<ScpLikeModel>
 
     @Query("DELETE FROM LikeAndReadTable")
     fun clear()

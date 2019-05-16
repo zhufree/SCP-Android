@@ -15,6 +15,7 @@ import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -46,7 +47,7 @@ class LaterAndHistoryActivity : BaseActivity() {
             }
             adapter?.notifyDataSetChanged()
         }
-    val viewItemList = emptyList<SimpleScp?>().toMutableList()
+    val viewItemList = emptyList<ScpRecordModel?>().toMutableList()
     var adapter : TimeScpAdapter? = null
     private var orderType = 1 // 0 時間正序，倒序
         set(value) {

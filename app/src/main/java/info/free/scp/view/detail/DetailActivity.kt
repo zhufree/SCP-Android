@@ -28,6 +28,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -35,6 +36,7 @@ import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import okhttp3.internal.Util
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -185,7 +187,6 @@ class DetailActivity : BaseActivity() {
                     }
                     .create().show()
         }
-
     }
 
     private fun setData(scp: ScpModel) {

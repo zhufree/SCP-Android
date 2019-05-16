@@ -1,7 +1,6 @@
 package info.free.scp.view.home
 
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +15,7 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.jetbrains.anko.support.v4.startActivity
 
 
 /**
@@ -39,7 +39,7 @@ class HomeFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         home_toolbar?.setTitle(R.string.app_name)
         home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
-        home_toolbar?.setOnMenuItemClickListener{
+        home_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.search -> {
                     activity?.startActivity(Intent(activity, SearchActivity::class.java))
@@ -56,23 +56,21 @@ class HomeFragment : BaseFragment() {
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }
-        tv_story_doc?.setOnClickListener{
+        tv_story_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.STORY_DOC)
         }
-        tv_about_doc?.setOnClickListener{
+        tv_about_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.ABOUT_SCP_DOC)
         }
-        tv_read_later?.setOnClickListener{
-            val laterIntent = Intent(activity, LaterAndHistoryActivity::class.java)
-            laterIntent.putExtra("view_type", LATER_TYPE)
-            activity?.startActivity(laterIntent)
+        tv_read_later?.setOnClickListener {
+            startActivity<LaterAndHistoryActivity>("view_type" to LATER_TYPE)
         }
-        tv_joke_doc?.setOnClickListener{
+        tv_joke_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.JOKE_DOC)
         }
         tv_direct?.setOnClickListener {
             PreferenceUtil.addPoints(2)
-            activity?.startActivity(Intent(activity, DirectActivity::class.java))
+            startActivity<DirectActivity>()
         }
     }
 

@@ -1,6 +1,5 @@
 package info.free.scp.view.download
 
-import android.app.Activity
 import android.graphics.Color
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,9 +14,7 @@ import com.lzy.okgo.request.GetRequest
 import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
 import com.lzy.okserver.download.DownloadTask
-import info.free.scp.PrivateConstants
 import info.free.scp.R
-import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
@@ -28,7 +25,6 @@ import info.free.scp.util.DownloadUtil.Status.FINISH
 import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
 import info.free.scp.util.DownloadUtil.Status.NONE
 import info.free.scp.util.DownloadUtil.Status.PAUSE
-import info.free.scp.view.base.BaseActivity
 import org.jetbrains.anko.*
 import java.io.File
 
@@ -66,7 +62,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
     private fun createOnClickListener(task: DownloadTask): View.OnClickListener {
         return View.OnClickListener {
             //            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
-            if (task.progress.status == 2) {
+            if (task.progress.status == Progress.LOADING) {
                 task.pause()
             } else {
                 task.start()

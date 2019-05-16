@@ -84,7 +84,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
         }
         itemView.btn_read_later.setOnClickListener {
             if (isInLaterViewList) {
-                ScpDataHelper.getInstance().deleteViewListItem(model.link, LATER_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(model.link, LATER_TYPE)
                 isInLaterViewList = false
                 it.setBackgroundColor(ThemeUtil.unClickBtn)
             } else {

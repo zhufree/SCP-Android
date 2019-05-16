@@ -16,8 +16,12 @@ import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
+import org.jetbrains.anko.startActivity
 
 
+/**
+ * 编号直达页
+ */
 class DirectActivity : BaseActivity() {
     private var chooseType = 0 // 0 scp 1 cn 2 J 3 cn-j
         set(value) {
@@ -79,11 +83,7 @@ class DirectActivity : BaseActivity() {
             }
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
-                val intent = Intent()
-                intent.putExtra("link", s.link)
-                intent.putExtra("sId", s.id)
-                intent.setClass(this, DetailActivity::class.java)
-                startActivity(intent)
+                startActivity<DetailActivity>("link" to s.link)
             } ?: Toaster.show("没有这篇文章")
 
         }
@@ -103,48 +103,40 @@ class DirectActivity : BaseActivity() {
                     EventUtil.onEvent(this, EventUtil.clickRandomAll)
                     val targetScp = ScpDataHelper.getInstance().getRandomScp("")
                     targetScp?.let {
-                        val intent = Intent()
-                        intent.putExtra("link", targetScp.link)
-                        intent.putExtra("read_type", 1)
-                        intent.putExtra("random_type", 0)
-                        intent.setClass(this, DetailActivity::class.java)
-                        startActivity(intent)
+                        startActivity<DetailActivity>(
+                                "link" to targetScp.link,
+                                "read_type" to 1,
+                                "random_type" to 0)
                     } ?: Toaster.show("没有离线的文档，无法随机")
                 }
                 R.id.random_scp -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomScp)
                     val targetScp = ScpDataHelper.getInstance().getRandomScp("1,2")
                     targetScp?.let {
-                        val intent = Intent()
-                        intent.putExtra("link", targetScp.link)
-                        intent.putExtra("read_type", 1)
-                        intent.putExtra("random_type", 1)
-                        intent.setClass(this, DetailActivity::class.java)
-                        startActivity(intent)
+                        startActivity<DetailActivity>(
+                                "link" to targetScp.link,
+                                "read_type" to 1,
+                                "random_type" to 1)
                     } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_tales -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomTale)
                     val targetScp = ScpDataHelper.getInstance().getRandomScp("3,4")
                     targetScp?.let {
-                        val intent = Intent()
-                        intent.putExtra("link", targetScp.link)
-                        intent.putExtra("read_type", 1)
-                        intent.putExtra("random_type", 2)
-                        intent.setClass(this, DetailActivity::class.java)
-                        startActivity(intent)
+                        startActivity<DetailActivity>(
+                                "link" to targetScp.link,
+                                "read_type" to 1,
+                                "random_type" to 2)
                     } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_joke -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomJoke)
                     val targetScp = ScpDataHelper.getInstance().getRandomScp("5,6")
                     targetScp?.let {
-                        val intent = Intent()
-                        intent.putExtra("link", targetScp.link)
-                        intent.putExtra("read_type", 1)
-                        intent.putExtra("random_type", 3)
-                        intent.setClass(this, DetailActivity::class.java)
-                        startActivity(intent)
+                        startActivity<DetailActivity>(
+                                "link" to targetScp.link,
+                                "read_type" to 1,
+                                "random_type" to 3)
                     } ?: Toaster.show("没有离线的该部分内容，无法随机")
                 }
             }

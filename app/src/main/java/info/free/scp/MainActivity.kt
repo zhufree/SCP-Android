@@ -1,5 +1,6 @@
 package info.free.scp
 
+import android.Manifest
 import android.content.*
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -13,9 +14,11 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
     private val feedFragment = FeedFragment.newInstance()
@@ -26,6 +29,19 @@ class MainActivity : BaseActivity() {
     private var themeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             refreshTheme()
+        }
+    }
+
+    @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
+    private fun requireFilePermission() {
+        val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (EasyPermissions.hasPermissions(this, *perms)) {
+            // Already have permission, do the thing
+            // ...
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
+                    SCPConstants.RequestCode.REQUEST_FILE_PERMISSION, *perms)
         }
     }
 
@@ -83,7 +99,7 @@ class MainActivity : BaseActivity() {
             } else {
                 transaction.add(R.id.flMainContainer, it)
             }
-        } ?:run {
+        } ?: run {
             transaction.add(R.id.flMainContainer, homeFragment, "home")
             currentFragment = homeFragment
         }
@@ -91,6 +107,8 @@ class MainActivity : BaseActivity() {
         UpdateManager.getInstance(this).checkAppData()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+
+        requireFilePermission()
     }
 
     /**
@@ -106,5 +124,17 @@ class MainActivity : BaseActivity() {
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
         feedFragment.refreshTheme()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
 }

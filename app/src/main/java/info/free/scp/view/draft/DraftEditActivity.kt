@@ -41,7 +41,6 @@ class DraftEditActivity : BaseActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Logger.i(s.toString())
                 PreferenceUtil.saveDraftContent(et_content.editableText.toString())
             }
         })

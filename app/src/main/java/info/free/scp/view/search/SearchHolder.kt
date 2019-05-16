@@ -6,6 +6,7 @@ import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.SimpleScp
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Toaster
@@ -42,7 +43,7 @@ class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
             }
             itemView.btn_search_read_later.setOnClickListener {
                 if (isInLaterViewList) {
-                    ScpDataHelper.getInstance().deleteViewListItem(link, LATER_TYPE)
+                    AppInfoDatabase.getInstance().readRecordDao().delete(link, LATER_TYPE)
                     isInLaterViewList = false
                     it.setBackgroundColor(ThemeUtil.unClickBtn)
                 } else {

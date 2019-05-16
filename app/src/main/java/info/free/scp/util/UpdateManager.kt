@@ -1,14 +1,14 @@
 package info.free.scp.util
 
 import android.app.AlertDialog
-import android.app.ProgressDialog
 import android.content.*
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import info.free.scp.BuildConfig
 import info.free.scp.R
-import info.free.scp.SCPConstants
+import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
@@ -53,7 +53,6 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
             FileHelper.getInstance(activity).restoreDB() // 第一次安装app时检测
-
 //            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
@@ -61,8 +60,16 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
 
             // FIXME 打包后下版本开发删掉这块代码
+            // 原来版本的数据库名叫 scp_info.db，需要把其中data的部分删除，
+            // 重新下载为scp_data.db，scp_info.db中把data部分删除
             // TODO 第一次安装这个新版本检测：如果本地有数据库，同步like等信息 第一次安装app和第一次安装这个版本区分一下
-            // TODO 把原数据库改名成info，然后删掉data类的信息
+
+            AppInfoDatabase.getInstance()
+//            val fileHelper = FileHelper.getInstance(activity)
+//            if (fileHelper.checkFileExist(fileHelper.dbDir + fileHelper.infoDBFilename)) {
+//                fileHelper.renameFile(fileHelper.dbDir + fileHelper.infoDBFilename)
+//            }
+            // TODO 然后删掉data类的信息
         }
 
         // 普通情况下一天检测一次更新
@@ -158,7 +165,6 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setPositiveButton("确定选择（暂时不可更改）") { inner, _ ->
                                     PreferenceUtil.setJob(jobList[which])
                                     EventUtil.onEvent(activity, EventUtil.chooseJob, jobList[which])
-                                    FileHelper.getInstance(activity).backUp()
                                     inner.dismiss()
                                     field?.set(out, true)
                                     out.dismiss()

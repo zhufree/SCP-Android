@@ -1,6 +1,5 @@
 package info.free.scp.view.category
 
-import android.app.AlertDialog
 import android.content.Context
 import android.view.View
 import android.view.View.GONE
@@ -9,7 +8,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
-import info.free.scp.bean.ScpReadModel
+import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
@@ -52,7 +51,7 @@ class ScpHolder(view: View) : RecyclerView.ViewHolder(view){
                     EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
                     var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
                     if (scpInfo == null) {
-                        scpInfo = ScpReadModel(model.link, model.title, false, false)
+                        scpInfo = ScpLikeModel(model.link, model.title, false, false)
                     }
                     scpInfo.hasRead = !scpInfo.hasRead
                     AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)

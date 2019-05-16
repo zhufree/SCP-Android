@@ -26,9 +26,8 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
-import info.free.scp.bean.ScpInfoModel
 import info.free.scp.bean.ScpModel
-import info.free.scp.bean.ScpReadModel
+import info.free.scp.bean.ScpLikeModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -367,7 +366,7 @@ class DetailActivity : BaseActivity() {
             PreferenceUtil.addPoints(2)
             var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
             if (scpInfo == null) {
-                scpInfo = ScpReadModel(s.link, s.title, false, false)
+                scpInfo = ScpLikeModel(s.link, s.title, false, false)
             }
             scpInfo.like = !scpInfo.like
             AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
@@ -456,7 +455,7 @@ class DetailActivity : BaseActivity() {
         scp?.let { s ->
             var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
             if (scpInfo == null) {
-                scpInfo = ScpReadModel(s.link, s.title, false, false)
+                scpInfo = ScpLikeModel(s.link, s.title, false, false)
             }
             if (s.hasRead == 0) {
                 // 标记已读

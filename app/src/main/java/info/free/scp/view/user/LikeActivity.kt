@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
+import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.view.detail.DetailActivity
@@ -16,14 +19,15 @@ import info.free.scp.view.search.SearchResultAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 
 class LikeActivity : BaseActivity() {
-    val likeList = emptyList<ScpModel?>().toMutableList()
+    val likeList = emptyList<ScpLikeModel?>().toMutableList()
     var adapter : SearchResultAdapter? = null
     private var orderType = 0 // 0 默认顺序 1 按编号
         set(value) {
             field = value
             likeList.clear()
-            likeList.addAll(if (value == 0) ScpDataHelper.getInstance().getLikeScpList() else
-                ScpDataHelper.getInstance().getOrderedLikeList())
+            // TODO
+//            likeList.addAll(if (value == 0) AppInfoDatabase.getInstance().likeAndReadDao().getLikeList() else
+//                ScpDataHelper.getInstance().getOrderedLikeList())
             adapter?.notifyDataSetChanged()
         }
 
@@ -33,17 +37,17 @@ class LikeActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.clickLikeList)
         initToolbar()
 
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
-        likeList.addAll(ScpDataHelper.getInstance().getLikeScpList())
+        likeList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getLikeList())
         Log.i("search", likeList.size.toString())
-        adapter = SearchResultAdapter(this, likeList)
+        // TODO
+//        adapter = SearchResultAdapter(this, likeList)
         rv_like?.adapter = adapter
         adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
             override fun onItemClick(view: View, position: Int) {
                 val intent = Intent()
                 intent.putExtra("link", likeList[position]?.link)
-                intent.putExtra("sId", likeList[position]?.id)
                 intent.setClass(this@LikeActivity, DetailActivity::class.java)
                 startActivity(intent)
             }

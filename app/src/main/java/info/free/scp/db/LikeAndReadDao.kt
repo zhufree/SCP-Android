@@ -4,17 +4,21 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import info.free.scp.bean.ScpModel
-import info.free.scp.bean.ScpReadModel
+import info.free.scp.bean.ScpLikeModel
 
-
+/**
+ * 读过和like信息
+ */
 @Dao
 interface LikeAndReadDao {
     @Insert(onConflict = REPLACE)
-    fun save(info: ScpReadModel)
+    fun save(info: ScpLikeModel)
 
-    @Query("SELECT * FROM LikeAndReadTable WHERE link = :link LIMIT 1")
-    fun getInfoByLink(link: String): ScpReadModel?
+    @Query("SELECT link, title,hasRead, `like` FROM LikeAndReadTable WHERE link = :link LIMIT 1")
+    fun getInfoByLink(link: String): ScpLikeModel?
+
+    @Query("SELECT * FROM LikeAndReadTable WHERE `like` = 1")
+    fun getLikeList(): List<ScpLikeModel>
 
     @Query("DELETE FROM LikeAndReadTable")
     fun clear()

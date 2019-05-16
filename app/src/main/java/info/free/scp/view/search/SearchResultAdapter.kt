@@ -15,6 +15,7 @@ import info.free.scp.view.base.BaseAdapter
  *
  */
 
+// TODO 把model简化成通用的
 class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
     : BaseAdapter<SearchHolder, ScpModel?>(mContext, dataList) {
     private var laterViewList = emptyList<SimpleScp>().toMutableList()

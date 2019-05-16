@@ -64,44 +64,8 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
     }
 
 
-    fun insertLikeAndReadInfo(model: ScpModel) {
-        val db = writableDatabase
-        db.beginTransaction()
-        try {
-            replaceLikeInfo(model)
-//            replaceScpModel(model)
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
-    }
 
 
-
-    private fun replaceLikeInfo(model: ScpModel) {
-        val db = writableDatabase
-        val cv = ContentValues()
-        if (model.link.isNotEmpty()) {
-            cv.put(ScpTable.LINK, model.link)
-        }
-        if (model.title.isNotEmpty()) {
-            cv.put(ScpTable.TITLE, model.title)
-        }
-        cv.put(ScpTable.HAS_READ, model.hasRead)
-        cv.put(ScpTable.LIKE, model.like)
-        db.beginTransaction()
-        try {
-            if (getLikeInfoByLink(model.link)) {
-                db.update(ScpTable.LIKE_AND_READ_TABLE_NAME, cv, ScpTable.LINK + "=?",
-                        arrayOf(model.link))
-            } else {
-                db.insert(ScpTable.LIKE_AND_READ_TABLE_NAME, null, cv)
-            }
-            db.setTransactionSuccessful()
-        } finally {
-            db.endTransaction()
-        }
-    }
     /**
      * 通过链接获取scpModel，可能不止一个
      */

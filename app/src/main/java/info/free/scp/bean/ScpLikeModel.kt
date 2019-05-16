@@ -9,5 +9,5 @@ import kotlinx.serialization.Serializable
  */
 @Serializable
 @Entity(tableName = "LikeAndReadTable")
-data class ScpReadModel (@PrimaryKey var link: String = "", var title: String = "", var like: Boolean,
+data class ScpLikeModel (@PrimaryKey var link: String = "", var title: String = "", var like: Boolean,
                          var hasRead: Boolean)

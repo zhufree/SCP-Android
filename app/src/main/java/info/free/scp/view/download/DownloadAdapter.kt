@@ -44,7 +44,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
         val download = getItem(position)
         // 绑定 holder
         holder.apply {
-            val link = PreferenceUtil.getDataDownloadLink(position-1)
+            val link = PreferenceUtil.getDataDownloadLink(position - 1)
             Logger.i("download: $position: $link")
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
@@ -57,7 +57,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
     }
 
     private fun getFileNameByIndex(index: Int): String {
-        return when(index) {
+        return when (index) {
             -1 -> "full_scp_data.db"
             else -> "only_scp_$index.db"
         }
@@ -65,7 +65,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
 
     private fun createOnClickListener(task: DownloadTask): View.OnClickListener {
         return View.OnClickListener {
-//            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
+            //            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
             if (task.progress.status == 2) {
                 task.pause()
             } else {
@@ -132,10 +132,13 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Log.i("freescp", "finish")
             if (ScpApplication.currentActivity != null) {
                 Log.i("freescp", ScpApplication.currentActivity.toString())
-                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name?:""}吗？",
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？",
                         "下载完成") {
-                    yesButton { FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name?:"") }
-                    noButton {  }
+                    yesButton {
+                        FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name
+                                ?: "", true)
+                    }
+                    noButton { }
                 }?.show()
             }
         }

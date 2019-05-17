@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
@@ -40,7 +41,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
         mContext = itemView.context
     }
 
-    fun setData(model: ScpModel?, laterViewList: MutableList<SimpleScp>) {
+    fun setData(model: ScpModel?, laterViewList: MutableList<ScpRecordModel>) {
         if (model == null) return
         itemView.tv_scp_title?.text = model.title
 //                if (model.notFound == 1 && !model.title.contains("拒绝访问")

@@ -8,7 +8,6 @@ import java.util.*
 /**
  * 储存本地的收藏读过等信息
  */
-@Serializable
 @Entity(tableName = "LaterAndHistoryTable")
 data class ScpRecordModel(@PrimaryKey var link: String, var title: String,
                           // 上次阅读的历史时间/加入待读列表的时间,根据type判断

@@ -5,7 +5,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.view.base.BaseAdapter
@@ -17,7 +19,7 @@ import info.free.scp.view.base.BaseAdapter
 
 class ScpAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
     : BaseAdapter<ScpCategoryHolder, ScpModel?>(mContext, dataList) {
-    private var laterViewList = emptyList<SimpleScp>().toMutableList()
+    private var laterViewList = emptyList<ScpRecordModel>().toMutableList()
 
     init {
         laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)

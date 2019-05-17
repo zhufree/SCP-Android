@@ -5,6 +5,7 @@ import android.view.View
 import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
@@ -28,7 +29,7 @@ class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
         mContext = itemView.context
     }
 
-    fun setData(link: String, title: String, viewTime: String?, laterViewList: MutableList<SimpleScp>?) {
+    fun setData(link: String, title: String, viewTime: String?, laterViewList: MutableList<ScpRecordModel>?) {
         itemView.tv_search_title?.text = title
         viewTime?.let {
             itemView.tv_view_time?.text = viewTime

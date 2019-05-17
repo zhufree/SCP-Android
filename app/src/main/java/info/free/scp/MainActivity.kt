@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
+import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.*
 import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity
@@ -107,8 +109,13 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         UpdateManager.getInstance(this).checkAppData()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-
         requireFilePermission()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ScpDatabase.getInstance()
+        AppInfoDatabase.getInstance()
     }
 
     /**

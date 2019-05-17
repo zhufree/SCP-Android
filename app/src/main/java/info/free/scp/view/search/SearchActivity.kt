@@ -7,7 +7,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import info.free.scp.R
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -20,7 +20,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class SearchActivity : BaseActivity() {
-    var resultList: MutableList<ScpModel?> = emptyList<ScpModel>().toMutableList()
+    var resultList: MutableList<ScpItemModel?> = emptyList<ScpItemModel>().toMutableList()
     var adapter: SearchResultAdapter? = null
     private var searchMode = 0 // 0 标题 1 全文
 
@@ -96,7 +96,7 @@ class SearchActivity : BaseActivity() {
                 pb_searching?.visibility = GONE
             }
         }
-//        Flowable.create<MutableList<ScpModel>>({emitter->
+//        Flowable.create<MutableList<ScpItemModel>>({emitter->
 //            Log.i("search", "开始检索")
 //            EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
 //            emitter.onNext(ScpDataHelper.getInstance().searchScpInDetailByKeyword(keyword))

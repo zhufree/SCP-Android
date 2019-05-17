@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 5,
-    "identityHash": "2b15cb2380a1df5dd34a725f90a55680",
+    "identityHash": "29053982bc5bb1b84d7bac4350a1ed4b",
     "entities": [
       {
-        "tableName": "LaterAndHistoryTable",
+        "tableName": "records",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `viewListType` INTEGER NOT NULL, `viewTime` INTEGER NOT NULL, PRIMARY KEY(`link`))",
         "fields": [
           {
@@ -43,7 +43,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "LikeAndReadTable",
+        "tableName": "like_table",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `like` INTEGER NOT NULL, `hasRead` INTEGER NOT NULL, PRIMARY KEY(`link`))",
         "fields": [
           {
@@ -84,7 +84,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2b15cb2380a1df5dd34a725f90a55680\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"29053982bc5bb1b84d7bac4350a1ed4b\")"
     ]
   }
 }

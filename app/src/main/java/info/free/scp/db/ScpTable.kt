@@ -93,4 +93,6 @@ object ScpTable {
 
     const val dropDetailTableSQL = "DROP TABLE IF EXISTS $DETAIL_TABLE_NAME"
 
+    const val migrationRecordTable = "ALTER TABLE $VIEW_LIST_TABLE_NAME ALTER COLUMN $VIEW_TIME INTEGER;"
+
 }

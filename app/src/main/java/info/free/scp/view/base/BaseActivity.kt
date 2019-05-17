@@ -51,10 +51,4 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         val cManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
     }
-
-    fun Activity.toActivity(activity: Class<*>, intent: Intent) {
-        intent.setClass(this, activity)
-        startActivity(intent)
-    }
-
 }

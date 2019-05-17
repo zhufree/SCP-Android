@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "dcc9756b212c66900b42f8d1ca0e5085",
+    "identityHash": "4691bbad502bb46f5979455c86784bba",
     "entities": [
       {
         "tableName": "scps",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, `created_time` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`created_time` TEXT, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
+          {
+            "fieldPath": "createdTime",
+            "columnName": "created_time",
+            "affinity": "TEXT",
+            "notNull": false
+          },
           {
             "fieldPath": "id",
             "columnName": "_id",
@@ -55,12 +61,6 @@
             "columnName": "author",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "createdTime",
-            "columnName": "created_time",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -103,12 +103,104 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "scp_collection",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`creator` TEXT NOT NULL, `subtext` TEXT NOT NULL, `snippet` TEXT NOT NULL, `desc` TEXT NOT NULL, `sub_links` TEXT NOT NULL, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
+        "fields": [
+          {
+            "fieldPath": "creator",
+            "columnName": "creator",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subtext",
+            "columnName": "subtext",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "snippet",
+            "columnName": "snippet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "desc",
+            "columnName": "desc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subLinks",
+            "columnName": "sub_links",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "_index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "link",
+            "columnName": "link",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scpType",
+            "columnName": "scp_type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subScpType",
+            "columnName": "sub_scp_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "downloadType",
+            "columnName": "download_type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"dcc9756b212c66900b42f8d1ca0e5085\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4691bbad502bb46f5979455c86784bba\")"
     ]
   }
 }

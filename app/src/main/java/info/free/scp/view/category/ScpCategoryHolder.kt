@@ -7,10 +7,10 @@ import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpModel
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*

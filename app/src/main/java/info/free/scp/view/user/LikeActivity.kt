@@ -9,14 +9,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.bean.ScpLikeModel
-import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
-import info.free.scp.view.search.SearchResultAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 
 class LikeActivity : BaseActivity() {

@@ -12,10 +12,11 @@ import android.view.View
  * [H] Holder
  * [T] 数据Model
  * 继承时要指定
+ * // TODO 用databinding的adapter替换
  */
 
-abstract class BaseAdapter<H: androidx.recyclerview.widget.RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
-    : androidx.recyclerview.widget.RecyclerView.Adapter<H>(),
+abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
+    : RecyclerView.Adapter<H>(),
         View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null
     private var mOnItemLongClickListener: OnItemLongClickListener? = null

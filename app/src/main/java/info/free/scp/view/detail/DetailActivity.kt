@@ -26,9 +26,8 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
-import info.free.scp.bean.ScpRecordModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -36,7 +35,6 @@ import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import okhttp3.internal.Util
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -53,7 +51,7 @@ class DetailActivity : BaseActivity() {
             fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
         }
     private var sId = ""
-    private var scp: ScpModel? = null
+    private var scp: ScpItemModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
     private var currentTextSizeIndex = textSizeList.indexOf(PreferenceUtil.getDetailTextSize())
@@ -85,8 +83,8 @@ class DetailActivity : BaseActivity() {
             "本页内容采用以下授权方式： <a rel=\"license\" href=\"http://creativecommons.org/licenses/" +
             "by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 License</a></div>"
     private var screenHeight = 0
-    private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private val historyList: MutableList<ScpItemModel> = emptyList<ScpItemModel>().toMutableList()
+    private val randomList: MutableList<ScpItemModel> = emptyList<ScpItemModel>().toMutableList()
     private var randomIndex = 0
     private var historyIndex = 0
     private var fullUrl = ""
@@ -189,7 +187,7 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    private fun setData(scp: ScpModel) {
+    private fun setData(scp: ScpItemModel) {
         ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
@@ -200,7 +198,7 @@ class DetailActivity : BaseActivity() {
         url = scp.link
 //            detailHtml = ScpDataHelper.getInstance().getDetailByLink(scp.link)
         detailHtml = ScpDatabase.getInstance().detailDao()
-                .getDetail(scp.link)
+                .getDetail(scp.link)?:""
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)

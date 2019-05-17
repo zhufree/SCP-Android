@@ -14,16 +14,16 @@ interface ReadRecordDao {
     @Insert(onConflict = REPLACE)
     fun save(info: ScpRecordModel)
 
-    @Query("SELECT * FROM LaterAndHistoryTable WHERE link = :link LIMIT 1")
+    @Query("SELECT * FROM records WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpRecordModel?
 
-    @Query("SELECT * FROM LaterAndHistoryTable WHERE viewListType = :viewType ORDER BY viewTime ASC")
+    @Query("SELECT * FROM records WHERE viewListType = :viewType ORDER BY viewTime ASC")
     fun getInfoByLinkAsc(viewType: Int): List<ScpRecordModel>
 
-    @Query("SELECT * FROM LaterAndHistoryTable WHERE viewListType = :viewType ORDER BY viewTime DESC")
+    @Query("SELECT * FROM records WHERE viewListType = :viewType ORDER BY viewTime DESC")
     fun getInfoByLinkDesc(viewType: Int): List<ScpRecordModel>
 
-    @Query("DELETE FROM LaterAndHistoryTable WHERE link = :link AND viewListType = :viewType")
+    @Query("DELETE FROM records WHERE link = :link AND viewListType = :viewType")
     fun delete(link: String, viewType: Int)
     // AND last_update >= :timeout
 }

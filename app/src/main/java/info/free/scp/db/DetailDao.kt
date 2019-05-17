@@ -16,7 +16,7 @@ interface DetailDao {
     fun saveAll(scps: List<ScpDetail>)
 
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
-    fun getDetail(link: String): String
+    fun getDetail(link: String): String?
 
     // AND last_update >= :timeout
 }

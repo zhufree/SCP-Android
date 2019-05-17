@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -139,16 +140,16 @@ class ScpListFragment : BaseFragment() {
                 scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_JOKE_CN))
             }
             SCPConstants.Category.SETTINGS -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_SETTINGS))
+                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_SETTINGS))
             }
             SCPConstants.Category.SETTINGS_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
+                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
             }
             SCPConstants.Category.CONTEST -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_CONTEST))
+                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_CONTEST))
             }
             SCPConstants.Category.CONTEST_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
+                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
             }
 
             SCPConstants.Category.TALES_BY_TIME -> {

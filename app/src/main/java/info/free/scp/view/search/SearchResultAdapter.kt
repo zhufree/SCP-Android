@@ -5,9 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.bean.SimpleScp
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.view.base.BaseAdapter
 
@@ -17,8 +16,8 @@ import info.free.scp.view.base.BaseAdapter
  */
 
 // TODO 把model简化成通用的
-class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpModel?>)
-    : BaseAdapter<SearchHolder, ScpModel?>(mContext, dataList) {
+class SearchResultAdapter(mContext: Context, dataList: MutableList<ScpItemModel?>)
+    : BaseAdapter<SearchHolder, ScpItemModel?>(mContext, dataList) {
     private var laterViewList = emptyList<ScpRecordModel>().toMutableList()
 
     init {

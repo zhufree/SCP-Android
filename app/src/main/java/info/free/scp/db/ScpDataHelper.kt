@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.ScpApplication
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.util.PreferenceUtil
 
@@ -36,9 +36,9 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
     /**
      * 获取某一type的scp list
      */
-    fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpModel> {
+    fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpItemModel> {
         val end = start + range
-        val resultList = emptyList<ScpModel>().toMutableList()
+        val resultList = emptyList<ScpItemModel>().toMutableList()
         if (PreferenceUtil.getIfHideFinished()) {
             resultList.addAll(ScpDatabase.getInstance().scpDao().getUnreadScpListByType(type))
         } else {
@@ -54,7 +54,7 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
     }
 
 
-    fun getSinglePageByType(type: Int): MutableList<ScpModel> {
+    fun getSinglePageByType(type: Int): MutableList<ScpItemModel> {
         val abnormalPageList = arrayOf(
                 "/log-of-extranormal-events",
                 "/log-of-extranormal-events-cn",
@@ -83,13 +83,13 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
     }
 
 
-    fun getRandomScp(typeRange: String = ""): ScpModel? {
+    fun getRandomScp(typeRange: String = ""): ScpItemModel? {
         randomCount++
         if (randomCount > 20) {
             randomCount = 0
             return null
         }
-        var scpModel: ScpModel?
+        var scpModel: ScpItemModel?
         var link = ""
         scpModel = if (typeRange.isEmpty()) ScpDatabase.getInstance().scpDao().getRandomScp()
         else ScpDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
@@ -97,8 +97,10 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
         if (scpModel != null) {
             link = scpModel.link
             val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
-            scpModel = if (detailHtml.contains("抱歉，该页面尚无内容") || detailHtml.isEmpty())
-                getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
+            detailHtml?.let {
+                scpModel = if (it.contains("抱歉，该页面尚无内容") ||it.isEmpty())
+                    getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
+            }
         }
         return scpModel
 

@@ -45,7 +45,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
                     .fileName(getFileNameByIndex(position - 1))
-                    .register(ListDownloadListener(download.title, this))
+                    .register(ListDownloadListener(download.title, this, position - 1))
                     .save()
             bind(createOnClickListener(task), download) // 点击事件
             itemView.tag = download
@@ -122,7 +122,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
         }
     }
 
-    class ListDownloadListener(tag: Any, val holder: DownloadHolder) : DownloadListener(tag) {
+    class ListDownloadListener(tag: Any, val holder: DownloadHolder, val index: Int) : DownloadListener(tag) {
         override fun onFinish(t: File?, progress: Progress?) {
             holder.refreshStatus(FINISH)
             Log.i("freescp", "finish")
@@ -133,6 +133,10 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                     yesButton {
                         FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name
                                 ?: "", true)
+                        for (i in -1..4) {
+                            PreferenceUtil.setDetailDataLoadFinish(i, false)
+                        }
+                        PreferenceUtil.setDetailDataLoadFinish(index, true)
                     }
                     noButton { }
                 }?.show()

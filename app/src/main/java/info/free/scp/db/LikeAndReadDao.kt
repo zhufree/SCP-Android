@@ -14,22 +14,22 @@ interface LikeAndReadDao {
     @Insert(onConflict = REPLACE)
     fun save(info: ScpLikeModel)
 
-    @Query("SELECT link, title,hasRead, `like` FROM LikeAndReadTable WHERE link = :link LIMIT 1")
+    @Query("SELECT link, title,hasRead, `like` FROM like_table WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpLikeModel?
 
-    @Query("SELECT * FROM LikeAndReadTable WHERE `like` = 1")
+    @Query("SELECT * FROM like_table WHERE `like` = 1")
     fun getLikeList(): List<ScpLikeModel>
 
-    @Query("SELECT * FROM LikeAndReadTable WHERE `like` = 1 ORDER BY title")
+    @Query("SELECT * FROM like_table WHERE `like` = 1 ORDER BY title")
     fun getOrderedLikeList(): List<ScpLikeModel>
 
-    @Query("SELECT count(*) FROM LikeAndReadTable WHERE `like` = 1")
+    @Query("SELECT count(*) FROM like_table WHERE `like` = 1")
     fun getLikeCount(): Int
 
-    @Query("SELECT count(*) FROM LikeAndReadTable WHERE hasRead = 1")
+    @Query("SELECT count(*) FROM like_table WHERE hasRead = 1")
     fun getReadCount(): Int
 
-    @Query("DELETE FROM LikeAndReadTable")
+    @Query("DELETE FROM like_table")
     fun clear()
     // AND last_update >= :timeout
 }

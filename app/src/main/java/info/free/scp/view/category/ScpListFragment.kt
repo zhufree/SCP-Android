@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDatabase
@@ -62,7 +63,7 @@ class ScpListFragment : BaseFragment() {
                         PreferenceUtil.addPoints(2)
                         val intent = Intent()
                         intent.putExtra("link", it[position]?.link)
-                        intent.putExtra("sId", it[position]?.id)
+                        intent.putExtra("scp_type", if (it[position] is ScpCollectionModel) 1 else 0)
                         intent.setClass(mContext, DetailActivity::class.java)
                         startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                     }
@@ -90,16 +91,16 @@ class ScpListFragment : BaseFragment() {
 
             }
             SCPConstants.Category.SCP_EX -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_EX))
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_EX_CN))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
             }
 //            SCPConstants.Category.SCP_EX_CN -> {
-//                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_EX_CN))
+//                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
 //            }
             SCPConstants.Category.SCP_ABNORMAL -> {
                 scpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
                 // 三句话外围
-                scpList?.add(ScpDatabase.getInstance().scpDao().getByLink("/short-stories"))
+                scpList?.add(ScpDatabase.getInstance().scpDao().getScpByLink("/short-stories"))
             }
             SCPConstants.Category.ABOUT_INFO -> {
                 // 相关材料
@@ -112,9 +113,9 @@ class ScpListFragment : BaseFragment() {
 
             SCPConstants.Category.SCP_ARCHIVES -> {
                 when (clickPosition) {
-                    0->scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_ARCHIVED))
-                    1->scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
-                    2->scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_REMOVED))
+                    0 -> scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
+                    1 -> scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
+                    2 -> scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
                 }
             }
             SCPConstants.Category.TALES -> {
@@ -123,54 +124,54 @@ class ScpListFragment : BaseFragment() {
             }
             SCPConstants.Category.TALES_CN -> {
                 scpList?.addAll(ScpDatabase.getInstance().scpDao().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES_CN
-                        ,taleCategory[clickPosition]))
+                        , taleCategory[clickPosition]))
             }
             SCPConstants.Category.STORY_SERIES -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_STORY_SERIES))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES))
             }
             SCPConstants.Category.STORY_SERIES_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_STORY_SERIES_CN))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES_CN))
             }
             SCPConstants.Category.JOKE -> {
                 // 内容较少，直接全部加载
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_JOKE))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE))
             }
             SCPConstants.Category.JOKE_CN -> {
                 // 内容较少，直接全部加载
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_JOKE_CN))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE_CN))
             }
             SCPConstants.Category.SETTINGS -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_SETTINGS))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS))
             }
             SCPConstants.Category.SETTINGS_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
             }
             SCPConstants.Category.CONTEST -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_CONTEST))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST))
             }
             SCPConstants.Category.CONTEST_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
             }
 
             SCPConstants.Category.TALES_BY_TIME -> {
                 if (taleTimeList.isEmpty()) {
-                    taleTimeList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SAVE_TALES_CN))
+                    taleTimeList.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_TALES_CN))
                 }
                 when (clickPosition) {
                     0 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2018") == true })
+                        scpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2018") == true })
                     }
                     1 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2017") == true })
+                        scpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2017") == true })
                     }
                     2 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2016") == true })
+                        scpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2016") == true })
                     }
                     3 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2015") == true })
+                        scpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2015") == true })
                     }
                     4 -> {
-                        scpList?.addAll(taleTimeList.filter { it.subScpType?.startsWith("2014") == true })
+                        scpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2014") == true })
                     }
                 }
 

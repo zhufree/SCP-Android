@@ -17,7 +17,10 @@ interface ScpDao {
     fun saveAll(scps: List<ScpItemModel>)
 
     @Query("SELECT * FROM scps WHERE link = :link LIMIT 1")
-    fun getByLink(link: String): ScpItemModel?
+    fun getScpByLink(link: String): ScpItemModel?
+
+    @Query("SELECT * FROM scp_collection WHERE link = :link LIMIT 1")
+    fun getColleectionByLink(link: String): ScpCollectionModel?
 
     @Query("SELECT * FROM scps WHERE `_index` = :index+1 AND scp_type = :scpType LIMIT 1")
     fun getNext(index: Int, scpType: Int): ScpItemModel?
@@ -25,16 +28,13 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `_index` = :index-1 AND scp_type = :scpType LIMIT 1")
     fun getPreview(index: Int, scpType: Int): ScpItemModel?
 
-    @Query("SELECT * FROM scps WHERE `scp_type` = :type")
+    @Query("SELECT * FROM scps WHERE `scp_type` = :type ORDER BY _index")
     fun getAllScpListByType(type: Int): List<ScpItemModel>
 
     @Query("SELECT * FROM scp_collection WHERE `scp_type` = :type")
     fun getAllCollectionByType(type: Int): List<ScpCollectionModel>
 
-    @Query("SELECT * FROM scps WHERE `scp_type` = :type")
-    fun getUnreadScpListByType(type: Int): List<ScpItemModel>
-
-    @Query("SELECT * FROM scps WHERE `scp_type` = :type AND `sub_scp_type` = :letterOrMonth ")
+    @Query("SELECT * FROM scps WHERE `scp_type` = :type AND sub_scp_type = :letterOrMonth ")
     fun getTalesByTypeAndSubType(type: Int, letterOrMonth: String): List<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")

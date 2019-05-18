@@ -53,12 +53,12 @@ object PreferenceUtil {
     /**
      * 服务器数据更新时间，last_update_time_0/1/2/3/4
      */
-    fun setServerLastUpdateTime(dbIndex: String, time: String) {
-        setStringValue(UPDATE_SP, dbIndex, time)
+    fun setServerLastUpdateTime(dbIndex: String, time: Long) {
+        setLongValue(UPDATE_SP, dbIndex, time)
     }
 
-    fun getServerLastUpdateTime(dbIndex: Int): String {
-        return getStringValue(UPDATE_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
+    fun getServerLastUpdateTime(dbIndex: Int): Long {
+        return getLongValue(UPDATE_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
     }
 
     /**
@@ -86,14 +86,14 @@ object PreferenceUtil {
     /**
      * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
      */
-    fun setDetailDataLoadFinish(downloadType: Int, value: Boolean) {
+    fun setDetailDataLoadFinish(dbIndex: Int, value: Boolean) {
         if (value) {
-            setDetailLastLoadTime(downloadType, Utils.formatNow())
+            setDetailLastLoadTime(dbIndex, System.currentTimeMillis())
         }
-        setBooleanValue(INIT_SP, downloadType.toString(), value)
+        setBooleanValue(INIT_SP, dbIndex.toString(), value)
     }
-    fun getDetailDataLoadFinish(downloadType: Int): Boolean {
-        return getBooleanValue(INIT_SP, downloadType.toString(), false)
+    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
+        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
     }
 
     /**
@@ -115,11 +115,11 @@ object PreferenceUtil {
     /**
      * 数据更新时间相关
      */
-    fun getDetailLastLoadTime(downloadType: Int): String {
-        return getStringValue(DOWNLOAD_SP,"${downloadType}_time" )
+    fun getDetailLastLoadTime(dbIndex: Int): Long {
+        return getLongValue(DOWNLOAD_SP,"${dbIndex}_time" )
     }
-    fun setDetailLastLoadTime(downloadType: Int, time: String) {
-        setStringValue(DOWNLOAD_SP, "${downloadType}_time", time)
+    fun setDetailLastLoadTime(dbIndex: Int, time: Long) {
+        setLongValue(DOWNLOAD_SP, "${dbIndex}_time", time)
     }
 
 
@@ -285,7 +285,7 @@ object PreferenceUtil {
         }
     }
 
-    fun getIfHideFinished(): Boolean {
+    fun getHideFinished(): Boolean {
         return getBooleanValue("read_settings", "hide_finished_article")
     }
 

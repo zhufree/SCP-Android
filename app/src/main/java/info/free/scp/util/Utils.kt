@@ -83,7 +83,7 @@ object Utils {
         return enabledNetwork(context) && !enabledWifi(context)
     }
 
-    private fun formatDate(time: Long): String {
+    fun formatDate(time: Long): String {
         val format =  SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
         return format.format(time)
     }

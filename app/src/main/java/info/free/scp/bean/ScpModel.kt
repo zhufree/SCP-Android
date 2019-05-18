@@ -20,12 +20,8 @@ abstract class ScpModel(
         var link: String = "", var title: String = "", // 都有的
         @ColumnInfo(name = "scp_type")
         var scpType: Int = -1,
-        @ColumnInfo(name = "sub_scp_type")
-        var subScpType: String? = "",
         @ColumnInfo(name = "download_type")
         var downloadType: Int = -1,
-        var author: String? = "", // 部分有的
+        var author: String? = "" // 部分有的
 //        @Ignore var tags: String = "", // 部分有的
-//                    var isCollection: Int = 0,
-        @Ignore var hasRead: Int = 0, @Ignore var like: Int = 0 // 预留：读过，收藏
 )

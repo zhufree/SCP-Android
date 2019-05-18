@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.db.ScpDatabase
@@ -29,7 +30,7 @@ class SearchActivity : BaseActivity() {
         setContentView(R.layout.activity_search)
         initToolbar()
 
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, androidx.recyclerview.widget.LinearLayoutManager.VERTICAL, false)
+        val lm = androidx.recyclerview.widget.LinearLayoutManager(this, VERTICAL, false)
         rv_search_result?.layoutManager = lm
         btn_search?.setOnClickListener {
             val keyword = et_search_input?.text?.toString()?:""
@@ -71,6 +72,8 @@ class SearchActivity : BaseActivity() {
         }
     }
     private fun searchByDetail(keyword:String) {
+        EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
+        PreferenceUtil.addPoints(5)
         pb_searching?.visibility = VISIBLE
         doAsync {
             val scpList = ScpDatabase.getInstance().scpDao().searchScpByDetail("%$keyword%")
@@ -96,35 +99,6 @@ class SearchActivity : BaseActivity() {
                 pb_searching?.visibility = GONE
             }
         }
-//        Flowable.create<MutableList<ScpItemModel>>({emitter->
-//            Log.i("search", "开始检索")
-//            EventUtil.onEvent(this, EventUtil.searchDetail, keyword)
-//            emitter.onNext(ScpDataHelper.getInstance().searchScpInDetailByKeyword(keyword))
-//            emitter.onComplete()
-//        }, BackpressureStrategy.BUFFER).subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe {scpList->
-//                    resultList.clear()
-//                    resultList.addAll(scpList)
-//                    Log.i("search", resultList.size.toString())
-//                    if (adapter == null) {
-//                        adapter = SearchResultAdapter(this@SearchActivity, resultList)
-//                        rv_search_result?.adapter = adapter
-//                        adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-//                            override fun onItemClick(view: View, position: Int) {
-//                                val intent = Intent()
-//                                intent.putExtra("link", resultList[position]?.link)
-//                                intent.putExtra("sId", resultList[position]?.sId)
-//                                intent.setClass(this@SearchActivity, DetailActivity::class.java)
-//                                startActivity(intent)
-//                            }
-//                        }
-//                    } else {
-//                        adapter?.notifyDataSetChanged()
-//                    }
-//                    pb_searching?.visibility = GONE
-//                }
-        PreferenceUtil.addPoints(5)
     }
 
     private fun initToolbar() {

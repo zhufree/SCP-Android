@@ -14,7 +14,8 @@ import kotlinx.serialization.SerialName
 
 @Entity(tableName = "scps")
 data class ScpItemModel(
+        @ColumnInfo(name = "sub_scp_type")
+        var subScpType: String? = "",
         @ColumnInfo(name = "created_time")
         var createdTime: String? = "" // 基金会故事创建时间
-//        @Ignore var tags: String = "", // 部分有的
 ):ScpModel()

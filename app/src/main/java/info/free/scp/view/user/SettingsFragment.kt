@@ -35,12 +35,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
-        findPreference<SwitchPreference>("dark_mode")?.setDefaultValue(ThemeUtil.currentTheme == 1)
-
+        findPreference<SwitchPreference>("dark_mode")?.isChecked = ThemeUtil.currentTheme == 1
         findPreference<SwitchPreference>("dark_mode")?.setOnPreferenceClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
-            true
+            false
         }
 
         findPreference<Preference>("read_settings")?.setOnPreferenceClickListener {

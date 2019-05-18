@@ -41,9 +41,6 @@ class FeedFragment : BaseFragment() {
         val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_feed?.adapter = feedPagerAdapter
         tab_feed?.setupWithViewPager(vp_feed)
-//        HttpManager.instance.getLatest {
-//            Log.i("feed", it.toString())
-//        }
     }
 
     companion object {

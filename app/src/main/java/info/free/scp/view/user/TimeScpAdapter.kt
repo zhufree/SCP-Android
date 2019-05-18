@@ -28,6 +28,6 @@ class TimeScpAdapter(mContext: Context, dataList: MutableList<ScpRecordModel?>)
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         holder.itemView.tag = position
         holder.setData(dataList[position]?.link?:"", dataList[position]?.title?:"",
-                "", null)
+                dataList[position]?.viewTime.toString(), null)
     }
 }

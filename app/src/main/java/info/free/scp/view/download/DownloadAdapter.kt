@@ -79,6 +79,8 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 clickListener = listener
                 download = item
                 index = item.dbIndex
+                tvDownloadTime.text = "本地同步时间：" + item.lastDownloadTime
+                tvUpdateTime.text = "服务器更新时间：" + item.lastUpdateTime
                 val fillColor = when (item.status) {
                     FINISH -> Color.GREEN
                     NONE -> Color.LTGRAY
@@ -112,7 +114,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             if (status == FINISH) {
                 binding.tvDownloadProgress.text = ""
                 // TODO 更新时间 离线完成时间
-                PreferenceUtil.setDetailLastLoadTime(index, Utils.formatNow())
+                PreferenceUtil.setDetailLastLoadTime(index, System.currentTimeMillis())
             }
         }
 

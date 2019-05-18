@@ -17,11 +17,20 @@ interface LikeAndReadDao {
     @Query("SELECT link, title,hasRead, `like` FROM like_table WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpLikeModel?
 
+    @Query("SELECT `like` FROM like_table WHERE link = :link LIMIT 1")
+    fun getLikeByLink(link: String): Boolean?
+
+    @Query("SELECT hasRead FROM like_table WHERE link = :link LIMIT 1")
+    fun getHasReadByLink(link: String): Boolean?
+
     @Query("SELECT * FROM like_table WHERE `like` = 1")
     fun getLikeList(): List<ScpLikeModel>
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 ORDER BY title")
     fun getOrderedLikeList(): List<ScpLikeModel>
+
+    @Query("SELECT * FROM like_table WHERE hasRead = 1")
+    fun getHasReadList(): List<ScpLikeModel>
 
     @Query("SELECT count(*) FROM like_table WHERE `like` = 1")
     fun getLikeCount(): Int

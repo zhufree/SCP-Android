@@ -10,9 +10,11 @@ import info.free.scp.R
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
+import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startService
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -32,7 +34,6 @@ class UpdateManager(private var activity: BaseActivity) {
 
     private val currentVersionCode = BuildConfig.VERSION_CODE
 
-    private var mLocalBroadcastManager: androidx.localbroadcastmanager.content.LocalBroadcastManager? = null
 
     /**
      * 检测更新和数据初始化
@@ -58,21 +59,9 @@ class UpdateManager(private var activity: BaseActivity) {
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
-
-            // FIXME 打包后下版本开发删掉这块代码
-            // 原来版本的数据库名叫 scp_info.db，需要把其中data的部分删除，
-            // 重新下载为scp_data.db，scp_info.db中把data部分删除
-            // TODO 第一次安装这个新版本检测：如果本地有数据库，同步like等信息 第一次安装app和第一次安装这个版本区分一下
-
             AppInfoDatabase.getInstance()
-//            val fileHelper = FileHelper.getInstance(activity)
-//            if (fileHelper.checkFileExist(fileHelper.dbDir + fileHelper.infoDBFilename)) {
-//                fileHelper.renameFile(fileHelper.dbDir + fileHelper.infoDBFilename)
-//            }
-            // TODO 然后删掉data类的信息
         }
 
-        // 普通情况下一天检测一次更新
         if (Utils.enabledNetwork(activity)) {
             PreferenceUtil.addPoints(1)
             Log.i("scp", "checkUpdate")
@@ -97,7 +86,7 @@ class UpdateManager(private var activity: BaseActivity) {
                         }
                         // 上次数据更新时间，分几个库
                         if (config.key.contains("last_update_time")) {
-                            PreferenceUtil.setServerLastUpdateTime(config.key, config.value)
+                            PreferenceUtil.setServerLastUpdateTime(config.key, config.value.toLong())
                         }
                         // 数据下载链接
                         if (config.key.contains("db_link")) {
@@ -119,9 +108,14 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setNegativeButton("暂不升级") { _, _ -> }
                                 .create().show()
                         // 有新版本就不检查数据更新，知道更新到最新
+                    } else {
+                        // 检查总数据库有没有更新并下载
+                        if (PreferenceUtil.getServerLastUpdateTime(-1) > PreferenceUtil.getDetailLastLoadTime(-1)) {
+                            // 开始离线主数据库
+                            activity.startService<InitDetailService>()
+                        }
                     }
                 }
-
             }
         }
     }

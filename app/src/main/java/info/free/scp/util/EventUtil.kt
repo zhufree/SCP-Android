@@ -40,7 +40,6 @@ click_about_app, 关于app, 1
 object EventUtil {
 
 
-    const val clickSyncData = "sync_data"
     const val clickDonation = "click_donation"
     const val clickOpenInBrowser = "open_in_browser"
     const val clickShareByPicture = "click_share_by_picture"

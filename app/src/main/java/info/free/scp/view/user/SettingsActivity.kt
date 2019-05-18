@@ -55,7 +55,7 @@ class SettingsActivity : BaseActivity() {
             }
         }
         supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
-            ReadSettingsFragment()).commit()
+                ReadSettingsFragment()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -75,9 +75,11 @@ class SettingsActivity : BaseActivity() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
+            findPreference<SwitchPreference>("hide_finished_article")?.isChecked =
+                    PreferenceUtil.getHideFinished()
             findPreference<SwitchPreference>("hide_finished_article")?.setOnPreferenceClickListener {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
-                true
+                false
             }
             findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { _, any ->
                 EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())

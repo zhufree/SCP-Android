@@ -29,10 +29,6 @@ class SubFeedFragment : Fragment() {
 
     private lateinit var viewModel: FeedListViewModel
 
-//    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-//                              savedInstanceState: Bundle?): View? {
-//        return inflater.inflate(R.layout.sub_feed_fragment, container, false)
-//    }
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -49,17 +45,12 @@ class SubFeedFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-//        viewModel = ViewModelProviders.of(this).get(FeedListViewModel::class.java)
-//        refresh()
-    }
 
     private fun subscribeUi(adapter: FeedAdapter) {
         val factory = InjectorUtils.provideFeedListViewModelFactory(requireContext())
         viewModel = ViewModelProviders.of(this, factory)
                 .get(FeedListViewModel::class.java)
-        feedType = arguments?.getInt("feedType")?: LATEST_CREATED
+        feedType = arguments?.getInt("feedType") ?: LATEST_CREATED
         Log.i("feed", "type = $feedType")
         viewModel.getFeed(feedType)?.observe(viewLifecycleOwner, Observer { result ->
             if (result != null && result.isNotEmpty())
@@ -68,9 +59,4 @@ class SubFeedFragment : Fragment() {
         viewModel.loadFeed(feedType)
 
     }
-
-    fun refresh() {
-        viewModel.loadFeed(feedType)
-    }
-
 }

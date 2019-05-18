@@ -2,12 +2,18 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4691bbad502bb46f5979455c86784bba",
+    "identityHash": "fd163fb5e8c01bf6e54ee403c747cc13",
     "entities": [
       {
         "tableName": "scps",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`created_time` TEXT, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sub_scp_type` TEXT, `created_time` TEXT, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
+          {
+            "fieldPath": "subScpType",
+            "columnName": "sub_scp_type",
+            "affinity": "TEXT",
+            "notNull": false
+          },
           {
             "fieldPath": "createdTime",
             "columnName": "created_time",
@@ -43,12 +49,6 @@
             "columnName": "scp_type",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "subScpType",
-            "columnName": "sub_scp_type",
-            "affinity": "TEXT",
-            "notNull": false
           },
           {
             "fieldPath": "downloadType",
@@ -106,37 +106,37 @@
       },
       {
         "tableName": "scp_collection",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`creator` TEXT NOT NULL, `subtext` TEXT NOT NULL, `snippet` TEXT NOT NULL, `desc` TEXT NOT NULL, `sub_links` TEXT NOT NULL, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `sub_scp_type` TEXT, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`creator` TEXT, `subtext` TEXT, `snippet` TEXT, `desc` TEXT, `sub_links` TEXT, `_id` INTEGER NOT NULL, `_index` INTEGER NOT NULL, `link` TEXT NOT NULL, `title` TEXT NOT NULL, `scp_type` INTEGER NOT NULL, `download_type` INTEGER NOT NULL, `author` TEXT, PRIMARY KEY(`_id`))",
         "fields": [
           {
             "fieldPath": "creator",
             "columnName": "creator",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "subtext",
             "columnName": "subtext",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "snippet",
             "columnName": "snippet",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "desc",
             "columnName": "desc",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "subLinks",
             "columnName": "sub_links",
             "affinity": "TEXT",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "id",
@@ -169,12 +169,6 @@
             "notNull": true
           },
           {
-            "fieldPath": "subScpType",
-            "columnName": "sub_scp_type",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "downloadType",
             "columnName": "download_type",
             "affinity": "INTEGER",
@@ -200,7 +194,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4691bbad502bb46f5979455c86784bba\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"fd163fb5e8c01bf6e54ee403c747cc13\")"
     ]
   }
 }

@@ -26,7 +26,7 @@ import org.jetbrains.anko.alert
  * Created by zhufree on 2018/8/22.
  */
 
-class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
+class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view) {
     private val categoryHeight = PreferenceUtil.getCategoryHeight()
     private val categoryInterval = PreferenceUtil.getCategoryInterval()
     private var mContext: Context? = null
@@ -36,7 +36,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
         rlLp.height = Utils.dp2px(categoryHeight)
         val lp = itemView.cv_category_item.layoutParams as RecyclerView.LayoutParams
         lp.topMargin = Utils.dp2px(categoryInterval)
-        lp.bottomMargin = Utils.dp2px(categoryInterval/2)
+        lp.bottomMargin = Utils.dp2px(categoryInterval / 2)
         itemView.btn_read_later?.visibility = VISIBLE
         mContext = itemView.context
     }
@@ -44,14 +44,13 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     fun setData(model: ScpModel?, laterViewList: MutableList<ScpRecordModel>) {
         if (model == null) return
         itemView.tv_scp_title?.text = model.title
-//                if (model.notFound == 1 && !model.title.contains("拒绝访问")
-//                && !model.title.contains("禁止访问"))
-//            "${model.title}[禁止访问]" else model.title
-        itemView.iv_like_star?.visibility = if (model.like == 1) VISIBLE else GONE
-        itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
+        itemView.iv_like_star?.visibility = if (AppInfoDatabase.getInstance().likeAndReadDao()
+                        .getLikeByLink(model.link) == true) VISIBLE else GONE
+        itemView.iv_read_label?.visibility = if (AppInfoDatabase.getInstance().likeAndReadDao()
+                        .getHasReadByLink(model.link) == true) VISIBLE else GONE
         itemView.iv_read_label.setOnClickListener {
             itemView.context.alert("是否确定取消已读这篇文档？", "取消已读") {
-                positiveButton("确定"){
+                positiveButton("确定") {
                     EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
                     var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
                     if (scpInfo == null) {
@@ -59,23 +58,10 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view){
                     }
                     scpInfo.hasRead = !scpInfo.hasRead
                     AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                    itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
+                    itemView.iv_read_label?.visibility = if (scpInfo.hasRead) VISIBLE else GONE
                 }
-                negativeButton("我手滑了"){}
+                negativeButton("我手滑了") {}
             }.show()
-//            AlertDialog.Builder(mContext)
-//                    .setTitle("取消已读")
-//                    .setMessage("是否确定取消已读这篇文档？")
-//                    .setPositiveButton("确定") { _, _ ->
-//                        EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
-//                        model.hasRead = if (model.hasRead == 0) 1 else 0
-//                        ScpDataHelper.getInstance().insertLikeAndReadInfo(model)
-//                        itemView.iv_read_label?.visibility = if (model.hasRead == 1) VISIBLE else GONE
-//                    }
-//                    .setNegativeButton("我手滑了") {dialog, _ ->
-//                        dialog.dismiss()
-//                    }
-//                    .create().show()
         }
         var isInLaterViewList = model.link in laterViewList.map { it.link }
         if (isInLaterViewList) {

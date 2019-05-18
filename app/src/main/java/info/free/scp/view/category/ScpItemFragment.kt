@@ -56,7 +56,6 @@ class ScpItemFragment : BaseFragment() {
                     PreferenceUtil.addPoints(2)
                     val intent = Intent()
                     intent.putExtra("link", it[position]?.link)
-                    intent.putExtra("sId", it[position]?.id)
                     intent.setClass(mContext, DetailActivity::class.java)
                     startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
                 }

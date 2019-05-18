@@ -1,11 +1,9 @@
 package info.free.scp.db
 
-import android.database.sqlite.SQLiteDatabase
-import android.database.sqlite.SQLiteOpenHelper
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.INFO_DB_NAME
-import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpItemModel
+import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpModel
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.util.PreferenceUtil
 
@@ -16,41 +14,51 @@ import info.free.scp.util.PreferenceUtil
  */
 
 
-const val DB_VERSION = 4
-
-class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, null, DB_VERSION) {
+class ScpDataHelper {
     private var randomCount = 0
-
-    override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
-        db?.execSQL(ScpTable.CREATE_VIEW_LIST_TABLE_SQL)
-    }
-
-    override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        if (oldVersion != newVersion) {
-            db?.execSQL(ScpTable.CREATE_LIKE_AND_READ_TABLE_SQL)
-            db?.execSQL(ScpTable.CREATE_VIEW_LIST_TABLE_SQL)
-        }
-    }
 
     /**
      * 获取某一type的scp list
      */
     fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpItemModel> {
         val end = start + range
-        val resultList = emptyList<ScpItemModel>().toMutableList()
-        if (PreferenceUtil.getIfHideFinished()) {
-            resultList.addAll(ScpDatabase.getInstance().scpDao().getUnreadScpListByType(type))
+        var queryList = emptyList<ScpItemModel>().toMutableList()
+        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        // 数据库检索
+        queryList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
+        // 截取序列中的一部分
+        if (queryList.size > 0 && start < queryList.size) {
+            queryList = queryList.subList(start, if (end < queryList.size) end else queryList.size - 1)
+        }
+        if (PreferenceUtil.getHideFinished()) {
+            // 去掉已读部分
+            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+            queryList.removeAll { hasReadList.map { it_ ->
+                it_.link
+            }.contains(it.link) }
+        }
+
+        return queryList
+    }
+    fun getScpByType(type: Int): MutableList<ScpModel> {
+        val queryList = emptyList<ScpModel>().toMutableList()
+        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        // 数据库检索
+        if (type in (13..17)) {
+            queryList.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(type))
         } else {
-            resultList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
+            queryList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
         }
-        resultList.sortBy {
-            it.index
+
+        if (PreferenceUtil.getHideFinished()) {
+            // 去掉已读部分
+            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+            queryList.removeAll { hasReadList.map { it_ ->
+                it_.link
+            }.contains(it.link) }
         }
-        if (resultList.size == 0 || start > resultList.size) {
-            return resultList
-        }
-        return resultList.subList(start, if (end < resultList.size) end else resultList.size - 1)
+
+        return queryList
     }
 
 
@@ -98,8 +106,10 @@ class ScpDataHelper : SQLiteOpenHelper(ScpApplication.context, INFO_DB_NAME, nul
             link = scpModel.link
             val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
             detailHtml?.let {
-                scpModel = if (it.contains("抱歉，该页面尚无内容") ||it.isEmpty())
-                    getRandomScp(typeRange) else ScpDatabase.getInstance().scpDao().getByLink(link)
+                scpModel = if (it.contains("抱歉，该页面尚无内容") || it.isEmpty())
+                    getRandomScp(typeRange) else scpModel
+            }?:run{
+                scpModel = getRandomScp(typeRange)
             }
         }
         return scpModel

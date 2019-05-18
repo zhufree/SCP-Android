@@ -22,11 +22,11 @@ object NewbieManager {
             when (i) {
                 0 -> {
                     noticeTitle = "第一次听说scp基金会"
-                    noticeMessage = "SCP基金会是一个接力小说网站，网友们在此创作基于同一世界观下的脑洞和设定..."
+                    noticeMessage = "SCP基金会是一个接力小说网站，网友们在此创作基于同一世界观下的脑洞和设定...点击下载离线数据库开始阅读吧"
                 }
                 1 -> {
                     noticeTitle = "文档才是本体（虽然它们看起来像说明书"
-                    noticeMessage = "欢迎你，云爱好者，从这里你可以开始接触SCP基金会的真正面貌..."
+                    noticeMessage = "欢迎你，云爱好者，从这里你可以开始接触SCP基金会的真正面貌...点击下载离线数据库开始阅读吧"
                 }
                 2 -> {
                     noticeTitle = "来啦老弟！"

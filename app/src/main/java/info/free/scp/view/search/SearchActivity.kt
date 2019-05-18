@@ -51,7 +51,7 @@ class SearchActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
-        resultList.addAll(ScpDatabase.getInstance().scpDao().searchScpByTitle(keyword))
+        resultList.addAll(ScpDatabase.getInstance()?.scpDao()?.searchScpByTitle(keyword)?: emptyList())
         if (resultList.size == 0) {
             Toaster.show("搜索结果为空")
         }
@@ -76,7 +76,7 @@ class SearchActivity : BaseActivity() {
         PreferenceUtil.addPoints(5)
         pb_searching?.visibility = VISIBLE
         doAsync {
-            val scpList = ScpDatabase.getInstance().scpDao().searchScpByDetail("%$keyword%")
+            val scpList = ScpDatabase.getInstance()?.scpDao()?.searchScpByDetail("%$keyword%")?: emptyList()
             uiThread {
                 resultList.clear()
                 resultList.addAll(scpList)

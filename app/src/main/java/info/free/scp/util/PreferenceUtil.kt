@@ -16,7 +16,6 @@ object PreferenceUtil {
 
     const val INIT_SP = "init"
     const val DOWNLOAD_SP = "download"
-    const val UPDATE_SP = "update"
     const val APP_SP = "app"
 
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
@@ -31,34 +30,24 @@ object PreferenceUtil {
      * 检测是不是第一次安装app
      */
     fun isFirstInstallApp(): Boolean {
-        val sp = getPrivateSharedPreference(INIT_SP)
-        return sp?.getBoolean("first_install", true)?:true
+        return getBooleanValue(INIT_SP, "firstInstall", true)
     }
 
     fun setFirstInstallApp() {
-        val sp = getPrivateSharedPreference(INIT_SP)
-        sp?.edit()?.putBoolean("first_install", false)?.apply()
-    }
-    /**
-     * 目录和数据库是否离线完成，用boolean记录
-     */
-    fun getInitCategoryFinish(): Boolean {
-        return getBooleanValue(INIT_SP, "init_category")
+        setBooleanValue(INIT_SP, "firstInstall", false)
     }
 
-    fun setInitCategoryFinish(finish: Boolean) {
-        setBooleanValue(INIT_SP, "init_category", finish)
-    }
 
     /**
      * 服务器数据更新时间，last_update_time_0/1/2/3/4
+     * key是字段名
      */
-    fun setServerLastUpdateTime(dbIndex: String, time: Long) {
-        setLongValue(UPDATE_SP, dbIndex, time)
+    fun setServerLastUpdateTime(dbName: String, time: Long) {
+        setLongValue(DOWNLOAD_SP, dbName, time)
     }
 
     fun getServerLastUpdateTime(dbIndex: Int): Long {
-        return getLongValue(UPDATE_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
+        return getLongValue(DOWNLOAD_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
     }
 
     /**
@@ -66,10 +55,10 @@ object PreferenceUtil {
      * db_link_0/1/2/3/4/all
      */
     fun setDataDownloadLink(dbName: String, link: String) {
-        setStringValue(UPDATE_SP, dbName, link)
+        setStringValue(DOWNLOAD_SP, dbName, link)
     }
     fun getDataDownloadLink(dbIndex: Int):String {
-        return getStringValue(UPDATE_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
+        return getStringValue(DOWNLOAD_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
     }
 
     /**
@@ -77,11 +66,11 @@ object PreferenceUtil {
      */
 
     fun setAutoDownload(auto: Boolean) {
-        setBooleanValue(UPDATE_SP, "auto_download", auto)
+        setBooleanValue(DOWNLOAD_SP, "auto_download", auto)
     }
 
     fun getAutoDownload(): Boolean {
-        return getBooleanValue(UPDATE_SP, "auto_download")
+        return getBooleanValue(DOWNLOAD_SP, "auto_download")
     }
     /**
      * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
@@ -96,22 +85,7 @@ object PreferenceUtil {
         return getBooleanValue(INIT_SP, dbIndex.toString(), false)
     }
 
-    /**
-     * 下载进度记录
-     */
-    fun getSingleDbLoadCount(downloadType: Int): Int {
-        return getIntValue(DOWNLOAD_SP, downloadType.toString())
-    }
-    fun setSingleDbLoadCount(downloadType: Int, progress: Int) {
-        setIntValue(DOWNLOAD_SP, downloadType.toString(), progress)
-    }
 
-    fun addSingleDbLoadCount(downloadType: Int) {
-        setIntValue(DOWNLOAD_SP, downloadType.toString(), getSingleDbLoadCount(downloadType) +1)
-    }
-    fun resetSingleDbLoadCount(downloadType: Int) {
-        setSingleDbLoadCount(downloadType, 0)
-    }
     /**
      * 数据更新时间相关
      */
@@ -120,6 +94,10 @@ object PreferenceUtil {
     }
     fun setDetailLastLoadTime(dbIndex: Int, time: Long) {
         setLongValue(DOWNLOAD_SP, "${dbIndex}_time", time)
+    }
+
+    fun clearDownloadPref() {
+        getPrivateSharedPreference(DOWNLOAD_SP)?.edit()?.clear()?.apply()
     }
 
 

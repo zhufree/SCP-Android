@@ -151,8 +151,9 @@ class LaterAndHistoryActivity : BaseActivity() {
                 }
             }
             if (numberString.isNotEmpty()) {
-                val targetScp = ScpDatabase.getInstance().scpDao().getScpByNumber(type, if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
-                    "-$numberString-" else "-$numberString")
+                val targetScp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(type,
+                        if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
+                    "%-$numberString-%" else "%-$numberString %")
                 if (targetScp != null) {
                     print(targetScp)
                     ScpDataHelper.getInstance().insertViewListItem(targetScp.link, targetScp.title, LATER_TYPE)

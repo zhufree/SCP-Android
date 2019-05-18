@@ -25,7 +25,7 @@ class ScpDataHelper {
         var queryList = emptyList<ScpItemModel>().toMutableList()
         val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
-        queryList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
+        queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())
         // 截取序列中的一部分
         if (queryList.size > 0 && start < queryList.size) {
             queryList = queryList.subList(start, if (end < queryList.size) end else queryList.size - 1)
@@ -45,11 +45,26 @@ class ScpDataHelper {
         val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
         if (type in (13..17)) {
-            queryList.addAll(ScpDatabase.getInstance().scpDao().getAllCollectionByType(type))
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)?: emptyList())
         } else {
-            queryList.addAll(ScpDatabase.getInstance().scpDao().getAllScpListByType(type))
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())
         }
 
+        if (PreferenceUtil.getHideFinished()) {
+            // 去掉已读部分
+            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+            queryList.removeAll { hasReadList.map { it_ ->
+                it_.link
+            }.contains(it.link) }
+        }
+
+        return queryList
+    }
+    fun getTalesByTypeAndSubType(type: Int, subType: String): MutableList<ScpModel> {
+        val queryList = emptyList<ScpModel>().toMutableList()
+        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        // 数据库检索
+        queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getTalesByTypeAndSubType(type, subType)?: emptyList())
         if (PreferenceUtil.getHideFinished()) {
             // 去掉已读部分
             hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
@@ -78,7 +93,7 @@ class ScpDataHelper {
                 "/object-classes",
                 "/security-clearance-levels",
                 "/task-forces")
-        var resultList = ScpDatabase.getInstance().scpDao().getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
+        var resultList = ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)?: emptyList()
         resultList = resultList.filter {
             when (type) {
                 SCPConstants.ScpType.SAVE_INFO -> infoPageList.contains(it.link)
@@ -99,12 +114,13 @@ class ScpDataHelper {
         }
         var scpModel: ScpItemModel?
         var link = ""
-        scpModel = if (typeRange.isEmpty()) ScpDatabase.getInstance().scpDao().getRandomScp()
-        else ScpDatabase.getInstance().scpDao().getRandomScpByType(typeRange)
+        val args = typeRange.split(",")
+        scpModel = if (typeRange.isEmpty()) ScpDatabase.getInstance()?.scpDao()?.getRandomScp()
+        else ScpDatabase.getInstance()?.scpDao()?.getRandomScpByType(args[0], args[1])
 
-        if (scpModel != null) {
-            link = scpModel.link
-            val detailHtml = ScpDatabase.getInstance().detailDao().getDetail(link)
+        scpModel?.let { scp->
+            link = scp.link
+            val detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(link)
             detailHtml?.let {
                 scpModel = if (it.contains("抱歉，该页面尚无内容") || it.isEmpty())
                     getRandomScp(typeRange) else scpModel

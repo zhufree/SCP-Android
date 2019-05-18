@@ -5,16 +5,18 @@ import android.content.*
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.EditText
+import android.widget.LinearLayout.VERTICAL
 import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
 import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.startService
+import org.jetbrains.anko.*
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -47,13 +49,14 @@ class UpdateManager(private var activity: BaseActivity) {
      * ---finish---
      */
     fun checkAppData() {
-
         Logger.i("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
-            FileHelper.getInstance(activity).restoreDB() // 第一次安装app时检测
+            PreferenceUtil.clearDownloadPref()
+            // FIXME 下个版本开启
+//            FileHelper.getInstance(activity).restoreDB() // 第一次安装app时检测
 //            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
@@ -110,63 +113,14 @@ class UpdateManager(private var activity: BaseActivity) {
                         // 有新版本就不检查数据更新，知道更新到最新
                     } else {
                         // 检查总数据库有没有更新并下载
-                        if (PreferenceUtil.getServerLastUpdateTime(-1) > PreferenceUtil.getDetailLastLoadTime(-1)) {
+                        if (PreferenceUtil.getAutoDownload() && (PreferenceUtil.getServerLastUpdateTime(-1)
+                                        > PreferenceUtil.getDetailLastLoadTime(-1))) {
                             // 开始离线主数据库
                             activity.startService<InitDetailService>()
                         }
                     }
                 }
             }
-        }
-    }
-
-
-    fun checkUserInfo() {
-        if (PreferenceUtil.getInitCategoryFinish() && PreferenceUtil.getNickname().isEmpty()
-                && !activity.isFinishing) {
-            val inputView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_report, null)
-            val nameInputDialog = AlertDialog.Builder(activity)
-                    .setTitle("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）")
-                    .setView(inputView)
-                    .setPositiveButton("OK") { _, _ -> }
-                    .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                    .create()
-            nameInputDialog.show()
-            nameInputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-                PreferenceUtil.saveNickname(inputView.et_report.text.toString())
-                nameInputDialog.dismiss()
-                checkJob()
-            }
-        }
-        checkJob()
-    }
-
-    private fun checkJob() {
-        if (PreferenceUtil.getNickname().isNotEmpty() && PreferenceUtil.getJob().isEmpty()
-                && !activity.isFinishing) {
-            val jobList = arrayOf("收容专家", "研究员", "安全人员", "战术反应人员", "外勤特工", "机动特遣队作业员")
-            AlertDialog.Builder(activity)
-                    .setTitle("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业")
-                    .setItems(jobList) { out, which ->
-                        val field = out?.javaClass?.superclass?.getDeclaredField(
-                                "mShowing")
-                        field?.isAccessible = true
-                        //   将mShowing变量设为false，表示对话框已关闭
-                        field?.set(out, false)
-                        AlertDialog.Builder(activity)
-                                .setTitle(jobList[which])
-                                .setMessage(PreferenceUtil.getDescForJob(jobList[which]))
-                                .setPositiveButton("确定选择（暂时不可更改）") { inner, _ ->
-                                    PreferenceUtil.setJob(jobList[which])
-                                    EventUtil.onEvent(activity, EventUtil.chooseJob, jobList[which])
-                                    inner.dismiss()
-                                    field?.set(out, true)
-                                    out.dismiss()
-                                }
-                                .setNegativeButton("我手滑了") { dialog, _ -> dialog.dismiss() }
-                                .create().show()
-                    }
-                    .create().show()
         }
     }
 }

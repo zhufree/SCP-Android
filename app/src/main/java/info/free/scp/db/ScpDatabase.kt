@@ -8,6 +8,7 @@ import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
+import info.free.scp.util.FileHelper
 
 
 @Database(entities = [ScpItemModel::class, ScpDetail::class, ScpCollectionModel::class], version = 1)
@@ -18,14 +19,24 @@ abstract class ScpDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: ScpDatabase? = null
 
-        fun getInstance(): ScpDatabase {
-            if (INSTANCE == null) {
+        fun getInstance(): ScpDatabase? {
+            if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
                 INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                         SCP_DB_NAME)
                         .allowMainThreadQueries()
                         .build()
             }
-            return INSTANCE!!
+            return INSTANCE
+        }
+
+        fun getNewInstance() {
+            INSTANCE?.close()
+            if (FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
+                INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
+                        SCP_DB_NAME)
+                        .allowMainThreadQueries()
+                        .build()
+            }
         }
     }
 }

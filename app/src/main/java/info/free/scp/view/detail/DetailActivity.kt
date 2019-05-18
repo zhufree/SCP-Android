@@ -21,12 +21,10 @@ import android.view.View.VISIBLE
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
-import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
@@ -46,7 +44,7 @@ class DetailActivity : BaseActivity() {
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
     private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
-    private var scpType = 0 // 0 所有，1仅scp，2 故事，3 joke
+    private var itemType = 0 //
     private var url = ""
         set(value) {
             field = value
@@ -108,16 +106,16 @@ class DetailActivity : BaseActivity() {
         readType = intent.getIntExtra("read_type", 0)
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
-        scpType = intent.getIntExtra("scp_type", 0)
+        itemType = intent.getIntExtra("scp_type", 0)
 
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
-            scp = if (scpType == 0) ScpDatabase.getInstance().scpDao()
-                    .getScpByLink(url) else ScpDatabase.getInstance().scpDao()
-                    .getColleectionByLink(url)
+            scp = if (itemType == 0) ScpDatabase.getInstance()?.scpDao()
+                    ?.getScpByLink(url) else ScpDatabase.getInstance()?.scpDao()
+                    ?.getCollectionByLink(url)
         }
 
         fullUrl = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
@@ -150,8 +148,7 @@ class DetailActivity : BaseActivity() {
                         val postString = url.subSequence(30, url.length)
                         Log.i("detail", "url = $postString")
 //                        val scpList = ScpDataHelper.getInstance().getScpModelByLink(postString.toString())
-                        val scp = ScpDatabase.getInstance().scpDao()
-                                .getScpByLink(postString.toString())
+                        val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(postString.toString())
                         scp?.let {
                             historyIndex = historyList.size
                             historyList.add(it)
@@ -196,8 +193,7 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         detail_toolbar?.title = scp.title
         url = scp.link
-        detailHtml = ScpDatabase.getInstance().detailDao()
-                .getDetail(scp.link) ?: ""
+        detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
@@ -263,7 +259,6 @@ class DetailActivity : BaseActivity() {
                             val reportString = reportView.et_report.text.toString()
                             Log.i("report", reportString)
                             MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
-                            TCAgent.onError(this@DetailActivity, Throwable("url: $url, detail: $reportString"))
                             reportDialog.dismiss()
                         }
                     }
@@ -361,7 +356,11 @@ class DetailActivity : BaseActivity() {
         when (readType) {
             0 -> {
 //                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
-                scp = ScpDatabase.getInstance().scpDao().getNext(index, scpType)
+                scp = if (itemType == 0) {
+                    ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                } else {
+                    ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                }
                 scp?.let {
                     setData(it)
                 } ?: Toaster.show("已经是最后一篇了")
@@ -402,7 +401,11 @@ class DetailActivity : BaseActivity() {
                 when (index) {
                     0 -> Toaster.show("已经是第一篇了")
                     else -> {
-                        scp = ScpDatabase.getInstance().scpDao().getPreview(index, scpType)
+                        scp = if (itemType == 0) {
+                            ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
+                        } else {
+                            ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
+                        }
                         scp?.let {
                             setData(it)
                         }

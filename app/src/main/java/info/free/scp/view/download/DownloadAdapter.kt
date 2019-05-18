@@ -18,6 +18,7 @@ import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.*
 import info.free.scp.util.DownloadUtil.Status.DOWNLOADING
 import info.free.scp.util.DownloadUtil.Status.ERROR
@@ -41,6 +42,9 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
         // 绑定 holder
         holder.apply {
             val link = PreferenceUtil.getDataDownloadLink(position - 1)
+            if (link.isEmpty()) {
+                ScpApplication.currentActivity?.toast("下载链接未加载成功，请稍后再进入该页面")
+            }
             Logger.i("download: $position: $link")
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
@@ -64,7 +68,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             //            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
             if (task.progress.status == Progress.LOADING) {
                 task.pause()
-            } else {
+            } else if (task.progress.url.isNotEmpty()) {
                 task.start()
             }
         }
@@ -130,11 +134,19 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Log.i("freescp", "finish")
             if (ScpApplication.currentActivity != null) {
                 Log.i("freescp", ScpApplication.currentActivity.toString())
-                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？",
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？建议复制完成后重启一次app",
                         "下载完成") {
                     yesButton {
-                        FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name
-                                ?: "", true)
+                        ScpApplication.currentActivity?.toast("开始复制")
+                        doAsync {
+                            FileHelper(ScpApplication.currentActivity!!).copyDataBaseFile(t?.name
+                                    ?: "", true)
+                            ScpDatabase.getNewInstance()
+                            uiThread {
+                                ScpApplication.currentActivity?.toast("复制完成")
+                            }
+                        }
+
                         for (i in -1..4) {
                             PreferenceUtil.setDetailDataLoadFinish(i, false)
                         }

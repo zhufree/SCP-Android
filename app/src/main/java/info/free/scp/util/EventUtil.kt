@@ -1,7 +1,6 @@
 package info.free.scp.util
 
 import android.content.Context
-import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.ScpApplication
 
@@ -74,10 +73,8 @@ object EventUtil {
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)
-        TCAgent.onEvent(context, event)
     }
     fun onEvent(context: Context? = ScpApplication.context, event: String, arg: String) {
         MobclickAgent.onEvent(context, event, arg)
-        TCAgent.onEvent(context, event)
     }
 }

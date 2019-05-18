@@ -23,9 +23,6 @@ abstract class BaseFragment : Fragment() {
         super.onAttach(context)
     }
 
-    fun goToDocPage(entry_type: Int) {
-        startActivity<SeriesDocActivity>("entry_type" to entry_type)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

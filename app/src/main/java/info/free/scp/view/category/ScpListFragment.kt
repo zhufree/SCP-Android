@@ -100,7 +100,7 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.Category.SCP_ABNORMAL -> {
                 scpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
                 // 三句话外围
-                scpList?.add(ScpDatabase.getInstance().scpDao().getScpByLink("/short-stories"))
+                scpList?.add(ScpDatabase.getInstance()?.scpDao()?.getScpByLink("/short-stories"))
             }
             SCPConstants.Category.ABOUT_INFO -> {
                 // 相关材料
@@ -119,11 +119,11 @@ class ScpListFragment : BaseFragment() {
                 }
             }
             SCPConstants.Category.TALES -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES
+                scpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES
                         , taleCategory[clickPosition]))
             }
             SCPConstants.Category.TALES_CN -> {
-                scpList?.addAll(ScpDatabase.getInstance().scpDao().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES_CN
+                scpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES_CN
                         , taleCategory[clickPosition]))
             }
             SCPConstants.Category.STORY_SERIES -> {

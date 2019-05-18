@@ -2,12 +2,10 @@ package info.free.scp.view.base
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.tendcloud.tenddata.TCAgent
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.util.ThemeUtil
 import org.jetbrains.anko.AnkoLogger
@@ -21,15 +19,13 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
     }
 
     public override fun onResume() {
-        super.onResume()
         MobclickAgent.onResume(this)
-        TCAgent.onPageStart(this, localClassName)
+        super.onResume()
     }
 
     public override fun onPause() {
-        super.onPause()
         MobclickAgent.onPause(this)
-        TCAgent.onPageEnd(this, localClassName)
+        super.onPause()
     }
 
     /**

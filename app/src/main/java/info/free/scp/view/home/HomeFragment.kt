@@ -9,9 +9,12 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.category.SeriesDocActivity
+import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -71,6 +74,14 @@ class HomeFragment : BaseFragment() {
         tv_direct?.setOnClickListener {
             PreferenceUtil.addPoints(2)
             startActivity<DirectActivity>()
+        }
+    }
+
+    private fun goToDocPage(entry_type: Int) {
+        ScpDatabase.getInstance()?.let {
+            startActivity<SeriesDocActivity>("entry_type" to entry_type)
+        }?:run {
+            startActivity<DownloadActivity>()
         }
     }
 

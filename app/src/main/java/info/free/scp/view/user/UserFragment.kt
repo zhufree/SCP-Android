@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import info.free.scp.R
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
@@ -16,6 +18,9 @@ import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_user.*
+import org.jetbrains.anko.*
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.selector
 import java.util.*
 
 
@@ -70,32 +75,76 @@ class UserFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         about_toolbar?.setTitle(R.string.app_name)
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
-        tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+        tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+            "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                 "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+        else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                "职务：点击设置\n代号：点击设置"
         tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\n" +
                 "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
                 + "/scp_user_head.jpg"))
         iv_user_head.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             /* 开启Pictures画面Type设定为image */
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,"image/*")
+            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
             /* 使用Intent.ACTION_GET_CONTENT这个Action */
             /* 取得相片后返回本画面 */
             startActivityForResult(intent, 1)
         }
+        tv_nickname.setOnClickListener { checkUserInfo() }
     }
 
-    override fun onResume() {
-        super.onResume()
-        if (PreferenceUtil.getNickname().isNotEmpty()) {
-            tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                    "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
-            tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\n" +
-                    "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
-        } else {
-            UpdateManager.getInstance(activity as BaseActivity).checkUserInfo()
+
+    private fun checkUserInfo() {
+        var input: EditText? = null
+        alert {
+            customView {
+                linearLayout {
+                    padding = dip(16)
+                    orientation = LinearLayout.VERTICAL
+                    textView("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）") {
+                        textColor = ThemeUtil.darkText
+                        textSize = 18f
+                    }
+                    input = editText {
+                        height = ViewGroup.LayoutParams.WRAP_CONTENT
+                        width = ViewGroup.LayoutParams.MATCH_PARENT
+                        singleLine = true
+                    }
+                }
+            }
+            positiveButton("确定") {
+                PreferenceUtil.saveNickname(input?.text.toString())
+                tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                        "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                checkJob()
+            }
+            negativeButton("取消") {}
+
+        }.show()
+    }
+
+    private fun checkJob() {
+        val jobList = listOf("收容专家", "研究员", "安全人员", "战术反应人员", "外勤特工", "机动特遣队作业员")
+        selector("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业",
+                jobList) { out, i ->
+            val field = out.javaClass.superclass?.getDeclaredField(
+                    "mShowing")
+            field?.isAccessible = true
+            //   将mShowing变量设为false，表示对话框已关闭
+            field?.set(out, false)
+            alert(getString(PreferenceUtil.getDescForJob(jobList[i])),jobList[i]) {
+                positiveButton("确定选择（暂时不可更改）") {
+                    field?.set(out, true)
+                    out.dismiss()
+                    PreferenceUtil.setJob(jobList[i])
+                    tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                            "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                }
+                negativeButton("我手滑了") { }
+            }.show()
         }
     }
 
@@ -113,7 +162,7 @@ class UserFragment : BaseFragment() {
             uri?.let {
                 try {
                     val file = Utils.getFileByUri(uri, context!!)
-                    file?.let{f ->
+                    file?.let { f ->
                         Utils.save(f, "scp_user_head")
                         iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
                     }

@@ -1,6 +1,5 @@
 package info.free.scp.view.home
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import info.free.scp.R
@@ -66,20 +65,32 @@ class DirectActivity : BaseActivity() {
         }
 
         btn_direct_cn.setOnClickListener {
-            chooseType = if (chooseType == 2) 3 else 1
+            chooseType = when (chooseType) {
+                0 -> 1
+                1 -> 0
+                2 -> 3
+                3 -> 2
+                else -> 1
+            }
             updateExpress()
         }
         btn_direct_j.setOnClickListener {
-            chooseType = if (chooseType == 1) 3 else 2
+            chooseType = when (chooseType) {
+                0 -> 2
+                1 -> 3
+                2 -> 0
+                3 -> 1
+                else -> 2
+            }
             updateExpress()
         }
         tv_go_direst_btn?.setOnClickListener {
             val scp = when (chooseType) {
-                0 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
-                1 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES_CN, "-$numberString")
-                2 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE, "-$numberString-")
-                3 -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_JOKE_CN, "-$numberString-")
-                else -> ScpDatabase.getInstance().scpDao().getScpByNumber(SAVE_SERIES, "-$numberString")
+                0 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES, "%-$numberString %")
+                1 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES_CN, "%-$numberString %")
+                2 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_JOKE, "%-$numberString-%")
+                3 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_JOKE_CN, "%-$numberString-%")
+                else -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES, "%-$numberString")
             }
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)

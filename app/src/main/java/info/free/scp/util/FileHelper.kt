@@ -3,6 +3,7 @@ package info.free.scp.util
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import info.free.scp.db.ScpDatabase
 import org.jetbrains.anko.*
 import java.io.File
 
@@ -48,22 +49,14 @@ class FileHelper(val mContext: Context) {
         }
     }
 
-    fun checkFileExist(fileName: String): Boolean {
-        val backUpFile = File(fileName)
+    /**
+     * 检查scp_data.db是否存在
+     */
+    fun checkDataExist(): Boolean {
+        val backUpFile = File(dbDir + dataDbFilename)
         return backUpFile.exists()
     }
 
-    fun renameFile(fileName: String, newName: String) {
-        if (fileName.isEmpty()) return
-        try {
-            val thisFile = File(fileName)
-            if (thisFile.exists()) {
-                thisFile.renameTo(File(newName))
-            }
-        } catch (e: Exception) {
-            mContext.toast("文件重命名出错：" + e.message)
-        }
-    }
     /**
      * 刚下载完，从缓存文件夹复制到数据库文件夹
      * @param dbName String 数据库名
@@ -126,7 +119,6 @@ class FileHelper(val mContext: Context) {
         try {
             val dbFile = File(dbDir + dbName)
             val backUpFile = File(getBackUpFileName(dbName))
-            dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
             if (backup && dbFile.exists()) {
                 dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
                 return
@@ -151,7 +143,10 @@ class FileHelper(val mContext: Context) {
                     mContext.toast("开始恢复")
                     doAsync {
                         if (restore()){
-                            mContext.toast("恢复完成")
+                            ScpDatabase.getInstance()
+                            uiThread {
+                                mContext.toast("恢复完成")
+                            }
                         }
                     }
                 }
@@ -165,6 +160,7 @@ class FileHelper(val mContext: Context) {
      */
     private fun restore(): Boolean {
         try {
+            copyDbFile(dataDbFilename, false)
             copyDbFile(infoDBFilename, false)
             copyPrefFile(prefFilename, false)
             return true

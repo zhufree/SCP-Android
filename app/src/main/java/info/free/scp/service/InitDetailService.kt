@@ -15,6 +15,7 @@ import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.FileHelper
 import java.io.File
 
@@ -25,7 +26,7 @@ class InitDetailService : IntentService("initDataService") {
         val link = PreferenceUtil.getDataDownloadLink(-1)
         val request: GetRequest<File> = OkGo.get(link)
         val task = OkDownload.request(link, request)
-                .fileName(SCPConstants.SCP_DB_NAME)
+                .fileName("full_scp_data.db")
                 .register(ServiceDownloadListener(this))
                 .save()
         task.start()
@@ -40,6 +41,7 @@ class InitDetailService : IntentService("initDataService") {
         override fun onFinish(t: File?, progress: Progress?) {
             PreferenceUtil.setDetailDataLoadFinish(-1, true)
             FileHelper(context).copyDataBaseFile(t?.name?:"", true)
+            ScpDatabase.getNewInstance()
             notificationManager.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
         }
 

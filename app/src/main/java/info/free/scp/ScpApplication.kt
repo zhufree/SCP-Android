@@ -24,14 +24,13 @@ class ScpApplication : MultiDexApplication() {
 
         OkGo.getInstance().init(this)
         // /data/data/packageName/databases
-//        val dbPath = ("$absPath${sp}data$sp$packageName${sp}databases$sp")
         OkDownload.getInstance().folder = cacheDir.absolutePath
 
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
         UMConfigure.setLogEnabled(true)
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
         // FIXME
-        MobclickAgent.setCatchUncaughtExceptions(false)
+//        MobclickAgent.setCatchUncaughtExceptions(false)
 
         context = applicationContext
 
@@ -67,7 +66,7 @@ class ScpApplication : MultiDexApplication() {
             resources.configuration.fontScale = 1.0f
             resources.updateConfiguration(resources.configuration, resources.displayMetrics)
         }
-        return resources;
+        return resources
     }
 
     override fun onTerminate() {

@@ -28,11 +28,6 @@ class DownloadNoticeHeader : ConstraintLayout {
         sw_auto_download.isChecked = PreferenceUtil.getAutoDownload()
         sw_auto_download.setOnCheckedChangeListener { _, isChecked ->
             PreferenceUtil.setAutoDownload(isChecked)
-            if (isChecked && !PreferenceUtil.getDetailDataLoadFinish(-1)) {
-                // 开始离线主数据库
-                val intent = Intent(context, InitDetailService::class.java)
-                context.startService(intent)
-            }
         }
     }
 }

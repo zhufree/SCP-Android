@@ -16,10 +16,10 @@ interface ScpDao {
     @Insert(onConflict = REPLACE)
     fun saveAll(scps: List<ScpItemModel>)
 
-    @Query("SELECT * FROM scps WHERE link = :link LIMIT 1")
+    @Query("SELECT * FROM scps WHERE link = :link ORDER BY _index LIMIT 1")
     fun getScpByLink(link: String): ScpItemModel?
 
-    @Query("SELECT * FROM scp_collection WHERE link = :link LIMIT 1")
+    @Query("SELECT * FROM scp_collection WHERE link = :link ORDER BY _index LIMIT 1")
     fun getCollectionByLink(link: String): ScpCollectionModel?
 
     @Query("SELECT * FROM scps WHERE `_index` = :index+1 AND scp_type = :scpType LIMIT 1")

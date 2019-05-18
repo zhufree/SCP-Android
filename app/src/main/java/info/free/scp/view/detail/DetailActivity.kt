@@ -35,6 +35,7 @@ import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
@@ -122,8 +123,6 @@ class DetailActivity : BaseActivity() {
 
         scp?.let {
             // 数据库取到
-            historyIndex = historyList.size
-            historyList.add(it)
             if (readType == 1) {
                 randomList.add(it)
             }
@@ -139,26 +138,26 @@ class DetailActivity : BaseActivity() {
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
         webView?.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+            override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
+                info(requestUrl)
                 if (onlineMode == 1) {
-                    view.loadUrl(url)
+                    view.loadUrl(requestUrl)
                 } else {
-                    if (url.startsWith("http://scp-wiki-cn.wikidot.com/")) {
-                        // 站内链接
-                        val postString = url.subSequence(30, url.length)
-                        Log.i("detail", "url = $postString")
-//                        val scpList = ScpDataHelper.getInstance().getScpModelByLink(postString.toString())
-                        val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(postString.toString())
-                        scp?.let {
-                            historyIndex = historyList.size
-                            historyList.add(it)
-                            setData(scp)
-                        } ?: run {
-                            pbLoading.visibility = VISIBLE
-                            view.loadUrl(url)
-                        }
+                    if (requestUrl.startsWith("http://scp-wiki-cn.wikidot.com/")) {
+                        url = requestUrl.subSequence(30, requestUrl.length).toString()
+                    } else if (requestUrl.startsWith("file:")) {
+                        url = requestUrl.subSequence(7, requestUrl.length).toString()
                     } else {
-                        view.loadUrl(url)
+                        url = requestUrl
+                    }
+                    info(url)
+                    val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
+                    scp?.let {
+
+                        setData(scp)
+                    } ?: run {
+                        pbLoading.visibility = VISIBLE
+                        view.loadUrl(fullUrl)
                     }
                 }
                 return false
@@ -184,13 +183,17 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    private fun setData(scp: ScpModel) {
+    private fun setData(scp: ScpModel, back: Boolean = false) {
         ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
         refreshReadBtnStatus()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        if (!back) {
+            historyList.add(scp)
+            historyIndex = historyList.size
+        }
         detail_toolbar?.title = scp.title
         url = scp.link
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
@@ -494,20 +497,13 @@ class DetailActivity : BaseActivity() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
-            if (historyIndex > 0) {
-                scp = historyList[historyIndex - 1]
-                scp?.let {
-                    setData(it)
-                }
-                historyList.removeAt(historyIndex)
-                historyIndex--
-                return true
-            } else if (webView.canGoBack()) {
-                webView.goBack()
-                return true
-            } else {
-                return super.onKeyDown(keyCode, event)
+            scp = historyList[historyIndex - 1]
+            scp?.let {
+                setData(it, true)
             }
+            historyList.removeAt(historyIndex - 1)
+            historyIndex--
+            return true
         } else {
             return super.onKeyDown(keyCode, event)
         }

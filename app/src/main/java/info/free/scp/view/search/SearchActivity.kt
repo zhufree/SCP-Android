@@ -18,6 +18,7 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.uiThread
 
 class SearchActivity : BaseActivity() {
@@ -51,7 +52,7 @@ class SearchActivity : BaseActivity() {
         EventUtil.onEvent(this, EventUtil.searchTitle, keyword)
         PreferenceUtil.addPoints(5)
         resultList.clear()
-        resultList.addAll(ScpDatabase.getInstance()?.scpDao()?.searchScpByTitle(keyword)?: emptyList())
+        resultList.addAll(ScpDatabase.getInstance()?.scpDao()?.searchScpByTitle("%$keyword%")?: emptyList())
         if (resultList.size == 0) {
             Toaster.show("搜索结果为空")
         }
@@ -60,11 +61,7 @@ class SearchActivity : BaseActivity() {
             rv_search_result?.adapter = adapter
             adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
-                    val intent = Intent()
-                    intent.putExtra("link", resultList[position]?.link)
-                    intent.putExtra("sId", resultList[position]?.id)
-                    intent.setClass(this@SearchActivity, DetailActivity::class.java)
-                    startActivity(intent)
+                    startActivity<DetailActivity>("link" to resultList[position]?.link)
                 }
             }
         } else {
@@ -86,11 +83,7 @@ class SearchActivity : BaseActivity() {
                     rv_search_result?.adapter = adapter
                     adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                         override fun onItemClick(view: View, position: Int) {
-                            val intent = Intent()
-                            intent.putExtra("link", resultList[position]?.link)
-                            intent.putExtra("sId", resultList[position]?.id)
-                            intent.setClass(this@SearchActivity, DetailActivity::class.java)
-                            startActivity(intent)
+                            startActivity<DetailActivity>("link" to resultList[position]?.link)
                         }
                     }
                 } else {

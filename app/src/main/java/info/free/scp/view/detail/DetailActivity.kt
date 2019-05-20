@@ -192,7 +192,7 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
             historyList.add(scp)
-            historyIndex = historyList.size
+            historyIndex = historyList.size-1
         }
         detail_toolbar?.title = scp.title
         url = scp.link

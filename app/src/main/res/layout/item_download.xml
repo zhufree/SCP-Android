@@ -15,13 +15,13 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:onClick="@{clickListener}">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:padding="8dp">
 
             <TextView
@@ -32,7 +32,9 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/tv_update_time"
+                app:layout_constraintVertical_chainStyle="spread"/>
 
             <TextView
                 android:id="@+id/tv_download_progress"
@@ -52,6 +54,7 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_update_time"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
@@ -61,6 +64,8 @@
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/tv_download_time"
+                app:layout_constraintTop_toBottomOf="@id/tv_download_title"
+                android:layout_marginTop="16dp"
                 app:layout_constraintEnd_toEndOf="parent" />
 
             <View

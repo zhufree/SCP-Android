@@ -44,7 +44,7 @@ class ScpDataHelper {
         val queryList = emptyList<ScpModel>().toMutableList()
         val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
-        if (type in (13..17)) {
+        if (type in (13..22)) {
             queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)?: emptyList())
         } else {
             queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())

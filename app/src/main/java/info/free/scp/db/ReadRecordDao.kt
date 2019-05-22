@@ -25,6 +25,9 @@ interface ReadRecordDao {
 
     @Query("DELETE FROM records WHERE link = :link AND viewListType = :viewType")
     fun delete(link: String, viewType: Int)
+
+    @Query("DELETE FROM records WHERE viewListType = 0")
+    fun clearHistory()
     // AND last_update >= :timeout
 }
 

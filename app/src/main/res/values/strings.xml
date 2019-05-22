@@ -74,6 +74,7 @@ bug修复和优化\n
 
     <string name="menu_reverse">逆序</string>
     <string name="menu_import_read_list">导入待读列表</string>
+    <string name="menu_clear_read_history">清除阅读历史</string>
 
     <string name="menu_search">搜索</string>
     <string name="menu_random">▼|随机</string>

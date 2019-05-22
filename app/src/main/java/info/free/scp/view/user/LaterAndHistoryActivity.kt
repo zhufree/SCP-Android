@@ -17,6 +17,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
@@ -29,6 +30,9 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.yesButton
 
 /**
  * 待读列表
@@ -102,6 +106,16 @@ class LaterAndHistoryActivity : BaseActivity() {
                         Toaster.show("请在待读列表页点击此按钮")
                     }
                 }
+                R.id.clear_read_history -> {
+                    // 清除历史记录
+                    alert("你确定要清除所有的阅读记录吗", "Notice") {
+                        yesButton {
+                            AppInfoDatabase.getInstance().readRecordDao().clearHistory()
+                            onResume()
+                        }
+                        noButton {  }
+                    }.show()
+                }
             }
             true
         }
@@ -109,6 +123,13 @@ class LaterAndHistoryActivity : BaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_read_list, menu)
+        if (viewType == HISTORY_TYPE) {
+            menu?.getItem(1)?.isVisible = false
+            menu?.getItem(2)?.isVisible = true
+        } else {
+            menu?.getItem(1)?.isVisible = true
+            menu?.getItem(2)?.isVisible = false
+        }
         return true
     }
 

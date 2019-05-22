@@ -30,9 +30,7 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 
 /**
  * 待读列表
@@ -100,11 +98,7 @@ class LaterAndHistoryActivity : BaseActivity() {
                     orderType = if (orderType == 0) 1 else 0
                 }
                 R.id.import_read_list -> {
-                    if (viewType == LATER_TYPE) {
-                        showInputListDialog()
-                    } else {
-                        Toaster.show("请在待读列表页点击此按钮")
-                    }
+                    showInputListDialog()
                 }
                 R.id.clear_read_history -> {
                     // 清除历史记录
@@ -138,7 +132,9 @@ class LaterAndHistoryActivity : BaseActivity() {
                 .inflate(R.layout.layout_dialog_input_large, null)
         val inputDialog = AlertDialog.Builder(this)
                 .setTitle(R.string.menu_import_read_list)
-                .setMessage("导入的文章标题用逗号分隔，标题内需要包含cn，j等关键词作为区分，可能会出错，请及时向开发者反馈，谢谢。")
+                .setMessage("导入的文章标题用中英文逗号/中英文分号/换行分隔均可（但需保持统一），有数字即可识别，" +
+                        "默认为SCP文档，其他类型文档标题内需要包含cn，j等关键词作为区分（大小写均可），" +
+                        "标题格式不规则的文档建议使用搜索功能手动添加。如果导入出错请加群向开发者反馈，谢谢。")
                 .setView(inputView)
                 .setPositiveButton("OK") { _, _ -> }
                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
@@ -148,38 +144,62 @@ class LaterAndHistoryActivity : BaseActivity() {
             val inputString = inputView.et_report.text.toString()
             splitReadList(inputString)
             inputDialog.dismiss()
-            Toaster.show("导入完成")
             EventUtil.onEvent(this, importReadList)
         }
     }
 
     private fun splitReadList(input: String) {
-        val titleList = input.split(",")
-        if (titleList.isEmpty()) return
+        var titleList = input.split(",")
+        if (titleList.isEmpty() || titleList.size < 2){
+            titleList = input.split("\\s+".toRegex())
+        }
+        if (titleList.isEmpty() || titleList.size < 2){
+            titleList = input.split("，")
+        }
+        if (titleList.isEmpty() || titleList.size < 2){
+            titleList = input.split("；")
+        }
+        if (titleList.isEmpty() || titleList.size < 2){
+            titleList = input.split(";")
+        }
+        if (titleList.isEmpty()){
+            toast("识别失败，请对照要求修改格式")
+            return
+        }
+        info(titleList)
         titleList.forEach { str ->
+            info(str)
             var type = SCPConstants.ScpType.SAVE_SERIES
             var numberString = ""
+            // 判断是否中分文档
             if (str.contains("cn") || str.contains("CN")) {
                 type = SCPConstants.ScpType.SAVE_SERIES_CN
             }
             str.forEach {
                 if (it.isDigit()) {
                     numberString += it
-                } else {
-                    if (it == 'j' || it == 'J') {
-                        type = if (type == SCPConstants.ScpType.SAVE_SERIES) SAVE_JOKE else SAVE_JOKE_CN
-                    }
+                } else if (it == 'j' || it == 'J') {
+                    // 判断是否J文档以及中分J或者全站J
+                    type = if (type == SCPConstants.ScpType.SAVE_SERIES) SAVE_JOKE else SAVE_JOKE_CN
                 }
             }
             if (numberString.isNotEmpty()) {
+                if (numberString.length == 1) {
+                    numberString = "00$numberString"
+                } else if (numberString.length == 2) {
+                    numberString = "0$numberString"
+                }
                 val targetScp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(type,
                         if (type ==SAVE_JOKE || type == SAVE_JOKE_CN)
                     "%-$numberString-%" else "%-$numberString %")
                 if (targetScp != null) {
-                    print(targetScp)
+                    info(targetScp)
                     ScpDataHelper.getInstance().insertViewListItem(targetScp.link, targetScp.title, LATER_TYPE)
                 }
+
             }
         }
+        Toaster.show("导入完成")
+        onResume()
     }
 }

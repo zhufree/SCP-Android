@@ -40,27 +40,9 @@ class SettingsActivity : BaseActivity() {
         settings_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
 
         settings_toolbar?.setNavigationOnClickListener { finish() }
-        val settingType = intent.getIntExtra("setting_type", 0)
-        if (settingType == 1) {
-            settings_toolbar?.inflateMenu(R.menu.download_setting_menu)
-            settings_toolbar?.setOnMenuItemClickListener {
-                if (it.itemId == R.id.download_help) {
-                    AlertDialog.Builder(this)
-                            .setTitle("离线说明")
-                            .setMessage(R.string.download_explain)
-                            .setPositiveButton("OK") { _, _ -> }
-                            .create().show()
-                }
-                true
-            }
-        }
+
         supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
                 ReadSettingsFragment()).commit()
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.download_setting_menu, menu)
-        return true
     }
 
     /**

@@ -8,12 +8,13 @@ import androidx.fragment.app.Fragment
 import android.view.View
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.category.SeriesDocActivity
+import org.jetbrains.anko.support.v4.startActivity
 
 
 /**
  * A simple [Fragment] base class.
  */
-abstract class BaseFragment : androidx.fragment.app.Fragment() {
+abstract class BaseFragment : Fragment() {
     var mContext: Context? = null
 
 
@@ -22,11 +23,6 @@ abstract class BaseFragment : androidx.fragment.app.Fragment() {
         super.onAttach(context)
     }
 
-    fun goToDocPage(entry_type: Int) {
-        val intent = Intent(mContext, SeriesDocActivity::class.java)
-        intent.putExtra("entry_type", entry_type)
-        startActivity(intent)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,4 +32,4 @@ abstract class BaseFragment : androidx.fragment.app.Fragment() {
     open fun refreshTheme() {
         view?.setBackgroundColor(ThemeUtil.containerBg)
     }
-} // Required empty public constructor
+}

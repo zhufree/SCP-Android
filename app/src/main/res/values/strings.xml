@@ -38,18 +38,13 @@
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.1更新内容\n
-1.新增最近更新tab，可以查看最近原创和最近翻译（30条）\n
-2.正文右上角菜单添加【加入待读】功能\n
-3.沙盒功能初版(只能保存一个草稿)，列表功能后续迭代\n
-4.导入待读列表功能\n
-5.随机可以分【全部|SCP|故事|搞笑】不同板块内随机（需要已离线该部分内容\n
-6.添加一个随机小组件\n\n
-bug修复和优化\n
-1.tab功能修复\n
-2.横竖屏切换时fragment保存问题修复\n
-3.增加了对于sd卡没有权限的提示\n
-        \n
+        v0.1.2更新内容\n
+1.优化了数据库离线方式\n
+2.增加清除阅读历史的功能\n
+3.优化导入待读列表功能\n
+4.修复一些已知的bug\n
+5.增加sd卡权限申请（原来之前是我没申请，我错了\n
+6.没了，这版本主要在重构代码和解决重构中出现的bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师
         以及在群里勤奋测试的群友们\n
         PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
@@ -74,6 +69,7 @@ bug修复和优化\n
 
     <string name="menu_reverse">逆序</string>
     <string name="menu_import_read_list">导入待读列表</string>
+    <string name="menu_clear_read_history">清除阅读历史</string>
 
     <string name="menu_search">搜索</string>
     <string name="menu_random">▼|随机</string>
@@ -110,7 +106,7 @@ bug修复和优化\n
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
     <string name="about_developer">支持开发者</string>
-    <string name="query_enter">用户调查问卷v0.1.1（开发者的话）</string>
+    <string name="query_enter">用户调查问卷v0.1.2（开发者的话）</string>
     <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
     <string name="sync_data">强制重新同步云端数据</string>
@@ -132,8 +128,11 @@ bug修复和优化\n
     <string name="download_other_title">其他文档和offset部分</string>
     <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
-    <string name="download_summary">云端更新时间：%1$s，本地更新时间：%2$s</string>
-    <string name="download_explain">更新目录功能将更新所有入口中的scp列表，带有更新时间的选项是离线的正文部分，如果没有离线正文，
-        依然可以请求网页链接查看正文，但如果没有目录将无法查看任何内容。\n当云端有更新时，可以选择单独更新某一部分正文内容。\n
-        强制同步云端数据将清空所有本地数据并重新下载，一般情况下不需要使用。\n</string>
+
+    <!--新的离线逻辑-->
+    <string name="download_notice">1.该数据库将应用于整个app的文档数据部分，不离线无法阅读文档；\n2.以下数据库只能只能六选一，
+        总数据库包括所有已有的内容，可以同时下载，完成时将会提示替换；\n3.第一次安装app时如果急着看内容可以选择后面5个之一，并允许app在有wifi的情况下离线和更新总数据库。
+        离线完成后会替换之前的数据库使用\n4.阅读历史收藏等数据单独存储，不需要担心被替换。</string>
+    <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
+    <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
 </resources>

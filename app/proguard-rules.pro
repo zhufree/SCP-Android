@@ -28,6 +28,9 @@
 -keepclasseswithmembers class info.free.scp.** { # <-- change package name to your app's
     kotlinx.serialization.KSerializer serializer(...);
 }
+-keep public class info.free.scp.R$*{
+public static final int *;
+}
 
 # Retrofit
 -dontnote retrofit2.Platform
@@ -47,14 +50,14 @@
 # Gson
 -keep class info.free.scp.bean.**{*;} # 自定义数据模型的bean目录
 
-#TalkingData
--dontwarn com.tendcloud.tenddata.**
--keep class com.tendcloud.** {*;}
--keep public class com.tendcloud.tenddata.** { public protected *;}
--keepclassmembers class com.tendcloud.tenddata.**{
-public void *(***);
+#umeng
+-keep class com.umeng.** {*;}
+
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
 }
--keep class com.talkingdata.sdk.TalkingDataSDK {public *;}
--keep class com.apptalkingdata.** {*;}
--keep class dice.** {*; }
--dontwarn dice.**
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}

@@ -7,6 +7,8 @@ package info.free.scp
 
 object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
+    const val SCP_DB_NAME = "scp_data.db"
+    const val INFO_DB_NAME = "scp_info.db"
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档
@@ -74,8 +76,8 @@ object SCPConstants {
         const val SAVE_STORY_SERIES_CN = 20
         const val SAVE_SETTINGS = 13
         const val SAVE_SETTINGS_CN = 14
-        const val SAVE_CONTEST = 16
-        const val SAVE_CONTEST_CN = 18
+        const val SAVE_CONTEST = 15
+        const val SAVE_CONTEST_CN = 17
 
         // android
         const val SAVE_OFFSET = 21
@@ -96,6 +98,7 @@ object SCPConstants {
     // RequestCode
     object RequestCode {
         const val CATEGORY_TO_DETAIL = 0
+        const val REQUEST_FILE_PERMISSION = 1
     }
 
     const val HISTORY_TYPE = 0

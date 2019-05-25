@@ -19,11 +19,13 @@ import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
 import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
+import info.free.scp.view.download.DownloadActivity
+import info.free.scp.view.draft.DraftEditActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
+import org.jetbrains.anko.startActivity
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
-
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         // Load the preferences from an XML resource
@@ -33,26 +35,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        preferenceManager?.sharedPreferences?.edit()?.putBoolean("dark_mode", ThemeUtil.currentTheme == 1)?.apply()
-        findPreference<SwitchPreference>("dark_mode")?.setDefaultValue(ThemeUtil.currentTheme == 1)
-
+        findPreference<SwitchPreference>("dark_mode")?.isChecked = ThemeUtil.currentTheme == 1
         findPreference<SwitchPreference>("dark_mode")?.setOnPreferenceClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)
-            true
+            false
         }
 
         findPreference<Preference>("read_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
-            val intent = Intent(activity, SettingsActivity::class.java)
-            intent.putExtra("setting_type", 0)
-            activity?.startActivity(intent)
+            activity?.startActivity<SettingsActivity>()
             true
         }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
-            EventUtil.onEvent(activity, clickDownloadSetting)
-            val intent = Intent(activity, SettingsActivity::class.java)
-            intent.putExtra("setting_type", 1)
-            activity?.startActivity(intent)
+            activity?.startActivity<DownloadActivity>()
             true
         }
         findPreference<Preference>("copyright")?.setOnPreferenceClickListener {
@@ -92,6 +87,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("draft")?.setOnPreferenceClickListener {
             EventUtil.onEvent(context, EventUtil.clickDraft)
+            activity?.startActivity<DraftEditActivity>()
             true
         }
     }

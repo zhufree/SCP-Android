@@ -18,19 +18,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+
+        <activity android:name=".view.download.DownloadActivity" />
+
         <meta-data
             android:name="UMENG_CHANNEL"
-            android:value="${UMENG_CHANNEL_VALUE}" />
-        <!-- <meta-data android:name="TD_CHANNEL_ID" android:value="${UMENG_CHANNEL_VALUE}" /> -->
+            android:value="${UMENG_CHANNEL_VALUE}" /> <!-- <meta-data android:name="TD_CHANNEL_ID" android:value="${UMENG_CHANNEL_VALUE}" /> -->
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true" />
 
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme"
-            android:configChanges="orientation|keyboardHidden">
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -42,9 +44,6 @@
         <activity android:name=".view.detail.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
 
-        <service
-            android:name=".service.InitCategoryService"
-            android:enabled="true" />
         <service
             android:name=".service.InitDetailService"
             android:enabled="true" />
@@ -90,6 +89,7 @@
             android:label="@string/title_activity_settings">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.SettingsActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -98,14 +98,16 @@
         <activity android:name=".view.draft.DraftEditActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.draft.DraftEditActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
-        <receiver android:name="ScpWidgetProvider">
+        <receiver android:name=".ScpWidgetProvider">
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
+
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.seewo.homewidgets.action.CLICK" />

@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import androidx.fragment.app.FragmentActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
@@ -82,5 +83,26 @@ object ThemeUtil {
         clickedBtn = allColor.getColor(6, Color.WHITE)
         disabledBg = allColor.getColor(7, Color.WHITE)
         allColor.recycle()
+    }
+
+    /**
+     *
+     * @param fillColor
+     * //填充色
+     * @param strokeColor
+     * //边框颜色
+     * @param strokeWidth
+     * //边框宽度
+     * @param roundRadius
+     * //圆角值
+     * @return
+     */
+    fun customShape(fillColor: Int, strokeColor: Int, strokeWidth: Int, roundRadius: Int)
+            : GradientDrawable {
+        val gd = GradientDrawable() // 创建drawable
+        gd.setColor(fillColor)
+        gd.cornerRadius = roundRadius.toFloat()
+        gd.setStroke(strokeWidth, strokeColor)
+        return gd
     }
 }

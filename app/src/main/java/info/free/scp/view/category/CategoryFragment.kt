@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
@@ -33,7 +32,7 @@ class CategoryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val lm = androidx.recyclerview.widget.LinearLayoutManager(mContext, VERTICAL, false)
+        val lm = LinearLayoutManager(mContext, VERTICAL, false)
         rv_category_list?.layoutManager = lm
         initData()
     }

@@ -1,22 +1,21 @@
-package info.free.scp.view.search
+package info.free.scp.view.user
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
-import info.free.scp.SCPConstants
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.bean.SimpleScp
-import info.free.scp.db.ScpDao
 import info.free.scp.view.base.BaseAdapter
+import info.free.scp.view.search.SearchHolder
 
 /**
  * Created by zhufree on 2018/10/25.
  * 用于阅读记录和稍后阅读列表的adapter
  */
 
-class SimpleScpAdapter(mContext: Context, dataList: MutableList<SimpleScp?>)
-    : BaseAdapter<SearchHolder, SimpleScp?>(mContext, dataList) {
+class TimeScpAdapter(mContext: Context, dataList: MutableList<ScpRecordModel?>)
+    : BaseAdapter<SearchHolder, ScpRecordModel?>(mContext, dataList) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
@@ -29,6 +28,6 @@ class SimpleScpAdapter(mContext: Context, dataList: MutableList<SimpleScp?>)
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         holder.itemView.tag = position
         holder.setData(dataList[position]?.link?:"", dataList[position]?.title?:"",
-                dataList[position]?.viewTime, null)
+                dataList[position]?.viewTime.toString(), null)
     }
 }

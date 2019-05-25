@@ -16,7 +16,6 @@ object PreferenceUtil {
 
     const val INIT_SP = "init"
     const val DOWNLOAD_SP = "download"
-    const val UPDATE_SP = "update"
     const val APP_SP = "app"
 
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
@@ -26,54 +25,79 @@ object PreferenceUtil {
     /**
      * -------------------数据初始化----------------------
      */
+
     /**
-     * 目录和数据库是否离线完成，用boolean记录
+     * 检测是不是第一次安装app
      */
-    fun getInitCategoryFinish(): Boolean {
-        return getBooleanValue(INIT_SP, "init_category")
+    fun isFirstInstallApp(): Boolean {
+        return getBooleanValue(INIT_SP, "firstInstall", true)
     }
 
-    fun setInitCategoryFinish(finish: Boolean) {
-        setBooleanValue(INIT_SP, "init_category", finish)
+    fun setFirstInstallApp() {
+        setBooleanValue(INIT_SP, "firstInstall", false)
     }
 
+
+    /**
+     * 服务器数据更新时间，last_update_time_0/1/2/3/4
+     * key是字段名
+     */
+    fun setServerLastUpdateTime(dbName: String, time: Long) {
+        setLongValue(DOWNLOAD_SP, dbName, time)
+    }
+
+    fun getServerLastUpdateTime(dbIndex: Int): Long {
+        return getLongValue(DOWNLOAD_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
+    }
+
+    /**
+     * 分库数据文件下载链接
+     * db_link_0/1/2/3/4/all
+     */
+    fun setDataDownloadLink(dbName: String, link: String) {
+        setStringValue(DOWNLOAD_SP, dbName, link)
+    }
+    fun getDataDownloadLink(dbIndex: Int):String {
+        return getStringValue(DOWNLOAD_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
+    }
+
+    /**
+     * 是否允许自动离线数据库
+     */
+
+    fun setAutoDownload(auto: Boolean) {
+        setBooleanValue(DOWNLOAD_SP, "auto_download", auto)
+    }
+
+    fun getAutoDownload(): Boolean {
+        return getBooleanValue(DOWNLOAD_SP, "auto_download")
+    }
     /**
      * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
      */
-    fun setDetailDataLoadFinish(downloadType: Int, value: Boolean) {
+    fun setDetailDataLoadFinish(dbIndex: Int, value: Boolean) {
         if (value) {
-            setDetailLastLoadTime(downloadType, Utils.formatNow())
+            setDetailLastLoadTime(dbIndex, System.currentTimeMillis())
         }
-        setBooleanValue(INIT_SP, downloadType.toString(), value)
+        setBooleanValue(INIT_SP, dbIndex.toString(), value)
     }
-    fun getDetailDataLoadFinish(downloadType: Int): Boolean {
-        return getBooleanValue(INIT_SP, downloadType.toString(), true)
-    }
-
-    /**
-     * 下载进度记录
-     */
-    fun getSingleDbLoadCount(downloadType: Int): Int {
-        return getIntValue(DOWNLOAD_SP, downloadType.toString())
-    }
-    fun setSingleDbLoadCount(downloadType: Int, progress: Int) {
-        setIntValue(DOWNLOAD_SP, downloadType.toString(), progress)
+    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
+        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
     }
 
-    fun addSingleDbLoadCount(downloadType: Int) {
-        setIntValue(DOWNLOAD_SP, downloadType.toString(), getSingleDbLoadCount(downloadType) +1)
-    }
-    fun resetSingleDbLoadCount(downloadType: Int) {
-        setSingleDbLoadCount(downloadType, 0)
-    }
+
     /**
      * 数据更新时间相关
      */
-    fun getDetailLastLoadTime(downloadType: Int): String {
-        return getStringValue(DOWNLOAD_SP,"${downloadType}_time" )
+    fun getDetailLastLoadTime(dbIndex: Int): Long {
+        return getLongValue(DOWNLOAD_SP,"${dbIndex}_time" )
     }
-    fun setDetailLastLoadTime(downloadType: Int, time: String) {
-        setStringValue(DOWNLOAD_SP, "${downloadType}_time", time)
+    fun setDetailLastLoadTime(dbIndex: Int, time: Long) {
+        setLongValue(DOWNLOAD_SP, "${dbIndex}_time", time)
+    }
+
+    fun clearDownloadPref() {
+        getPrivateSharedPreference(DOWNLOAD_SP)?.edit()?.clear()?.apply()
     }
 
 
@@ -113,23 +137,6 @@ object PreferenceUtil {
         setIntValue("theme", "currentTheme", theme)
     }
 
-
-    /**
-     * 检测更新，一天只检测一次，重新安装后要重置
-     */
-    fun setLastCheckUpdateTime(time: Long) {
-        setLongValue(UPDATE_SP, "lastCheckUpdateTime", time)
-    }
-
-    fun checkNeedShowUpdateNotice(): Boolean {
-        val lastTime = getLongValue(UPDATE_SP, "lastCheckUpdateTime")
-        val cal = Calendar.getInstance()
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
-                0, 0, 0)
-        val beginOfDate = cal.timeInMillis
-        return lastTime < beginOfDate
-    }
-
     /**
      * 检测小组件当天是否更新
      */
@@ -148,13 +155,6 @@ object PreferenceUtil {
     }
 
 
-    fun setServerLastUpdateTime(dbIndex: String, time: String) {
-        setStringValue(UPDATE_SP, dbIndex, time)
-    }
-
-    fun getServerLastUpdateTime(dbIndex: Int): String {
-        return getStringValue(UPDATE_SP, "last_update_time_$dbIndex")
-    }
 
     /**
      * 积分系统
@@ -263,7 +263,7 @@ object PreferenceUtil {
         }
     }
 
-    fun getIfHideFinished(): Boolean {
+    fun getHideFinished(): Boolean {
         return getBooleanValue("read_settings", "hide_finished_article")
     }
 

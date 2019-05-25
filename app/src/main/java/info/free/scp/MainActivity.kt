@@ -1,13 +1,14 @@
 package info.free.scp
 
+import android.Manifest
 import android.content.*
-import android.content.res.Configuration
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
-import info.free.scp.SCPConstants.BroadCastAction.INIT_PROGRESS
+import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.*
 import info.free.scp.view.user.UserFragment
 import info.free.scp.view.base.BaseActivity
@@ -15,17 +16,17 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
     private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 
     private var mLocalBroadcastManager: LocalBroadcastManager? = null
-    private var fragmentInit = false
-
 
     private var themeReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -33,6 +34,18 @@ class MainActivity : BaseActivity() {
         }
     }
 
+    @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
+    private fun requireFilePermission() {
+        val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        if (EasyPermissions.hasPermissions(this, *perms)) {
+            // Already have permission, do the thing
+            // ...
+        } else {
+            // Do not have permissions, request them now
+            EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
+                    SCPConstants.RequestCode.REQUEST_FILE_PERMISSION, *perms)
+        }
+    }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         val transaction = supportFragmentManager.beginTransaction()
@@ -81,43 +94,34 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         // 设置默认fragment
-        navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        val transaction = supportFragmentManager.beginTransaction()
+        currentFragment?.let {
+            if (it.isAdded) {
+                transaction.show(it)
+            } else {
+                transaction.add(R.id.flMainContainer, it)
+            }
+        } ?: run {
+            transaction.add(R.id.flMainContainer, homeFragment, "home")
+            currentFragment = homeFragment
+        }
+        transaction.commit()
+        UpdateManager.getInstance(this).checkAppData()
 
-//        Logger.local = true
+        navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        requireFilePermission()
     }
 
     override fun onResume() {
         super.onResume()
-
-        if (!fragmentInit) {
-            // 设置默认fragment
-            fragmentInit = true
-            val transaction = supportFragmentManager.beginTransaction()
-            currentFragment?.let {
-                if (it.isAdded) {
-                    transaction.show(it)
-                } else {
-                    transaction.add(R.id.flMainContainer, it)
-                }
-            } ?:run {
-                transaction.add(R.id.flMainContainer, homeFragment, "home")
-                currentFragment = homeFragment
-            }
-            transaction.commit()
-            UpdateManager.getInstance(this).checkAppData()
-        }
+        AppInfoDatabase.getInstance()
     }
 
     /**
-     * 注册广播
-     * 1. 初始化目录
-     * 2. 加载正文
-     * 3. 主题
+     * 注册广播：主题
      */
     private fun registerBroadCastReceivers() {
         mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
-        val intentFilter = IntentFilter()
-        intentFilter.addAction(INIT_PROGRESS)
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
     }
 
@@ -126,5 +130,17 @@ class MainActivity : BaseActivity() {
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
         feedFragment.refreshTheme()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+    }
+
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
     }
 }

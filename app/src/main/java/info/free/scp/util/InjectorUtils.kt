@@ -17,6 +17,8 @@
 package info.free.scp.util
 
 import android.content.Context
+import info.free.scp.view.download.DownloadListViewModelFactory
+import info.free.scp.view.download.DownloadRepository
 import info.free.scp.view.feed.FeedListViewModelFactory
 import info.free.scp.view.feed.FeedRepository
 
@@ -28,6 +30,9 @@ object InjectorUtils {
     private fun getFeedRepository(context: Context): FeedRepository {
         return FeedRepository()
     }
+    private fun getDownloadRepository(): DownloadRepository {
+        return DownloadRepository()
+    }
 //    private fun getPictureRepository(context: Context): PictureRepository {
 //        return PictureRepository()
 //    }
@@ -36,6 +41,10 @@ object InjectorUtils {
     fun provideFeedListViewModelFactory(context: Context): FeedListViewModelFactory {
         val repository = getFeedRepository(context)
         return FeedListViewModelFactory(repository)
+    }
+    fun provideDownloadListViewModelFactory(): DownloadListViewModelFactory {
+        val repository = getDownloadRepository()
+        return DownloadListViewModelFactory(repository)
     }
 
 //    fun providePlantDetailViewModelFactory(

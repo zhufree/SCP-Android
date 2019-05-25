@@ -64,13 +64,13 @@ class DetailActivity : BaseActivity() {
             field = value
             PreferenceUtil.setDetailTextSize(value)
             nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-                    "$currentTextSize;line-height:30px;}* {color:#aaa;}</style>"
+                    "$currentTextSize;}* {color:#aaa;}</style>"
             dayTextStyle = "<style>p {font-size:$currentTextSize}" +
-                    ";line-height:30px;}* {color:#000;}</style>"
+                    ";}* {color:#000;}</style>"
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;line-height:30px;}* {color:#aaa;}</style>"
-    private var dayTextStyle = "<style>p {font-size:$currentTextSize;line-height:30px;}* {color:#000;}</style>"
+            "$currentTextSize;}* {color:#aaa;}</style>"
+    private var dayTextStyle = "<style>p {font-size:$currentTextSize;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"

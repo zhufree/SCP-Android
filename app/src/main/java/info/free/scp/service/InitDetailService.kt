@@ -32,6 +32,7 @@ class InitDetailService : IntentService("initDataService") {
         task.start()
     }
 
+
     internal class ServiceDownloadListener(var context: Context) : DownloadListener("download_full_db") {
         private val channelID = "info.free.scp"
         private val DOWNLOAD_DETAIL_NOTIFICATION = R.string.download_detail_service
@@ -43,6 +44,7 @@ class InitDetailService : IntentService("initDataService") {
             FileHelper(context).copyDataBaseFile(t?.name?:"", true)
             ScpDatabase.getNewInstance()
             notificationManager.cancel(DOWNLOAD_DETAIL_NOTIFICATION)
+
         }
 
         override fun onRemove(progress: Progress?) {

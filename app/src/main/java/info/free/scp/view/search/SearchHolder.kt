@@ -5,13 +5,13 @@ import android.view.View
 import android.view.View.VISIBLE
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Toaster
 import kotlinx.android.synthetic.main.item_search.view.*
+import org.jetbrains.anko.toast
 
 /**
  * 搜索结果：待读按钮
@@ -49,7 +49,7 @@ class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
                     it.setBackgroundColor(ThemeUtil.unClickBtn)
                 } else {
                     ScpDataHelper.getInstance().insertViewListItem(link, title, LATER_TYPE)
-                    Toaster.show("已加入待读列表")
+                    ScpApplication.currentActivity?.toast("已加入待读列表")
                     isInLaterViewList = true
                     it.setBackgroundColor(ThemeUtil.clickedBtn)
                 }

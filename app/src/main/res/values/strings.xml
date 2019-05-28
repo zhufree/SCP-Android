@@ -135,4 +135,16 @@
         离线完成后会替换之前的数据库使用\n4.阅读历史收藏等数据单独存储，不需要担心被替换。</string>
     <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
+
+    <!--捐赠-->
+    <!--donation-->
+    <string name="donation">捐赠</string>
+    <string name="wechat">微信</string>
+    <string name="wechat_qr">微信二维码</string>
+    <string name="alipay_qr">支付宝二维码</string>
+    <string name="show_ad">看垃圾广告</string>
+    <string name="donation_notice">长按二维码保存到相册</string>
+    <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
+    <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>
+    <string name="alipay">支付宝</string>
 </resources>

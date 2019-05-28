@@ -49,7 +49,7 @@ class UpdateManager(private var activity: BaseActivity) {
      * ---finish---
      */
     fun checkAppData() {
-        Logger.i("start checkAppData()")
+        activity.info("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
@@ -76,7 +76,7 @@ class UpdateManager(private var activity: BaseActivity) {
                 var updateDesc: String? = ""
                 var updateLink: String? = ""
                 HttpManager.instance.getAppConfig {
-                    Logger.i("getAppConfig result = $it")
+                    activity.info("getAppConfig result = $it")
                     for (config in it) {
                         if (config.key == "version") {
                             newVersionCode = config.value.toInt()
@@ -97,7 +97,7 @@ class UpdateManager(private var activity: BaseActivity) {
                         }
                     }
                     if (currentVersionCode < newVersionCode && !activity.isFinishing) {
-                        Logger.i("current = $currentVersionCode, new = $newVersionCode, 需要升级")
+                        activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
                         AlertDialog.Builder(activity)
                                 .setTitle("发现新版本")
                                 .setMessage(updateDesc)

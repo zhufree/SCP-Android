@@ -16,7 +16,6 @@ import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.bean.SimpleScp
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
@@ -24,7 +23,6 @@ import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
 import info.free.scp.util.EventUtil.clickLaterList
 import info.free.scp.util.EventUtil.importReadList
-import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
@@ -199,7 +197,7 @@ class LaterAndHistoryActivity : BaseActivity() {
 
             }
         }
-        Toaster.show("导入完成")
+        toast("导入完成")
         onResume()
     }
 }

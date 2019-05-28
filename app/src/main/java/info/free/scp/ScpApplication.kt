@@ -9,8 +9,8 @@ import com.lzy.okgo.OkGo
 import com.lzy.okserver.OkDownload
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
-import info.free.scp.util.Logger
 import info.free.scp.util.ThemeUtil
+import info.free.scp.view.base.BaseActivity
 
 /**
  * Created by zhufree on 2018/8/27.
@@ -43,7 +43,7 @@ class ScpApplication : MultiDexApplication() {
             }
 
             override fun onActivityStarted(activity: Activity?) {
-                currentActivity = activity
+                currentActivity = activity as BaseActivity
             }
 
             override fun onActivityDestroyed(activity: Activity?) {
@@ -70,12 +70,11 @@ class ScpApplication : MultiDexApplication() {
     }
 
     override fun onTerminate() {
-        Logger.saveLog()
         super.onTerminate()
     }
 
     companion object {
         lateinit var context: Context
-        var currentActivity: Activity? = null
+        var currentActivity: BaseActivity? = null
     }
 }

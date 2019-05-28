@@ -45,7 +45,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             if (link.isEmpty()) {
                 ScpApplication.currentActivity?.toast("下载链接未加载成功，请稍后再进入该页面")
             }
-            Logger.i("download: $position: $link")
+            ScpApplication.currentActivity?.info("download: $position: $link")
             val request: GetRequest<File> = OkGo.get(link)
             val task = OkDownload.request(link, request)
                     .fileName(getFileNameByIndex(position - 1))

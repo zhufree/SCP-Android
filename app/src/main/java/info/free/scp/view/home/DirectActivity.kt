@@ -11,11 +11,11 @@ import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 
 
 /**
@@ -95,7 +95,7 @@ class DirectActivity : BaseActivity() {
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
                 startActivity<DetailActivity>("link" to s.link)
-            } ?: Toaster.show("没有这篇文章")
+            } ?: toast("没有这篇文章")
 
         }
     }
@@ -118,7 +118,7 @@ class DirectActivity : BaseActivity() {
                                 "link" to targetScp.link,
                                 "read_type" to 1,
                                 "random_type" to 0)
-                    } ?: Toaster.show("没有离线的文档，无法随机")
+                    } ?: toast("没有离线的文档，无法随机")
                 }
                 R.id.random_scp -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomScp)
@@ -128,7 +128,7 @@ class DirectActivity : BaseActivity() {
                                 "link" to targetScp.link,
                                 "read_type" to 1,
                                 "random_type" to 1)
-                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: toast("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_tales -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomTale)
@@ -138,7 +138,7 @@ class DirectActivity : BaseActivity() {
                                 "link" to targetScp.link,
                                 "read_type" to 1,
                                 "random_type" to 2)
-                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: toast("没有离线的该部分内容，无法随机")
                 }
                 R.id.random_joke -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomJoke)
@@ -148,7 +148,7 @@ class DirectActivity : BaseActivity() {
                                 "link" to targetScp.link,
                                 "read_type" to 1,
                                 "random_type" to 3)
-                    } ?: Toaster.show("没有离线的该部分内容，无法随机")
+                    } ?: toast("没有离线的该部分内容，无法随机")
                 }
             }
             true

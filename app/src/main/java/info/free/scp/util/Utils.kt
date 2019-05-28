@@ -22,6 +22,7 @@ import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
+import org.jetbrains.anko.toast
 import java.io.*
 import java.text.DateFormat.*
 import java.text.SimpleDateFormat
@@ -152,7 +153,7 @@ object Utils {
             outputStream.write(file.readBytes())
             outputStream.close()
         } catch (e: FileNotFoundException) {
-            Toaster.show("未开启SD卡读取权限，需要手动开启。")
+            ScpApplication.currentActivity?.toast("未开启SD卡读取权限，需要手动开启。")
         } catch (e: IOException) {
             e.printStackTrace()
         }

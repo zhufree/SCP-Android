@@ -238,7 +238,7 @@ class DetailActivity : BaseActivity() {
                                 it.setTitle(R.string.offline_mode)
                                 webView?.loadUrl(fullUrl)
                             } else {
-                                Toaster.show("请先开启网络")
+                                toast("请先开启网络")
                             }
                         } else {
                             onlineMode = 0
@@ -279,7 +279,7 @@ class DetailActivity : BaseActivity() {
                         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                         val clipData = ClipData.newPlainText("scp_link", fullUrl)
                         clipboardManager?.primaryClip = clipData
-                        Toaster.show("已复制到剪贴板")
+                        toast("已复制到剪贴板")
                     }
                     R.id.like -> {
                         likeScp()
@@ -287,12 +287,12 @@ class DetailActivity : BaseActivity() {
                     R.id.add_read_later -> {
                         ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
                                 SCPConstants.LATER_TYPE)
-                        Toaster.show("已加入待读列表")
+                        toast("已加入待读列表")
                     }
                     R.id.share_picture -> {
                         // 截屏分享
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
-                        Toaster.show("生成图片中...", context = this)
+                        toast("生成图片中...")
                         gp_share_content?.visibility = VISIBLE
                         cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
                                 ViewTreeObserver.OnGlobalLayoutListener {
@@ -366,7 +366,7 @@ class DetailActivity : BaseActivity() {
                 }
                 scp?.let {
                     setData(it)
-                } ?: Toaster.show("已经是最后一篇了")
+                } ?: toast("已经是最后一篇了")
             }
             1 -> {
                 if (randomIndex < randomList.size - 1) {
@@ -402,7 +402,7 @@ class DetailActivity : BaseActivity() {
         when (readType) {
             0 -> {
                 when (index) {
-                    0 -> Toaster.show("已经是第一篇了")
+                    0 -> toast("已经是第一篇了")
                     else -> {
                         scp = if (itemType == 0) {
                             ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
@@ -423,7 +423,7 @@ class DetailActivity : BaseActivity() {
                         setData(it)
                     }
                 } else {
-                    Toaster.show("已经是第一篇了")
+                    toast("已经是第一篇了")
                 }
             }
             else -> {

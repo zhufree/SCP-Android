@@ -16,11 +16,11 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.fragment_category.*
+import org.jetbrains.anko.support.v4.toast
 
 /**
  * 一级目录，点进去是正文
@@ -178,7 +178,7 @@ class ScpListFragment : BaseFragment() {
             }
         }
         if (scpList?.size == 0) {
-            Toaster.show("该页没有内容或数据加载未完成")
+            toast("该页没有内容或数据加载未完成")
         }
         scpAdapter?.notifyDataSetChanged()
     }

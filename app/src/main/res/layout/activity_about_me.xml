@@ -7,65 +7,99 @@
     tools:context="info.free.scp.view.user.AboutMeActivity"
     android:background="?attr/containerBg">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_about_me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/about_me_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/donation" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <ImageView
         android:id="@+id/iv_about_me"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="100dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="64dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="32dp"
         android:contentDescription="@string/app_name"
         android:src="@drawable/img_donation_wechat"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/tv_donation_wechat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/abl_about_me"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/tv_donation_wechat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="微信捐赠"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:background="?attr/itemBg"
+        android:layout_marginBottom="32dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/iv_about_me"
-        android:layout_marginTop="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/wechat_qr"
+        app:layout_constraintBottom_toTopOf="@id/tv_donation_notice"
         app:layout_constraintEnd_toStartOf="@+id/tv_donation_alipay"
-        app:layout_constraintVertical_chainStyle="spread_inside"/>
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_about_me" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/tv_donation_alipay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:text="支付宝捐赠"
-        android:background="?attr/itemBg"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/iv_about_me"
-        android:layout_marginTop="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="60dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/alipay_qr"
+        app:layout_constraintBottom_toBottomOf="@id/tv_donation_wechat"
+        app:layout_constraintEnd_toStartOf="@+id/tv_show_ad"
         app:layout_constraintStart_toEndOf="@id/tv_donation_wechat"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="@id/tv_donation_wechat" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/tv_show_ad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="长按二维码保存到相册"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/show_ad"
+        app:layout_constraintBottom_toBottomOf="@id/tv_donation_wechat"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp"/>
+        app:layout_constraintStart_toEndOf="@id/tv_donation_alipay"
+        app:layout_constraintTop_toTopOf="@id/tv_donation_wechat" />
+
+    <TextView
+        android:id="@+id/tv_donation_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/donation_notice"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_donation_wechat" />
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

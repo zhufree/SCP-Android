@@ -1,6 +1,5 @@
 package info.free.scp.view.search
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,13 +11,13 @@ import info.free.scp.bean.ScpItemModel
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
 import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class SearchActivity : BaseActivity() {
@@ -36,7 +35,7 @@ class SearchActivity : BaseActivity() {
         btn_search?.setOnClickListener {
             val keyword = et_search_input?.text?.toString()?:""
             if (keyword.isEmpty()) {
-                Toaster.show("请输入正确的关键词")
+                toast("请输入正确的关键词")
             } else {
                 if (searchMode == 0) searchByTitle(keyword) else searchByDetail(keyword)
             }
@@ -54,7 +53,7 @@ class SearchActivity : BaseActivity() {
         resultList.clear()
         resultList.addAll(ScpDatabase.getInstance()?.scpDao()?.searchScpByTitle("%$keyword%")?: emptyList())
         if (resultList.size == 0) {
-            Toaster.show("搜索结果为空")
+            toast("搜索结果为空")
         }
         if (adapter == null) {
             adapter = SearchResultAdapter(this@SearchActivity, resultList)

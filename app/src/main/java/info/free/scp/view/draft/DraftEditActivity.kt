@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import info.free.scp.R
-import info.free.scp.util.Logger
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_draft_edit.*

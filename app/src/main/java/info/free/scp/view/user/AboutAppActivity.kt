@@ -7,10 +7,9 @@ import android.os.Bundle
 import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.Toaster
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_about_app.*
+import org.jetbrains.anko.toast
 
 class AboutAppActivity : BaseActivity() {
 
@@ -26,7 +25,7 @@ class AboutAppActivity : BaseActivity() {
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             val clipData = ClipData.newPlainText("qqGroup", "805194504")
             clipboardManager?.primaryClip = clipData
-            Toaster.show("已复制到剪贴板")
+            toast("已复制到剪贴板")
             true
         }
     }

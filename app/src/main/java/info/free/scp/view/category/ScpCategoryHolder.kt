@@ -7,6 +7,7 @@ import android.view.View.VISIBLE
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -17,6 +18,7 @@ import info.free.scp.util.*
 import info.free.scp.util.EventUtil.addLater
 import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.alert
+import org.jetbrains.anko.toast
 
 /**
  * 列表的item
@@ -76,7 +78,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view) {
                 it.setBackgroundColor(ThemeUtil.unClickBtn)
             } else {
                 ScpDataHelper.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
-                Toaster.show("已加入待读列表")
+                ScpApplication.currentActivity?.toast("已加入待读列表")
                 EventUtil.onEvent(mContext, addLater)
                 isInLaterViewList = true
                 it.setBackgroundColor(ThemeUtil.clickedBtn)

@@ -104,6 +104,8 @@ dependencies {
     implementation 'com.lzy.net:okserver:+'    //版本号使用 + 可以自动引用最新版
 
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+    implementation files('libs/GDTSDK.union.4.40.910.jar')
 }
 
 repositories {

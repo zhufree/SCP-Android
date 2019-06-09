@@ -78,10 +78,6 @@ class DetailActivity : BaseActivity() {
     private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
     private val wikiScript = "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
     private val jsScript = "$jqScript$initScript$tabScript$wikiScript"
-
-    private val copyRightHtml = "<div id=\"license-area\" class=\"license-area\">除非特别注明，" +
-            "本页内容采用以下授权方式： <a rel=\"license\" href=\"http://creativecommons.org/licenses/" +
-            "by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 License</a></div>"
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
@@ -140,6 +136,13 @@ class DetailActivity : BaseActivity() {
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
+                if (requestUrl.startsWith("http://scp-wiki-cn.wikidot.com/") and requestUrl.contains("/html/")) {
+                    return false
+                }
+                if (requestUrl.startsWith("http://scp-wiki-cn.wdfiles.com/")) {
+                    return false
+                }
+
                 if (onlineMode == 1) {
                     view.loadUrl(requestUrl)
                 } else {
@@ -185,6 +188,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setData(scp: ScpModel, back: Boolean = false) {
         ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
+        AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, SCPConstants.LATER_TYPE)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
         refreshReadBtnStatus()
@@ -192,11 +196,14 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
             historyList.add(scp)
-            historyIndex = historyList.size-1
+            historyIndex = historyList.size - 1
         }
         detail_toolbar?.title = scp.title
         url = scp.link
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
+        // 显示frame
+        detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+        detailHtml = detailHtml.replace("html-block-iframe", "")
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)

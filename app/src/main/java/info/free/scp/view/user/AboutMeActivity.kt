@@ -16,9 +16,9 @@ import android.net.Uri
 import android.os.Handler
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import com.qq.e.ads.interstitial.AbstractInterstitialADListener
-import com.qq.e.ads.interstitial.InterstitialAD
-import com.qq.e.comm.util.AdError
+//import com.qq.e.ads.interstitial.AbstractInterstitialADListener
+//import com.qq.e.ads.interstitial.InterstitialAD
+//import com.qq.e.comm.util.AdError
 import info.free.scp.PrivateConstants
 import info.free.scp.SCPConstants
 import org.jetbrains.anko.longToast
@@ -29,7 +29,7 @@ import pub.devrel.easypermissions.EasyPermissions
 
 class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var payType = 0 // 0 wechat 1 zhi
-    private var ad: InterstitialAD? = null
+//    private var ad: InterstitialAD? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,17 +61,17 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             }, 500)
         }
 
-        ad = InterstitialAD(this, PrivateConstants.AD_APP_ID, PrivateConstants.AD_ID)
-        ad?.setADListener(object : AbstractInterstitialADListener() {
-
-            override fun onNoAD(error: AdError) {
-            }
-
-            override fun onADReceive() {
-                ad?.show()
-            }
-
-        })
+//        ad = InterstitialAD(this, PrivateConstants.AD_APP_ID, PrivateConstants.AD_ID)
+//        ad?.setADListener(object : AbstractInterstitialADListener() {
+//
+//            override fun onNoAD(error: AdError) {
+//            }
+//
+//            override fun onADReceive() {
+//                ad?.show()
+//            }
+//
+//        })
     }
 
     private fun startWechatScan(c: Context) {
@@ -113,7 +113,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private fun requireFilePermission() {
         val perms = arrayOf(Manifest.permission.READ_PHONE_STATE)
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            ad?.loadAD()
+//            ad?.loadAD()
         } else {
             // Do not have permissions, request them now
             EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
@@ -131,6 +131,6 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        ad?.loadAD()
+//        ad?.loadAD()
     }
 }

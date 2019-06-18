@@ -37,6 +37,10 @@
         android:id="@+id/share_picture"
         android:title="@string/share_with_picture"
         app:showAsAction="collapseActionView"/>
+    <item
+        android:id="@+id/translate"
+        android:title="@string/translate"
+        app:showAsAction="collapseActionView"/>
 
 
 </menu>

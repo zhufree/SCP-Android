@@ -59,6 +59,7 @@
     <string name="menu_open_in_browser">在浏览器中打开</string>
     <string name="menu_copy_link">复制链接</string>
     <string name="share_with_picture">图片分享</string>
+    <string name="translate">转换简体</string>
     <string name="menu_like">收藏</string>
     <string name="menu_add_read_later">加入待读列表</string>
 

@@ -105,7 +105,7 @@ dependencies {
 
     implementation 'pub.devrel:easypermissions:3.0.0'
 
-    implementation files('libs/GDTSDK.union.4.40.910.jar')
+//    implementation files('libs/GDTSDK.union.4.40.910.jar')
 }
 
 repositories {

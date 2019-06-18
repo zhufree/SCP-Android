@@ -38,6 +38,8 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import taobe.tec.jcc.JChineseConvertor
+import java.io.IOException
 
 
 class DetailActivity : BaseActivity() {
@@ -338,11 +340,26 @@ class DetailActivity : BaseActivity() {
 
                         }
                     }
+                    R.id.translate -> {
+                        translate()
+                    }
                     else -> {
                     }
                 }
             }
             true
+        }
+    }
+
+    private fun translate() {
+        try {
+            val converter = JChineseConvertor.getInstance()
+            detailHtml = converter.t2s(detailHtml)
+            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                    + detailHtml + jsScript,
+                    "text/html", "utf-8", null)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 

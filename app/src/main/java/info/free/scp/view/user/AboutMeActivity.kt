@@ -25,8 +25,7 @@ import info.free.scp.SCPConstants.AD_APP_ID
 import info.free.scp.SCPConstants.CUT_VIDEO_AD_ID
 import info.free.scp.SCPConstants.STATIC_AD_ID
 import info.free.scp.SCPConstants.VIDEO_AD_ID
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import org.jetbrains.anko.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -39,12 +38,8 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
         EventUtil.onEvent(this, EventUtil.clickAboutMe)
         setContentView(R.layout.activity_about_me)
-        TGSDK.setDebugModel(true)
 
-        TGSDK.initialize(
-                this,
-                AD_APP_ID,
-                null)
+        TGSDK.initialize(this, AD_APP_ID, null)
         about_me_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         about_me_toolbar?.setNavigationOnClickListener { finish() }
         tv_donation_wechat?.setOnClickListener {
@@ -59,6 +54,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         tv_show_ad?.setOnClickListener {
             requireFilePermission()
         }
+        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
 
         iv_about_me?.setOnLongClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
@@ -73,17 +69,54 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         }
 
         tv_show_ad?.setOnClickListener {
-            if (TGSDK.couldShowAd(STATIC_AD_ID)) {
-                TGSDK.showTestView(this, STATIC_AD_ID)
+            if (System.currentTimeMillis() - PreferenceUtil.getLastShowAdTime() < 1800000) {
+                alert("你点击广告太频繁了，请待会再来吧","感谢你的支持") {
+                    yesButton {}
+                }.show()
                 return@setOnClickListener
             }
-            if (TGSDK.couldShowAd(CUT_VIDEO_AD_ID)) {
-                TGSDK.showTestView(this, CUT_VIDEO_AD_ID)
+            if (!PreferenceUtil.getShowAdNotice()) {
+                alert("如果你想支持开发者但没有闲钱的话，可以选择看广告。" +
+                        "开发者承诺不在本APP内任何地方插入侵入式（强制观看）的广告，" +
+                        "仅在用户知情同意的情况下显示广告。","感谢你的支持") {
+
+                    yesButton {
+                        PreferenceUtil.setShowAdNotice()
+                        showAdSelector()
+                    }
+                }.show()
                 return@setOnClickListener
             }
-            if (TGSDK.couldShowAd(VIDEO_AD_ID)) {
-                TGSDK.showTestView(this, VIDEO_AD_ID)
-                return@setOnClickListener
+            showAdSelector()
+        }
+    }
+
+    private fun showAdSelector() {
+        val adList = listOf("图片广告：+1分", "可以跳过的视频广告：+3分", "不可跳过的视频广告：+5分")
+        selector("选择你要看的广告类型", adList) { _, i ->
+            when (i) {
+                0 -> {
+                    if (TGSDK.couldShowAd(STATIC_AD_ID)) {
+                        PreferenceUtil.addAdPoints(1)
+                        TGSDK.showAd(this, STATIC_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+                    }
+                }
+                1 -> {
+                    if (TGSDK.couldShowAd(CUT_VIDEO_AD_ID)) {
+                        PreferenceUtil.addAdPoints(3)
+                        TGSDK.showAd(this, CUT_VIDEO_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+                    }
+                }
+                2 -> {
+                    if (TGSDK.couldShowAd(VIDEO_AD_ID)) {
+                        PreferenceUtil.addAdPoints(5)
+                        TGSDK.showAd(this, VIDEO_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+
+                    }
+                }
             }
         }
     }

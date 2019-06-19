@@ -306,6 +306,30 @@ object PreferenceUtil {
     fun getDraftTitle(): String {
         return getStringValue("level", "draft_title")
     }
+
+    /**
+     * 广告
+     */
+    fun setShowAdNotice() {
+        setBooleanValue(APP_SP, "show_ad_notice", true)
+    }
+
+    fun getShowAdNotice() = getBooleanValue(APP_SP, "show_ad_notice")
+
+    fun addAdPoints(point: Int) {
+        setIntValue("level", "ad_point", getAdPoint() + point)
+    }
+
+    fun getAdPoint(): Int {
+        return getIntValue("level", "ad_point")
+    }
+
+    fun setLastShowAdTime(time: Long) {
+        setLongValue(APP_SP, "last_show_ad_time", time)
+    }
+
+    fun getLastShowAdTime() = getLongValue(APP_SP, "last_show_ad_time")
+
     /**
      * 工具方法
      */

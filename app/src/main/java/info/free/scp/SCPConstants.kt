@@ -101,6 +101,12 @@ object SCPConstants {
         const val REQUEST_FILE_PERMISSION = 1
     }
 
+    const val AD_APP_ID = "Anj4zA3O5nvjCDY3V425"
+    const val VIDEO_AD_ID = "JAZAScTTmG4YbithEZA"
+    const val CUT_VIDEO_AD_ID = "OSpUJ7zYci0WpO6siH8"
+    const val STATIC_AD_ID = "4Ay37SwuUaeiU3W1Oi2"
+
+
     const val HISTORY_TYPE = 0
     const val LATER_TYPE = 1
 

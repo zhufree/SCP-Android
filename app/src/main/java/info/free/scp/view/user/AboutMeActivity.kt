@@ -14,13 +14,17 @@ import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Handler
+import com.soulgame.sgsdk.tgsdklib.TGSDK
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 //import com.qq.e.ads.interstitial.AbstractInterstitialADListener
 //import com.qq.e.ads.interstitial.InterstitialAD
 //import com.qq.e.comm.util.AdError
-import info.free.scp.PrivateConstants
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AD_APP_ID
+import info.free.scp.SCPConstants.CUT_VIDEO_AD_ID
+import info.free.scp.SCPConstants.STATIC_AD_ID
+import info.free.scp.SCPConstants.VIDEO_AD_ID
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -35,7 +39,14 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
         EventUtil.onEvent(this, EventUtil.clickAboutMe)
         setContentView(R.layout.activity_about_me)
+        TGSDK.setDebugModel(true)
 
+        TGSDK.initialize(
+                this,
+                AD_APP_ID,
+                null)
+        about_me_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        about_me_toolbar?.setNavigationOnClickListener { finish() }
         tv_donation_wechat?.setOnClickListener {
             payType = 0
             iv_about_me?.setImageResource(R.drawable.img_donation_wechat)
@@ -61,17 +72,26 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             }, 500)
         }
 
-//        ad = InterstitialAD(this, PrivateConstants.AD_APP_ID, PrivateConstants.AD_ID)
-//        ad?.setADListener(object : AbstractInterstitialADListener() {
-//
-//            override fun onNoAD(error: AdError) {
-//            }
-//
-//            override fun onADReceive() {
-//                ad?.show()
-//            }
-//
-//        })
+        tv_show_ad?.setOnClickListener {
+            if (TGSDK.couldShowAd(STATIC_AD_ID)) {
+                TGSDK.showTestView(this, STATIC_AD_ID)
+                return@setOnClickListener
+            }
+            if (TGSDK.couldShowAd(CUT_VIDEO_AD_ID)) {
+                TGSDK.showTestView(this, CUT_VIDEO_AD_ID)
+                return@setOnClickListener
+            }
+            if (TGSDK.couldShowAd(VIDEO_AD_ID)) {
+                TGSDK.showTestView(this, VIDEO_AD_ID)
+                return@setOnClickListener
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        TGSDK.preloadAd(this)
     }
 
     private fun startWechatScan(c: Context) {
@@ -121,7 +141,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)

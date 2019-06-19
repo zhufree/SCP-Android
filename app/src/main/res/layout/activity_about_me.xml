@@ -83,7 +83,7 @@
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         android:text="@string/show_ad"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/tv_donation_wechat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_donation_alipay"

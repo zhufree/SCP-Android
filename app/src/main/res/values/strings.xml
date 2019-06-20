@@ -59,7 +59,8 @@
     <string name="menu_open_in_browser">在浏览器中打开</string>
     <string name="menu_copy_link">复制链接</string>
     <string name="share_with_picture">图片分享</string>
-    <string name="translate">转换简体</string>
+    <string name="translate_to_simple">转换简体</string>
+    <string name="translate_to_traditional">转换繁体</string>
     <string name="menu_like">收藏</string>
     <string name="menu_add_read_later">加入待读列表</string>
 
@@ -100,6 +101,7 @@
     <string name="game_list">游戏列表</string>
     <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
+    <string name="day_mode">日间模式</string>
     <string name="read_settings">阅读设置</string>
     <string name="download_settings">离线及同步设置</string>
     <string name="hide_finished_article">隐藏已读文档</string>

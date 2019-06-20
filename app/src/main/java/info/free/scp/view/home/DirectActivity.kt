@@ -101,12 +101,8 @@ class DirectActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(direct_toolbar)
+        baseToolbar = direct_toolbar
         supportActionBar?.setTitle(R.string.title_direct)
-        direct_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        direct_toolbar?.setNavigationOnClickListener {
-            finish()
-        }
         direct_toolbar?.inflateMenu(R.menu.direct_menu) //设置右上角的填充菜单
         direct_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {

@@ -1,11 +1,8 @@
 package info.free.scp.view.detail
 
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.*
 import android.content.DialogInterface.BUTTON_POSITIVE
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -31,6 +28,8 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
+import info.free.scp.util.ThemeUtil.DAY_THEME
+import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
@@ -188,6 +187,12 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    override fun refreshTheme() {
+        super.refreshTheme()
+        cl_detail_container?.setBackgroundColor(ThemeUtil.containerBg)
+        refreshStyle()
+    }
+
     private fun setData(scp: ScpModel, back: Boolean = false) {
         ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
         AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, SCPConstants.LATER_TYPE)
@@ -229,11 +234,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(detail_toolbar)
-        detail_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        detail_toolbar?.setNavigationOnClickListener {
-            finish()
-        }
+        baseToolbar = detail_toolbar
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
             scp?.let { s ->
@@ -293,6 +294,9 @@ class DetailActivity : BaseActivity() {
                     R.id.like -> {
                         likeScp()
                     }
+                    R.id.change_theme -> {
+                        changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
+                    }
                     R.id.add_read_later -> {
                         ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
                                 SCPConstants.LATER_TYPE)
@@ -340,8 +344,11 @@ class DetailActivity : BaseActivity() {
 
                         }
                     }
-                    R.id.translate -> {
-                        translate()
+                    R.id.translate_to_simple -> {
+                        translate(simple)
+                    }
+                    R.id.translate_to_traditional -> {
+                        translate(traditional)
                     }
                     else -> {
                     }
@@ -351,10 +358,17 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    private fun translate() {
+    private fun changeTheme(mode: Int) {
+        ThemeUtil.changeTheme(this, mode)
+    }
+
+    private val simple = 0
+    private val traditional = 1
+
+    private fun translate(translateType: Int) {
         try {
             val converter = JChineseConvertor.getInstance()
-            detailHtml = converter.t2s(detailHtml)
+            detailHtml = if (translateType == simple) converter.t2s(detailHtml) else converter.s2t(detailHtml)
             webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                     + detailHtml + jsScript,
                     "text/html", "utf-8", null)

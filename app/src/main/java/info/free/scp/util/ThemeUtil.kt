@@ -28,6 +28,8 @@ object ThemeUtil {
     var disabledBg: Int = -1
 
     var currentTheme: Int = -1
+    const val DAY_THEME = 0
+    const val NIGHT_THEME = 1
 
     init {
         currentTheme = PreferenceUtil.getCurrentTheme()
@@ -36,16 +38,16 @@ object ThemeUtil {
     /** 为每一个activity设置主题  */
     fun setTheme(activity: Activity) {
         when (currentTheme) {
-            0 -> activity.setTheme(R.style.DayTheme)
-            1 -> activity.setTheme(R.style.NightTheme)
+            DAY_THEME -> activity.setTheme(R.style.DayTheme)
+            NIGHT_THEME -> activity.setTheme(R.style.NightTheme)
             else -> activity.setTheme(R.style.DayTheme)
         }
     }
 
     fun setTheme(application: Application) {
         when (currentTheme) {
-            0 -> application.setTheme(R.style.DayTheme)
-            1 -> application.setTheme(R.style.NightTheme)
+            DAY_THEME -> application.setTheme(R.style.DayTheme)
+            NIGHT_THEME -> application.setTheme(R.style.NightTheme)
             else -> application.setTheme(R.style.DayTheme)
         }
         initColor(application)
@@ -53,14 +55,14 @@ object ThemeUtil {
 
 
     /** 修改主题  */
-    fun changeTheme(activity: androidx.fragment.app.FragmentActivity?, theme: Int) {
+    fun changeTheme(activity: FragmentActivity?, theme: Int) {
         currentTheme = theme
         PreferenceUtil.setCurrentTheme(theme)
         activity?.let {
             setTheme(activity)
             initColor(activity)
         }
-        androidx.localbroadcastmanager.content.LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
+        LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
     }
 
     private fun initColor(context: Context) {

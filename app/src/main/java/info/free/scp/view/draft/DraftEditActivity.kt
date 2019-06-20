@@ -14,9 +14,8 @@ class DraftEditActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_draft_edit)
 
-        setSupportActionBar(draft_toolbar)
+        baseToolbar = draft_toolbar
         supportActionBar?.setTitle(R.string.draft_list)
-        draft_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
         draft_toolbar?.setNavigationOnClickListener {
             PreferenceUtil.saveDraftContent(et_content.editableText.toString())
             PreferenceUtil.saveDraftTitle(et_title.editableText.toString())

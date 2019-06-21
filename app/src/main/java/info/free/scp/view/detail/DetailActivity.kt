@@ -33,10 +33,7 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 import taobe.tec.jcc.JChineseConvertor
 import java.io.IOException
 
@@ -155,10 +152,10 @@ class DetailActivity : BaseActivity() {
                         url = requestUrl
                     }
                     info(url)
-                    val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
-                    scp?.let {
-
-                        setData(scp)
+                    val tmpScp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
+                    tmpScp?.let {
+                        scp = tmpScp
+                        setData(tmpScp)
                     } ?: run {
                         pbLoading.visibility = VISIBLE
                         view.loadUrl(fullUrl)
@@ -396,7 +393,6 @@ class DetailActivity : BaseActivity() {
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-//                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
                 scp = if (itemType == 0) {
                     ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
                 } else {
@@ -500,7 +496,8 @@ class DetailActivity : BaseActivity() {
         readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
             tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
-            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.disabledBg)
+            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
+                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
             readBtnLp?.endToEnd = -1
             readBtnLp?.startToStart = -1
             readBtnLp?.endToStart = R.id.gl_detail_center
@@ -508,7 +505,8 @@ class DetailActivity : BaseActivity() {
             tv_bottom_like?.visibility = VISIBLE
         } else {
             tv_bottom_set_has_read?.setText(R.string.set_has_read)
-            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.itemBg)
+            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
+                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
             readBtnLp?.endToEnd = 0
             readBtnLp?.startToStart = 0
             readBtnLp?.endToStart = -1
@@ -518,6 +516,10 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initSwitchBtn() {
+        tv_bottom_preview?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        tv_bottom_next?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
         tv_bottom_preview?.setOnClickListener {
             toPreviewArticle()
         }
@@ -558,11 +560,13 @@ class DetailActivity : BaseActivity() {
         if (scpInfo == null || !scpInfo.like) {
             menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
             tv_bottom_like?.text = "收藏"
-            tv_bottom_like?.setBackgroundColor(ThemeUtil.itemBg)
+            tv_bottom_like?.background = ThemeUtil.customShape(
+                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
         } else {
             menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             tv_bottom_like?.text = "取消收藏"
-            tv_bottom_like?.setBackgroundColor(ThemeUtil.disabledBg)
+            tv_bottom_like?.background = ThemeUtil.customShape(
+                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
         }
         return super.onPrepareOptionsMenu(menu)
     }

@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbarBg"
-            app:popupTheme="@style/ToolbarPopupTheme"
-            app:layout_scrollFlags="scroll|enterAlways"/>
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/ToolbarPopupTheme" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -36,125 +36,138 @@
             android:layout_height="match_parent"
             android:background="?attr/containerBg"
             android:paddingBottom="16dp">
+
             <WebView
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintTop_toTopOf="parent">
-            </WebView>
+                android:padding="16dp"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ProgressBar
                 android:id="@+id/pbLoading"
                 style="@style/Widget.AppCompat.ProgressBar"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginBottom="60dp"
                 android:progressDrawable="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="60dp"
-                android:layout_marginBottom="60dp" />
+                app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/gp_share_content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
-                app:constraint_referenced_ids="tv_share_notice, iv_download_qrcode"/>
+                app:constraint_referenced_ids="tv_share_notice, iv_download_qrcode" />
+
             <TextView
                 android:id="@+id/tv_share_notice"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="扫描二维码，探索SCP基金会的秘密"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/webView"
                 android:layout_marginTop="8dp"
-                android:textSize="16sp"/>
+                android:gravity="center"
+                android:text="扫描二维码，探索SCP基金会的秘密"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/webView" />
+
             <ImageView
                 android:id="@+id/iv_download_qrcode"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:src="@drawable/download_qr"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_share_notice"
-                app:layout_constraintBottom_toTopOf="@+id/s_blank_bottom"
                 android:layout_marginTop="4dp"
-                android:contentDescription="@string/app_name" />
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/download_qr"
+                app:layout_constraintBottom_toTopOf="@+id/s_blank_bottom"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_share_notice" />
+
             <Space
                 android:id="@+id/s_blank_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                app:layout_constraintTop_toBottomOf="@id/iv_download_qrcode"
                 app:layout_constraintBottom_toBottomOf="parent"
-                />
+                app:layout_constraintTop_toBottomOf="@id/iv_download_qrcode" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_gravity="bottom"
-        android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
-        >
-        <TextView
+        android:layout_marginBottom="16dp">
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_preview"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
-            android:background="?attr/itemBg"
             android:gravity="center"
+            android:padding="0dp"
             android:text="@string/preview_article"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_detail_center"
             android:layout_width="0dp"
+
             android:layout_height="match_parent"
-            app:layout_constraintGuide_percent="0.5"
-            android:orientation="vertical"/>
-        <TextView
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_set_has_read"
             android:layout_width="80dp"
             android:layout_height="30dp"
-            android:background="?attr/itemBg"
             android:gravity="center"
+            android:padding="0dp"
             android:text="@string/set_has_read"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_like"
             android:layout_width="80dp"
             android:layout_height="30dp"
-            android:background="?attr/itemBg"
             android:gravity="center"
+            android:padding="0dp"
             android:text="@string/menu_like"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@id/gl_detail_center"
             android:visibility="gone"
-            />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/gl_detail_center"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_next"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginEnd="16dp"
-            android:background="?attr/itemBg"
             android:gravity="center"
+            android:padding="0dp"
             android:text="@string/next_article"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/containerBg"
     tools:context="info.free.scp.view.detail.DetailActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -41,7 +40,6 @@
                 android:id="@+id/webView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:padding="16dp"
                 app:layout_constraintTop_toTopOf="parent" />
 

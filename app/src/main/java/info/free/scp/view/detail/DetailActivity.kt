@@ -22,6 +22,7 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
+import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
@@ -68,9 +69,9 @@ class DetailActivity : BaseActivity() {
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
             "$currentTextSize;}* {color:#aaa;}</style>"
-    private var dayTextStyle = "<style>p {font-size:$currentTextSize;}* {color:#000;}</style>"
+    private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
-    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
     private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
     private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
@@ -113,7 +114,7 @@ class DetailActivity : BaseActivity() {
                     ?.getCollectionByLink(url)
         }
 
-        fullUrl = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
+        fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
 
         scp?.let {
             // 数据库取到
@@ -134,17 +135,17 @@ class DetailActivity : BaseActivity() {
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
-                if (requestUrl.startsWith("http://scp-wiki-cn.wikidot.com/") and requestUrl.contains("/html/")) {
+                if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
                     return false
                 }
-                if (requestUrl.startsWith("http://scp-wiki-cn.wdfiles.com/")) {
+                if (requestUrl.startsWith(SCP_SITE_URL)) {
                     return false
                 }
 
                 if (onlineMode == 1) {
                     view.loadUrl(requestUrl)
                 } else {
-                    if (requestUrl.startsWith("http://scp-wiki-cn.wikidot.com/")) {
+                    if (requestUrl.startsWith(SCP_SITE_URL)) {
                         url = requestUrl.subSequence(30, requestUrl.length).toString()
                     } else if (requestUrl.startsWith("file:")) {
                         url = requestUrl.subSequence(7, requestUrl.length).toString()
@@ -188,6 +189,8 @@ class DetailActivity : BaseActivity() {
         super.refreshTheme()
         cl_detail_container?.setBackgroundColor(ThemeUtil.containerBg)
         refreshStyle()
+        refreshReadBtnStatus()
+        refreshButtonStyle()
     }
 
     private fun setData(scp: ScpModel, back: Boolean = false) {
@@ -224,7 +227,7 @@ class DetailActivity : BaseActivity() {
      * 不改变网页内容，只刷新样式
      */
     private fun refreshStyle() {
-        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
         webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                 + detailHtml + jsScript,
                 "text/html", "utf-8", null)
@@ -292,6 +295,7 @@ class DetailActivity : BaseActivity() {
                         likeScp()
                     }
                     R.id.change_theme -> {
+                        it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
                         changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
                     }
                     R.id.add_read_later -> {
@@ -516,10 +520,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initSwitchBtn() {
-        tv_bottom_preview?.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
-        tv_bottom_next?.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
             toPreviewArticle()
         }
@@ -533,6 +534,13 @@ class DetailActivity : BaseActivity() {
         }
 
         tv_bottom_like?.setOnClickListener { likeScp() }
+    }
+
+    private fun refreshButtonStyle() {
+        tv_bottom_preview?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        tv_bottom_next?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

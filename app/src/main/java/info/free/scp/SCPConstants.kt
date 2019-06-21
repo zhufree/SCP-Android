@@ -86,12 +86,10 @@ object SCPConstants {
 
     const val BMOB_API_URL = "https://api.bmob.cn/"
     const val SCP_SITE_URL = "http://scp-wiki-cn.wikidot.com"
-    const val FEED_API_URL = "http://95.169.12.185"
+    const val FEED_API_URL = "http://148.70.39.62"
 
     // 广播类型
     object BroadCastAction {
-        const val INIT_PROGRESS = "initProgress"
-        const val LOAD_DETAIL_FINISH = "loadDetailFinish"
         const val ACTION_CHANGE_THEME = "changeTheme"
     }
 

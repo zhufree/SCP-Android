@@ -21,6 +21,7 @@ import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftEditActivity
+import info.free.scp.view.draft.DraftListActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.startActivity
 
@@ -87,7 +88,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         findPreference<Preference>("draft")?.setOnPreferenceClickListener {
             EventUtil.onEvent(context, EventUtil.clickDraft)
-            activity?.startActivity<DraftEditActivity>()
+            activity?.startActivity<DraftListActivity>()
             true
         }
     }

@@ -20,7 +20,20 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbarBg"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/ToolbarPopupTheme" />
+            app:popupTheme="@style/ToolbarPopupTheme">
+
+            <TextView
+                android:id="@+id/tv_detail_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textSize="18sp" />
+        </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

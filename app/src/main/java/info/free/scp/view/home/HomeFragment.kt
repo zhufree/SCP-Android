@@ -50,12 +50,12 @@ class HomeFragment : BaseFragment() {
             }
             true
         }
-        tv_series_doc?.background?.alpha = 90
-        tv_story_doc?.background?.alpha = 90
-        tv_about_doc?.background?.alpha = 90
-        tv_read_later?.background?.alpha = 90
-        tv_joke_doc?.background?.alpha = 90
-        tv_direct?.background?.alpha = 90
+        tv_series_doc?.background?.alpha = 80
+        tv_story_doc?.background?.alpha = 80
+        tv_about_doc?.background?.alpha = 80
+        tv_read_later?.background?.alpha = 80
+        tv_joke_doc?.background?.alpha = 80
+        tv_direct?.background?.alpha = 80
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }

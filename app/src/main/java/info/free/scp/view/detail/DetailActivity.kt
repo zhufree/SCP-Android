@@ -205,7 +205,8 @@ class DetailActivity : BaseActivity() {
             historyList.add(scp)
             historyIndex = historyList.size - 1
         }
-        detail_toolbar?.title = scp.title
+        tv_detail_toolbar?.text = scp.title
+        tv_detail_toolbar?.isSelected = true
         url = scp.link
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
         // 显示frame
@@ -235,6 +236,7 @@ class DetailActivity : BaseActivity() {
 
     private fun initToolbar() {
         baseToolbar = detail_toolbar
+        supportActionBar?.title = null
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
             scp?.let { s ->

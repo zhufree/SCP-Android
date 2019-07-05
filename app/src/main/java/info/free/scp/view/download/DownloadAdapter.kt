@@ -51,7 +51,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                     .fileName(getFileNameByIndex(position - 1))
                     .register(ListDownloadListener(download.title, this, position - 1))
                     .save()
-            bind(createOnClickListener(task), download) // 点击事件
+            bind(createOnClickListener(task, position), download) // 点击事件
             itemView.tag = download
         }
     }
@@ -63,10 +63,41 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
         }
     }
 
-    private fun createOnClickListener(task: DownloadTask): View.OnClickListener {
+    private fun createOnClickListener(task: DownloadTask, position: Int): View.OnClickListener {
         return View.OnClickListener {
-            //            DownloadUtil.downloadDb(PrivateConstants.SCP_DB_3_LINK)
-            if (task.progress.status == Progress.LOADING) {
+            val fileHelper = FileHelper.getInstance(ScpApplication.context)
+            if (position == 0) {
+                // 检查本地是否有已经下载过的
+                if (fileHelper.checkBackupDataExist()) { // 是总数据库
+                    ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
+                        positiveButton("恢复") {
+                            ScpApplication.context.toast("开始恢复")
+                            doAsync {
+                                if (fileHelper.restoreData()) {
+                                    ScpDatabase.getNewInstance()
+                                    uiThread {
+                                        ScpApplication.currentActivity?.toast("恢复完成")
+                                    }
+                                }
+                            }
+                        }
+                        negativeButton("仍要下载") {
+                            if (task.progress.status == Progress.LOADING) {
+                                task.pause()
+                            } else if (task.progress.url.isNotEmpty()) {
+                                task.start()
+                            }
+                        }
+                        neutralPressed("取消") {}
+                    }?.show()
+                } else {
+                    if (task.progress.status == Progress.LOADING) {
+                        task.pause()
+                    } else if (task.progress.url.isNotEmpty()) {
+                        task.start()
+                    }
+                }
+            } else if (task.progress.status == Progress.LOADING) {
                 task.pause()
             } else if (task.progress.url.isNotEmpty()) {
                 task.start()
@@ -134,7 +165,8 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Log.i("freescp", "finish")
             if (ScpApplication.currentActivity != null) {
                 Log.i("freescp", ScpApplication.currentActivity.toString())
-                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？建议复制完成后重启一次app",
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name
+                        ?: ""}吗？如果复制数据库过程中出错，再次点击该项以检测使用备份的数据库",
                         "下载完成") {
                     yesButton {
                         ScpApplication.currentActivity?.toast("开始复制")

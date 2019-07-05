@@ -28,6 +28,19 @@ abstract class AppInfoDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: AppInfoDatabase? = null
 
+        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
+        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
+        private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+            }
+        }
+
         private val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 // 升级时删掉数据部分，只留info部分
@@ -45,7 +58,6 @@ abstract class AppInfoDatabase : RoomDatabase() {
         }
         private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // 升级时删掉数据部分，只留info部分
                 database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
             }
         }
@@ -54,6 +66,9 @@ abstract class AppInfoDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(ScpApplication.context, AppInfoDatabase::class.java,
                         INFO_DB_NAME)
+                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_2_3)
+                        .addMigrations(MIGRATION_3_4)
                         .addMigrations(MIGRATION_4_5)
                         .addMigrations(MIGRATION_5_6)
                         .allowMainThreadQueries()

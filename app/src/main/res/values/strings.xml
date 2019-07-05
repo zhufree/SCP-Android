@@ -38,15 +38,16 @@
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.2更新内容\n
-1.优化了数据库离线方式\n
-2.增加清除阅读历史的功能\n
-3.优化导入待读列表功能\n
-4.修复一些已知的bug\n
-5.增加sd卡权限申请（原来之前是我没申请，我错了\n
-6.没了，这版本主要在重构代码和解决重构中出现的bug\n
-        感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师
-        以及在群里勤奋测试的群友们\n
+        v0.1.3更新内容\n
+1.支持文档中frame的显示\n
+2.新增繁简转换功能\n
+3.阅读文档时可以在右上角菜单中切换夜间模式\n
+4.新增草稿列表（可编辑保存多个草稿\n
+5.如果复制数据库出错，支持使用备份的数据库\n
+6.部分UI样式优化\n
+7.修复部分已知bug\n
+        感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
+        以及在群里勤奋测试的群友们（欢迎加群玩耍）\n
         PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
 
     <string name="download_detail_service">离线正文</string>
@@ -148,7 +149,7 @@
     <string name="wechat">微信</string>
     <string name="wechat_qr">微信二维码</string>
     <string name="alipay_qr">支付宝二维码</string>
-    <string name="show_ad">看垃圾广告</string>
+    <string name="show_ad">看广告支持开发者</string>
     <string name="donation_notice">长按二维码保存到相册</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
     <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>

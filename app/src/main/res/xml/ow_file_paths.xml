@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <paths>
+        <!-- 
+            主要用于在 7.0 以上系统上调起安装。 apk 下载目录会依次尝试获取
+            系统下载目录(sdcard/Download) -> App 外部目录(files, cache) -> App 内部目录 (files, cache)
+         -->
+        <files-path
+            name="files"
+            path="" />
+        <external-path
+            name="sdcard"
+            path="" />
+        <cache-path
+            name="cache"
+            path="" />
+        <external-files-path
+            name="exFiles"
+            path="" />
+        <external-cache-path
+            name="exCache"
+            path="" />
+    </paths>
+</resources>

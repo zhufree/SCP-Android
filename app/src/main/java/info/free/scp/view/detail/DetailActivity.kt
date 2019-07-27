@@ -1,11 +1,8 @@
 package info.free.scp.view.detail
 
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.*
 import android.content.DialogInterface.BUTTON_POSITIVE
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -25,19 +22,21 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
+import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
+import info.free.scp.util.ThemeUtil.DAY_THEME
+import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
+import taobe.tec.jcc.JChineseConvertor
+import java.io.IOException
 
 
 class DetailActivity : BaseActivity() {
@@ -70,18 +69,14 @@ class DetailActivity : BaseActivity() {
         }
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
             "$currentTextSize;}* {color:#aaa;}</style>"
-    private var dayTextStyle = "<style>p {font-size:$currentTextSize;}* {color:#000;}</style>"
+    private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
-    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
     private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
     private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
     private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
     private val wikiScript = "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
     private val jsScript = "$jqScript$initScript$tabScript$wikiScript"
-
-    private val copyRightHtml = "<div id=\"license-area\" class=\"license-area\">除非特别注明，" +
-            "本页内容采用以下授权方式： <a rel=\"license\" href=\"http://creativecommons.org/licenses/" +
-            "by-sa/3.0/\">Creative Commons Attribution-ShareAlike 3.0 License</a></div>"
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
@@ -119,7 +114,7 @@ class DetailActivity : BaseActivity() {
                     ?.getCollectionByLink(url)
         }
 
-        fullUrl = if (url.contains("http")) url else "http://scp-wiki-cn.wikidot.com$url"
+        fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
 
         scp?.let {
             // 数据库取到
@@ -140,10 +135,17 @@ class DetailActivity : BaseActivity() {
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
+                if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
+                    return false
+                }
+                if (requestUrl.startsWith(SCP_SITE_URL)) {
+                    return false
+                }
+
                 if (onlineMode == 1) {
                     view.loadUrl(requestUrl)
                 } else {
-                    if (requestUrl.startsWith("http://scp-wiki-cn.wikidot.com/")) {
+                    if (requestUrl.startsWith(SCP_SITE_URL)) {
                         url = requestUrl.subSequence(30, requestUrl.length).toString()
                     } else if (requestUrl.startsWith("file:")) {
                         url = requestUrl.subSequence(7, requestUrl.length).toString()
@@ -151,10 +153,10 @@ class DetailActivity : BaseActivity() {
                         url = requestUrl
                     }
                     info(url)
-                    val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
-                    scp?.let {
-
-                        setData(scp)
+                    val tmpScp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
+                    tmpScp?.let {
+                        scp = tmpScp
+                        setData(tmpScp)
                     } ?: run {
                         pbLoading.visibility = VISIBLE
                         view.loadUrl(fullUrl)
@@ -183,8 +185,17 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    override fun refreshTheme() {
+        super.refreshTheme()
+        cl_detail_container?.setBackgroundColor(ThemeUtil.containerBg)
+        refreshStyle()
+        refreshReadBtnStatus()
+        refreshButtonStyle()
+    }
+
     private fun setData(scp: ScpModel, back: Boolean = false) {
         ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
+        AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, SCPConstants.LATER_TYPE)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
         refreshReadBtnStatus()
@@ -192,11 +203,15 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
             historyList.add(scp)
-            historyIndex = historyList.size-1
+            historyIndex = historyList.size - 1
         }
-        detail_toolbar?.title = scp.title
+        tv_detail_toolbar?.text = scp.title
+        tv_detail_toolbar?.isSelected = true
         url = scp.link
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
+        // 显示frame
+        detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+        detailHtml = detailHtml.replace("html-block-iframe", "")
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
@@ -213,18 +228,15 @@ class DetailActivity : BaseActivity() {
      * 不改变网页内容，只刷新样式
      */
     private fun refreshStyle() {
-        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == 1) nightTextStyle else dayTextStyle)
+        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
         webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                 + detailHtml + jsScript,
                 "text/html", "utf-8", null)
     }
 
     private fun initToolbar() {
-        setSupportActionBar(detail_toolbar)
-        detail_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        detail_toolbar?.setNavigationOnClickListener {
-            finish()
-        }
+        baseToolbar = detail_toolbar
+        supportActionBar?.title = null
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
             scp?.let { s ->
@@ -284,6 +296,10 @@ class DetailActivity : BaseActivity() {
                     R.id.like -> {
                         likeScp()
                     }
+                    R.id.change_theme -> {
+                        it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
+                        changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
+                    }
                     R.id.add_read_later -> {
                         ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
                                 SCPConstants.LATER_TYPE)
@@ -331,11 +347,36 @@ class DetailActivity : BaseActivity() {
 
                         }
                     }
+                    R.id.translate_to_simple -> {
+                        translate(simple)
+                    }
+                    R.id.translate_to_traditional -> {
+                        translate(traditional)
+                    }
                     else -> {
                     }
                 }
             }
             true
+        }
+    }
+
+    private fun changeTheme(mode: Int) {
+        ThemeUtil.changeTheme(this, mode)
+    }
+
+    private val simple = 0
+    private val traditional = 1
+
+    private fun translate(translateType: Int) {
+        try {
+            val converter = JChineseConvertor.getInstance()
+            detailHtml = if (translateType == simple) converter.t2s(detailHtml) else converter.s2t(detailHtml)
+            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                    + detailHtml + jsScript,
+                    "text/html", "utf-8", null)
+        } catch (e: IOException) {
+            e.printStackTrace()
         }
     }
 
@@ -358,7 +399,6 @@ class DetailActivity : BaseActivity() {
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-//                    scp = ScpDataHelper.getInstance().getNextScp(s.index)
                 scp = if (itemType == 0) {
                     ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
                 } else {
@@ -462,7 +502,8 @@ class DetailActivity : BaseActivity() {
         readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
             tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
-            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.disabledBg)
+            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
+                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
             readBtnLp?.endToEnd = -1
             readBtnLp?.startToStart = -1
             readBtnLp?.endToStart = R.id.gl_detail_center
@@ -470,7 +511,8 @@ class DetailActivity : BaseActivity() {
             tv_bottom_like?.visibility = VISIBLE
         } else {
             tv_bottom_set_has_read?.setText(R.string.set_has_read)
-            tv_bottom_set_has_read?.setBackgroundColor(ThemeUtil.itemBg)
+            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
+                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
             readBtnLp?.endToEnd = 0
             readBtnLp?.startToStart = 0
             readBtnLp?.endToStart = -1
@@ -480,6 +522,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initSwitchBtn() {
+        refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
             toPreviewArticle()
         }
@@ -493,6 +536,13 @@ class DetailActivity : BaseActivity() {
         }
 
         tv_bottom_like?.setOnClickListener { likeScp() }
+    }
+
+    private fun refreshButtonStyle() {
+        tv_bottom_preview?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        tv_bottom_next?.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
@@ -520,11 +570,13 @@ class DetailActivity : BaseActivity() {
         if (scpInfo == null || !scpInfo.like) {
             menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
             tv_bottom_like?.text = "收藏"
-            tv_bottom_like?.setBackgroundColor(ThemeUtil.itemBg)
+            tv_bottom_like?.background = ThemeUtil.customShape(
+                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
         } else {
             menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             tv_bottom_like?.text = "取消收藏"
-            tv_bottom_like?.setBackgroundColor(ThemeUtil.disabledBg)
+            tv_bottom_like?.background = ThemeUtil.customShape(
+                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
         }
         return super.onPrepareOptionsMenu(menu)
     }

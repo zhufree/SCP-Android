@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import info.free.scp.R
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_category.*
 
@@ -20,12 +21,8 @@ class ScpListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category)
 
-        setSupportActionBar(category_toolbar)
+        baseToolbar = category_toolbar
         category_toolbar?.title = "文档目录"
-        category_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        category_toolbar?.setNavigationOnClickListener {
-            finish()
-        }
 
         initData()
 
@@ -40,7 +37,10 @@ class ScpListActivity : BaseActivity() {
         }
     }
 
-
+    override fun refreshTheme() {
+        super.refreshTheme()
+        mFragment?.refreshTheme()
+    }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {

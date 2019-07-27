@@ -132,6 +132,13 @@ class FileHelper(val mContext: Context) {
         }
     }
 
+    fun checkBackupDataExist(): Boolean {
+        val backUpFile = File(getBackUpFileName(dataDbFilename))
+        return backUpFile.exists() &&
+                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime(-1) && // 是最新的文件
+                backUpFile.length() > 90 * 1000 * 1000
+    }
+
     /**
      * 恢复数据的Dialog
      */
@@ -143,7 +150,7 @@ class FileHelper(val mContext: Context) {
                     mContext.toast("开始恢复")
                     doAsync {
                         if (restore()){
-                            ScpDatabase.getInstance()
+                            ScpDatabase.getNewInstance()
                             uiThread {
                                 mContext.toast("恢复完成")
                             }
@@ -163,6 +170,16 @@ class FileHelper(val mContext: Context) {
             copyDbFile(dataDbFilename, false)
             copyDbFile(infoDBFilename, false)
             copyPrefFile(prefFilename, false)
+            return true
+        } catch (e: Exception) {
+            mContext.toast("文件复制出错：" + e.message)
+        }
+        return false
+    }
+
+    fun restoreData(): Boolean {
+        try {
+            copyDbFile(dataDbFilename, false)
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)

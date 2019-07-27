@@ -1,4 +1,9 @@
-<paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 这个下载路径不可以修改，必须是 GDTDOWNLOAD -->
-    <external-path name="gdt_sdk_download_path" path="GDTDOWNLOAD" />
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="gdt_sdk_download_path"
+        path="GDTDOWNLOAD" />
+    <external-files-path
+        name="external_files_path"
+        path="Download" />
 </paths>

@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.multidex.MultiDexApplication
 import com.lzy.okgo.OkGo
 import com.lzy.okserver.OkDownload
+import com.soulgame.sgsdk.tgsdklib.TGSDK
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import info.free.scp.util.ThemeUtil
@@ -32,6 +33,7 @@ class ScpApplication : MultiDexApplication() {
         // FIXME
 //        MobclickAgent.setCatchUncaughtExceptions(false)
 
+
         context = applicationContext
 
         ThemeUtil.setTheme(this)
@@ -43,7 +45,9 @@ class ScpApplication : MultiDexApplication() {
             }
 
             override fun onActivityStarted(activity: Activity?) {
-                currentActivity = activity as BaseActivity
+                if (activity is BaseActivity) {
+                    currentActivity = activity
+                }
             }
 
             override fun onActivityDestroyed(activity: Activity?) {

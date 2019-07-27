@@ -1,5 +1,6 @@
 package info.free.scp.db
 
+import android.database.sqlite.SQLiteDatabaseCorruptException
 import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
@@ -9,6 +10,7 @@ import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.util.FileHelper
+import org.jetbrains.anko.toast
 
 
 @Database(entities = [ScpItemModel::class, ScpDetail::class, ScpCollectionModel::class], version = 1)
@@ -20,22 +22,30 @@ abstract class ScpDatabase : RoomDatabase() {
         private var INSTANCE: ScpDatabase? = null
 
         fun getInstance(): ScpDatabase? {
-            if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
-                INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
-                        SCP_DB_NAME)
-                        .allowMainThreadQueries()
-                        .build()
+            try {
+                if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
+                    INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
+                            SCP_DB_NAME)
+                            .allowMainThreadQueries()
+                            .build()
+                }
+            } catch (e: SQLiteDatabaseCorruptException) {
+                ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
             }
             return INSTANCE
         }
 
         fun getNewInstance() {
             INSTANCE?.close()
-            if (FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
-                INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
-                        SCP_DB_NAME)
-                        .allowMainThreadQueries()
-                        .build()
+            try {
+                if (FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
+                    INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
+                            SCP_DB_NAME)
+                            .allowMainThreadQueries()
+                            .build()
+                }
+            } catch (e: SQLiteDatabaseCorruptException) {
+                ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
             }
         }
     }

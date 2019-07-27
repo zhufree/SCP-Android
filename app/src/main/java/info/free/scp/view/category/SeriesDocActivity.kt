@@ -24,6 +24,7 @@ import info.free.scp.SCPConstants.Entry.ABOUT_SCP_DOC
 import info.free.scp.SCPConstants.Entry.JOKE_DOC
 import info.free.scp.SCPConstants.Entry.SCP_DOC
 import info.free.scp.SCPConstants.Entry.STORY_DOC
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
@@ -41,9 +42,7 @@ class SeriesDocActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_series)
-        setSupportActionBar(series_toolbar)
-        series_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        series_toolbar?.setNavigationOnClickListener { finish() }
+        baseToolbar = series_toolbar
         series_toolbar?.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
         series_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -135,5 +134,12 @@ class SeriesDocActivity : BaseActivity() {
                 currentFragment = fragmentList[p0]
             }
         })
+    }
+
+    override fun refreshTheme() {
+        super.refreshTheme()
+        vp_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
+        tab_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
+        tab_series_doc?.setTabTextColors(ThemeUtil.darkText, ThemeUtil.lightText)
     }
 }

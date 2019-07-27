@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.draft.DraftEditActivity">
+    tools:context=".view.draft.DraftEditActivity"
+    android:background="?attr/containerBg">
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
@@ -40,7 +41,7 @@
             android:hint="标题" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
+    <androidx.appcompat.widget.AppCompatEditText
         android:id="@+id/et_content"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -49,7 +50,6 @@
         android:layout_marginTop="16dp"
         android:background="@null"
         android:gravity="top|start"
-        android:hint="退出时会自动保存，无需手动保存。"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -14,28 +14,34 @@ import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Handler
+import com.soulgame.sgsdk.tgsdklib.TGSDK
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import com.qq.e.ads.interstitial.AbstractInterstitialADListener
-import com.qq.e.ads.interstitial.InterstitialAD
-import com.qq.e.comm.util.AdError
-import info.free.scp.PrivateConstants
+//import com.qq.e.ads.interstitial.AbstractInterstitialADListener
+//import com.qq.e.ads.interstitial.InterstitialAD
+//import com.qq.e.comm.util.AdError
 import info.free.scp.SCPConstants
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
+import info.free.scp.SCPConstants.AD_APP_ID
+import info.free.scp.SCPConstants.CUT_VIDEO_AD_ID
+import info.free.scp.SCPConstants.STATIC_AD_ID
+import info.free.scp.SCPConstants.VIDEO_AD_ID
+import org.jetbrains.anko.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
 
 class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var payType = 0 // 0 wechat 1 zhi
-    private var ad: InterstitialAD? = null
+//    private var ad: InterstitialAD? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventUtil.onEvent(this, EventUtil.clickAboutMe)
         setContentView(R.layout.activity_about_me)
 
+        TGSDK.initialize(this, AD_APP_ID, null)
+        about_me_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+        about_me_toolbar?.setNavigationOnClickListener { finish() }
         tv_donation_wechat?.setOnClickListener {
             payType = 0
             iv_about_me?.setImageResource(R.drawable.img_donation_wechat)
@@ -48,6 +54,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         tv_show_ad?.setOnClickListener {
             requireFilePermission()
         }
+        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
 
         iv_about_me?.setOnLongClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
@@ -61,17 +68,63 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             }, 500)
         }
 
-        ad = InterstitialAD(this, PrivateConstants.AD_APP_ID, PrivateConstants.AD_ID)
-        ad?.setADListener(object : AbstractInterstitialADListener() {
-
-            override fun onNoAD(error: AdError) {
+        tv_show_ad?.setOnClickListener {
+            if (System.currentTimeMillis() - PreferenceUtil.getLastShowAdTime() < 1800000) {
+                alert("你点击广告太频繁了，请待会再来吧","感谢你的支持") {
+                    yesButton {}
+                }.show()
+                return@setOnClickListener
             }
+            if (!PreferenceUtil.getShowAdNotice()) {
+                alert("如果你想支持开发者但没有闲钱的话，可以选择看广告。" +
+                        "开发者承诺不在本APP内任何地方插入侵入式（强制观看）的广告，" +
+                        "仅在用户知情同意的情况下显示广告。","感谢你的支持") {
 
-            override fun onADReceive() {
-                ad?.show()
+                    yesButton {
+                        PreferenceUtil.setShowAdNotice()
+                        showAdSelector()
+                    }
+                }.show()
+                return@setOnClickListener
             }
+            showAdSelector()
+        }
+    }
 
-        })
+    private fun showAdSelector() {
+        val adList = listOf("图片广告：+1分", "可以跳过的视频广告：+3分", "不可跳过的视频广告：+5分")
+        selector("选择你要看的广告类型", adList) { _, i ->
+            when (i) {
+                0 -> {
+                    if (TGSDK.couldShowAd(STATIC_AD_ID)) {
+                        PreferenceUtil.addAdPoints(1)
+                        TGSDK.showAd(this, STATIC_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+                    }
+                }
+                1 -> {
+                    if (TGSDK.couldShowAd(CUT_VIDEO_AD_ID)) {
+                        PreferenceUtil.addAdPoints(3)
+                        TGSDK.showAd(this, CUT_VIDEO_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+                    }
+                }
+                2 -> {
+                    if (TGSDK.couldShowAd(VIDEO_AD_ID)) {
+                        PreferenceUtil.addAdPoints(5)
+                        TGSDK.showAd(this, VIDEO_AD_ID)
+                        tv_ad_point?.text = "广告积分：${PreferenceUtil.getAdPoint()}"
+
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        TGSDK.preloadAd(this)
     }
 
     private fun startWechatScan(c: Context) {
@@ -113,7 +166,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private fun requireFilePermission() {
         val perms = arrayOf(Manifest.permission.READ_PHONE_STATE)
         if (EasyPermissions.hasPermissions(this, *perms)) {
-            ad?.loadAD()
+//            ad?.loadAD()
         } else {
             // Do not have permissions, request them now
             EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
@@ -121,7 +174,7 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
@@ -131,6 +184,6 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        ad?.loadAD()
+//        ad?.loadAD()
     }
 }

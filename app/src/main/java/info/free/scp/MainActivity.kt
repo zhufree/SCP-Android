@@ -26,13 +26,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private val feedFragment = FeedFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
-
-    private var themeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            refreshTheme()
-        }
-    }
 
     @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
     private fun requireFilePermission() {
@@ -89,7 +82,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 注册广播
-        registerBroadCastReceivers()
 
         setContentView(R.layout.activity_main)
 
@@ -120,19 +112,16 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     /**
      * 注册广播：主题
      */
-    private fun registerBroadCastReceivers() {
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
-        mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(ACTION_CHANGE_THEME))
-    }
 
-    fun refreshTheme() {
+
+    override fun refreshTheme() {
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
         feedFragment.refreshTheme()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)

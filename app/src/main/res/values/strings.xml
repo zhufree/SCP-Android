@@ -6,15 +6,14 @@
     <string name="tab_latest">最近更新</string>
     <string name="tab_mine">我的</string>
 
+    <!--主页入口-->
     <string name="title_scp_documents">SCP文档</string>
     <string name="title_other_documents">其他文档</string>
     <string name="title_more_about">更多相关</string>
     <string name="title_direct">编号直达/随机</string>
-
-
     <string name="title_series_about">相关信息</string>
 
-
+    <!--目录tab-->
     <string name="title_scp_story">故事外围</string>
     <string name="title_about_scp">关于基金会</string>
     <string name="title_joke_scp">搞笑作品</string>
@@ -35,22 +34,24 @@
     <string name="title_exiled_library">放逐者图书馆</string>
     <string name="title_scp_int">SCP国际</string>
 
+    <!--app info-->
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.2更新内容\n
-1.优化了数据库离线方式\n
-2.增加清除阅读历史的功能\n
-3.优化导入待读列表功能\n
-4.修复一些已知的bug\n
-5.增加sd卡权限申请（原来之前是我没申请，我错了\n
-6.没了，这版本主要在重构代码和解决重构中出现的bug\n
-        感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师
-        以及在群里勤奋测试的群友们\n
+        v0.1.3更新内容\n
+1.支持文档中frame的显示\n
+2.新增繁简转换功能\n
+3.阅读文档时可以在右上角菜单中切换夜间模式\n
+4.新增草稿列表（可编辑保存多个草稿\n
+5.如果复制数据库出错，支持使用备份的数据库\n
+6.部分UI样式优化\n
+7.修复部分已知bug\n
+        感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
+        以及在群里勤奋测试的群友们（欢迎加群玩耍）\n
         PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
 
     <string name="download_detail_service">离线正文</string>
-
+    <!--正文下拉菜单-->
     <string name="offline_mode">切换离线模式</string>
     <string name="online_mode">切换网页模式</string>
     <string name="menu_report">反馈问题</string>
@@ -59,14 +60,18 @@
     <string name="menu_open_in_browser">在浏览器中打开</string>
     <string name="menu_copy_link">复制链接</string>
     <string name="share_with_picture">图片分享</string>
+    <string name="translate_to_simple">转换简体</string>
+    <string name="translate_to_traditional">转换繁体</string>
     <string name="menu_like">收藏</string>
     <string name="menu_add_read_later">加入待读列表</string>
 
+    <!--正文底部菜单-->
     <string name="next_article">下一篇</string>
     <string name="preview_article">上一篇</string>
     <string name="set_has_read">标记已读</string>
     <string name="set_has_not_read">取消已读</string>
 
+    <!--列表操作项-->
     <string name="menu_reverse">逆序</string>
     <string name="menu_import_read_list">导入待读列表</string>
     <string name="menu_clear_read_history">清除阅读历史</string>
@@ -76,6 +81,7 @@
 
     <string name="menu_download_help">下载页说明</string>
 
+    <!--职业说明文案-->
     <string name="job_desc_1">收容专家在基金会设施有两个主要职责。首先，收容小组会响应呼叫并对异常项目，
         个体或现象的异常活动状态进行判断，并确保和建立初次收容，然后将它们运送到最近的基金会收容site。
         另外，基金会收容工程师和技师负责对基金会设施内的异常项目，个体或现象的收容单位和方案进行设计，改进和维护。</string>
@@ -92,6 +98,7 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
+    <!--设置-->
     <string name="about_view_content">浏览相关</string>
     <string name="draft_list">草稿箱</string>
     <string name="like_list">收藏列表</string>
@@ -99,6 +106,7 @@
     <string name="game_list">游戏列表</string>
     <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
+    <string name="day_mode">日间模式</string>
     <string name="read_settings">阅读设置</string>
     <string name="download_settings">离线及同步设置</string>
     <string name="hide_finished_article">隐藏已读文档</string>
@@ -137,14 +145,18 @@
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
 
     <!--捐赠-->
-    <!--donation-->
     <string name="donation">捐赠</string>
     <string name="wechat">微信</string>
     <string name="wechat_qr">微信二维码</string>
     <string name="alipay_qr">支付宝二维码</string>
-    <string name="show_ad">看垃圾广告</string>
+    <string name="show_ad">看广告支持开发者</string>
     <string name="donation_notice">长按二维码保存到相册</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
     <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>
     <string name="alipay">支付宝</string>
+
+    <!--草稿-->
+    <string name="empty_draft">还没有草稿</string>
+    <string name="add_draft">添加草稿</string>
+    <string name="save_draft">保存草稿</string>
 </resources>

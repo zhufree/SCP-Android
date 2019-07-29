@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.multidex.MultiDexApplication
 import com.lzy.okgo.OkGo
 import com.lzy.okserver.OkDownload
-import com.soulgame.sgsdk.tgsdklib.TGSDK
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import info.free.scp.util.ThemeUtil

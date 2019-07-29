@@ -68,7 +68,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             val fileHelper = FileHelper.getInstance(ScpApplication.context)
             if (position == 0) {
                 // 检查本地是否有已经下载过的
-                if (fileHelper.checkBackupDataExist()) { // 是总数据库
+                if (fileHelper.checkBackupDataExist() && task.progress.status == Progress.NONE) { // 是总数据库
                     ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
                         positiveButton("恢复") {
                             ScpApplication.context.toast("开始恢复")
@@ -165,8 +165,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Log.i("freescp", "finish")
             if (ScpApplication.currentActivity != null) {
                 Log.i("freescp", ScpApplication.currentActivity.toString())
-                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name
-                        ?: ""}吗？如果复制数据库过程中出错，再次点击该项以检测使用备份的数据库",
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？建议复制完成后重启一次app",
                         "下载完成") {
                     yesButton {
                         ScpApplication.currentActivity?.toast("开始复制")

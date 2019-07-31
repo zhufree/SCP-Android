@@ -39,7 +39,7 @@ TODO
 - [ ] 其他
   - [ ] 设置
   - [ ] 名片分享功能（咕咕咕）
-  - [ ] 数据库重构
+  - [x] 数据库重构
 
 爬虫重构
 - [x] offset抓取
@@ -49,6 +49,26 @@ TODO
 
 
 当前开发版本
+# v0.1.4
+- [ ] 解决数据库下载慢的问题（备案域名中），顺便更新一遍数据库
+- [ ] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
+  - [ ] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。
+  - [ ] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [ ] 最受欢迎的原创GoI格式[请点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [ ] 最受欢迎的原创被放逐者之图书馆作品请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [ ] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+- [ ] 收藏夹可分类
+- [ ] 正文页面添加滑动条
+- [ ] 根据某些规则筛选scp（抓tag数据？）
+- [ ] 分出一些重点/特色明显/科普类文档放在显眼位置
+- [ ] 数据库备份功能优化
+- [ ] 去掉不必要的权限申请，整理文件夹使用
+- [ ] 尝试联系【简明易懂的SCP】，【SCP配音团】等合作
+
+
+FIX BUG
+- [ ] 历史记录时间丢失
+
 # v0.1.3
 - [x] 支持文档中frame的显示
 - [x] 繁简转换功能

@@ -55,6 +55,9 @@ android {
         HuaWei {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "HuaWei"]
         }
+        MI {
+            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "XiaoMi"]
+        }
         GooglePlay {
             manifestPlaceholders = [UMENG_CHANNEL_VALUE: "GooglePlay"]
         }

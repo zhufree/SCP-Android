@@ -97,6 +97,7 @@ object SCPConstants {
     object RequestCode {
         const val CATEGORY_TO_DETAIL = 0
         const val REQUEST_FILE_PERMISSION = 1
+        const val REQUEST_PICTURE_DIR = 2
     }
 
     const val HISTORY_TYPE = 0

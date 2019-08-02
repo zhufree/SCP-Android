@@ -30,7 +30,7 @@ class ScpApplication : MultiDexApplication() {
         UMConfigure.setLogEnabled(true)
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
         // FIXME
-//        MobclickAgent.setCatchUncaughtExceptions(false)
+        MobclickAgent.setCatchUncaughtExceptions(!isDebug)
 
 
         context = applicationContext
@@ -78,6 +78,7 @@ class ScpApplication : MultiDexApplication() {
 
     companion object {
         lateinit var context: Context
+        var isDebug = true
         var currentActivity: BaseActivity? = null
     }
 }

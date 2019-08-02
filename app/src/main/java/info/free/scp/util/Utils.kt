@@ -3,28 +3,29 @@
 package info.free.scp.util
 
 import android.app.Activity
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
+import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.graphics.Bitmap
+import android.net.ConnectivityManager
 import android.net.Uri
+import android.net.wifi.WifiManager
+import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.DisplayMetrics
 import android.util.Log
+import info.free.scp.SCPConstants
+import info.free.scp.ScpApplication
 import kotlinx.io.ByteArrayOutputStream
 import kotlinx.io.IOException
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import android.util.DisplayMetrics
-import android.content.ContentUris
-import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-import android.os.Build
-import android.content.ContentValues
-import android.net.ConnectivityManager
-import android.net.wifi.WifiManager
-import info.free.scp.SCPConstants
-import info.free.scp.ScpApplication
 import org.jetbrains.anko.toast
 import java.io.*
-import java.text.DateFormat.*
+import java.text.DateFormat.LONG
+import java.text.DateFormat.SHORT
 import java.text.SimpleDateFormat
 
 

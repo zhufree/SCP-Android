@@ -1,6 +1,7 @@
 package info.free.scp
 
 import android.app.Activity
+import android.app.DownloadManager
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
@@ -18,6 +19,7 @@ import info.free.scp.view.base.BaseActivity
  */
 
 class ScpApplication : MultiDexApplication() {
+
 
     override fun onCreate() {
         super.onCreate()
@@ -80,5 +82,8 @@ class ScpApplication : MultiDexApplication() {
         lateinit var context: Context
         var isDebug = true
         var currentActivity: BaseActivity? = null
+        val downloadManager by lazy {
+            context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        }
     }
 }

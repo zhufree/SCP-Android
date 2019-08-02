@@ -1,21 +1,59 @@
 package info.free.scp.view.download
 
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import info.free.scp.R
+import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ActivityDownloadBinding
+import info.free.scp.db.ScpDatabase
+import info.free.scp.util.FileHelper
 import info.free.scp.util.InjectorUtils
 import info.free.scp.view.base.BaseActivity
-import pub.devrel.easypermissions.EasyPermissions
-import info.free.scp.R
-import android.Manifest.permission
-import pub.devrel.easypermissions.AfterPermissionGranted
-import info.free.scp.SCPConstants.RequestCode.REQUEST_FILE_PERMISSION
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 
 class DownloadActivity : BaseActivity() {
+
+    private var downloadReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val completeDownloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                    ?: -1
+            if (completeDownloadId > 0) {
+                val pfd = ScpApplication.downloadManager.openDownloadedFile(completeDownloadId)
+                doAsync {
+                    try {
+                        val fileInputStream = FileInputStream(pfd.fileDescriptor)
+                        FileHelper(this@DownloadActivity).copyStreamToData(fileInputStream)
+                        val destFile = File(FileHelper.dbDir + FileHelper.dataDbFilename)
+                        val outputStream = FileOutputStream(destFile)
+                        fileInputStream.copyTo(outputStream)
+                        fileInputStream.close()
+                        ScpDatabase.getNewInstance()
+                        uiThread {
+                            toast("复制完成")
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        toast("文件复制出错：" + e.message)
+                    }
+
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,5 +78,12 @@ class DownloadActivity : BaseActivity() {
                         adapter.submitList(downloads)
                     }
                 })
+        registerReceiver(downloadReceiver,
+                IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(downloadReceiver)
     }
 }

@@ -1,6 +1,7 @@
 package info.free.scp.view.download
 
 import android.graphics.Color
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,33 +9,56 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.lzy.okgo.OkGo
 import com.lzy.okgo.model.Progress
-import com.lzy.okgo.request.GetRequest
-import com.lzy.okserver.OkDownload
 import com.lzy.okserver.download.DownloadListener
-import com.lzy.okserver.download.DownloadTask
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
 import info.free.scp.db.ScpDatabase
-import info.free.scp.util.*
+import info.free.scp.util.DownloadUtil
 import info.free.scp.util.DownloadUtil.Status.DOWNLOADING
 import info.free.scp.util.DownloadUtil.Status.ERROR
 import info.free.scp.util.DownloadUtil.Status.FINISH
 import info.free.scp.util.DownloadUtil.Status.NEED_UPDATE
 import info.free.scp.util.DownloadUtil.Status.NONE
 import info.free.scp.util.DownloadUtil.Status.PAUSE
+import info.free.scp.util.FileHelper
+import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import org.jetbrains.anko.*
 import java.io.File
 
+
 class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolder>(DownloadDiffCallback()) {
+
+    val downloadList = arrayListOf(-1L, -1L, -1L, -1L, -1L, -1L)
+    val holderList = arrayListOf<DownloadHolder>()
+    var mStartVideoHandler: Handler = Handler()
+    private var runnable: Runnable? = null
+
+
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DownloadHolder {
-        return DownloadHolder(ItemDownloadBinding.inflate(
+
+        val holder = DownloadHolder(ItemDownloadBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
+        holderList.add(holder)
+        if (holderList.size == 6 && runnable == null) {
+            runnable = Runnable {
+                for ((index, id) in downloadList.withIndex()) {
+                    if (id > 0) {
+                        holderList[index].refreshProgress(DownloadUtil.getDownloadStatus(id))
+                    }
+                }
+                runnable?.let {
+                    mStartVideoHandler.postDelayed(runnable, 1000)
+                }
+            }
+            runnable?.run()
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: DownloadHolder, position: Int) {
@@ -46,12 +70,12 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                 ScpApplication.currentActivity?.toast("下载链接未加载成功，请稍后再进入该页面")
             }
             ScpApplication.currentActivity?.info("download: $position: $link")
-            val request: GetRequest<File> = OkGo.get(link)
-            val task = OkDownload.request(link, request)
-                    .fileName(getFileNameByIndex(position - 1))
-                    .register(ListDownloadListener(download.title, this, position - 1))
-                    .save()
-            bind(createOnClickListener(task, position), download) // 点击事件
+//            val request: GetRequest<File> = OkGo.get(link)
+//            val task = OkDownload.request(link, request)
+//                    .fileName(getFileNameByIndex(position - 1))
+//                    .register(ListDownloadListener(download.title, this, position - 1))
+//                    .save()
+            bind(createOnClickListener(position), download) // 点击事件
             itemView.tag = download
         }
     }
@@ -63,12 +87,12 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
         }
     }
 
-    private fun createOnClickListener(task: DownloadTask, position: Int): View.OnClickListener {
+    private fun createOnClickListener(position: Int): View.OnClickListener {
         return View.OnClickListener {
             val fileHelper = FileHelper.getInstance(ScpApplication.context)
             if (position == 0) {
                 // 检查本地是否有已经下载过的
-                if (fileHelper.checkBackupDataExist() && task.progress.status == Progress.NONE) { // 是总数据库
+                if (fileHelper.checkBackupDataExist() && downloadList[position] == -1L) { // 是总数据库
                     ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
                         positiveButton("恢复") {
                             ScpApplication.context.toast("开始恢复")
@@ -82,27 +106,45 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
                             }
                         }
                         negativeButton("仍要下载") {
-                            if (task.progress.status == Progress.LOADING) {
-                                task.pause()
-                            } else if (task.progress.url.isNotEmpty()) {
-                                task.start()
-                            }
+                            toggleDownloadStatus(position, PreferenceUtil.getDataDownloadLink(position - 1))
+//                            if (task.progress.status == Progress.LOADING) {
+//                                task.pause()
+//                            } else if (task.progress.url.isNotEmpty()) {
+//                                task.start()
+//                            }
                         }
                         neutralPressed("取消") {}
                     }?.show()
                 } else {
-                    if (task.progress.status == Progress.LOADING) {
-                        task.pause()
-                    } else if (task.progress.url.isNotEmpty()) {
-                        task.start()
-                    }
+                    toggleDownloadStatus(position, PreferenceUtil.getDataDownloadLink(position - 1))
+//                    if (task.progress.status == Progress.LOADING) {
+//                        task.pause()
+//                    } else if (task.progress.url.isNotEmpty()) {
+//                        task.start()
+//                    }
                 }
-            } else if (task.progress.status == Progress.LOADING) {
-                task.pause()
-            } else if (task.progress.url.isNotEmpty()) {
-                task.start()
+            } else {
+                toggleDownloadStatus(position, PreferenceUtil.getDataDownloadLink(position - 1))
+//                if (task.progress.status == Progress.LOADING) {
+//                    task.pause()
+//                } else if (task.progress.url.isNotEmpty()) {
+//                    task.start()
+//                }
             }
         }
+    }
+
+    private fun toggleDownloadStatus(position: Int, url: String) {
+        val downloadId = downloadList[position]
+        if (downloadId < 0) {
+            val newDownloadId = DownloadUtil.createDownload(url)
+            downloadList[position] = newDownloadId
+        } else {
+            ScpApplication.downloadManager.remove(downloadId)
+            downloadList[position] = -1
+            holderList[position].refreshProgress("取消下载")
+        }
+
     }
 
     class DownloadHolder(private val binding: ItemDownloadBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -153,9 +195,8 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             }
         }
 
-        fun refreshProgress(progress: Progress?) {
-            binding.tvDownloadProgress.text = "${progress?.currentSize?.div(1000)}KB" +
-                    "/${progress?.totalSize?.div(1000000)}MB"
+        fun refreshProgress(info: String) {
+            binding.tvDownloadProgress.text = info
         }
     }
 
@@ -165,7 +206,8 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
             Log.i("freescp", "finish")
             if (ScpApplication.currentActivity != null) {
                 Log.i("freescp", ScpApplication.currentActivity.toString())
-                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name ?: ""}吗？建议复制完成后重启一次app",
+                ScpApplication.currentActivity?.alert("确定使用已下载的数据库文件${t?.name
+                        ?: ""}吗？建议复制完成后重启一次app",
                         "下载完成") {
                     yesButton {
                         ScpApplication.currentActivity?.toast("开始复制")
@@ -201,7 +243,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
          * @param progress Progress?
          */
         override fun onProgress(progress: Progress?) {
-            holder.refreshProgress(progress)
+//            holder.refreshProgress(progress)
             if (progress?.status == Progress.PAUSE) {
                 holder.refreshStatus(PAUSE)
             }

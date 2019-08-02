@@ -3,9 +3,12 @@ package info.free.scp.util
 import android.content.Context
 import android.os.Environment
 import android.util.Log
+import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
 import org.jetbrains.anko.*
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 
 /**
@@ -14,21 +17,25 @@ import java.io.File
  */
 
 class FileHelper(val mContext: Context) {
-    var infoDBFilename = "scp_info.db"
-    var dataDbFilename = "scp_data.db"
+
     var prefFilename = "level.xml" // 用户名和等级信息
     val backUpFolderName = "backup"
-    val appFolderName = "SCP"
-    val sp = File.separator
-    val absPath = Environment.getDataDirectory().absolutePath
-    val pakName = mContext.packageName
+    //    val appFolderName = "SCP"
+    val appFolderName = "scp_download"
     val cacheDir = mContext.cacheDir.absolutePath + sp // 'data/data/info.free.scp/cache/'
-    val prefDir = "$absPath${sp}data$sp$pakName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
-    val dbDir = "$absPath${sp}data$sp$pakName${sp}databases$sp"
+
+    val documentDir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName$sp"
     // 'data/data/info.free.scp/databases/'
 
     companion object {
         private var fileHelper: FileHelper? = null
+        var infoDBFilename = "scp_info.db"
+        var dataDbFilename = "scp_data.db"
+        val absPath = Environment.getDataDirectory().absolutePath
+        val pakName = ScpApplication.context.packageName
+        val sp = File.separator
+        val prefDir = "$absPath${sp}data$sp$pakName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
+        val dbDir = "$absPath${sp}data$sp$pakName${sp}databases$sp"
         fun getInstance(context: Context): FileHelper {
             return fileHelper ?: FileHelper(context)
         }
@@ -36,14 +43,16 @@ class FileHelper(val mContext: Context) {
 
     private fun getBackUpFileName(fileName: String): String {
         checkBackupDir()
-        return "${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName$sp$fileName"
+        return "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}" +
+                "$sp$appFolderName$sp$fileName"
     }
 
     /**
      * 检查备份文件是否存在，如果没有就创建
      */
     private fun checkBackupDir() {
-        val backupDir = File("${Environment.getExternalStorageDirectory()}$sp$appFolderName$sp$backUpFolderName")
+        val backupDir = File("${Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName")
         if (!backupDir.exists()) {
             backupDir.mkdirs()
         }
@@ -84,6 +93,18 @@ class FileHelper(val mContext: Context) {
         }
     }
 
+    fun copyStreamToData(inputStream: FileInputStream) {
+        try {
+            val destFile = File(dbDir + dataDbFilename)
+            val outputStream = FileOutputStream(destFile)
+            inputStream.copyTo(outputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            mContext.toast("文件复制出错：" + e.message)
+        }
+
+    }
+
     /**
      * 复制pref文件到备份文件夹
      * @param prefName String
@@ -119,12 +140,16 @@ class FileHelper(val mContext: Context) {
         try {
             val dbFile = File(dbDir + dbName)
             val backUpFile = File(getBackUpFileName(dbName))
+            val documentFile = File(documentDir + dbName)
             if (backup && dbFile.exists()) {
                 dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
                 return
             }
-            if (!backup && backUpFile.exists()) {
-                backUpFile.copyTo(dbFile, true)
+//            if (!backup && backUpFile.exists()) {
+//                backUpFile.copyTo(dbFile, true)
+//            }
+            if (!backup && documentFile.exists()) {
+                documentFile.copyTo(dbFile, true)
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -135,8 +160,8 @@ class FileHelper(val mContext: Context) {
     fun checkBackupDataExist(): Boolean {
         val backUpFile = File(getBackUpFileName(dataDbFilename))
         return backUpFile.exists() &&
-                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime(-1) && // 是最新的文件
-                backUpFile.length() > 90 * 1000 * 1000
+                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime(-1)
+//                && backUpFile.length() > 90 * 1000 * 1000
     }
 
     /**

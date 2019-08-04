@@ -35,7 +35,7 @@ object DownloadUtil {
         return ScpApplication.downloadManager.enqueue(request)
     }
 
-    fun getDownloadStatus(id: Long): String {
+    fun getDownloadInfo(id: Long): IntArray {
         val uri = ScpApplication.downloadManager.getUriForDownloadedFile(id)
         val bytesAndStatus = intArrayOf(-1, -1, 0)
         val query = DownloadManager.Query().setFilterById(id)
@@ -50,29 +50,6 @@ object DownloadUtil {
         } finally {
             c?.close()
         }
-        return "${bytesAndStatus[0] / 1000000}M/${bytesAndStatus[1] / 1000000}M ${getStatusByCode(bytesAndStatus[2])}"
-    }
-
-    fun getStatusByCode(code: Int): String {
-        return when (code) {
-            1 shl 0 -> {
-                "PENDING"
-            }
-            1 shl 1 -> {
-                "下载中"
-            }
-            1 shl 2 -> {
-                "暂停"
-            }
-            1 shl 3 -> {
-                "下载成功"
-            }
-            1 shl 4 -> {
-                "下载失败"
-            }
-            else -> {
-                "PENDING"
-            }
-        }
+        return bytesAndStatus
     }
 }

@@ -16,16 +16,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/sw_auto_download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="@string/allow_auto_download"
-        app:switchPadding="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_download_notice" />
+    <!--<androidx.appcompat.widget.SwitchCompat-->
+    <!--android:id="@+id/sw_auto_download"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:text="@string/allow_auto_download"-->
+    <!--app:switchPadding="8dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_download_notice" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

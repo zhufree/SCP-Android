@@ -4,18 +4,10 @@ import android.app.AlertDialog
 import android.content.*
 import android.net.Uri
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.EditText
-import android.widget.LinearLayout.VERTICAL
 import info.free.scp.BuildConfig
-import info.free.scp.R
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.service.HttpManager
-import info.free.scp.service.InitDetailService
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import org.jetbrains.anko.*
 
 
@@ -113,11 +105,11 @@ class UpdateManager(private var activity: BaseActivity) {
                         // 有新版本就不检查数据更新，知道更新到最新
                     } else {
                         // 检查总数据库有没有更新并下载
-                        if (PreferenceUtil.getAutoDownload() && (PreferenceUtil.getServerLastUpdateTime(-1)
-                                        > PreferenceUtil.getDetailLastLoadTime(-1))) {
-                            // 开始离线主数据库
-                            activity.startService<InitDetailService>()
-                        }
+//                        if (PreferenceUtil.getAutoDownload() && (PreferenceUtil.getServerLastUpdateTime(-1)
+//                                        > PreferenceUtil.getDetailLastLoadTime(-1))) {
+//                            // 开始离线主数据库
+//                            activity.startService<InitDetailService>()
+//                        }
                     }
                 }
             }

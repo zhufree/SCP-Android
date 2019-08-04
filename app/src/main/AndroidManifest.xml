@@ -42,9 +42,9 @@
         <activity android:name=".view.detail.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
 
-        <service
-            android:name=".service.InitDetailService"
-            android:enabled="true" />
+        <!--<service-->
+        <!--android:name=".service.InitDetailService"-->
+        <!--android:enabled="true" />-->
 
         <activity android:name=".view.user.AboutAppActivity">
             <intent-filter>

@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.multidex.MultiDexApplication
-import com.lzy.okgo.OkGo
-import com.lzy.okserver.OkDownload
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import info.free.scp.util.ThemeUtil
@@ -23,10 +21,6 @@ class ScpApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-
-        OkGo.getInstance().init(this)
-        // /data/data/packageName/databases
-        OkDownload.getInstance().folder = cacheDir.absolutePath
 
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
         UMConfigure.setLogEnabled(true)

@@ -21,7 +21,6 @@ class FileHelper(val mContext: Context) {
     var prefFilename = "level.xml" // 用户名和等级信息
     val backUpFolderName = "backup"
     //    val appFolderName = "SCP"
-    val appFolderName = "scp_download"
     val cacheDir = mContext.cacheDir.absolutePath + sp // 'data/data/info.free.scp/cache/'
 
     val documentDir = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName$sp"
@@ -34,8 +33,11 @@ class FileHelper(val mContext: Context) {
         val absPath = Environment.getDataDirectory().absolutePath
         val pakName = ScpApplication.context.packageName
         val sp = File.separator
+        val appFolderName = "scp_download"
         val prefDir = "$absPath${sp}data$sp$pakName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
         val dbDir = "$absPath${sp}data$sp$pakName${sp}databases$sp"
+        val documentPath = "${Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName"
         fun getInstance(context: Context): FileHelper {
             return fileHelper ?: FileHelper(context)
         }
@@ -51,8 +53,7 @@ class FileHelper(val mContext: Context) {
      * 检查备份文件是否存在，如果没有就创建
      */
     private fun checkBackupDir() {
-        val backupDir = File("${Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName")
+        val backupDir = File(documentPath)
         if (!backupDir.exists()) {
             backupDir.mkdirs()
         }

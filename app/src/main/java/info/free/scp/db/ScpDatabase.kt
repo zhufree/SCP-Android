@@ -1,9 +1,9 @@
 package info.free.scp.db
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
-import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpCollectionModel
@@ -23,7 +23,7 @@ abstract class ScpDatabase : RoomDatabase() {
 
         fun getInstance(): ScpDatabase? {
             try {
-                if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
+                if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataReady()) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()
@@ -38,7 +38,7 @@ abstract class ScpDatabase : RoomDatabase() {
         fun getNewInstance() {
             INSTANCE?.close()
             try {
-                if (FileHelper.getInstance(ScpApplication.context).checkDataExist()) {
+                if (FileHelper.getInstance(ScpApplication.context).checkDataReady()) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()

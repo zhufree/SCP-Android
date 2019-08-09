@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -37,11 +36,9 @@ class DownloadActivity : BaseActivity() {
                 doAsync {
                     try {
                         val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                        val destFile = File(FileHelper.dbDir + FileHelper.dataDbFilename)
+                        val destFile = File(FileHelper.privateDbDirPath + FileHelper.dataDbFilename)
                         val outputStream = FileOutputStream(destFile)
                         destFile.outputStream().use { output ->
-                            Log.i("file", output.toString())
-                            Log.i("file", fileInputStream.toString())
                             fileInputStream.copyTo(output)
                         }
                         outputStream.flush()

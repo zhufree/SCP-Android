@@ -17,10 +17,10 @@ import java.io.File
  * scp_info.db和level.xml在每次备份时复制到documents
  */
 
-class FileHelper(val mContext: Context) {
+class FileUtil(val mContext: Context) {
 
     companion object {
-        private var fileHelper: FileHelper? = null
+        private var fileHelper: FileUtil? = null
         var prefFilename = "level.xml"
         var infoDBFilename = "scp_info.db"
         var dataDbFilename = "scp_data.db"
@@ -33,8 +33,8 @@ class FileHelper(val mContext: Context) {
         val documentDirPath = "${Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName$sp"
 
-        fun getInstance(context: Context): FileHelper {
-            return fileHelper ?: FileHelper(context)
+        fun getInstance(context: Context): FileUtil {
+            return fileHelper ?: FileUtil(context)
         }
     }
 
@@ -104,7 +104,7 @@ class FileHelper(val mContext: Context) {
     fun restoreDB() {
         val backUpFile = File(getBackUpFilePath(dataDbFilename))
         if (backUpFile.exists()) {
-            mContext.alert("检测到备份数据库，是否恢复", "恢复") {
+            mContext.alert("检测到本设备有之前保存的用户数据，是否恢复", "恢复") {
                 yesButton {
                     mContext.toast("开始恢复")
                     doAsync {

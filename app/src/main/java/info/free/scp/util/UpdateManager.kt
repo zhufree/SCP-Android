@@ -47,9 +47,8 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
             PreferenceUtil.clearDownloadPref()
-            // FIXME 下个版本开启
-//            FileHelper.getInstance(activity).restoreDB() // 第一次安装app时检测
-//            return
+            FileUtil.getInstance(activity).restoreDB() // 第一次安装app时检测
+            return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
@@ -103,13 +102,6 @@ class UpdateManager(private var activity: BaseActivity) {
                                 .setNegativeButton("暂不升级") { _, _ -> }
                                 .create().show()
                         // 有新版本就不检查数据更新，知道更新到最新
-                    } else {
-                        // 检查总数据库有没有更新并下载
-//                        if (PreferenceUtil.getAutoDownload() && (PreferenceUtil.getServerLastUpdateTime(-1)
-//                                        > PreferenceUtil.getDetailLastLoadTime(-1))) {
-//                            // 开始离线主数据库
-//                            activity.startService<InitDetailService>()
-//                        }
                     }
                 }
             }

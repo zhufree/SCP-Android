@@ -12,7 +12,7 @@ import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ItemDownloadBinding
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.DownloadUtil
-import info.free.scp.util.FileHelper
+import info.free.scp.util.FileUtil
 import info.free.scp.util.PreferenceUtil
 import org.jetbrains.anko.*
 
@@ -69,7 +69,7 @@ class DownloadAdapter : ListAdapter<DownloadModel, DownloadAdapter.DownloadHolde
 
     private fun createOnClickListener(position: Int): View.OnClickListener {
         return View.OnClickListener {
-            val fileHelper = FileHelper.getInstance(ScpApplication.context)
+            val fileHelper = FileUtil.getInstance(ScpApplication.context)
             if (position == 0) {
                 // 检查本地是否有已经下载过的
                 if (fileHelper.checkBackupDataExist() && downloadList[position] == -1L) { // 是总数据库

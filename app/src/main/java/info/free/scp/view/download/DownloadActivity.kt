@@ -14,7 +14,7 @@ import info.free.scp.ScpApplication
 import info.free.scp.bean.DownloadModel
 import info.free.scp.databinding.ActivityDownloadBinding
 import info.free.scp.db.ScpDatabase
-import info.free.scp.util.FileHelper
+import info.free.scp.util.FileUtil
 import info.free.scp.util.InjectorUtils
 import info.free.scp.view.base.BaseActivity
 import org.jetbrains.anko.doAsync
@@ -36,7 +36,7 @@ class DownloadActivity : BaseActivity() {
                 doAsync {
                     try {
                         val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                        val destFile = File(FileHelper.privateDbDirPath + FileHelper.dataDbFilename)
+                        val destFile = File(FileUtil.privateDbDirPath + FileUtil.dataDbFilename)
                         val outputStream = FileOutputStream(destFile)
                         destFile.outputStream().use { output ->
                             fileInputStream.copyTo(output)

@@ -9,7 +9,7 @@ import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
-import info.free.scp.util.FileHelper
+import info.free.scp.util.FileUtil
 import org.jetbrains.anko.toast
 
 
@@ -23,7 +23,7 @@ abstract class ScpDatabase : RoomDatabase() {
 
         fun getInstance(): ScpDatabase? {
             try {
-                if (INSTANCE == null && FileHelper.getInstance(ScpApplication.context).checkDataReady()) {
+                if (INSTANCE == null && FileUtil.getInstance(ScpApplication.context).checkDataReady()) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()
@@ -38,7 +38,7 @@ abstract class ScpDatabase : RoomDatabase() {
         fun getNewInstance() {
             INSTANCE?.close()
             try {
-                if (FileHelper.getInstance(ScpApplication.context).checkDataReady()) {
+                if (FileUtil.getInstance(ScpApplication.context).checkDataReady()) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()

@@ -18,7 +18,7 @@ import info.free.scp.db.ScpTable.dropDetailTableSQL
 import info.free.scp.db.ScpTable.dropScpTableSQL
 
 
-@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class], version = 6)
+@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppInfoDatabase : RoomDatabase() {
     abstract fun likeAndReadDao(): LikeAndReadDao
@@ -61,6 +61,11 @@ abstract class AppInfoDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
             }
         }
+        private val MIGRATION_6_7: Migration = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
+            }
+        }
 
         fun getInstance(): AppInfoDatabase {
             if (INSTANCE == null) {
@@ -71,6 +76,7 @@ abstract class AppInfoDatabase : RoomDatabase() {
                         .addMigrations(MIGRATION_3_4)
                         .addMigrations(MIGRATION_4_5)
                         .addMigrations(MIGRATION_5_6)
+                        .addMigrations(MIGRATION_6_7)
                         .allowMainThreadQueries()
                         .build()
             }

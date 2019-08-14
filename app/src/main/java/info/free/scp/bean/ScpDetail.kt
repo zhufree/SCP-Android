@@ -11,5 +11,4 @@ import kotlinx.serialization.SerialName
  */
 @Entity(tableName = "scp_detail")
 data class ScpDetail(@PrimaryKey var link: String, var detail: String,
-//                     @Optional @SerialName("download_type") var downloadType: Int = -1,
                      @Optional @SerialName("not_found") @ColumnInfo(name = "not_found") var notFound: Int = -1)

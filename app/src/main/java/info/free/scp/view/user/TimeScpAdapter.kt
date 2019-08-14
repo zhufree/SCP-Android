@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.bean.SimpleScp
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.search.SearchHolder
 

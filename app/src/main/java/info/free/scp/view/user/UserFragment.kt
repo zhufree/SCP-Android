@@ -79,7 +79,7 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        about_toolbar?.setTitle(R.string.app_name)
+        about_toolbar?.setTitle(R.string.user_info)
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +

@@ -99,6 +99,7 @@
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
     <!--设置-->
+    <string name="user_info">员工档案</string>
     <string name="about_view_content">浏览相关</string>
     <string name="draft_list">草稿箱</string>
     <string name="like_list">收藏列表</string>

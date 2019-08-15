@@ -1,13 +1,15 @@
 package info.free.scp.view.detail
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.DialogInterface.BUTTON_POSITIVE
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import androidx.constraintlayout.widget.ConstraintLayout
 import android.util.Log
 import android.view.KeyEvent
 import android.view.KeyEvent.KEYCODE_BACK
@@ -18,6 +20,7 @@ import android.view.View.VISIBLE
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.constraintlayout.widget.ConstraintLayout
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
@@ -26,11 +29,14 @@ import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
-import info.free.scp.util.*
+import info.free.scp.db.ScpDatabase
+import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
@@ -385,7 +391,7 @@ class DetailActivity : BaseActivity() {
             PreferenceUtil.addPoints(2)
             var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
             if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false)
+                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = -1)
             }
             scpInfo.like = !scpInfo.like
             AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
@@ -478,7 +484,7 @@ class DetailActivity : BaseActivity() {
         scp?.let { s ->
             var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
             if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false)
+                scpInfo = ScpLikeModel(s.link, s.title, like = false, hasRead = false, boxId = -1)
             }
             if (scpInfo.hasRead) {
                 // 取消已读

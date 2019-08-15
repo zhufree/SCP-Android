@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
         android:gravity="end|center_vertical"
         android:padding="8dp"
         android:text="SCP-"
@@ -42,11 +42,11 @@
         app:layout_constraintBottom_toTopOf="@+id/btn_direct_cn"
         app:layout_constraintVertical_chainStyle="spread"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_direct_cn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:gravity="center"
         android:padding="10dp"
         android:text="CN"
@@ -60,11 +60,11 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_direct_title"
         app:layout_constraintBottom_toTopOf="@+id/gv_direct_number"/>
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_direct_j"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:gravity="center"
         android:padding="10dp"
         android:text="J"
@@ -81,20 +81,21 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="24dp"
-        android:columnWidth="80dp"
+        android:layout_marginTop="16dp"
+        android:columnWidth="64dp"
         android:numColumns="3"
         android:stretchMode="spacingWidth"
-        android:verticalSpacing="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_go_direst_btn"
+        android:verticalSpacing="5dp"
+        android:horizontalSpacing="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_go_direct"
         app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
         app:layout_constraintStart_toStartOf="@id/tv_direct_title"
         app:layout_constraintTop_toBottomOf="@id/btn_direct_cn" />
 
-    <TextView
-        android:id="@+id/tv_go_direst_btn"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_go_direct"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="48dp"
         android:background="?attr/itemBg"
         android:textColor="?attr/darkText"
         android:text="Go!"

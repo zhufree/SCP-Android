@@ -4,17 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.feed.FeedFragment">
+    tools:context=".view.feed.FeedFragment"
+    android:background="@color/containerBg">
 
     <com.google.android.material.tabs.TabLayout
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/tab_feed"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:background="?attr/containerBg"
         app:tabTextColor="?attr/darkText"
         app:tabSelectedTextColor="?attr/lightText"
-        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_feed"

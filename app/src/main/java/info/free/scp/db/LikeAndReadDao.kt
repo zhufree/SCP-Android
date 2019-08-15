@@ -14,7 +14,7 @@ interface LikeAndReadDao {
     @Insert(onConflict = REPLACE)
     fun save(info: ScpLikeModel)
 
-    @Query("SELECT link, title,hasRead, `like` FROM like_table WHERE link = :link LIMIT 1")
+    @Query("SELECT * FROM like_table WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpLikeModel?
 
     @Query("SELECT `like` FROM like_table WHERE link = :link LIMIT 1")

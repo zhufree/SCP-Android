@@ -2,15 +2,16 @@ package info.free.scp.view.home
 
 import android.os.Bundle
 import android.view.Menu
-import info.free.scp.R
 import android.widget.ArrayAdapter
+import info.free.scp.R
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
@@ -64,6 +65,12 @@ class DirectActivity : BaseActivity() {
             updateExpress()
         }
 
+        arrayOf(btn_direct_cn, btn_direct_j, btn_go_direct).forEach {
+            it.post {
+                it.background = ThemeUtil.customShape(ThemeUtil.itemBg, 0, 0, it.height / 2)
+            }
+        }
+
         btn_direct_cn.setOnClickListener {
             chooseType = when (chooseType) {
                 0 -> 1
@@ -84,7 +91,7 @@ class DirectActivity : BaseActivity() {
             }
             updateExpress()
         }
-        tv_go_direst_btn?.setOnClickListener {
+        btn_go_direct?.setOnClickListener {
             val scp = when (chooseType) {
                 0 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES, "%-$numberString %")
                 1 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES_CN, "%-$numberString %")

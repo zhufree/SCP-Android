@@ -79,7 +79,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // 注册广播
-
         setContentView(R.layout.activity_main)
 
         // 设置默认fragment
@@ -98,6 +97,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         UpdateManager.getInstance(this).checkAppData()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        window.navigationBarColor = resources.getColor(R.color.colorPrimaryDark)
 //        requireFilePermission()
     }
 

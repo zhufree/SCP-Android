@@ -1,24 +1,24 @@
 package info.free.scp.db
 
-import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.DraftModel
-import info.free.scp.bean.ScpRecordModel
+import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.db.ScpTable.LIKE_AND_READ_TABLE_NAME
 import info.free.scp.db.ScpTable.VIEW_LIST_TABLE_NAME
-import info.free.scp.db.ScpTable.migrationRecordTable
 import info.free.scp.db.ScpTable.dropDetailTableSQL
 import info.free.scp.db.ScpTable.dropScpTableSQL
 
 
-@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class], version = 7)
+@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class, ScpLikeBox::class], version = 7)
 @TypeConverters(Converters::class)
 abstract class AppInfoDatabase : RoomDatabase() {
     abstract fun likeAndReadDao(): LikeAndReadDao
@@ -61,9 +61,10 @@ abstract class AppInfoDatabase : RoomDatabase() {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
             }
         }
-        private val MIGRATION_6_7: Migration = object : Migration(5, 6) {
+        private val MIGRATION_6_7: Migration = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
+                database.execSQL("ALTER TABLE `like_table` ADD COLUMN `boxId` INTEGER;")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `like_box_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)")
             }
         }
 

@@ -1,14 +1,15 @@
 package info.free.scp.util
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import info.free.scp.BuildConfig
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.info
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -85,6 +86,9 @@ class UpdateManager(private var activity: BaseActivity) {
                         // 数据下载链接
                         if (config.key.contains("db_link")) {
                             PreferenceUtil.setDataDownloadLink(config.key, config.value)
+                        }
+                        if (config.key == "notice") {
+                            PreferenceUtil.setNotice(config.value)
                         }
                     }
                     if (currentVersionCode < newVersionCode && !activity.isFinishing) {

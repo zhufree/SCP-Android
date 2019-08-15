@@ -40,7 +40,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        home_toolbar?.setTitle(R.string.app_name)
+        home_toolbar?.setTitle(R.string.title_scp_documents)
         home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         home_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -50,12 +50,13 @@ class HomeFragment : BaseFragment() {
             }
             true
         }
-        tv_series_doc?.background?.alpha = 80
-        tv_story_doc?.background?.alpha = 80
-        tv_about_doc?.background?.alpha = 80
-        tv_read_later?.background?.alpha = 80
-        tv_joke_doc?.background?.alpha = 80
-        tv_direct?.background?.alpha = 80
+        tv_home_notice?.text = PreferenceUtil.getNotice()
+        tv_series_doc?.background?.alpha = 50
+        tv_story_doc?.background?.alpha = 50
+        tv_about_doc?.background?.alpha = 50
+        tv_read_later?.background?.alpha = 50
+        tv_joke_doc?.background?.alpha = 50
+        tv_direct?.background?.alpha = 50
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }

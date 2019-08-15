@@ -52,7 +52,7 @@ TODO
 
 当前开发版本
 # v0.1.4
-- [ ] 解决数据库下载慢的问题（备案域名中，20天剩余），顺便更新一遍数据库
+- [ ] 解决数据库下载慢的问题（备案域名中，15天剩余），顺便更新一遍数据库
 - [ ] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
   - [ ] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。
   - [ ] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。

@@ -97,8 +97,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         UpdateManager.getInstance(this).checkAppData()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        window.navigationBarColor = resources.getColor(R.color.colorPrimaryDark)
-//        requireFilePermission()
+        requireFilePermission()
     }
 
     override fun onResume() {

@@ -7,8 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.umeng.analytics.MobclickAgent
@@ -37,6 +37,7 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         ThemeUtil.setTheme(this)
         registerBroadCastReceivers()
+        window.navigationBarColor = resources.getColor(R.color.colorPrimaryDark)
     }
 
     public override fun onResume() {

@@ -54,6 +54,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
+                android:scrollbars="vertical"
+                android:scrollbarAlwaysDrawVerticalTrack="true"
+                android:fadeScrollbars="false"
+                android:verticalScrollbarPosition="right"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ProgressBar

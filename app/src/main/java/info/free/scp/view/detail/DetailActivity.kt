@@ -132,7 +132,7 @@ class DetailActivity : BaseActivity() {
             // 数据库没有，加载链接
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
-            nsv_web_wrapper?.scrollTo(0, 0)
+//            nsv_web_wrapper?.scrollTo(0, 0)
         }
 
         webView?.requestFocus()
@@ -227,7 +227,7 @@ class DetailActivity : BaseActivity() {
                     + detailHtml + jsScript,
                     "text/html", "utf-8", null)
         }
-        nsv_web_wrapper?.scrollTo(0, 0)
+//        nsv_web_wrapper?.scrollTo(0, 0)
     }
 
     /**

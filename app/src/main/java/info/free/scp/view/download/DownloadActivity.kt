@@ -32,9 +32,9 @@ class DownloadActivity : BaseActivity() {
             val completeDownloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                     ?: -1
             if (completeDownloadId > 0) {
-                val pfd = ScpApplication.downloadManager.openDownloadedFile(completeDownloadId)
                 doAsync {
                     try {
+                        val pfd = ScpApplication.downloadManager.openDownloadedFile(completeDownloadId)
                         val fileInputStream = FileInputStream(pfd.fileDescriptor)
                         val destFile = File(FileUtil.privateDbDirPath + FileUtil.dataDbFilename)
                         val outputStream = FileOutputStream(destFile)
@@ -47,6 +47,7 @@ class DownloadActivity : BaseActivity() {
                         ScpDatabase.getNewInstance()
                         uiThread {
                             toast("复制完成")
+                            finish()
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()

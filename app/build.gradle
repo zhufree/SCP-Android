@@ -110,6 +110,7 @@ dependencies {
     implementation "org.jetbrains.anko:anko-coroutines:0.10.8"
 
     implementation 'pub.devrel:easypermissions:3.0.0'
+    implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 
 //    implementation files('libs/TGSDK.1.8.4.aar')
 }

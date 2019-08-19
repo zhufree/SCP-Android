@@ -41,6 +41,8 @@ import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk27.coroutines.onScrollChange
+import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
 import taobe.tec.jcc.JChineseConvertor
 import java.io.IOException
 
@@ -132,7 +134,7 @@ class DetailActivity : BaseActivity() {
             // 数据库没有，加载链接
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
-//            nsv_web_wrapper?.scrollTo(0, 0)
+            nsv_web_wrapper?.scrollTo(0, 0)
         }
 
         webView?.requestFocus()
@@ -189,6 +191,21 @@ class DetailActivity : BaseActivity() {
                     }
                     .create().show()
         }
+
+        sb_detail?.onSeekBarChangeListener {
+            this.onProgressChanged { seekBar, i, b ->
+                if (b) {
+                    nsv_web_wrapper?.scrollTo(0, (webView.height * (i / 100f)).toInt())
+                }
+            }
+        }
+        nsv_web_wrapper?.onScrollChange { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+            info { "$scrollY, ${webView?.height}" }
+            webView?.let {
+                sb_detail?.progress = ((scrollY.toFloat() / webView.height) * 100).toInt()
+            }
+        }
+
     }
 
     override fun refreshTheme() {
@@ -227,7 +244,7 @@ class DetailActivity : BaseActivity() {
                     + detailHtml + jsScript,
                     "text/html", "utf-8", null)
         }
-//        nsv_web_wrapper?.scrollTo(0, 0)
+        nsv_web_wrapper?.scrollTo(0, 0)
     }
 
     /**

@@ -54,12 +54,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:scrollbars="vertical"
-                android:scrollbarAlwaysDrawVerticalTrack="true"
-                android:fadeScrollbars="false"
-                android:verticalScrollbarPosition="right"
+                android:scrollbars="none"
                 app:layout_constraintTop_toTopOf="parent" />
-
             <ProgressBar
                 android:id="@+id/pbLoading"
                 style="@style/Widget.AppCompat.ProgressBar"
@@ -110,6 +106,7 @@
                 android:layout_height="40dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_download_qrcode" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -185,5 +182,28 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="end">
 
+        <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
+            android:id="@+id/sb_detail"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:splitTrack="false"
+            android:thumb="@drawable/ic_seekbar_thumb"
+            android:progressDrawable="@drawable/progress_bar"
+            app:seekBarRotation="CW90" /> <!-- Rotation: CW90 or CW270 -->
+    </com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper>
+    <!--<info.free.scp.view.detail.VerticalSeekBar-->
+    <!--android:layout_width="16dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_gravity="end"-->
+
+    <!--android:progress="50"-->
+    <!--android:progressDrawable="@color/colorPrimaryDark"-->
+    <!--android:thumb="@drawable/ic_seekbar_thumb"/>-->
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -42,12 +42,12 @@ object PreferenceUtil {
      * 服务器数据更新时间，last_update_time_0/1/2/3/4
      * key是字段名
      */
-    fun setServerLastUpdateTime(dbName: String, time: Long) {
-        setLongValue(DOWNLOAD_SP, dbName, time)
+    fun setServerLastUpdateTime(time: Long) {
+        setLongValue(DOWNLOAD_SP, "last_update_time", time)
     }
 
-    fun getServerLastUpdateTime(dbIndex: Int): Long {
-        return getLongValue(DOWNLOAD_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
+    fun getServerLastUpdateTime(): Long {
+        return getLongValue(DOWNLOAD_SP, "last_update_time")
     }
 
     fun setNotice(notice: String) {
@@ -70,30 +70,34 @@ object PreferenceUtil {
         return getStringValue(DOWNLOAD_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
     }
 
+    // 新版本，只下一个数据库
+    fun setDownloadLink(link: String) {
+        setStringValue(DOWNLOAD_SP, "db_link", link)
+    }
+
+    fun getDownloadLink(): String {
+        return getStringValue(DOWNLOAD_SP, "db_link")
+    }
+
     /**
      * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
      */
-    fun setDetailDataLoadFinish(dbIndex: Int, value: Boolean) {
-        if (value) {
-            setDetailLastLoadTime(dbIndex, System.currentTimeMillis())
-        }
-        setBooleanValue(INIT_SP, dbIndex.toString(), value)
-    }
 
-    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
-        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
-    }
+
+//    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
+//        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
+//    }
 
 
     /**
      * 数据更新时间相关
      */
-    fun getDetailLastLoadTime(dbIndex: Int): Long {
-        return getLongValue(DOWNLOAD_SP, "${dbIndex}_time")
+    fun getDetailLastLoadTime(): Long {
+        return getLongValue(DOWNLOAD_SP, "load_db_time")
     }
 
-    fun setDetailLastLoadTime(dbIndex: Int, time: Long) {
-        setLongValue(DOWNLOAD_SP, "${dbIndex}_time", time)
+    fun setDetailLastLoadTime(time: Long) {
+        setLongValue(DOWNLOAD_SP, "load_db_time", time)
     }
 
     fun clearDownloadPref() {

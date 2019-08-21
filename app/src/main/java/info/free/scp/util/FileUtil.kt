@@ -69,7 +69,7 @@ class FileUtil(val mContext: Context) {
     fun checkBackupDataExist(): Boolean {
         val backUpFile = File(getBackUpFilePath(dataDbFilename))
         return backUpFile.exists() &&
-                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime(-1)
+                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime()
                 && backUpFile.length() > 50 * 1000 * 1000
     }
 

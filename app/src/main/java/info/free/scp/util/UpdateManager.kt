@@ -80,12 +80,12 @@ class UpdateManager(private var activity: BaseActivity) {
                             updateLink = config.value
                         }
                         // 上次数据更新时间，分几个库
-                        if (config.key.contains("last_update_time")) {
-                            PreferenceUtil.setServerLastUpdateTime(config.key, config.value.toLong())
+                        if (config.key == "last_update_time_all") {
+                            PreferenceUtil.setServerLastUpdateTime(config.value.toLong())
                         }
                         // 数据下载链接
-                        if (config.key.contains("db_link")) {
-                            PreferenceUtil.setDataDownloadLink(config.key, config.value)
+                        if (config.key == "db_link_all") {
+                            PreferenceUtil.setDownloadLink(config.value)
                         }
                         if (config.key == "notice") {
                             PreferenceUtil.setNotice(config.value)

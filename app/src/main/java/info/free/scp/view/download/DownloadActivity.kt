@@ -6,20 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import android.os.Handler
 import info.free.scp.R
 import info.free.scp.ScpApplication
-import info.free.scp.bean.DownloadModel
-import info.free.scp.databinding.ActivityDownloadBinding
 import info.free.scp.db.ScpDatabase
-import info.free.scp.util.FileUtil
-import info.free.scp.util.InjectorUtils
+import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.android.synthetic.main.activity_download.*
+import org.jetbrains.anko.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -53,7 +47,6 @@ class DownloadActivity : BaseActivity() {
                         e.printStackTrace()
                         toast("文件复制出错：" + e.message)
                     }
-
                 }
             }
         }
@@ -61,33 +54,104 @@ class DownloadActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val bd: ActivityDownloadBinding = DataBindingUtil.setContentView(
-                this, R.layout.activity_download)
+        setContentView(R.layout.activity_download)
 
-        setSupportActionBar(bd.downloadToolbar)
-        bd.downloadToolbar.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        bd.downloadToolbar.setNavigationOnClickListener { finish() }
+        setSupportActionBar(download_toolbar)
 
-        val adapter = DownloadAdapter()
-        bd.rlDownloadList.adapter = adapter
-        val factory = InjectorUtils.provideDownloadListViewModelFactory()
-        val model = ViewModelProviders.of(this, factory)
-                .get(DownloadListViewModel::class.java)
-
-
-        model.getDownloadList()
-                ?.observe(this, Observer<List<DownloadModel>> { downloads ->
-                    // update UI
-                    if (downloads.isNotEmpty()) {
-                        adapter.submitList(downloads)
-                    }
-                })
+        tv_download_time.text = "本地同步时间：${Utils.formatDate(PreferenceUtil.getServerLastUpdateTime())}"
+        tv_update_time.text = "服务器更新时间：${Utils.formatDate(PreferenceUtil.getDetailLastLoadTime())}"
+        btn_download?.post {
+            btn_download?.background = ThemeUtil.customShape(resources.getColor(R.color.colorPrimaryDark),
+                    0, 0, dip(30))
+        }
+        btn_download?.setOnClickListener {
+            downloadData()
+        }
         registerReceiver(downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+    }
+
+    val downloadUrl = PreferenceUtil.getDownloadLink()
+    var downloadId = -1L
+    var mStartVideoHandler: Handler = Handler()
+    private var runnable: Runnable? = null
+
+    private fun downloadData() {
+
+        val fileHelper = FileUtil.getInstance(ScpApplication.context)
+        // 检查本地是否有已经下载过的
+        if (fileHelper.checkBackupDataExist()) {
+            ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
+                positiveButton("恢复") {
+                    ScpApplication.context.toast("开始恢复")
+                    doAsync {
+                        if (fileHelper.restoreData()) {
+                            ScpDatabase.getNewInstance()
+                            uiThread {
+                                ScpApplication.currentActivity?.toast("恢复完成")
+                            }
+                        }
+                    }
+                }
+                negativeButton("重新下载") {
+                    toggleDownloadStatus()
+                }
+                neutralPressed("取消") {}
+            }?.show()
+        } else {
+            toggleDownloadStatus()
+        }
+    }
+
+    private fun toggleDownloadStatus() {
+        if (downloadId < 0) {
+            runnable = Runnable {
+                val info: IntArray = DownloadUtil.getDownloadInfo(downloadId)
+                tv_download_progress.text = "${info[0] / 1000000}M/${info[1] / 1000000}M ${getStatusByCode(info[2])}"
+                runnable?.let {
+                    mStartVideoHandler.postDelayed(runnable, 1000)
+                }
+            }
+            runnable?.run()
+            downloadId = DownloadUtil.createDownload(downloadUrl)
+        } else {
+            ScpApplication.downloadManager.remove(downloadId)
+            downloadId = -1
+            tv_download_progress.text = "${0 / 1000000}M/${0 / 1000000}M ${getStatusByCode(-1)}"
+        }
+    }
+
+
+    private fun getStatusByCode(code: Int): String {
+        return when (code) {
+            1 shl 0 -> {
+                "PENDING"
+            }
+            1 shl 1 -> {
+                "下载中"
+            }
+            1 shl 2 -> {
+                "暂停"
+            }
+            1 shl 3 -> {
+                PreferenceUtil.setDetailLastLoadTime(System.currentTimeMillis())
+                "下载成功"
+            }
+            1 shl 4 -> {
+                "下载失败"
+            }
+            -1 -> {
+                "取消下载"
+            }
+            else -> {
+                "PENDING"
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(downloadReceiver)
+        runnable = null
     }
 }

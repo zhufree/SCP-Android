@@ -15,12 +15,11 @@ import android.view.View
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import info.free.scp.R
+import info.free.scp.ScpApplication
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
-import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
-import info.free.scp.view.draft.DraftEditActivity
 import info.free.scp.view.draft.DraftListActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.startActivity
@@ -45,6 +44,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("read_settings")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
             activity?.startActivity<SettingsActivity>()
+            true
+        }
+        findPreference<Preference>("donation")?.setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickReadSetting)
+            if (ScpApplication.channelName == "HuaWei") {
+                activity?.startActivity<DonationActivity>()
+            } else {
+                activity?.startActivity<DonationQrActivity>()
+            }
+            // TODO 埋点
             true
         }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {

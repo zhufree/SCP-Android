@@ -54,9 +54,9 @@
             android:title="@string/copyright">
         </Preference>
         <Preference
+            android:key="donation"
             android:textColor="?attr/lightText"
             android:title="@string/about_developer">
-            <intent android:action="info.free.scp.view.user.AboutMeActivity" />
         </Preference>
 
 

@@ -151,6 +151,8 @@
     <string name="wechat">微信</string>
     <string name="wechat_qr">微信二维码</string>
     <string name="alipay_qr">支付宝二维码</string>
+    <string name="go_afdian">爱发电</string>
+    <string name="go_chongya">冲呀</string>
     <string name="show_ad">看广告支持开发者</string>
     <string name="donation_notice">长按二维码保存到相册</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>

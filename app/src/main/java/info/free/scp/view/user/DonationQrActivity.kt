@@ -1,8 +1,6 @@
 package info.free.scp.view.user
 
-import android.Manifest
 import android.graphics.drawable.BitmapDrawable
-import android.os.Bundle
 import info.free.scp.R
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
@@ -13,16 +11,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Bundle
 import android.os.Handler
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.SCPConstants
 import org.jetbrains.anko.*
-import pub.devrel.easypermissions.AfterPermissionGranted
-import pub.devrel.easypermissions.EasyPermissions
 
 
-class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
+class DonationQrActivity : BaseActivity() {
     private var payType = 0 // 0 wechat 1 zhi
 //    private var ad: InterstitialAD? = null
 
@@ -31,25 +27,20 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         EventUtil.onEvent(this, EventUtil.clickAboutMe)
         setContentView(R.layout.activity_about_me)
 
-        about_me_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        about_me_toolbar?.setNavigationOnClickListener { finish() }
-        tv_donation_wechat?.setOnClickListener {
+        baseToolbar = about_me_toolbar
+        btn_donation_wechat?.setOnClickListener {
             payType = 0
-            iv_about_me?.setImageResource(R.drawable.img_donation_wechat)
+            iv_qr?.setImageResource(R.drawable.img_donation_wechat)
         }
-        tv_donation_alipay?.setOnClickListener {
+        btn_donation_alipay?.setOnClickListener {
             payType = 1
-            iv_about_me?.setImageResource(R.drawable.img_donation_alipay)
+            iv_qr?.setImageResource(R.drawable.img_donation_alipay)
         }
 
-        tv_show_ad?.setOnClickListener {
-            requireFilePermission()
-        }
-
-        iv_about_me?.setOnLongClickListener {
+        iv_qr?.setOnLongClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
             PreferenceUtil.addPoints(2)
-            Utils.saveBitmapFile((iv_about_me.drawable as BitmapDrawable).bitmap, "scp_donation")
+            Utils.saveBitmapFile((iv_qr.drawable as BitmapDrawable).bitmap, "scp_donation")
             MediaScannerConnection.scanFile(this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
                     null, null)
             longToast(R.string.jump_notice)
@@ -58,9 +49,6 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             }, 500)
         }
 
-        tv_show_ad?.setOnClickListener {
-
-        }
     }
 
 
@@ -97,30 +85,5 @@ class AboutMeActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         val list = pm.queryIntentActivities(
                 intent, PackageManager.MATCH_DEFAULT_ONLY)
         return list != null && list.size > 0
-    }
-
-    @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
-    private fun requireFilePermission() {
-        val perms = arrayOf(Manifest.permission.READ_PHONE_STATE)
-        if (EasyPermissions.hasPermissions(this, *perms)) {
-//            ad?.loadAD()
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(this, getString(R.string.request_permission_notice),
-                    SCPConstants.RequestCode.REQUEST_FILE_PERMISSION, *perms)
-        }
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
-    }
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-    }
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-//        ad?.loadAD()
     }
 }

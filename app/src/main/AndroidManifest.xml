@@ -2,11 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.free.scp">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <application
         android:name=".ScpApplication"
         android:allowBackup="true"
@@ -17,14 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-
-
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="${UMENG_CHANNEL_VALUE}" />
-        <meta-data
-            android:name="android.webkit.WebView.EnableSafeBrowsing"
-            android:value="true" />
+        <activity android:name=".view.user.DonationActivity"/>
 
         <activity
             android:name=".MainActivity"
@@ -39,13 +27,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.category.ScpListActivity" />
+
         <activity android:name=".view.detail.DetailActivity" />
         <activity android:name=".view.base.BaseActivity" />
-
-        <!--<service-->
-        <!--android:name=".service.InitDetailService"-->
-        <!--android:enabled="true" />-->
-
         <activity android:name=".view.user.AboutAppActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutAppActivity" />
@@ -53,13 +37,15 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.user.AboutMeActivity">
+        <activity android:name=".view.user.DonationQrActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutMeActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
+        </activity> <!-- <service -->
+        <!-- android:name=".service.InitDetailService" -->
+        <!-- android:enabled="true" /> -->
         <activity android:name=".view.search.SearchActivity" />
         <activity android:name=".view.user.LikeActivity">
             <intent-filter>
@@ -102,17 +88,12 @@
         </activity>
         <activity android:name=".view.draft.DraftListActivity" />
         <activity android:name=".view.download.DownloadActivity" />
-
-        <receiver android:name=".ScpWidgetProvider">
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/widget_info" />
-
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.seewo.homewidgets.action.CLICK" />
-            </intent-filter>
-        </receiver> <!-- ad -->
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -122,11 +103,26 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/gdt_file_path" />
-        </provider>
+        </provider> <!-- ad -->
+        <receiver android:name=".ScpWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="com.seewo.homewidgets.action.CLICK" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
 
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
     </application>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

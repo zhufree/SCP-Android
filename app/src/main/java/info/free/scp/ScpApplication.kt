@@ -3,9 +3,11 @@ package info.free.scp
 import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.multidex.MultiDexApplication
+import com.umeng.analytics.AnalyticsConfig
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import info.free.scp.util.ThemeUtil
@@ -17,6 +19,7 @@ import info.free.scp.view.base.BaseActivity
  */
 
 class ScpApplication : MultiDexApplication() {
+
 
 
     override fun onCreate() {
@@ -79,5 +82,9 @@ class ScpApplication : MultiDexApplication() {
         val downloadManager by lazy {
             context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         }
+        val channelName:String
+            get() {
+                return AnalyticsConfig.getChannel(context)
+            }
     }
 }

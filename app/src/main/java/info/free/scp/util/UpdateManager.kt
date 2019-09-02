@@ -90,6 +90,9 @@ class UpdateManager(private var activity: BaseActivity) {
                         if (config.key == "notice") {
                             PreferenceUtil.setNotice(config.value)
                         }
+                        if (config.key == "api_url") {
+                            PreferenceUtil.setApiUrl(config.value)
+                        }
                     }
                     if (currentVersionCode < newVersionCode && !activity.isFinishing) {
                         activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")

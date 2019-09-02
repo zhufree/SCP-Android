@@ -5,6 +5,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.bean.*
+import info.free.scp.util.PreferenceUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.serialization.json.JSON
@@ -27,7 +28,7 @@ class HttpManager {
             .addConverterFactory(serializationConverterFactory(contentType, JSON))
             .build()
     private val feedRetrofit: Retrofit = Retrofit.Builder()
-            .baseUrl(SCPConstants.FEED_API_URL)
+            .baseUrl(PreferenceUtil.getApiUrl())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(serializationConverterFactory(contentType, JSON))
             .build()

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import java.util.*
 
@@ -56,6 +57,15 @@ object PreferenceUtil {
 
     fun getNotice(): String {
         return getStringValue(APP_SP, "notice")
+    }
+
+    fun setApiUrl(url: String) {
+        setStringValue(APP_SP, "api_url", url)
+    }
+
+    fun getApiUrl(): String {
+        val prefUrl = getStringValue(APP_SP, "api_url")
+        return if (prefUrl.isNotEmpty()) prefUrl else SCPConstants.FEED_API_URL
     }
 
     /**

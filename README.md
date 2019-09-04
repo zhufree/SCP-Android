@@ -59,14 +59,14 @@ TODO
   - [ ] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
   - [ ] 最受欢迎的原创GoI格式[请点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
   - [ ] 最受欢迎的原创被放逐者之图书馆作品请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
-  - [ ] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [-] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
 - [ ] 收藏夹可分类
 - [x] 正文页面添加滑动条
 - [x] 数字键盘形状优化&“其他SCP”的介绍
 - [x] 首页放一个公告位置
 - [x] 离线页面修改
 - [ ] 备份pref和db
-- [ ] 捐赠页面去掉广告，增加捐赠列表
+- [x] 捐赠页面去掉广告，增加捐赠列表
 - [ ] 分出一些重点/特色明显/科普类文档放在显眼位置
 - [ ] 数据库备份功能优化
 - [ ] 去掉不必要的权限申请，整理文件夹使用

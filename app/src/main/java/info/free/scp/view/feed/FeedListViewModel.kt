@@ -2,15 +2,19 @@ package info.free.scp.view.feed
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.viewModelScope
 import info.free.scp.bean.FeedModel
+import kotlinx.coroutines.launch
 
-class FeedListViewModel(private val feedRepo: FeedRepository) : ViewModel() {
-    fun getFeed(feedType: Int): MutableLiveData<ArrayList<FeedModel>>? {
-        loadFeed(feedType)
+class FeedListViewModel : ViewModel() {
+    private val feedRepo = FeedRepository()
+    fun getFeed(): MutableLiveData<List<FeedModel>>? {
         return feedRepo.feedList
     }
 
     fun loadFeed(feedType: Int) {
-        feedRepo.loadFeedList(feedType)
+        viewModelScope.launch {
+            feedRepo.loadFeedList(feedType)
+        }
     }
 }

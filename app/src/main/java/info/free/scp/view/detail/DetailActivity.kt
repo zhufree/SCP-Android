@@ -1,11 +1,8 @@
 package info.free.scp.view.detail
 
 import android.app.AlertDialog
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
+import android.content.*
 import android.content.DialogInterface.BUTTON_POSITIVE
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -17,15 +14,20 @@ import android.view.LayoutInflater
 import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.EditText
+import android.widget.LinearLayout.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.SCP_SITE_URL
+import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
@@ -404,16 +406,70 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun likeScp() {
-        scp?.let { s ->
-            PreferenceUtil.addPoints(2)
-            var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
-            if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = -1)
+        val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+        // 获取数据库中的收藏夹
+        val boxList = arrayListOf<ScpLikeBox>()
+        boxList.addAll(likeDao.getLikeBox())
+        if (boxList.isEmpty()) {
+            // 没有收藏夹，创建一个默认的
+            val defaultBox = ScpLikeBox(0, "默认收藏夹")
+            boxList.add(defaultBox)
+            likeDao.addLikeBox(defaultBox)
+        }
+        val nameList = arrayListOf<String>()
+        nameList.addAll(boxList.map { it.name })
+        nameList.add("新建收藏夹")
+        // 显示收藏夹列表和新建收藏夹选项
+        selector("加入收藏夹", nameList) { _, i ->
+            if (i == boxList.size) {
+                // 新建收藏夹
+                createNewBox()
+                return@selector
+            } else {
+                // 选择一个收藏夹加入
+                scp?.let { s ->
+                    PreferenceUtil.addPoints(2)
+                    var scpInfo = likeDao.getInfoByLink(s.link)
+                    if (scpInfo == null) {
+                        scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = boxList[i].id)
+                    }
+                    scpInfo.like = !scpInfo.like
+                    AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
+                }
             }
-            scpInfo.like = !scpInfo.like
-            AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
         }
         invalidateOptionsMenu()
+    }
+
+    private fun createNewBox() {
+        var input: EditText? = null
+        alert {
+            customView {
+                linearLayout {
+                    padding = dip(16)
+                    orientation = VERTICAL
+                    textView("输入收藏夹标题") {
+                        textColor = ThemeUtil.darkText
+                        textSize = 18f
+                    }
+                    input = editText {
+                        height = WRAP_CONTENT
+                        width = MATCH_PARENT
+                        singleLine = true
+                    }
+                }
+
+            }
+            positiveButton("确定") {
+                input?.clearFocus()
+                val defaultBox = ScpLikeBox(0, input?.text?.toString() ?: "")
+                info { defaultBox }
+                AppInfoDatabase.getInstance().likeAndReadDao().addLikeBox(defaultBox)
+                likeScp()
+            }
+            negativeButton("取消") {}
+
+        }.show()
     }
 
     private fun toNextArticle() {
@@ -501,7 +557,7 @@ class DetailActivity : BaseActivity() {
         scp?.let { s ->
             var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
             if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, like = false, hasRead = false, boxId = -1)
+                scpInfo = ScpLikeModel(s.link, s.title, like = false, hasRead = false, boxId = 0)
             }
             if (scpInfo.hasRead) {
                 // 取消已读

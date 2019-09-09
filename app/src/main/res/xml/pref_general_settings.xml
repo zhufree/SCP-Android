@@ -11,7 +11,7 @@
         <Preference
             android:textColor="?attr/lightText"
             android:title="@string/like_list">
-            <intent android:action="info.free.scp.view.user.LikeActivity" />
+            <intent android:action="info.free.scp.view.like.LikeBoxActivity" />
         </Preference>
         <Preference
             android:key="history_list"

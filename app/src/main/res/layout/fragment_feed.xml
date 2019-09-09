@@ -8,7 +8,6 @@
     android:background="@color/containerBg">
 
     <com.google.android.material.tabs.TabLayout
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:id="@+id/tab_feed"
         android:layout_width="match_parent"
         android:layout_height="44dp"

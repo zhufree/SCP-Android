@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.feed.TopRatedListActivity"></activity>
+        <activity android:name=".view.feed.TopRatedListActivity" />
         <activity android:name=".view.user.DonationActivity" />
         <activity
             android:name=".MainActivity"
@@ -51,13 +51,15 @@
         <!-- android:name=".service.InitDetailService" -->
         <!-- android:enabled="true" /> -->
         <activity android:name=".view.search.SearchActivity" />
-        <activity android:name=".view.user.LikeActivity">
+        <activity android:name=".view.like.LikeBoxActivity">
             <intent-filter>
-                <action android:name="info.free.scp.view.user.LikeActivity" />
+                <action android:name="info.free.scp.view.like.LikeBoxActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".view.like.LikeActivity" />
+
         <activity android:name=".view.user.LaterAndHistoryActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />

@@ -58,7 +58,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view) {
                     EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
                     var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
                     if (scpInfo == null) {
-                        scpInfo = ScpLikeModel(model.link, model.title, false, false, -1)
+                        scpInfo = ScpLikeModel(model.link, model.title, like = false, hasRead = false, boxId = 0)
                     }
                     scpInfo.hasRead = !scpInfo.hasRead
                     AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)

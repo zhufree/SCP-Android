@@ -63,7 +63,7 @@ abstract class AppInfoDatabase : RoomDatabase() {
         }
         private val MIGRATION_6_7: Migration = object : Migration(6, 7) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `like_table` ADD COLUMN `boxId` INTEGER;")
+                database.execSQL("ALTER TABLE `like_table` ADD COLUMN `boxId` INTEGER NOT NULL DEFAULT 0;")
                 database.execSQL("CREATE TABLE IF NOT EXISTS `like_box_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)")
             }
         }

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "4b540fe3022f8b3f0f51b6a714e84e9b",
+    "identityHash": "a92b883fe912050be3a4b00dcf0a466b",
     "entities": [
       {
         "tableName": "records",
@@ -44,7 +44,7 @@
       },
       {
         "tableName": "like_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `like` INTEGER NOT NULL, `hasRead` INTEGER NOT NULL, `boxId` INTEGER, PRIMARY KEY(`link`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `like` INTEGER NOT NULL, `hasRead` INTEGER NOT NULL, `boxId` INTEGER NOT NULL, PRIMARY KEY(`link`))",
         "fields": [
           {
             "fieldPath": "link",
@@ -74,7 +74,7 @@
             "fieldPath": "boxId",
             "columnName": "boxId",
             "affinity": "INTEGER",
-            "notNull": false
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -154,7 +154,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4b540fe3022f8b3f0f51b6a714e84e9b')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a92b883fe912050be3a4b00dcf0a466b')"
     ]
   }
 }

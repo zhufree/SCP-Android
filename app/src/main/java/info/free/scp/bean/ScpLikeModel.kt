@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey
  */
 @Entity(tableName = "like_table")
 data class ScpLikeModel(@PrimaryKey var link: String = "", var title: String = "", var like: Boolean,
-                        var hasRead: Boolean, var boxId: Int?)
+                        var hasRead: Boolean, var boxId: Int = 0)
 
 @Entity(tableName = "like_box_table")
 data class ScpLikeBox(

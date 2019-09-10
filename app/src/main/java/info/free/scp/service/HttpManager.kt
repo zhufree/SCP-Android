@@ -13,6 +13,7 @@ import info.free.scp.util.PreferenceUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
@@ -25,6 +26,7 @@ class HttpManager {
 
     private val bmobRetrofit: Retrofit = Retrofit.Builder()
             .baseUrl(SCPConstants.BMOB_API_URL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     private val feedRetrofit: Retrofit = Retrofit.Builder()

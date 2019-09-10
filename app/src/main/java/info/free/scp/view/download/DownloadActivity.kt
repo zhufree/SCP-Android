@@ -51,12 +51,13 @@ class DownloadActivity : BaseActivity() {
             }
         }
     }
+    val downloadUrl = PreferenceUtil.getDownloadLink()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_download)
 
-        setSupportActionBar(download_toolbar)
+        baseToolbar = download_toolbar
 
         tv_download_time.text = "本地同步时间：${Utils.formatDate(PreferenceUtil.getServerLastUpdateTime())}"
         tv_update_time.text = "服务器更新时间：${Utils.formatDate(PreferenceUtil.getDetailLastLoadTime())}"
@@ -69,9 +70,11 @@ class DownloadActivity : BaseActivity() {
         }
         registerReceiver(downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        if (downloadUrl.isEmpty()) {
+            toast("下载链接未加载完成")
+        }
     }
 
-    val downloadUrl = PreferenceUtil.getDownloadLink()
     var downloadId = -1L
     var mStartVideoHandler: Handler = Handler()
     private var runnable: Runnable? = null

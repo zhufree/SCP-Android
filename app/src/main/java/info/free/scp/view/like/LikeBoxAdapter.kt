@@ -31,6 +31,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
         return View.OnClickListener {
             val intent = Intent()
             intent.putExtra("box_id", box.id)
+            intent.putExtra("box_name", box.name)
             intent.setClass(it.context, LikeActivity::class.java)
             (it.context as Activity).startActivity(intent)
         }

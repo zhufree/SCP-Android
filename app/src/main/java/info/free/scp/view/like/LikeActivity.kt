@@ -26,7 +26,6 @@ class LikeActivity : BaseActivity() {
         set(value) {
             field = value
             likeList.clear()
-            // TODO order改成拿到之后在总表里用index排序
             if (value == 1) {
                 likeList.addAll(reverseList)
             } else {
@@ -59,7 +58,6 @@ class LikeActivity : BaseActivity() {
         orderedList.addAll(likeDao.getLikeListByBoxId(boxId))
         reverseList.addAll(orderedList.sortedBy { it?.title ?: "" })
         likeList.addAll(orderedList)
-        // TODO
         adapter = SimpleScpAdapter(this, likeList)
         rv_like?.adapter = adapter
         adapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {

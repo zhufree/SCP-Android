@@ -53,7 +53,7 @@ TODO
 当前开发版本
 # v0.1.4
 - [x] 解决数据库下载慢的问题（备案域名中，15天剩余）
-- [ ] 更新一遍数据库
+- [x] 更新一遍数据库
 - [x] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
   - [x] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。
   - [x] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
@@ -62,6 +62,7 @@ TODO
   - [-] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
 - [ ] 收藏夹可分类
   - [ ] 升级测试
+  - [ ] 取消收藏
 - [x] 正文页面添加滑动条
 - [x] 数字键盘形状优化&“其他SCP”的介绍
 - [x] 首页放一个公告位置

@@ -20,21 +20,21 @@ import java.io.File
 class FileUtil(val mContext: Context) {
 
     companion object {
-        private var fileHelper: FileUtil? = null
+        private var fileUtil: FileUtil? = null
         var prefFilename = "level.xml"
         var infoDBFilename = "scp_info.db"
         var dataDbFilename = "scp_data.db"
-        val appFolderName = "SCP"
+        val appFolderName = "scp_download"
         val absPath = Environment.getDataDirectory().absolutePath
-        val pakName = ScpApplication.context.packageName
+        val pkgName = ScpApplication.context.packageName
         val sp = File.separator
-        val privatePrefDirPath = "$absPath${sp}data$sp$pakName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
-        val privateDbDirPath = "$absPath${sp}data$sp$pakName${sp}databases$sp"
+        val privatePrefDirPath = "$absPath${sp}data$sp$pkgName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
+        val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
         val documentDirPath = "${Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_DOCUMENTS)}$sp$appFolderName$sp"
 
         fun getInstance(context: Context): FileUtil {
-            return fileHelper ?: FileUtil(context)
+            return fileUtil ?: FileUtil(context)
         }
     }
 
@@ -74,22 +74,35 @@ class FileUtil(val mContext: Context) {
     }
 
     /**
+     * TODO
      * 复制pref/db文件到备份文件夹
      * [filePath] String
      * [backup] 备份还是恢复操作
      */
-    private fun copyFile(filePath: String, backup: Boolean) {
+    private fun copyFile(filePath: String, isPref: Boolean, backup: Boolean) {
         Log.i("freescp", filePath)
         if (filePath.isEmpty()) return
         try {
-            val prefFile = File(filePath)
-            val backUpFile = File(getBackUpFilePath(filePath))
-            if (backup && prefFile.exists()) {
-                prefFile.copyTo(backUpFile, true) // 复制到备份文件夹
-                return
-            }
-            if (!backup && backUpFile.exists()) {
-                backUpFile.copyTo(prefFile, true) // 从备份文件夹恢复
+            if (isPref) {
+                val prefFile = File(filePath)
+                val backUpFile = File(getBackUpFilePath(prefFilename))
+                if (backup && prefFile.exists()) {
+                    prefFile.copyTo(backUpFile, true) // 复制到备份文件夹
+                    return
+                }
+                if (!backup && backUpFile.exists()) {
+                    backUpFile.copyTo(prefFile, true) // 从备份文件夹恢复
+                }
+            } else {
+                val dbFile = File(filePath)
+                val backUpFile = File(getBackUpFilePath(dataDbFilename))
+                if (backup && dbFile.exists()) {
+                    dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
+                    return
+                }
+                if (!backup && backUpFile.exists()) {
+                    backUpFile.copyTo(dbFile, true) // 从备份文件夹恢复
+                }
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -126,9 +139,9 @@ class FileUtil(val mContext: Context) {
      */
     private fun restore(): Boolean {
         try {
-            copyFile("$privateDbDirPath$dataDbFilename", false)
-            copyFile("$privateDbDirPath$infoDBFilename", false)
-            copyFile("$privatePrefDirPath$prefFilename", false)
+//            copyFile("$privateDbDirPath$dataDbFilename", false)
+//            copyFile("$privateDbDirPath$infoDBFilename", false)
+//            copyFile("$privatePrefDirPath$prefFilename", false)
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)
@@ -138,7 +151,7 @@ class FileUtil(val mContext: Context) {
 
     fun restoreData(): Boolean {
         try {
-            copyFile("$privateDbDirPath$dataDbFilename", false)
+            copyFile("$privateDbDirPath$dataDbFilename", false, false)
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)

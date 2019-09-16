@@ -59,8 +59,8 @@ class DownloadActivity : BaseActivity() {
 
         baseToolbar = download_toolbar
 
-        tv_download_time.text = "本地同步时间：${Utils.formatDate(PreferenceUtil.getServerLastUpdateTime())}"
-        tv_update_time.text = "服务器更新时间：${Utils.formatDate(PreferenceUtil.getDetailLastLoadTime())}"
+        tv_download_time.text = "本地同步时间：${Utils.formatDate(PreferenceUtil.getDetailLastLoadTime())}"
+        tv_update_time.text = "服务器更新时间：${Utils.formatDate(PreferenceUtil.getServerLastUpdateTime())}"
         btn_download?.post {
             btn_download?.background = ThemeUtil.customShape(resources.getColor(R.color.colorPrimaryDark),
                     0, 0, dip(30))
@@ -92,6 +92,7 @@ class DownloadActivity : BaseActivity() {
                             ScpDatabase.getNewInstance()
                             uiThread {
                                 ScpApplication.currentActivity?.toast("恢复完成")
+                                finish()
                             }
                         }
                     }

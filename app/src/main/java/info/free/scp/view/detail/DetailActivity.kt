@@ -406,39 +406,47 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun likeScp() {
-        val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-        // 获取数据库中的收藏夹
-        val boxList = arrayListOf<ScpLikeBox>()
-        boxList.addAll(likeDao.getLikeBox())
-        if (boxList.isEmpty()) {
-            // 没有收藏夹，创建一个默认的
-            val defaultBox = ScpLikeBox(0, "默认收藏夹")
-            boxList.add(defaultBox)
-            likeDao.addLikeBox(defaultBox)
-        }
-        val nameList = arrayListOf<String>()
-        nameList.addAll(boxList.map { it.name })
-        nameList.add("新建收藏夹")
-        // 显示收藏夹列表和新建收藏夹选项
-        selector("加入收藏夹", nameList) { _, i ->
-            if (i == boxList.size) {
-                // 新建收藏夹
-                createNewBox()
-                return@selector
-            } else {
-                // 选择一个收藏夹加入
-                scp?.let { s ->
-                    PreferenceUtil.addPoints(2)
-                    var scpInfo = likeDao.getInfoByLink(s.link)
-                    if (scpInfo == null) {
-                        scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = boxList[i].id)
-                    }
-                    scpInfo.like = !scpInfo.like
-                    AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
+        scp?.let { s ->
+            val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+            var scpInfo = likeDao.getInfoByLink(s.link)
+            if (scpInfo == null) {
+                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = 0)
+            }
+            if (!scpInfo.like) {
+                // 获取数据库中的收藏夹
+                val boxList = arrayListOf<ScpLikeBox>()
+                boxList.addAll(likeDao.getLikeBox())
+                if (boxList.isEmpty()) {
+                    // 没有收藏夹，创建一个默认的
+                    val defaultBox = ScpLikeBox(0, "默认收藏夹")
+                    boxList.add(defaultBox)
+                    likeDao.addLikeBox(defaultBox)
                 }
+                val nameList = arrayListOf<String>()
+                nameList.addAll(boxList.map { it.name })
+                nameList.add("新建收藏夹")
+                // 显示收藏夹列表和新建收藏夹选项
+                selector("加入收藏夹", nameList) { _, i ->
+                    if (i == boxList.size) {
+                        // 新建收藏夹
+                        createNewBox()
+                        return@selector
+                    } else {
+                        // 选择一个收藏夹加入
+                        PreferenceUtil.addPoints(2)
+                        scpInfo.boxId = boxList[i].id
+                        scpInfo.like = true
+                        AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
+                        invalidateOptionsMenu()
+                    }
+                }
+            } else {
+                scpInfo.like = !scpInfo.like
+                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
+                invalidateOptionsMenu()
             }
         }
-        invalidateOptionsMenu()
+
     }
 
     private fun createNewBox() {

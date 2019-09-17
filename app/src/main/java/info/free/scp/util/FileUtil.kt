@@ -39,7 +39,7 @@ class FileUtil(val mContext: Context) {
     }
 
     /**
-     * 根据文件夹路径+文件名凑出备份文件全路径
+     * 根据文件夹路径+文件名凑出备份文件全路径 Documents/scp_download
      * @param fileName String
      * @return String
      */
@@ -74,36 +74,47 @@ class FileUtil(val mContext: Context) {
     }
 
     /**
+     * 检查scp_info.db或pref文件有无备份在Documents/scp_download文件夹
+     */
+    fun checkBackUpFileExist(fileName: String): Boolean {
+        val backUpFile = File(getBackUpFilePath(fileName))
+        return backUpFile.exists()
+    }
+
+    /**
      * TODO
      * 复制pref/db文件到备份文件夹
      * [filePath] String
      * [backup] 备份还是恢复操作
      */
-    private fun copyFile(filePath: String, isPref: Boolean, backup: Boolean) {
-        Log.i("freescp", filePath)
-        if (filePath.isEmpty()) return
+    private fun copyFile(fromFilePath: String, toFilePath: String) {
+        Log.i("freescp", fromFilePath)
+        if (fromFilePath.isEmpty() || toFilePath.isEmpty()) return
         try {
-            if (isPref) {
-                val prefFile = File(filePath)
-                val backUpFile = File(getBackUpFilePath(prefFilename))
-                if (backup && prefFile.exists()) {
-                    prefFile.copyTo(backUpFile, true) // 复制到备份文件夹
-                    return
-                }
-                if (!backup && backUpFile.exists()) {
-                    backUpFile.copyTo(prefFile, true) // 从备份文件夹恢复
-                }
-            } else {
-                val dbFile = File(filePath)
-                val backUpFile = File(getBackUpFilePath(dataDbFilename))
-                if (backup && dbFile.exists()) {
-                    dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
-                    return
-                }
-                if (!backup && backUpFile.exists()) {
-                    backUpFile.copyTo(dbFile, true) // 从备份文件夹恢复
-                }
-            }
+            val fromFile = File(fromFilePath)
+            val toFile = File(toFilePath)
+            fromFile.copyTo(toFile, true)
+//            if (isPref) {
+//                val prefFile = File(filePath)
+//                val backUpFile = File(getBackUpFilePath(prefFilename))
+//                if (backup && prefFile.exists()) {
+//                    prefFile.copyTo(backUpFile, true) // 复制到备份文件夹
+//                    return
+//                }
+//                if (!backup && backUpFile.exists()) {
+//                    backUpFile.copyTo(prefFile, true) // 从备份文件夹恢复
+//                }
+//            } else {
+//                val dbFile = File(filePath)
+//                val backUpFile = File(getBackUpFilePath(dataDbFilename))
+//                if (backup && dbFile.exists()) {
+//                    dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
+//                    return
+//                }
+//                if (!backup && backUpFile.exists()) {
+//                    backUpFile.copyTo(dbFile, true) // 从备份文件夹恢复
+//                }
+//            }
         } catch (e: Exception) {
             e.printStackTrace()
             mContext.toast("文件复制出错：" + e.message)
@@ -139,9 +150,9 @@ class FileUtil(val mContext: Context) {
      */
     private fun restore(): Boolean {
         try {
-//            copyFile("$privateDbDirPath$dataDbFilename", false)
-//            copyFile("$privateDbDirPath$infoDBFilename", false)
-//            copyFile("$privatePrefDirPath$prefFilename", false)
+            copyFile(getBackUpFilePath(dataDbFilename), "$privateDbDirPath$dataDbFilename")
+            copyFile(getBackUpFilePath(infoDBFilename), "$privateDbDirPath$infoDBFilename")
+            copyFile(getBackUpFilePath(prefFilename), "$privatePrefDirPath$prefFilename")
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)
@@ -151,7 +162,7 @@ class FileUtil(val mContext: Context) {
 
     fun restoreData(): Boolean {
         try {
-            copyFile("$privateDbDirPath$dataDbFilename", false, false)
+            copyFile(getBackUpFilePath(dataDbFilename), "$privateDbDirPath$dataDbFilename")
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)

@@ -1,5 +1,6 @@
 package info.free.scp.util
 
+import info.free.scp.ScpApplication
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.download.DownloadActivity
 import org.jetbrains.anko.alert
@@ -50,8 +51,10 @@ object NewbieManager {
                 title = noticeTitle
                 message = noticeMessage
                 yesButton { }
-                neutralPressed("点击下载文档数据库") {
-                    activity.startActivity<DownloadActivity>()
+                if (!FileUtil.getInstance(ScpApplication.context).checkDataReady()) {
+                    neutralPressed("点击下载文档数据库") {
+                        activity.startActivity<DownloadActivity>()
+                    }
                 }
 
             }.show()

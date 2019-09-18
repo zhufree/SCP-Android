@@ -1,5 +1,6 @@
 package info.free.scp.db
 
+import android.database.sqlite.SQLiteDatabaseCorruptException
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -16,6 +17,7 @@ import info.free.scp.db.ScpTable.LIKE_AND_READ_TABLE_NAME
 import info.free.scp.db.ScpTable.VIEW_LIST_TABLE_NAME
 import info.free.scp.db.ScpTable.dropDetailTableSQL
 import info.free.scp.db.ScpTable.dropScpTableSQL
+import org.jetbrains.anko.toast
 
 
 @Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class, ScpLikeBox::class], version = 7)
@@ -82,6 +84,24 @@ abstract class AppInfoDatabase : RoomDatabase() {
                         .build()
             }
             return INSTANCE!!
+        }
+
+        fun getNewInstance() {
+            INSTANCE?.close()
+            try {
+                INSTANCE = Room.databaseBuilder(ScpApplication.context, AppInfoDatabase::class.java,
+                        INFO_DB_NAME)
+                        .addMigrations(MIGRATION_1_2)
+                        .addMigrations(MIGRATION_2_3)
+                        .addMigrations(MIGRATION_3_4)
+                        .addMigrations(MIGRATION_4_5)
+                        .addMigrations(MIGRATION_5_6)
+                        .addMigrations(MIGRATION_6_7)
+                        .allowMainThreadQueries()
+                        .build()
+            } catch (e: SQLiteDatabaseCorruptException) {
+                ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
+            }
         }
     }
 }

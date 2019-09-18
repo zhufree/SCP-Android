@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Environment
 import android.util.Log
 import info.free.scp.ScpApplication
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import org.jetbrains.anko.*
 import java.io.File
@@ -82,7 +83,6 @@ class FileUtil(val mContext: Context) {
     }
 
     /**
-     * TODO
      * 复制pref/db文件到备份文件夹
      * [filePath] String
      * [backup] 备份还是恢复操作
@@ -90,34 +90,10 @@ class FileUtil(val mContext: Context) {
     private fun copyFile(fromFilePath: String, toFilePath: String) {
         Log.i("freescp", fromFilePath)
         if (fromFilePath.isEmpty() || toFilePath.isEmpty()) return
-        try {
-            val fromFile = File(fromFilePath)
-            val toFile = File(toFilePath)
+        val fromFile = File(fromFilePath)
+        val toFile = File(toFilePath)
+        if (fromFile.exists()) {
             fromFile.copyTo(toFile, true)
-//            if (isPref) {
-//                val prefFile = File(filePath)
-//                val backUpFile = File(getBackUpFilePath(prefFilename))
-//                if (backup && prefFile.exists()) {
-//                    prefFile.copyTo(backUpFile, true) // 复制到备份文件夹
-//                    return
-//                }
-//                if (!backup && backUpFile.exists()) {
-//                    backUpFile.copyTo(prefFile, true) // 从备份文件夹恢复
-//                }
-//            } else {
-//                val dbFile = File(filePath)
-//                val backUpFile = File(getBackUpFilePath(dataDbFilename))
-//                if (backup && dbFile.exists()) {
-//                    dbFile.copyTo(backUpFile, true) // 复制到备份文件夹
-//                    return
-//                }
-//                if (!backup && backUpFile.exists()) {
-//                    backUpFile.copyTo(dbFile, true) // 从备份文件夹恢复
-//                }
-//            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            mContext.toast("文件复制出错：" + e.message)
         }
     }
 
@@ -134,6 +110,7 @@ class FileUtil(val mContext: Context) {
                     doAsync {
                         if (restore()) {
                             ScpDatabase.getNewInstance()
+                            AppInfoDatabase.getNewInstance()
                             uiThread {
                                 mContext.toast("恢复完成")
                             }
@@ -163,6 +140,18 @@ class FileUtil(val mContext: Context) {
     fun restoreData(): Boolean {
         try {
             copyFile(getBackUpFilePath(dataDbFilename), "$privateDbDirPath$dataDbFilename")
+            return true
+        } catch (e: Exception) {
+            mContext.toast("文件复制出错：" + e.message)
+        }
+        return false
+    }
+
+    fun backup(): Boolean {
+        try {
+            copyFile("$privateDbDirPath$dataDbFilename", getBackUpFilePath(dataDbFilename))
+            copyFile("$privateDbDirPath$infoDBFilename", getBackUpFilePath(infoDBFilename))
+            copyFile("$privatePrefDirPath$prefFilename", getBackUpFilePath(prefFilename))
             return true
         } catch (e: Exception) {
             mContext.toast("文件复制出错：" + e.message)

@@ -65,8 +65,21 @@ class DownloadActivity : BaseActivity() {
             btn_download?.background = ThemeUtil.customShape(resources.getColor(R.color.colorPrimaryDark),
                     0, 0, dip(30))
         }
+        btn_backup?.post {
+            btn_backup?.background = ThemeUtil.customShape(resources.getColor(R.color.colorPrimaryDark),
+                    0, 0, dip(30))
+        }
         btn_download?.setOnClickListener {
             downloadData()
+        }
+        btn_backup?.setOnClickListener {
+            toast("开始备份")
+            doAsync {
+                FileUtil.getInstance(this@DownloadActivity).backup()
+                uiThread {
+                    toast("备份完成")
+                }
+            }
         }
         registerReceiver(downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
@@ -90,6 +103,7 @@ class DownloadActivity : BaseActivity() {
                     doAsync {
                         if (fileHelper.restoreData()) {
                             ScpDatabase.getNewInstance()
+                            PreferenceUtil.setDetailLastLoadTime(System.currentTimeMillis())
                             uiThread {
                                 ScpApplication.currentActivity?.toast("恢复完成")
                                 finish()

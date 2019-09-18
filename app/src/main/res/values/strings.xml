@@ -109,7 +109,7 @@
     <string name="dark_mode">夜间模式</string>
     <string name="day_mode">日间模式</string>
     <string name="read_settings">阅读设置</string>
-    <string name="download_settings">离线及同步设置</string>
+    <string name="download_settings">数据下载及备份</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
@@ -139,12 +139,14 @@
     <string name="sync_category_title">更新目录</string>
 
     <!--新的离线逻辑-->
-    <string name="download_notice">1.该数据库将应用于整个app的文档数据部分，不离线将无法阅读文档；\n
-        2.0.1.4版本开始下载的文件放在Downloads文件夹的scp_download子文件夹中，如果设置数据库时出错，可以再次点击下载按钮，将会自动使用已下载的数据库，请确保已经授予app文件存储权限；\n
-        3.数据库内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
-        4.阅读历史收藏等数据单独存储，不需要担心下载新数据库时被替换。</string>
+    <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Downloads文件夹的scp_download子文件夹中：\n
+        ① scp_data.db——scp文档数据库，用于阅读文档，内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
+        ② scp_info.db——用户信息数据库，保存收藏读过等信息，在更新文档数据库时不受影响\n
+        ③ level.xml——存用户等级职业等信息</string>
     <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
+    <string name="download_notice">检测并使用scp_download文件夹中的数据库，没有就自动下载，也可以加群下载数据库文件手动复制到该文件夹使用；</string>
+    <string name="backup_notice">备份APP数据到scp_download文件夹中</string>
 
     <!--捐赠-->
     <string name="donation">捐赠</string>

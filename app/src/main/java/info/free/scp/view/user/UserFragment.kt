@@ -154,7 +154,7 @@ class UserFragment : BaseFragment() {
             //   将mShowing变量设为false，表示对话框已关闭
             field?.set(out, false)
             alert(getString(PreferenceUtil.getDescForJob(jobList[i])), jobList[i]) {
-                positiveButton("确定选择（暂时不可更改）") {
+                positiveButton("确定选择") {
                     field?.set(out, true)
                     out.dismiss()
                     PreferenceUtil.setJob(jobList[i])

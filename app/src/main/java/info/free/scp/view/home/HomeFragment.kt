@@ -89,6 +89,8 @@ class HomeFragment : BaseFragment() {
     override fun refreshTheme() {
         super.refreshTheme()
         home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        cd_notice_container?.setBackgroundColor(ThemeUtil.containerBg)
+        tv_home_notice?.setTextColor(ThemeUtil.darkText)
         tv_series_doc?.setTextColor(ThemeUtil.darkText)
         tv_story_doc?.setTextColor(ThemeUtil.darkText)
 

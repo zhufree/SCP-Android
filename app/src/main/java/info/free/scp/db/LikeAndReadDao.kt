@@ -27,7 +27,7 @@ interface LikeAndReadDao {
     @Query("SELECT * FROM like_table WHERE `like` = 1")
     fun getLikeList(): List<ScpLikeModel>
 
-    @Query("SELECT * FROM like_table WHERE `boxId` = :boxId")
+    @Query("SELECT * FROM like_table WHERE `like` = 1 AND `boxId` = :boxId")
     fun getLikeListByBoxId(boxId: Int): List<ScpLikeModel>
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 ORDER BY title")

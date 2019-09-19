@@ -37,7 +37,7 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         ThemeUtil.setTheme(this)
         registerBroadCastReceivers()
-        window.navigationBarColor = resources.getColor(R.color.colorPrimaryDark)
+        window.navigationBarColor = ThemeUtil.toolbarBg
     }
 
     public override fun onResume() {
@@ -80,6 +80,7 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
 
     open fun refreshTheme(){
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        window.navigationBarColor = ThemeUtil.toolbarBg
     }
 
 

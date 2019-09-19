@@ -413,14 +413,14 @@ class DetailActivity : BaseActivity() {
                 scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = 0)
             }
             if (!scpInfo.like) {
+                // 未收藏
                 // 获取数据库中的收藏夹
                 val boxList = arrayListOf<ScpLikeBox>()
                 boxList.addAll(likeDao.getLikeBox())
                 if (boxList.isEmpty()) {
                     // 没有收藏夹，创建一个默认的
-                    val defaultBox = ScpLikeBox(0, "默认收藏夹")
-                    boxList.add(defaultBox)
-                    likeDao.addLikeBox(defaultBox)
+                    likeDao.addLikeBox(ScpLikeBox(0, "默认收藏夹"))
+                    boxList.addAll(likeDao.getLikeBox())
                 }
                 val nameList = arrayListOf<String>()
                 nameList.addAll(boxList.map { it.name })
@@ -441,7 +441,7 @@ class DetailActivity : BaseActivity() {
                     }
                 }
             } else {
-                scpInfo.like = !scpInfo.like
+                scpInfo.like = false
                 AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
                 invalidateOptionsMenu()
             }

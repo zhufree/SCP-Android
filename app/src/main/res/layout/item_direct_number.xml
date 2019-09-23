@@ -3,14 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="64dp"
     android:gravity="center"
+    android:background="@drawable/btn_round_item_bg"
     android:orientation="vertical">
 
-    <androidx.appcompat.widget.AppCompatButton
+    <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_direct_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="?attr/darkText"
-        android:background="@drawable/btn_round_item_bg" />
+        android:textColor="?attr/darkText" />
 </LinearLayout>

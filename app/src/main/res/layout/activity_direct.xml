@@ -56,7 +56,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_direct_j"
         app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toStartOf="@+id/tv_direct_title"
+        app:layout_constraintStart_toStartOf="@+id/gv_direct_number"
         app:layout_constraintTop_toBottomOf="@+id/tv_direct_title"
         app:layout_constraintBottom_toTopOf="@+id/gv_direct_number"/>
 
@@ -72,13 +72,13 @@
         android:background="?attr/itemBg"
         android:textColor="?attr/darkText"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/tv_direct_title"
+        app:layout_constraintEnd_toEndOf="@+id/gv_direct_number"
         app:layout_constraintStart_toEndOf="@+id/btn_direct_cn"
         app:layout_constraintTop_toTopOf="@+id/btn_direct_cn" />
 
     <GridView
         android:id="@+id/gv_direct_number"
-        android:layout_width="0dp"
+        android:layout_width="232dp"
         android:layout_height="0dp"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="16dp"
@@ -86,7 +86,7 @@
         android:numColumns="3"
         android:stretchMode="spacingWidth"
         android:verticalSpacing="5dp"
-        android:horizontalSpacing="5dp"
+        android:horizontalSpacing="10dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_go_direct"
         app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
         app:layout_constraintStart_toStartOf="@id/tv_direct_title"
@@ -100,8 +100,8 @@
         android:textColor="?attr/darkText"
         android:text="Go!"
         android:gravity="center"
-        app:layout_constraintStart_toStartOf="@id/tv_direct_title"
-        app:layout_constraintEnd_toEndOf="@id/tv_direct_title"
+        app:layout_constraintEnd_toEndOf="@+id/gv_direct_number"
+        app:layout_constraintStart_toStartOf="@+id/gv_direct_number"
         app:layout_constraintTop_toBottomOf="@id/gv_direct_number"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="24dp"/>

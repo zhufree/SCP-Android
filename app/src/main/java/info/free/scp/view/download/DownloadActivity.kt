@@ -26,6 +26,7 @@ class DownloadActivity : BaseActivity() {
             val completeDownloadId = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
                     ?: -1
             if (completeDownloadId > 0) {
+                isDownloading = false
                 doAsync {
                     try {
                         val pfd = ScpApplication.downloadManager.openDownloadedFile(completeDownloadId)
@@ -83,20 +84,18 @@ class DownloadActivity : BaseActivity() {
         }
         registerReceiver(downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
-        if (downloadUrl.isEmpty()) {
-            toast("下载链接未加载完成")
-        }
     }
 
     var downloadId = -1L
     var mStartVideoHandler: Handler = Handler()
     private var runnable: Runnable? = null
+    private var isDownloading = false
 
     private fun downloadData() {
 
         val fileHelper = FileUtil.getInstance(ScpApplication.context)
         // 检查本地是否有已经下载过的
-        if (fileHelper.checkBackupDataExist() && !isFinishing) {
+        if (fileHelper.checkBackupDataExist() && !isDownloading && !isFinishing) {
             ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
                 positiveButton("恢复") {
                     ScpApplication.context.toast("开始恢复")
@@ -132,10 +131,12 @@ class DownloadActivity : BaseActivity() {
             }
             runnable?.run()
             downloadId = DownloadUtil.createDownload(downloadUrl)
+            isDownloading = true
         } else {
             ScpApplication.downloadManager.remove(downloadId)
             downloadId = -1
             tv_download_progress.text = "${0 / 1000000}M/${0 / 1000000}M ${getStatusByCode(-1)}"
+            isDownloading = false
         }
     }
 

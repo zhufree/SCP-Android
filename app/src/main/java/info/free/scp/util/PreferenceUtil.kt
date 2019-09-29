@@ -79,7 +79,7 @@ object PreferenceUtil {
     }
 
     fun getDownloadLink(): String {
-        return getStringValue(DOWNLOAD_SP, "db_link")
+        return getStringValue(DOWNLOAD_SP, "db_link", "http://cdn.zhufree.fun/scp_data.db")
     }
 
     /**

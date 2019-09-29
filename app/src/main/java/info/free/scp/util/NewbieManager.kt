@@ -51,7 +51,8 @@ object NewbieManager {
                 title = noticeTitle
                 message = noticeMessage
                 yesButton { }
-                if (!FileUtil.getInstance(ScpApplication.context).checkDataReady()) {
+                if (!FileUtil.getInstance(ScpApplication.context).checkDataReady() // 没有数据库
+                        && PreferenceUtil.getDownloadLink().isNotEmpty()) { // 链接准备好了
                     neutralPressed("点击下载文档数据库") {
                         activity.startActivity<DownloadActivity>()
                     }

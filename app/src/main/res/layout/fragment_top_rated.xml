@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="32dp"
+        android:background="?attr/containerBg"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toTopOf="@+id/cv_top_rated_scp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -23,6 +24,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/top_rated_all"
+            android:textColor="?attr/darkText"
             android:textSize="22sp" />
     </androidx.cardview.widget.CardView>
 
@@ -32,6 +34,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="16dp"
+        android:background="?attr/containerBg"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toTopOf="@+id/cv_top_rated_goi"
         app:layout_constraintEnd_toStartOf="@id/cv_top_rated_tales"
@@ -44,6 +47,7 @@
             android:gravity="center"
             android:padding="8dp"
             android:text="@string/top_rated_scp"
+            android:textColor="?attr/darkText"
             android:textSize="22sp" />
     </androidx.cardview.widget.CardView>
 
@@ -53,6 +57,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="32dp"
+        android:background="?attr/containerBg"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="@id/cv_top_rated_scp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -64,6 +69,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="8dp"
+            android:textColor="?attr/darkText"
             android:text="@string/top_rated_tale"
             android:textSize="22sp" />
     </androidx.cardview.widget.CardView>
@@ -76,6 +82,7 @@
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
+        android:background="?attr/containerBg"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/cv_top_rated_wanderer"
@@ -87,6 +94,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="8dp"
+            android:textColor="?attr/darkText"
             android:text="@string/top_rated_goi"
             android:textSize="22sp" />
     </androidx.cardview.widget.CardView>
@@ -97,6 +105,7 @@
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="32dp"
+        android:background="@android:color/transparent"
         app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="@id/cv_top_rated_goi"
         app:layout_constraintEnd_toEndOf="parent"
@@ -108,6 +117,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="8dp"
+            android:textColor="?attr/darkText"
             android:text="@string/top_rated_wanderer"
             android:textSize="20sp" />
     </androidx.cardview.widget.CardView>

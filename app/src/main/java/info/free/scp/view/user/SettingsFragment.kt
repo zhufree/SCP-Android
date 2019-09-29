@@ -18,6 +18,7 @@ import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
+import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
@@ -53,10 +54,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else {
                 activity?.startActivity<DonationQrActivity>()
             }
-            // TODO 埋点
             true
         }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickDownloadSetting)
             activity?.startActivity<DownloadActivity>()
             true
         }

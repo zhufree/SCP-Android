@@ -56,7 +56,7 @@ object PreferenceUtil {
     }
 
     fun getNotice(): String {
-        return getStringValue(APP_SP, "notice")
+        return getStringValue(APP_SP, "notice", "这里是公告")
     }
 
     fun setApiUrl(url: String) {
@@ -72,13 +72,6 @@ object PreferenceUtil {
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all
      */
-    fun setDataDownloadLink(dbName: String, link: String) {
-        setStringValue(DOWNLOAD_SP, dbName, link)
-    }
-
-    fun getDataDownloadLink(dbIndex: Int): String {
-        return getStringValue(DOWNLOAD_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
-    }
 
     // 新版本，只下一个数据库
     fun setDownloadLink(link: String) {
@@ -88,16 +81,6 @@ object PreferenceUtil {
     fun getDownloadLink(): String {
         return getStringValue(DOWNLOAD_SP, "db_link")
     }
-
-    /**
-     * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
-     */
-
-
-//    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
-//        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
-//    }
-
 
     /**
      * 数据更新时间相关
@@ -386,6 +369,10 @@ object PreferenceUtil {
 
     private fun getStringValue(spName: String, key: String): String {
         return getPrivateSharedPreference(spName)?.getString(key, "") ?: ""
+    }
+
+    private fun getStringValue(spName: String, key: String, defaultValue: String = ""): String {
+        return getPrivateSharedPreference(spName)?.getString(key, defaultValue) ?: defaultValue
     }
 
     private fun setStringValue(spName: String, key: String, value: String) {

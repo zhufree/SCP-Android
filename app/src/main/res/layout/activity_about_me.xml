@@ -38,12 +38,14 @@
         android:id="@+id/btn_donation_alipay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/itemBg"
         android:gravity="center"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         android:text="@string/alipay_qr"
+        android:textColor="?attr/darkText"
         app:layout_constraintBottom_toBottomOf="@id/btn_donation_wechat"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_donation_wechat"
@@ -55,18 +57,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
+        android:background="?attr/itemBg"
         android:gravity="center"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:paddingEnd="16dp"
         android:paddingBottom="8dp"
         android:text="@string/wechat_qr"
+        android:textColor="?attr/darkText"
         app:layout_constraintBottom_toTopOf="@id/tv_donation_notice"
         app:layout_constraintEnd_toStartOf="@+id/btn_donation_alipay"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_qr" />
-    
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/abl_about_me"
         android:layout_width="match_parent"
@@ -78,7 +82,7 @@
             android:id="@+id/about_me_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="?attr/toolbarBg"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/donation" />
 

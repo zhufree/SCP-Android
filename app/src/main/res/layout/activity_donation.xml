@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="?attr/containerBg"
     tools:context=".view.user.DonationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -18,7 +19,7 @@
             android:id="@+id/donation_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="?attr/toolbarBg"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/donation" />
 
@@ -56,6 +57,8 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/go_afdian"
+                android:background="#8A62DC"
+                android:textColor="?attr/darkText"
                 app:layout_constraintEnd_toStartOf="@+id/btn_chongya"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +74,8 @@
                 android:paddingEnd="16dp"
                 android:paddingBottom="8dp"
                 android:text="@string/go_chongya"
+                android:background="#FFCF00"
+                android:textColor="?attr/darkText"
                 app:layout_constraintBottom_toBottomOf="@id/btn_afdian"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/btn_afdian"

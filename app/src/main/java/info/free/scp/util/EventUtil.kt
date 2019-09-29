@@ -43,7 +43,6 @@ object EventUtil {
     const val clickOpenInBrowser = "open_in_browser"
     const val clickShareByPicture = "click_share_by_picture"
     const val clickCopyLink = "copy_link"
-    const val chooseJob = "choose_job"
     const val cancelRead = "cancel_has_read"
     const val searchTitle = "search_title"
     const val searchDetail = "search_detail"

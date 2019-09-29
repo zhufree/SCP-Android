@@ -2,7 +2,6 @@ package info.free.scp.view.feed
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,9 @@ import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants.LATEST_CREATED
 
 import info.free.scp.databinding.SubFeedFragmentBinding
+import info.free.scp.view.base.BaseFragment
 
-class SubFeedFragment : Fragment() {
+class SubFeedFragment : BaseFragment() {
 
     var feedType = LATEST_CREATED
 

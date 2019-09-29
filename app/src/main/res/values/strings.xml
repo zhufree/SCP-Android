@@ -38,17 +38,16 @@
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.3更新内容\n
-1.支持文档中frame的显示\n
-2.新增繁简转换功能\n
-3.阅读文档时可以在右上角菜单中切换夜间模式\n
-4.新增草稿列表（可编辑保存多个草稿\n
-5.如果复制数据库出错，支持使用备份的数据库\n
-6.部分UI样式优化\n
+        v0.1.4更新内容\n
+1.文档收藏可分不同的收藏夹\n
+2.新增最高评分板块【全部/原创SCP/原创故事/原创GoI/原创被放逐者之图书馆作品】\n
+3.优化部分夜间模式\n
+4.简化下载流程和说明\n
+5.优化捐赠页面\n
+6.部分UI样式优化，首页新增一个公告展示\n
 7.修复部分已知bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
-        以及在群里勤奋测试的群友们（欢迎加群玩耍）\n
-        PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
+        以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
 
     <string name="download_detail_service">离线正文</string>
     <!--正文下拉菜单-->
@@ -115,7 +114,7 @@
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
     <string name="about_developer">支持开发者</string>
-    <string name="query_enter">用户调查问卷v0.1.2（开发者的话）</string>
+    <string name="query_enter">用户调查问卷</string>
     <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
     <string name="sync_data">强制重新同步云端数据</string>

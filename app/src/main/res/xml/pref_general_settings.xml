@@ -74,7 +74,7 @@
             android:title="@string/query_enter">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://freeescp.mikecrm.com/V3f0n0B" />
+                android:data="http://freeescp.mikecrm.com/zelnB9R" />
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

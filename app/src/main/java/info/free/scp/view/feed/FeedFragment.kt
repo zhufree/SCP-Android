@@ -1,12 +1,12 @@
 package info.free.scp.view.feed
 
 
-import android.app.Fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
@@ -26,6 +26,7 @@ class FeedFragment : BaseFragment() {
 
 //    private var mParam1: String? = null
 //    private var mParam2: String? = null
+var fragmentList = arrayListOf<BaseFragment>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -35,12 +36,17 @@ class FeedFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fragmentList = arrayListOf(SubFeedFragment.newInstance(LATEST_CREATED),
+        fragmentList = arrayListOf(SubFeedFragment.newInstance(LATEST_CREATED),
                 SubFeedFragment.newInstance(LATEST_TRANSLATED), TopRatedFragment.newInstance())
         val titleList = arrayListOf("最近原创", "最近翻译", "最高评分")
         val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_feed?.adapter = feedPagerAdapter
         tab_feed?.setupWithViewPager(vp_feed)
+    }
+
+    override fun refreshTheme() {
+        super.refreshTheme()
+        fragmentList.forEach { it.refreshTheme() }
     }
 
     companion object {

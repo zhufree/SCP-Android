@@ -13,6 +13,7 @@ import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
 import info.free.scp.SCPConstants.TOP_RATED_TALES
 import info.free.scp.SCPConstants.TOP_RATED_WANDERS
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_top_rated.*
 import org.jetbrains.anko.support.v4.startActivity
@@ -53,6 +54,15 @@ class TopRatedFragment : BaseFragment() {
         cv_top_rated_wanderer?.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_WANDERS)
         }
+    }
+
+    override fun refreshTheme() {
+        super.refreshTheme()
+        cv_top_rated_goi?.setBackgroundColor(ThemeUtil.containerBg)
+        cv_top_rated_tales?.setBackgroundColor(ThemeUtil.containerBg)
+        cv_top_rated_scp?.setBackgroundColor(ThemeUtil.containerBg)
+        cv_top_rated_all?.setBackgroundColor(ThemeUtil.containerBg)
+        cv_top_rated_wanderer?.setBackgroundColor(ThemeUtil.containerBg)
     }
 
     companion object {

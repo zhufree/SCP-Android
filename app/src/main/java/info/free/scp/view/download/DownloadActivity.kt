@@ -96,7 +96,7 @@ class DownloadActivity : BaseActivity() {
 
         val fileHelper = FileUtil.getInstance(ScpApplication.context)
         // 检查本地是否有已经下载过的
-        if (fileHelper.checkBackupDataExist()) {
+        if (fileHelper.checkBackupDataExist() && !isFinishing) {
             ScpApplication.currentActivity?.alert("检测到该数据库之前已下载完成，是否恢复？", "恢复") {
                 positiveButton("恢复") {
                     ScpApplication.context.toast("开始恢复")

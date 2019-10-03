@@ -55,8 +55,7 @@ class LikeActivity : BaseActivity() {
 
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
-//        orderedList.addAll(likeDao.getLikeListByBoxId(boxId))
-        orderedList.addAll(likeDao.getLikeList())
+        orderedList.addAll(likeDao.getLikeListByBoxId(boxId))
         reverseList.addAll(orderedList.sortedBy { it?.title ?: "" })
         likeList.addAll(orderedList)
         adapter = SimpleScpAdapter(this, likeList)

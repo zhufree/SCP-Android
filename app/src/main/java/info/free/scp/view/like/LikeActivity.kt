@@ -55,6 +55,9 @@ class LikeActivity : BaseActivity() {
 
         val lm = LinearLayoutManager(this, VERTICAL, false)
         rv_like?.layoutManager = lm
+        if (boxId == 1) {
+            orderedList.addAll(likeDao.getLikeListByBoxId(0))
+        }
         orderedList.addAll(likeDao.getLikeListByBoxId(boxId))
         reverseList.addAll(orderedList.sortedBy { it?.title ?: "" })
         likeList.addAll(orderedList)

@@ -119,9 +119,12 @@ class DetailActivity : BaseActivity() {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
-            scp = if (itemType == 0) ScpDatabase.getInstance()?.scpDao()
-                    ?.getScpByLink(url) else ScpDatabase.getInstance()?.scpDao()
-                    ?.getCollectionByLink(url)
+            scp = ScpDatabase.getInstance()?.scpDao()
+                    ?.getScpByLink(url)
+            if (scp == null) {
+                scp = ScpDatabase.getInstance()?.scpDao()
+                        ?.getCollectionByLink(url)
+            }
         }
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
@@ -149,6 +152,9 @@ class DetailActivity : BaseActivity() {
                     return false
                 }
                 if (requestUrl.startsWith(SCP_SITE_URL)) {
+                    return false
+                }
+                if (requestUrl.contains("player.bilibili.com")) {
                     return false
                 }
 
@@ -235,8 +241,11 @@ class DetailActivity : BaseActivity() {
         url = scp.link
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
         // 显示frame
-        detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+        if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
+            detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+        }
         detailHtml = detailHtml.replace("html-block-iframe", "")
+
         if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)

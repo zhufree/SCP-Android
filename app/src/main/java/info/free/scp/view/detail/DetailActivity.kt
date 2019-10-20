@@ -119,6 +119,9 @@ class DetailActivity : BaseActivity() {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
+//            scp = if (itemType == 0) ScpDatabase.getInstance()?.scpDao()
+//                    ?.getScpByLink(url) else ScpDatabase.getInstance()?.scpDao()
+//                    ?.getCollectionByLink(url)
             scp = ScpDatabase.getInstance()?.scpDao()
                     ?.getScpByLink(url)
             if (scp == null) {

@@ -71,7 +71,11 @@ class DownloadActivity : BaseActivity() {
                     0, 0, dip(30))
         }
         btn_download?.setOnClickListener {
-            downloadData()
+            if (enabledNetwork()) {
+                downloadData()
+            } else {
+                toast("请打开网络连接")
+            }
         }
         btn_backup?.setOnClickListener {
             toast("开始备份")

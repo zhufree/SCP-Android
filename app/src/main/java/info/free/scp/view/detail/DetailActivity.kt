@@ -22,10 +22,11 @@ import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.LinearLayout.VERTICAL
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
@@ -94,13 +95,16 @@ class DetailActivity : BaseActivity() {
     private var historyIndex = 0
     private var fullUrl = ""
 
+    private val viewModel by lazy {
+        ViewModelProvider(this)
+                .get(DetailViewModel::class.java)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         screenHeight = Utils.getScreenHeight(this)
 
-        initToolbar()
-        initSwitchBtn()
         EventUtil.onEvent(this, EventUtil.clickReadDetail)
         webView?.setBackgroundColor(0) // 设置背景色
         webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
@@ -114,36 +118,36 @@ class DetailActivity : BaseActivity() {
         randomType = intent.getIntExtra("random_type", 0)
         itemType = intent.getIntExtra("scp_type", 0)
 
+
+
+        fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
+
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
-//            scp = if (itemType == 0) ScpDatabase.getInstance()?.scpDao()
-//                    ?.getScpByLink(url) else ScpDatabase.getInstance()?.scpDao()
-//                    ?.getCollectionByLink(url)
-            scp = ScpDatabase.getInstance()?.scpDao()
-                    ?.getScpByLink(url)
-            if (scp == null) {
-                scp = ScpDatabase.getInstance()?.scpDao()
-                        ?.getCollectionByLink(url)
-            }
+            viewModel.setScp(url)
         }
 
-        fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
-
-        scp?.let {
+        viewModel.getScp()?.observe(this, Observer {
             // 数据库取到
             if (readType == 1) {
                 randomList.add(it)
             }
+            // TODO
+            scp = it
             setData(it)
-        } ?: run {
+        }) ?: run {
             // 数据库没有，加载链接
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
+        viewModel.getScpInfo()?.observe(this, Observer { scpInfo ->
+            invalidateOptionsMenu()
+        })
+
 
         webView?.requestFocus()
 
@@ -217,6 +221,9 @@ class DetailActivity : BaseActivity() {
             }
         }
 
+        initToolbar()
+        initSwitchBtn()
+
     }
 
     override fun refreshTheme() {
@@ -227,12 +234,19 @@ class DetailActivity : BaseActivity() {
         refreshButtonStyle()
     }
 
+    /**
+     * 不改变网页内容，只刷新样式
+     */
+    private fun refreshStyle() {
+        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
+        webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                + detailHtml + jsScript,
+                "text/html", "utf-8", null)
+    }
+
     private fun setData(scp: ScpModel, back: Boolean = false) {
-        ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, HISTORY_TYPE)
-        AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, SCPConstants.LATER_TYPE)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
-        refreshReadBtnStatus()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
@@ -242,6 +256,7 @@ class DetailActivity : BaseActivity() {
         tv_detail_toolbar?.text = scp.title
         tv_detail_toolbar?.isSelected = true
         url = scp.link
+        refreshReadBtnStatus()
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
         // 显示frame
         if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
@@ -261,15 +276,6 @@ class DetailActivity : BaseActivity() {
         nsv_web_wrapper?.scrollTo(0, 0)
     }
 
-    /**
-     * 不改变网页内容，只刷新样式
-     */
-    private fun refreshStyle() {
-        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
-        webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                + detailHtml + jsScript,
-                "text/html", "utf-8", null)
-    }
 
     private fun initToolbar() {
         baseToolbar = detail_toolbar
@@ -405,6 +411,9 @@ class DetailActivity : BaseActivity() {
     private val simple = 0
     private val traditional = 1
 
+    /**
+     * 繁简转换
+     */
     private fun translate(translateType: Int) {
         try {
             val converter = JChineseConvertor.getInstance()
@@ -417,48 +426,41 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    /**
+     * 先get or create一个scpInfo信息
+     * 未收藏
+     * 已收藏
+     */
     private fun likeScp() {
-        scp?.let { s ->
-            val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-            var scpInfo = likeDao.getInfoByLink(s.link)
-            if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, false, hasRead = false, boxId = 0)
-            }
-            if (!scpInfo.like) {
-                // 未收藏
-                // 获取数据库中的收藏夹
-                val boxList = arrayListOf<ScpLikeBox>()
-                boxList.addAll(likeDao.getLikeBox())
-                if (boxList.isEmpty()) {
-                    // 没有收藏夹，创建一个默认的
-                    likeDao.addLikeBox(ScpLikeBox(0, "默认收藏夹"))
-                    boxList.addAll(likeDao.getLikeBox())
+        val scpInfo = viewModel.getScpInfo()?.value
+        if (scpInfo == null) return
+        val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+        if (!scpInfo.like) {
+            // 未收藏
+            // 获取数据库中的收藏夹
+            val boxList = arrayListOf<ScpLikeBox>()
+            boxList.addAll(likeDao.getLikeBox())
+            val nameList = arrayListOf<String>()
+            nameList.addAll(boxList.map { it.name })
+            nameList.add("新建收藏夹")
+            // 显示收藏夹列表和新建收藏夹选项
+            selector("加入收藏夹", nameList) { _, i ->
+                if (i == boxList.size) {
+                    // 新建收藏夹
+                    createNewBox()
+                    return@selector
+                } else {
+                    // 选择一个收藏夹加入
+                    PreferenceUtil.addPoints(2)
+                    scpInfo.boxId = boxList[i].id
+                    scpInfo.like = true
+                    viewModel.likeScp(scpInfo)
                 }
-                val nameList = arrayListOf<String>()
-                nameList.addAll(boxList.map { it.name })
-                nameList.add("新建收藏夹")
-                // 显示收藏夹列表和新建收藏夹选项
-                selector("加入收藏夹", nameList) { _, i ->
-                    if (i == boxList.size) {
-                        // 新建收藏夹
-                        createNewBox()
-                        return@selector
-                    } else {
-                        // 选择一个收藏夹加入
-                        PreferenceUtil.addPoints(2)
-                        scpInfo.boxId = boxList[i].id
-                        scpInfo.like = true
-                        AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                        invalidateOptionsMenu()
-                    }
-                }
-            } else {
-                scpInfo.like = false
-                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                invalidateOptionsMenu()
             }
+        } else {
+            scpInfo.like = false
+            viewModel.likeScp(scpInfo)
         }
-
     }
 
     private fun createNewBox() {

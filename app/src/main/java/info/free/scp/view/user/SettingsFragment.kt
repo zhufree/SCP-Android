@@ -24,6 +24,7 @@ import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.alert
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -50,7 +51,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("donation")?.setOnPreferenceClickListener {
             EventUtil.onEvent(activity, clickReadSetting)
             if (ScpApplication.channelName == "HuaWei") {
-                activity?.startActivity<DonationActivity>()
+//                activity?.startActivity<DonationActivity>()
+                alert("因为华为不允许应用内有任何支付行为，如果想要支持开发者可以加群了解，谢谢！") { }.show()
             } else {
                 activity?.startActivity<DonationQrActivity>()
             }

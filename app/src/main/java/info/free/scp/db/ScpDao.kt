@@ -1,5 +1,6 @@
 package info.free.scp.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
@@ -16,11 +17,17 @@ interface ScpDao {
     @Insert(onConflict = REPLACE)
     fun saveAll(scps: List<ScpItemModel>)
 
-    @Query("SELECT * FROM scps WHERE link = :link ORDER BY _index LIMIT 1")
+    @Query("SELECT * FROM scps WHERE link = :link ORDER BY _id LIMIT 1")
     fun getScpByLink(link: String): ScpItemModel?
+
+    @Query("SELECT * FROM scps WHERE link = :link ORDER BY _id LIMIT 1")
+    fun getLiveScpByLink(link: String): LiveData<ScpItemModel>?
 
     @Query("SELECT * FROM scp_collection WHERE link = :link ORDER BY _index LIMIT 1")
     fun getCollectionByLink(link: String): ScpCollectionModel?
+
+    @Query("SELECT * FROM scp_collection WHERE link = :link ORDER BY _index LIMIT 1")
+    fun getLiveCollectionByLink(link: String): LiveData<ScpCollectionModel>?
 
     @Query("SELECT * FROM scps WHERE `_index` = :index+1 AND scp_type = :scpType LIMIT 1")
     fun getNextScp(index: Int, scpType: Int): ScpItemModel?

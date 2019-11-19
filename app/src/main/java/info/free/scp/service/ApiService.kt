@@ -15,10 +15,25 @@ import retrofit2.http.*
 interface ApiService {
 
     @GET("/latest_cn/{pageIndex}")
-    fun getLatestCn(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
+    suspend fun getLatestCn(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
 
     @GET("/latest_translated/{pageIndex}")
-    fun getLatestTranslated(@Path("pageIndex") pageIndex: Int): Observable<ApiBean.ApiListResponse<FeedModel>>
+    suspend fun getLatestTranslated(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
+
+    @GET("/top_rated_all/{pageIndex}")
+    suspend fun getTopRated(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
+
+    @GET("/top_rated_scp/{pageIndex}")
+    suspend fun getTopRatedScp(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
+
+    @GET("/top_rated_tale/{pageIndex}")
+    suspend fun getTopRatedTale(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
+
+    @GET("/top_rated_goi")
+    suspend fun getTopRatedGoi(): ApiBean.ApiListResponse<FeedModel>
+
+    @GET("/top_rated_wanderers/{pageIndex}")
+    suspend fun getTopRatedWander(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
 
     @Headers(
             "Content-Type:application/json",

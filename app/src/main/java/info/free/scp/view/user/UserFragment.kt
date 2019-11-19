@@ -79,7 +79,7 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        about_toolbar?.setTitle(R.string.app_name)
+        about_toolbar?.setTitle(R.string.user_info)
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
@@ -154,7 +154,7 @@ class UserFragment : BaseFragment() {
             //   将mShowing变量设为false，表示对话框已关闭
             field?.set(out, false)
             alert(getString(PreferenceUtil.getDescForJob(jobList[i])), jobList[i]) {
-                positiveButton("确定选择（暂时不可更改）") {
+                positiveButton("确定选择") {
                     field?.set(out, true)
                     out.dismiss()
                     PreferenceUtil.setJob(jobList[i])

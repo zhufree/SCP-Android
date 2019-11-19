@@ -1,139 +1,176 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.home.HomeFragment"
-    android:background="?attr/containerBg">
+    android:background="?attr/containerBg"
+    android:orientation="vertical"
+    tools:context="info.free.scp.view.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/home_toolbar"
-            android:layout_height="?attr/actionBarSize"
             android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbarBg"
-            app:popupTheme="@style/ToolbarPopupTheme">
-        </androidx.appcompat.widget.Toolbar>
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:title="SCP文档" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/tv_series_doc"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/img_logo"
-        android:gravity="center"
-        android:text="@string/title_scp_documents"
-        android:textColor="?attr/darkText"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/tv_about_doc"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/tv_story_doc"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/tv_story_doc"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="24dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="24dp"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:background="@drawable/img_logo_cn"
-        android:gravity="center"
-        android:text="@string/title_scp_story"
-        android:textColor="?attr/darkText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_read_later"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_series_doc"
-        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tv_about_doc"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginStart="42dp"
-        android:background="@drawable/img_break_logo_1"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="@string/title_about_scp"
-        android:textColor="?attr/darkText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_joke_doc"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/tv_read_later"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_series_doc" />
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cd_notice_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="?attr/containerBg"
+                android:minHeight="64dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/tv_read_later"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginStart="21dp"
-        android:background="@drawable/img_later_logo"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="@string/later_list"
-        android:textColor="?attr/darkText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_direct"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_about_doc"
-        app:layout_constraintTop_toBottomOf="@+id/tv_story_doc" />
+                    <TextView
+                        android:id="@+id/tv_home_notice"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/darkText"
+                        android:textSize="18sp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/tv_joke_doc"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/img_break_logo_3"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="@string/title_joke_scp"
-        android:textColor="?attr/darkText"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@+id/tv_direct"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_about_doc" />
+            <TextView
+                android:id="@+id/tv_series_doc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="21dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/img_logo"
+                android:gravity="center"
+                android:text="@string/title_scp_documents"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tv_about_doc"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@id/tv_story_doc"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cd_notice_container" />
 
-    <TextView
-        android:id="@+id/tv_direct"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/img_direct_logo"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:text="@string/title_direct"
-        android:textColor="?attr/darkText"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_joke_doc"
-        app:layout_constraintTop_toBottomOf="@id/tv_read_later" />
+            <TextView
+                android:id="@+id/tv_story_doc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="21dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="42dp"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/img_logo_cn"
+                android:gravity="center"
+                android:text="@string/title_scp_story"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_read_later"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_series_doc"
+                app:layout_constraintTop_toBottomOf="@id/cd_notice_container" />
+
+            <TextView
+                android:id="@+id/tv_about_doc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="42dp"
+                android:layout_marginEnd="21dp"
+                android:background="@drawable/img_break_logo_1"
+                android:gravity="center"
+                android:text="@string/title_about_scp"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_joke_doc"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/tv_read_later"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_series_doc" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_read_later"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="21dp"
+                android:layout_marginEnd="42dp"
+                android:background="@drawable/img_later_logo"
+                android:gravity="center"
+                android:text="@string/later_list"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/tv_direct"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_about_doc"
+                app:layout_constraintTop_toBottomOf="@+id/tv_story_doc" />
+
+            <TextView
+                android:id="@+id/tv_joke_doc"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="42dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="21dp"
+                android:background="@drawable/img_break_logo_3"
+                android:gravity="center"
+                android:text="@string/title_joke_scp"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/tv_direct"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_about_doc" />
+
+            <TextView
+                android:id="@+id/tv_direct"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="21dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="42dp"
+                android:background="@drawable/img_direct_logo"
+                android:gravity="center"
+                android:text="@string/title_direct"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_joke_doc"
+                app:layout_constraintTop_toBottomOf="@id/tv_read_later" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,14 +1,15 @@
 package info.free.scp.util
 
 import android.app.AlertDialog
-import android.content.*
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import info.free.scp.BuildConfig
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.info
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -61,48 +62,58 @@ class UpdateManager(private var activity: BaseActivity) {
             Log.i("scp", "checkUpdate")
             // 记录上次检测更新时间
             // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
-            doAsync {
-                // 检查更新信息
-                var newVersionCode = 0
-                var updateDesc: String? = ""
-                var updateLink: String? = ""
-                HttpManager.instance.getAppConfig {
-                    activity.info("getAppConfig result = $it")
-                    for (config in it) {
-                        if (config.key == "version") {
-                            newVersionCode = config.value.toInt()
-                        }
-                        if (config.key == "update_desc") {
-                            updateDesc = config.value
-                        }
-                        if (config.key == "update_link") {
-                            updateLink = config.value
-                        }
-                        // 上次数据更新时间，分几个库
-                        if (config.key.contains("last_update_time")) {
-                            PreferenceUtil.setServerLastUpdateTime(config.key, config.value.toLong())
-                        }
-                        // 数据下载链接
-                        if (config.key.contains("db_link")) {
-                            PreferenceUtil.setDataDownloadLink(config.key, config.value)
-                        }
+            getConfig()
+        }
+    }
+
+    fun getConfig() {
+        doAsync {
+            // 检查更新信息
+            var newVersionCode = 0
+            var updateDesc: String? = ""
+            var updateLink: String? = ""
+            HttpManager.instance.getAppConfig {
+                activity.info("getAppConfig result = $it")
+                for (config in it) {
+                    if (config.key == "version") {
+                        newVersionCode = config.value.toInt()
                     }
-                    if (currentVersionCode < newVersionCode && !activity.isFinishing) {
-                        activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
-                        AlertDialog.Builder(activity)
-                                .setTitle("发现新版本")
-                                .setMessage(updateDesc)
-                                .setPositiveButton("现在升级") { _, _ ->
-                                    val updateIntent = Intent()
-                                    updateIntent.action = "android.intent.action.VIEW"
-                                    val updateUrl = Uri.parse(updateLink)
-                                    updateIntent.data = updateUrl
-                                    activity.startActivity(updateIntent)
-                                }
-                                .setNegativeButton("暂不升级") { _, _ -> }
-                                .create().show()
-                        // 有新版本就不检查数据更新，知道更新到最新
+                    if (config.key == "update_desc") {
+                        updateDesc = config.value
                     }
+                    if (config.key == "update_link") {
+                        updateLink = config.value
+                    }
+                    // 上次数据更新时间，分几个库
+                    if (config.key == "last_update_time_all") {
+                        PreferenceUtil.setServerLastUpdateTime(config.value.toLong())
+                    }
+                    // 数据下载链接
+                    if (config.key == "db_link_all") {
+                        PreferenceUtil.setDownloadLink(config.value)
+                    }
+                    if (config.key == "notice") {
+                        PreferenceUtil.setNotice(config.value)
+                    }
+                    if (config.key == "api_url") {
+                        PreferenceUtil.setApiUrl(config.value)
+                    }
+                }
+                if (currentVersionCode < newVersionCode && !activity.isFinishing) {
+                    activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
+                    AlertDialog.Builder(activity)
+                            .setTitle("发现新版本")
+                            .setMessage(updateDesc)
+                            .setPositiveButton("现在升级") { _, _ ->
+                                val updateIntent = Intent()
+                                updateIntent.action = "android.intent.action.VIEW"
+                                val updateUrl = Uri.parse(updateLink)
+                                updateIntent.data = updateUrl
+                                activity.startActivity(updateIntent)
+                            }
+                            .setNegativeButton("暂不升级") { _, _ -> }
+                            .create().show()
+                    // 有新版本就不检查数据更新，知道更新到最新
                 }
             }
         }

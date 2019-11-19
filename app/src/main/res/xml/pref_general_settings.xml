@@ -11,7 +11,7 @@
         <Preference
             android:textColor="?attr/lightText"
             android:title="@string/like_list">
-            <intent android:action="info.free.scp.view.user.LikeActivity" />
+            <intent android:action="info.free.scp.view.like.LikeBoxActivity" />
         </Preference>
         <Preference
             android:key="history_list"
@@ -54,9 +54,9 @@
             android:title="@string/copyright">
         </Preference>
         <Preference
+            android:key="donation"
             android:textColor="?attr/lightText"
             android:title="@string/about_developer">
-            <intent android:action="info.free.scp.view.user.AboutMeActivity" />
         </Preference>
 
 
@@ -74,7 +74,7 @@
             android:title="@string/query_enter">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="http://freeescp.mikecrm.com/V3f0n0B" />
+                android:data="http://freeescp.mikecrm.com/zelnB9R" />
         </Preference>
     </PreferenceCategory>
 </PreferenceScreen>

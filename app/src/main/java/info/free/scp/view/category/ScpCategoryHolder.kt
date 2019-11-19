@@ -8,14 +8,16 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.ScpApplication
-import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
-import info.free.scp.util.*
+import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.addLater
+import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.item_category.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.toast
@@ -56,7 +58,7 @@ class ScpCategoryHolder(view: View) : RecyclerView.ViewHolder(view) {
                     EventUtil.onEvent(mContext, EventUtil.cancelRead, model.link)
                     var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
                     if (scpInfo == null) {
-                        scpInfo = ScpLikeModel(model.link, model.title, false, false)
+                        scpInfo = ScpLikeModel(model.link, model.title, like = false, hasRead = false, boxId = 0)
                     }
                     scpInfo.hasRead = !scpInfo.hasRead
                     AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)

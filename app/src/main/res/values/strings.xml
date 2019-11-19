@@ -38,17 +38,16 @@
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.3更新内容\n
-1.支持文档中frame的显示\n
-2.新增繁简转换功能\n
-3.阅读文档时可以在右上角菜单中切换夜间模式\n
-4.新增草稿列表（可编辑保存多个草稿\n
-5.如果复制数据库出错，支持使用备份的数据库\n
-6.部分UI样式优化\n
+        v0.1.4更新内容\n
+1.文档收藏可分不同的收藏夹\n
+2.新增最高评分板块【全部/原创SCP/原创故事/原创GoI/原创被放逐者之图书馆作品】\n
+3.优化部分夜间模式\n
+4.简化下载流程和说明\n
+5.优化捐赠页面\n
+6.部分UI样式优化，首页新增一个公告展示\n
 7.修复部分已知bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
-        以及在群里勤奋测试的群友们（欢迎加群玩耍）\n
-        PS：招募内测人员，要求是乐意频繁安装新安装包，可以第一时间用上新功能，感兴趣请加群</string>
+        以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
 
     <string name="download_detail_service">离线正文</string>
     <!--正文下拉菜单-->
@@ -99,6 +98,7 @@
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
     <!--设置-->
+    <string name="user_info">员工档案</string>
     <string name="about_view_content">浏览相关</string>
     <string name="draft_list">草稿箱</string>
     <string name="like_list">收藏列表</string>
@@ -108,13 +108,13 @@
     <string name="dark_mode">夜间模式</string>
     <string name="day_mode">日间模式</string>
     <string name="read_settings">阅读设置</string>
-    <string name="download_settings">离线及同步设置</string>
+    <string name="download_settings">数据下载及备份</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
     <string name="about_developer">支持开发者</string>
-    <string name="query_enter">用户调查问卷v0.1.2（开发者的话）</string>
+    <string name="query_enter">用户调查问卷</string>
     <string name="other_setting">其他</string>
     <string name="init_data">初始化数据</string>
     <string name="sync_data">强制重新同步云端数据</string>
@@ -138,17 +138,22 @@
     <string name="sync_category_title">更新目录</string>
 
     <!--新的离线逻辑-->
-    <string name="download_notice">1.该数据库将应用于整个app的文档数据部分，不离线无法阅读文档；\n2.以下数据库只能只能六选一，
-        总数据库包括所有已有的内容，可以同时下载，完成时将会提示替换；\n3.第一次安装app时如果急着看内容可以选择后面5个之一，并允许app在有wifi的情况下离线和更新总数据库。
-        离线完成后会替换之前的数据库使用\n4.阅读历史收藏等数据单独存储，不需要担心被替换。</string>
+    <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Documents文件夹的scp_download子文件夹中：\n
+        ① scp_data.db——scp文档数据库，用于阅读文档，内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
+        ② scp_info.db——用户信息数据库，保存收藏读过等信息，在更新文档数据库时不受影响\n
+        ③ level.xml——存用户等级职业等信息</string>
     <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
+    <string name="download_notice">检测并使用scp_download文件夹中的数据库，没有就自动下载，也可以加群下载数据库文件手动复制到该文件夹使用；</string>
+    <string name="backup_notice">备份APP数据到scp_download文件夹中</string>
 
     <!--捐赠-->
     <string name="donation">捐赠</string>
     <string name="wechat">微信</string>
     <string name="wechat_qr">微信二维码</string>
     <string name="alipay_qr">支付宝二维码</string>
+    <string name="go_afdian">爱发电</string>
+    <string name="go_chongya">冲呀</string>
     <string name="show_ad">看广告支持开发者</string>
     <string name="donation_notice">长按二维码保存到相册</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
@@ -159,4 +164,11 @@
     <string name="empty_draft">还没有草稿</string>
     <string name="add_draft">添加草稿</string>
     <string name="save_draft">保存草稿</string>
+
+    <!--最受欢迎页面-->
+    <string name="top_rated_all">最高评分页面</string>
+    <string name="top_rated_scp">最受欢迎的原创SCP</string>
+    <string name="top_rated_tale">最受欢迎的原创故事</string>
+    <string name="top_rated_goi">最受欢迎的原创GoI格式</string>
+    <string name="top_rated_wanderer">最受欢迎的被放逐者之图书馆作品</string>
 </resources>

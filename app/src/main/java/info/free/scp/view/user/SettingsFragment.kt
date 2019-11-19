@@ -15,15 +15,16 @@ import android.view.View
 import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import info.free.scp.R
+import info.free.scp.ScpApplication
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
 import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
-import info.free.scp.view.draft.DraftEditActivity
 import info.free.scp.view.draft.DraftListActivity
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.support.v4.alert
 
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -47,7 +48,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             activity?.startActivity<SettingsActivity>()
             true
         }
+        findPreference<Preference>("donation")?.setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickReadSetting)
+            if (ScpApplication.channelName == "HuaWei") {
+//                activity?.startActivity<DonationActivity>()
+                alert("因为华为不允许应用内有任何支付行为，如果想要支持开发者可以加群了解，谢谢！") { }.show()
+            } else {
+                activity?.startActivity<DonationQrActivity>()
+            }
+            true
+        }
         findPreference<Preference>("download_settings")?.setOnPreferenceClickListener {
+            EventUtil.onEvent(activity, clickDownloadSetting)
             activity?.startActivity<DownloadActivity>()
             true
         }

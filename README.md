@@ -13,6 +13,7 @@ SCP Android 第三方客户端
 - 恶灵附身
 - 艾迪芬奇的记忆
 - 克苏鲁的呼唤：官方游戏
+- 冷鲜肉
 
 ---
 
@@ -43,6 +44,7 @@ TODO
 
 爬虫重构
 - [x] offset抓取
+- [ ] 根据某些规则筛选scp（抓tag数据？）
 - [ ] 目录更新自动化
   - [ ] scrapy爬取录入数据库
 - [ ] 内容更新自动化
@@ -50,18 +52,25 @@ TODO
 
 当前开发版本
 # v0.1.4
-- [ ] 解决数据库下载慢的问题（备案域名中），顺便更新一遍数据库
-- [ ] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
-  - [ ] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。
-  - [ ] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
-  - [ ] 最受欢迎的原创GoI格式[请点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
-  - [ ] 最受欢迎的原创被放逐者之图书馆作品请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
-  - [ ] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
-- [ ] 收藏夹可分类
-- [ ] 正文页面添加滑动条
-- [ ] 根据某些规则筛选scp（抓tag数据？）
+- [x] 解决数据库下载慢的问题（备案域名中，15天剩余）
+- [x] 更新一遍数据库
+- [x] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
+  - [x] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。
+  - [x] 最受欢迎的原创故事请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [x] 最受欢迎的原创GoI格式[请点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [x] 最受欢迎的原创被放逐者之图书馆作品请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+  - [-] 本月最受欢迎的页面请参阅[本月最高评分的页面](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagetale_limit/1/all_range/-/tale_range/others)。
+- [x] 收藏夹可分类
+  - [x] 升级测试
+  - [x] 取消收藏
+- [x] 正文页面添加滑动条
+- [x] 数字键盘形状优化&“其他SCP”的介绍
+- [x] 首页放一个公告位置
+- [x] 离线页面修改
+- [x] 备份pref和db
+- [x] 直达页面UI和bug
+- [x] 捐赠页面去掉广告，增加捐赠列表
 - [ ] 分出一些重点/特色明显/科普类文档放在显眼位置
-- [ ] 数据库备份功能优化
 - [ ] 去掉不必要的权限申请，整理文件夹使用
 - [ ] 尝试联系【简明易懂的SCP】，【SCP配音团】等合作
 

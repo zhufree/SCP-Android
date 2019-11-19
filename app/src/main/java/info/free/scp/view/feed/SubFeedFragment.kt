@@ -1,19 +1,18 @@
 package info.free.scp.view.feed
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants.LATEST_CREATED
 
 import info.free.scp.databinding.SubFeedFragmentBinding
-import info.free.scp.util.InjectorUtils
+import info.free.scp.view.base.BaseFragment
 
-class SubFeedFragment : Fragment() {
+class SubFeedFragment : BaseFragment() {
 
     var feedType = LATEST_CREATED
 
@@ -27,17 +26,22 @@ class SubFeedFragment : Fragment() {
         }
     }
 
-    private lateinit var viewModel: FeedListViewModel
+    private val viewModel by lazy {
+        ViewModelProvider(this)
+                .get(FeedListViewModel::class.java)
+    }
 
+    private lateinit var binding: SubFeedFragmentBinding
 
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? {
-        val binding = SubFeedFragmentBinding.inflate(inflater, container, false)
+        binding = SubFeedFragmentBinding.inflate(inflater, container, false)
         val feedAdapter = FeedAdapter()
         binding.rvFeed.adapter = feedAdapter
+        binding.slFeed.isRefreshing = true
         subscribeUi(feedAdapter)
         binding.slFeed.setOnRefreshListener {
             binding.slFeed.isRefreshing = false
@@ -47,16 +51,13 @@ class SubFeedFragment : Fragment() {
 
 
     private fun subscribeUi(adapter: FeedAdapter) {
-        val factory = InjectorUtils.provideFeedListViewModelFactory(requireContext())
-        viewModel = ViewModelProviders.of(this, factory)
-                .get(FeedListViewModel::class.java)
         feedType = arguments?.getInt("feedType") ?: LATEST_CREATED
         Log.i("feed", "type = $feedType")
-        viewModel.getFeed(feedType)?.observe(viewLifecycleOwner, Observer { result ->
+        viewModel.getFeed()?.observe(viewLifecycleOwner, Observer { result ->
+            binding.slFeed.isRefreshing = false
             if (result != null && result.isNotEmpty())
                 adapter.submitList(result)
         })
         viewModel.loadFeed(feedType)
-
     }
 }

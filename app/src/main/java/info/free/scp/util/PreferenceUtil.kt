@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import info.free.scp.R
+import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import java.util.*
 
@@ -42,58 +43,54 @@ object PreferenceUtil {
      * 服务器数据更新时间，last_update_time_0/1/2/3/4
      * key是字段名
      */
-    fun setServerLastUpdateTime(dbName: String, time: Long) {
-        setLongValue(DOWNLOAD_SP, dbName, time)
+    fun setServerLastUpdateTime(time: Long) {
+        setLongValue(DOWNLOAD_SP, "last_update_time", time)
     }
 
-    fun getServerLastUpdateTime(dbIndex: Int): Long {
-        return getLongValue(DOWNLOAD_SP, "last_update_time_" + if (dbIndex == -1) "all" else dbIndex)
+    fun getServerLastUpdateTime(): Long {
+        return getLongValue(DOWNLOAD_SP, "last_update_time")
+    }
+
+    fun setNotice(notice: String) {
+        setStringValue(APP_SP, "notice", notice)
+    }
+
+    fun getNotice(): String {
+        return getStringValue(APP_SP, "notice", "这里是公告")
+    }
+
+    fun setApiUrl(url: String) {
+        setStringValue(APP_SP, "api_url", url)
+    }
+
+    fun getApiUrl(): String {
+        val prefUrl = getStringValue(APP_SP, "api_url")
+        return if (prefUrl.isNotEmpty()) prefUrl else SCPConstants.FEED_API_URL
     }
 
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all
      */
-    fun setDataDownloadLink(dbName: String, link: String) {
-        setStringValue(DOWNLOAD_SP, dbName, link)
-    }
-    fun getDataDownloadLink(dbIndex: Int):String {
-        return getStringValue(DOWNLOAD_SP, "db_link_" + if (dbIndex == -1) "all" else dbIndex)
+
+    // 新版本，只下一个数据库
+    fun setDownloadLink(link: String) {
+        setStringValue(DOWNLOAD_SP, "db_link", link)
     }
 
-    /**
-     * 是否允许自动离线数据库
-     */
-
-    fun setAutoDownload(auto: Boolean) {
-        setBooleanValue(DOWNLOAD_SP, "auto_download", auto)
+    fun getDownloadLink(): String {
+        return getStringValue(DOWNLOAD_SP, "db_link", "http://cdn.zhufree.fun/scp_data.db")
     }
-
-    fun getAutoDownload(): Boolean {
-        return getBooleanValue(DOWNLOAD_SP, "auto_download")
-    }
-    /**
-     * 记录单个库离线完成，同时记录离线时间，在离线管理页用到
-     */
-    fun setDetailDataLoadFinish(dbIndex: Int, value: Boolean) {
-        if (value) {
-            setDetailLastLoadTime(dbIndex, System.currentTimeMillis())
-        }
-        setBooleanValue(INIT_SP, dbIndex.toString(), value)
-    }
-    fun getDetailDataLoadFinish(dbIndex: Int): Boolean {
-        return getBooleanValue(INIT_SP, dbIndex.toString(), false)
-    }
-
 
     /**
      * 数据更新时间相关
      */
-    fun getDetailLastLoadTime(dbIndex: Int): Long {
-        return getLongValue(DOWNLOAD_SP,"${dbIndex}_time" )
+    fun getDetailLastLoadTime(): Long {
+        return getLongValue(DOWNLOAD_SP, "load_db_time")
     }
-    fun setDetailLastLoadTime(dbIndex: Int, time: Long) {
-        setLongValue(DOWNLOAD_SP, "${dbIndex}_time", time)
+
+    fun setDetailLastLoadTime(time: Long) {
+        setLongValue(DOWNLOAD_SP, "load_db_time", time)
     }
 
     fun clearDownloadPref() {
@@ -106,7 +103,7 @@ object PreferenceUtil {
      */
     fun getFirstOpenCurrentVersion(versionCode: String): Boolean {
         val sp = getPrivateSharedPreference(INIT_SP)
-        return sp?.getBoolean(versionCode, true)?:true
+        return sp?.getBoolean(versionCode, true) ?: true
     }
 
     fun setFirstOpenCurrentVersion(versionCode: String) {
@@ -119,8 +116,9 @@ object PreferenceUtil {
      */
     fun getShownDetailNotice(): Boolean {
         val sp = getPrivateSharedPreference(INIT_SP)
-        return sp?.getBoolean("shownDetailNotice", false)?:false
+        return sp?.getBoolean("shownDetailNotice", false) ?: false
     }
+
     fun setShownDetailNotice() {
         val sp = getPrivateSharedPreference(INIT_SP)
         sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
@@ -129,7 +127,7 @@ object PreferenceUtil {
     /**
      * 主题相关
      */
-    fun getCurrentTheme(): Int{
+    fun getCurrentTheme(): Int {
         return getIntValue("theme", "currentTheme")
     }
 
@@ -155,13 +153,13 @@ object PreferenceUtil {
     }
 
 
-
     /**
      * 积分系统
      */
     fun addPoints(point: Int) {
         setIntValue("level", "point", getPoint() + point)
     }
+
     fun reducePoints(point: Int) {
         setIntValue("level", "point", getPoint() - point)
     }
@@ -177,6 +175,7 @@ object PreferenceUtil {
     fun saveNickname(name: String) {
         setStringValue("level", "nickname", name)
     }
+
     fun getJob(): String {
         return getStringValue("level", "job")
     }
@@ -202,6 +201,7 @@ object PreferenceUtil {
     private val safer = arrayOf("实习守卫", "一级守卫", "二级守卫", "守卫组长", "守卫参谋", "保安官")
     private val tactical = arrayOf("实习战术反应人员", "支援战术反应人员", "一级战术反应人员", "二级战术反应人员",
             "三级战术反应人员", " 战术小组组长")
+
     fun getJobNameByLevel(level: Int): String {
         val job = getJob()
         return when (job) {
@@ -224,7 +224,7 @@ object PreferenceUtil {
             "战术反应人员" -> {
                 tactical[level]
             }
-            else ->{
+            else -> {
                 ""
             }
         }
@@ -237,7 +237,7 @@ object PreferenceUtil {
             R.string.job_desc_5,
             R.string.job_desc_6)
 
-    fun getDescForJob(job: String): Int{
+    fun getDescForJob(job: String): Int {
         return when (job) {
             "收容专家" -> {
                 jobDesc[0]
@@ -257,7 +257,7 @@ object PreferenceUtil {
             "机动特遣队作业员" -> {
                 jobDesc[5]
             }
-            else ->{
+            else -> {
                 jobDesc[6]
             }
         }
@@ -271,10 +271,12 @@ object PreferenceUtil {
         val count = getStringValue("read_settings", "category_count")
         return if (count.isNotEmpty()) count.toInt() else 100
     }
+
     fun getCategoryHeight(): Int {
         val height = getStringValue("read_settings", "category_height")
         return if (height.isNotEmpty()) height.toInt() else 50
     }
+
     fun getCategoryInterval(): Int {
         val interval = getStringValue("read_settings", "category_interval")
         return if (interval.isNotEmpty()) interval.toInt() else 4
@@ -284,6 +286,7 @@ object PreferenceUtil {
         val textSize = getStringValue("read_settings", "detail_text_size")
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
+
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)
     }
@@ -299,6 +302,7 @@ object PreferenceUtil {
     fun getDraftContent(): String {
         return getStringValue("level", "draft_content")
     }
+
     fun saveDraftTitle(title: String) {
         setStringValue("level", "draft_title", title)
     }
@@ -334,15 +338,17 @@ object PreferenceUtil {
      * 工具方法
      */
     private fun getBooleanValue(spName: String, key: String, defaultValue: Boolean = false): Boolean {
-        return getPrivateSharedPreference(spName)?.getBoolean(key, defaultValue)?:defaultValue
+        return getPrivateSharedPreference(spName)?.getBoolean(key, defaultValue) ?: defaultValue
     }
+
     private fun setBooleanValue(spName: String, key: String, value: Boolean) {
         getPrivateSharedPreference(spName)?.edit {
             putBoolean(key, value)
         }
     }
+
     private fun getIntValue(spName: String, key: String): Int {
-        return getPrivateSharedPreference(spName)?.getInt(key, 0)?:0
+        return getPrivateSharedPreference(spName)?.getInt(key, 0) ?: 0
     }
 
     private fun setIntValue(spName: String, key: String, value: Int) {
@@ -352,7 +358,7 @@ object PreferenceUtil {
     }
 
     private fun getLongValue(spName: String, key: String): Long {
-        return getPrivateSharedPreference(spName)?.getLong(key, 0L)?:0L
+        return getPrivateSharedPreference(spName)?.getLong(key, 0L) ?: 0L
     }
 
     private fun setLongValue(spName: String, key: String, value: Long) {
@@ -360,13 +366,18 @@ object PreferenceUtil {
             putLong(key, value)
         }
     }
+
     private fun getStringValue(spName: String, key: String): String {
-        return getPrivateSharedPreference(spName)?.getString(key, "")?:""
+        return getPrivateSharedPreference(spName)?.getString(key, "") ?: ""
+    }
+
+    private fun getStringValue(spName: String, key: String, defaultValue: String = ""): String {
+        return getPrivateSharedPreference(spName)?.getString(key, defaultValue) ?: defaultValue
     }
 
     private fun setStringValue(spName: String, key: String, value: String) {
-       getPrivateSharedPreference(spName)?.edit {
-           putString(key, value)
-       }
+        getPrivateSharedPreference(spName)?.edit {
+            putString(key, value)
+        }
     }
 }

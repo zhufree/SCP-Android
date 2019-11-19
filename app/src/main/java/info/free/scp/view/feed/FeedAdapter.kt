@@ -12,13 +12,13 @@ import info.free.scp.bean.FeedModel
 import info.free.scp.databinding.ItemFeedBinding
 import info.free.scp.view.detail.DetailActivity
 
-class FeedAdapter: ListAdapter<FeedModel, FeedAdapter.PictureHolder>(FeedDiffCallback()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedAdapter.PictureHolder {
-        return PictureHolder(ItemFeedBinding.inflate(
+class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallback()) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder {
+        return FeedHolder(ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: FeedAdapter.PictureHolder, position: Int) {
+    override fun onBindViewHolder(holder: FeedHolder, position: Int) {
         val feed = getItem(position)
         holder.apply {
             bind(createOnClickListener(feed), feed)
@@ -28,7 +28,6 @@ class FeedAdapter: ListAdapter<FeedModel, FeedAdapter.PictureHolder>(FeedDiffCal
 
     private fun createOnClickListener(feed: FeedModel): View.OnClickListener {
         return View.OnClickListener {
-//            EventUtil.onEvent(it.context, EventUtil.viewPicture)
             val intent = Intent()
             intent.putExtra("link", feed.link)
             intent.setClass(it.context, DetailActivity::class.java)
@@ -36,7 +35,7 @@ class FeedAdapter: ListAdapter<FeedModel, FeedAdapter.PictureHolder>(FeedDiffCal
         }
     }
 
-    class PictureHolder(private val binding: ItemFeedBinding): RecyclerView.ViewHolder(binding.root) {
+    class FeedHolder(private val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(listener: View.OnClickListener, item: FeedModel) {
             binding.apply {
                 clickListener = listener

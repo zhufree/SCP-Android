@@ -9,9 +9,13 @@ import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
+import info.free.scp.util.FileUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.UpdateManager
+import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.download.DownloadActivity
@@ -19,6 +23,7 @@ import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.toast
 
 
 /**
@@ -40,7 +45,7 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        home_toolbar?.setTitle(R.string.app_name)
+        home_toolbar?.setTitle(R.string.title_scp_documents)
         home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
         home_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -50,12 +55,13 @@ class HomeFragment : BaseFragment() {
             }
             true
         }
-        tv_series_doc?.background?.alpha = 80
-        tv_story_doc?.background?.alpha = 80
-        tv_about_doc?.background?.alpha = 80
-        tv_read_later?.background?.alpha = 80
-        tv_joke_doc?.background?.alpha = 80
-        tv_direct?.background?.alpha = 80
+        tv_home_notice?.text = PreferenceUtil.getNotice()
+        tv_series_doc?.background?.alpha = 50
+        tv_story_doc?.background?.alpha = 50
+        tv_about_doc?.background?.alpha = 50
+        tv_read_later?.background?.alpha = 50
+        tv_joke_doc?.background?.alpha = 50
+        tv_direct?.background?.alpha = 50
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }
@@ -88,6 +94,8 @@ class HomeFragment : BaseFragment() {
     override fun refreshTheme() {
         super.refreshTheme()
         home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        cd_notice_container?.setBackgroundColor(ThemeUtil.containerBg)
+        tv_home_notice?.setTextColor(ThemeUtil.darkText)
         tv_series_doc?.setTextColor(ThemeUtil.darkText)
         tv_story_doc?.setTextColor(ThemeUtil.darkText)
 

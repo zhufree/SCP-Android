@@ -129,5 +129,4 @@ class HomeFragment : BaseFragment() {
             return fragment
         }
     }
-
-} // Required empty public constructor
+}

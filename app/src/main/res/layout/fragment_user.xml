@@ -1,144 +1,118 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?attr/containerBg">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/ablToolbarWrapper"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/about_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/toolbarBg"
-            app:popupTheme="@style/ToolbarPopupTheme">
+        <ImageView
+            android:id="@+id/iv_user_head"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="60dp"
+            android:alpha="0.8"
+            android:background="@drawable/user_head_bg"
+            android:contentDescription="@string/app_name"
+            android:padding="5dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/icon_read"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/iv_share"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_gravity="end"
-                android:visibility="gone"
-                android:src="@drawable/ic_share_white_24dp"
-                tools:ignore="ContentDescription" />
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!--<ScrollView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="?attr/darkText"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_data_desc"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_user_head" />
+
+        <TextView
+            android:id="@+id/tv_data_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="?attr/lightText"
+            android:textSize="13sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_slogan"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
+
+        <TextView
+            android:id="@+id/tv_slogan"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:maxLines="1"
+            android:text="控制，收容，保护。"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_data_desc" />
+
+        <TextView
+            android:id="@+id/iv_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:alpha="0.3"
+            android:background="@drawable/user_label_bg"
+            android:paddingStart="10dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="8dp"
+            android:text="机密人员"
+            android:textColor="@color/colorAccent"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_user_head"
+            app:layout_constraintEnd_toEndOf="@id/iv_user_head"
+            app:layout_constraintStart_toStartOf="@id/iv_user_head"
+            app:layout_constraintTop_toTopOf="@id/iv_user_head" />
+
+        <!--        <ImageView-->
+        <!--            android:id="@+id/iv_cover"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            android:alpha="0.2"-->
+        <!--            android:scaleType="fitXY"-->
+        <!--            android:src="@drawable/img_user_cover"-->
+        <!--            app:layout_constraintBottom_toBottomOf="@id/iv_user_head"-->
+        <!--            app:layout_constraintEnd_toEndOf="@id/tv_nickname"-->
+        <!--            app:layout_constraintStart_toStartOf="@id/iv_user_head"-->
+        <!--            app:layout_constraintTop_toTopOf="@id/iv_user_head" />-->
+
+        <!--        <View-->
+        <!--            android:id="@+id/v_blank"-->
+        <!--            android:layout_width="72dp"-->
+        <!--            android:layout_height="0dp"-->
+        <!--            app:layout_constraintEnd_toStartOf="@id/iv_user_head"-->
+        <!--            app:layout_constraintTop_toTopOf="parent" />-->
+
+        <FrameLayout
+            android:id="@+id/fl_settings"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_marginTop="16dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/v_blank"
+            app:layout_constraintTop_toBottomOf="@id/iv_user_head" />
+        <!--</ScrollView>-->
 
-            <ImageView
-                android:id="@+id/iv_user_head"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:alpha="0.8"
-                android:background="@drawable/user_head_bg"
-                android:scaleType="centerCrop"
-                android:src="@drawable/icon_read"
-                android:contentDescription="@string/app_name"
-                android:padding="5dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <TextView
-                android:id="@+id/tv_nickname"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="?attr/darkText"
-                android:textSize="14sp"
-                app:layout_constraintTop_toTopOf="@id/iv_user_head"
-                app:layout_constraintBottom_toTopOf="@+id/tv_data_desc"
-                app:layout_constraintStart_toEndOf="@id/iv_user_head"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginStart="16dp"/>
-
-            <TextView
-                android:id="@+id/tv_data_desc"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="?attr/lightText"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@+id/tv_slogan"
-                app:layout_constraintEnd_toEndOf="@id/tv_nickname"
-                app:layout_constraintStart_toStartOf="@id/tv_nickname"
-                app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
-
-            <TextView
-                android:id="@+id/tv_slogan"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="控制，收容，保护。"
-                android:maxLines="1"
-                android:textSize="12sp"
-                android:textColor="@color/colorAccent"
-                app:layout_constraintBottom_toBottomOf="@id/iv_user_head"
-                app:layout_constraintStart_toStartOf="@id/tv_nickname"
-                app:layout_constraintEnd_toEndOf="@id/tv_nickname"
-                app:layout_constraintTop_toBottomOf="@id/tv_data_desc" />
-            <TextView
-                android:id="@+id/iv_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="22sp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:paddingStart="10dp"
-                android:paddingEnd="10dp"
-                android:text="机密人员"
-                android:textColor="@color/colorAccent"
-                android:alpha="0.3"
-                android:background="@drawable/user_label_bg"
-                app:layout_constraintTop_toTopOf="@id/tv_nickname"
-                android:layout_marginTop="5dp"
-                app:layout_constraintEnd_toEndOf="@id/tv_nickname" />
-            <ImageView
-                android:id="@+id/iv_cover"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:src="@drawable/img_user_cover"
-                android:scaleType="fitXY"
-                android:alpha="0.2"
-                app:layout_constraintStart_toStartOf="@id/iv_user_head"
-                app:layout_constraintTop_toTopOf="@id/iv_user_head"
-                app:layout_constraintEnd_toEndOf="@id/tv_nickname"
-                app:layout_constraintBottom_toBottomOf="@id/iv_user_head"/>
-
-            <View
-                android:id="@+id/v_blank"
-                android:layout_width="72dp"
-                android:layout_height="0dp"
-                app:layout_constraintEnd_toStartOf="@id/iv_user_head"
-                app:layout_constraintTop_toTopOf="parent"/>
-            <FrameLayout
-                android:id="@+id/fl_settings"
-                android:layout_width="0dp"
-                app:layout_constraintStart_toStartOf="@id/v_blank"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:layout_height="0dp"
-                app:layout_constraintTop_toBottomOf="@id/iv_user_head"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="16dp"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    <!--</ScrollView>-->
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</ScrollView>

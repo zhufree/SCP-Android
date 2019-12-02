@@ -2,6 +2,7 @@ package info.free.scp
 
 import android.Manifest
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import info.free.scp.db.AppInfoDatabase
@@ -80,7 +81,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
         // 注册广播
         setContentView(R.layout.activity_main)
-
         // 设置默认fragment
         val transaction = supportFragmentManager.beginTransaction()
         currentFragment?.let {

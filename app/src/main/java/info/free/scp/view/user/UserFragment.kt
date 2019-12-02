@@ -79,7 +79,6 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        about_toolbar?.setTitle(R.string.user_info)
         childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
@@ -168,7 +167,6 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(ThemeUtil.lightText)
     }
@@ -185,11 +183,12 @@ class UserFragment : BaseFragment() {
                     val scpDir = df?.findFile("SCP")
                     val picPath = scpDir?.findFile("scp_user_head.jpg")
                     picPath?.let {
-                        Log.i("img", picPath.toString())
-                        val pfd = context!!.contentResolver.openFileDescriptor(picPath.uri, "r")
-                        val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                        iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
-                        fileInputStream.close()
+                        val pfd = context?.contentResolver?.openFileDescriptor(picPath.uri, "r")
+                        pfd?.let {
+                            val fileInputStream = FileInputStream(pfd.fileDescriptor)
+                            iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
+                            fileInputStream.close()
+                        }
                     }
 
                 } else {

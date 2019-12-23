@@ -8,4 +8,5 @@
     <attr name="unClickBtn" format = "color"/>
     <attr name="clickedBtn" format = "color"/>
     <attr name="disabledBg" format = "color"/>
+    <attr name="settingItemBg" format="color" />
 </resources>

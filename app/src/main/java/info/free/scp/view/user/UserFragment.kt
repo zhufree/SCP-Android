@@ -79,13 +79,13 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
+//        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                    "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                    "职务：${getRank(PreferenceUtil.getPoint())}\t代号：${PreferenceUtil.getNickname()}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                "职务：点击设置\n代号：点击设置"
-        tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\n" +
+                "职务：点击设置\t代号：点击设置"
+        tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
                 "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
         iv_user_head.setOnClickListener {

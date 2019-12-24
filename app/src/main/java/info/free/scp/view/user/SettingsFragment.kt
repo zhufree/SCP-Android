@@ -18,6 +18,7 @@ import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.util.*
 import info.free.scp.util.EventUtil.clickCopyright
+import info.free.scp.util.EventUtil.clickDonation
 import info.free.scp.util.EventUtil.clickDownloadSetting
 import info.free.scp.util.EventUtil.clickReadSetting
 import info.free.scp.view.download.DownloadActivity
@@ -49,7 +50,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
         findPreference<Preference>("donation")?.setOnPreferenceClickListener {
-            EventUtil.onEvent(activity, clickReadSetting)
             if (ScpApplication.channelName == "HuaWei") {
 //                activity?.startActivity<DonationActivity>()
                 alert("因为华为不允许应用内有任何支付行为，如果想要支持开发者可以加群了解，谢谢！") { }.show()

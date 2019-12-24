@@ -25,7 +25,7 @@
     <color name="clickedBtn">#2775b6</color>
     <color name="unClickBtnNight">#2e317c</color>
     <color name="clickedBtnNight">#1c2938</color>
-    <color name="settingItemBg">#e5e5e5</color>
+    <color name="settingItemBg">#fff</color>
     <color name="settingItemBgNight">#2f2f2f</color>
 
     <color name="white">#fff</color>

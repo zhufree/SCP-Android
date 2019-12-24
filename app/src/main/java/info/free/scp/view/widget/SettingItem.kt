@@ -20,6 +20,7 @@ class SettingItem : ConstraintLayout {
     var rightText = ""
     var isGroupFirst = false
     var isGroupLast = false
+    var onClick: () -> Unit = {}
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -52,8 +53,24 @@ class SettingItem : ConstraintLayout {
             tv_setting_right.text = rightText
         }
 
-//        if (isGroupFirst) {
-        background = ThemeUtil.customShape(ThemeUtil.settingItemBg, 0, 0, Utils.dp2px(22))
-//        }
+        refreshTheme()
+        setOnClickListener {
+            onClick()
+        }
+    }
+
+    fun refreshTheme() {
+        val cornerRadius = Utils.dp2px(18).toFloat()
+        when {
+            isGroupFirst -> {
+                background = ThemeUtil.customShape(ThemeUtil.settingItemBg, 0, 0, cornerRadius, 0f, cornerRadius, 0f)
+            }
+            isGroupLast -> {
+                background = ThemeUtil.customShape(ThemeUtil.settingItemBg, 0, 0, 0f, cornerRadius, 0f, cornerRadius)
+            }
+            else -> {
+                backgroundColor = ThemeUtil.settingItemBg
+            }
+        }
     }
 }

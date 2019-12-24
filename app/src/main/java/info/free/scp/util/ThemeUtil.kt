@@ -120,6 +120,6 @@ object ThemeUtil {
     }
 
     fun setGdCorner(gd: GradientDrawable, lt: Float, lb: Float, rt: Float, rb: Float) {
-        gd.cornerRadii = arrayOf(lt, lt, lb, lb, rt, rt, rb, rb).toFloatArray()
+        gd.cornerRadii = arrayOf(lt, lt, rt, rt, lb, lb, rb, rb).toFloatArray()
     }
 }

@@ -25,7 +25,7 @@
         <!--导航条颜色-->
         <item name="toolbarBg">@color/colorPrimaryDark</item>
         <!--页面容器背景色（白）-->
-        <item name="containerBg">@color/white</item>
+        <item name="containerBg">@color/containerBg</item>
         <!--条目背景色（浅蓝）-->
         <item name="itemBg">@color/itemBg</item>
         <!--浅色底深色字-->

@@ -1,21 +1,12 @@
 package info.free.scp.view.user
 
-import android.app.AlertDialog
 import android.os.Bundle
 import android.preference.PreferenceActivity
 import androidx.preference.PreferenceFragmentCompat
-import android.view.Menu
 import android.view.View
 import androidx.preference.DialogPreference
-import androidx.preference.Preference
 import androidx.preference.SwitchPreference
 import info.free.scp.R
-import info.free.scp.SCPConstants.Download.DOWNLOAD_ARCHIVES
-import info.free.scp.SCPConstants.Download.DOWNLOAD_COLLECTIONS
-import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP
-import info.free.scp.SCPConstants.Download.DOWNLOAD_SCP_CN
-import info.free.scp.SCPConstants.Download.DOWNLOAD_TALE
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_settings.*

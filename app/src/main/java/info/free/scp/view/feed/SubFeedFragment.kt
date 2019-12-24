@@ -31,6 +31,10 @@ class SubFeedFragment : BaseFragment() {
                 .get(FeedListViewModel::class.java)
     }
 
+    private val feedAdapter by lazy {
+        FeedAdapter()
+    }
+
     private lateinit var binding: SubFeedFragmentBinding
 
     override fun onCreateView(
@@ -39,7 +43,6 @@ class SubFeedFragment : BaseFragment() {
             savedInstanceState: Bundle?
     ): View? {
         binding = SubFeedFragmentBinding.inflate(inflater, container, false)
-        val feedAdapter = FeedAdapter()
         binding.rvFeed.adapter = feedAdapter
         binding.slFeed.isRefreshing = true
         subscribeUi(feedAdapter)
@@ -59,5 +62,10 @@ class SubFeedFragment : BaseFragment() {
                 adapter.submitList(result)
         })
         viewModel.loadFeed(feedType)
+    }
+
+    override fun refreshTheme() {
+        super.refreshTheme()
+        feedAdapter.refreshTheme()
     }
 }

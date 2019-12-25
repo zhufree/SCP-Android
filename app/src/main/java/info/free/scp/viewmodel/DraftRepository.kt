@@ -12,6 +12,4 @@ class DraftRepository {
     var draft: LiveData<DraftModel>? = null
     private var draftDao = AppInfoDatabase.getInstance().draftDao()
     var draftList = draftDao.getAllDraft()
-
-
 }

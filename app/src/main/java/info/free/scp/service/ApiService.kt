@@ -36,9 +36,9 @@ interface ApiService {
     suspend fun getTopRatedWander(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
 
     @Headers(
-            "Content-Type:application/json",
             PrivateConstants.APP_ID,
-            PrivateConstants.API_KEY
+            PrivateConstants.API_KEY,
+            PrivateConstants.CONTENT_TYPE_JSON
     )
     @GET("1/classes/Config")
     fun getAppConfig(): Observable<ApiBean.ApiListResponse<ApiBean.ConfigResponse>>

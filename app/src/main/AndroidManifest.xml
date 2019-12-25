@@ -18,6 +18,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".view.portal.PortalActivity"
+            android:parentActivityName=".BaseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="BaseActivity" />
+        </activity>
         <activity android:name=".view.feed.TopRatedListActivity" />
         <activity android:name=".view.user.DonationActivity" />
         <activity
@@ -60,7 +67,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".view.like.LikeActivity" />
-
         <activity android:name=".view.user.LaterAndHistoryActivity">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />

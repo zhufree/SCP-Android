@@ -171,4 +171,7 @@
     <string name="top_rated_tale">最受欢迎的原创故事</string>
     <string name="top_rated_goi">最受欢迎的原创GoI格式</string>
     <string name="top_rated_wanderer">最受欢迎的被放逐者之图书馆作品</string>
+
+    <!--传送门页面-->
+    <string name="portal">传送门</string>
 </resources>

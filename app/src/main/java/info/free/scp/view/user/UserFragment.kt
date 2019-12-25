@@ -33,6 +33,7 @@ import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
 import info.free.scp.view.game.GameListActivity
 import info.free.scp.view.like.LikeBoxActivity
+import info.free.scp.view.portal.PortalActivity
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.*
@@ -122,7 +123,7 @@ class UserFragment : BaseFragment() {
 
         st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
         st_game.onClick = { startActivity<GameListActivity>() }
-        st_portal.onClick = {}
+        st_portal.onClick = { startActivity<PortalActivity>() }
         // TODO 改文字
         st_dark_mode.onClick = {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) 0 else 1)

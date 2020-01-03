@@ -6,6 +6,7 @@ import androidx.preference.PreferenceFragmentCompat
 import android.view.View
 import androidx.preference.DialogPreference
 import androidx.preference.SwitchPreference
+import info
 import info.free.scp.R
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
@@ -54,8 +55,9 @@ class SettingsActivity : BaseActivity() {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 false
             }
-            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { _, any ->
-                EventUtil.onEvent(context, EventUtil.setListItemCount, any.toString())
+            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { preference, newValue ->
+                info(newValue.toString())
+                EventUtil.onEvent(context, EventUtil.setListItemCount, newValue.toString())
                 true
             }
         }

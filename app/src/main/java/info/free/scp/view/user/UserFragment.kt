@@ -14,6 +14,7 @@ import android.provider.MediaStore
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -161,11 +162,11 @@ class UserFragment : BaseFragment() {
         val startIndex1 = copySpan1.indexOf("http")
         val startIndex2 = copySpan2.indexOf("http")
         val startIndex3 = copySpan3.indexOf("http")
-        copySpan1.setSpan(SettingsFragment.CopySpan("http://scp-wiki-cn.wikidot.com/", activity), startIndex1,
+        copySpan1.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/", activity), startIndex1,
                 copySpan1.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        copySpan2.setSpan(SettingsFragment.CopySpan("https://creativecommons.org/licenses/by-sa/3.0/deed.zh", activity), startIndex2,
+        copySpan2.setSpan(CopySpan("https://creativecommons.org/licenses/by-sa/3.0/deed.zh", activity), startIndex2,
                 copySpan2.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        copySpan3.setSpan(SettingsFragment.CopySpan("http://scp-wiki-cn.wikidot.com/licensing-guide", activity), startIndex3,
+        copySpan3.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/licensing-guide", activity), startIndex3,
                 copySpan3.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
         copyrightView.tv_copyright_1.text = copySpan1
         copyrightView.tv_copyright_2.text = copySpan2
@@ -183,6 +184,16 @@ class UserFragment : BaseFragment() {
 // 获取button并设置点击事件
         copyrightDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
             copyrightDialog.dismiss()
+        }
+    }
+
+    class CopySpan(val url: String, val activity: androidx.fragment.app.FragmentActivity?) : ClickableSpan() {
+        override fun onClick(widget: View) {
+            val copyrightIntent = Intent()
+            copyrightIntent.action = "android.intent.action.VIEW"
+            val updateUrl = Uri.parse(url)
+            copyrightIntent.data = updateUrl
+            activity?.startActivity(copyrightIntent)
         }
     }
 

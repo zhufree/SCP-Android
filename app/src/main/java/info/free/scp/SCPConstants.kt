@@ -47,6 +47,7 @@ object SCPConstants {
         const val CONTEST_CN = 13
         const val EVENT = 14
         const val TALES_BY_TIME = 15
+        const val SCP_INTERNATIONAL = 24
     }
 
     object ScpType {
@@ -78,6 +79,7 @@ object SCPConstants {
         const val SAVE_SETTINGS_CN = 14
         const val SAVE_CONTEST = 15
         const val SAVE_CONTEST_CN = 17
+        const val SAVE_INTERNATIONAL = 24
 
         // android
         const val SAVE_OFFSET = 21

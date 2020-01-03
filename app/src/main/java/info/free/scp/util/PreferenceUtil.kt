@@ -3,6 +3,7 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication

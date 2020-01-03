@@ -76,6 +76,11 @@ class ScpDataHelper {
         return queryList
     }
 
+    // TODO
+//    fun getInternationalByCountryAndType(): MutableList<ScpModel> {
+//
+//    }
+
 
     fun getSinglePageByType(type: Int): MutableList<ScpItemModel> {
         val abnormalPageList = arrayOf(

@@ -94,6 +94,9 @@ class ScpListFragment : BaseFragment() {
                 scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
                 scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
             }
+            SCPConstants.Category.SCP_INTERNATIONAL -> {
+                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INTERNATIONAL))
+            }
 //            SCPConstants.Category.SCP_EX_CN -> {
 //                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
 //            }

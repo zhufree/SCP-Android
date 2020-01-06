@@ -162,6 +162,18 @@
                 app:layout_constraintTop_toBottomOf="@id/st_history"
                 app:name="游戏列表" />
 
+        <info.free.scp.view.widget.SettingItem
+            android:id="@+id/st_meal"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/st_history"
+            app:name="恰饭屋" />
+
             <info.free.scp.view.widget.SettingItem
                 android:id="@+id/st_portal"
                 android:layout_width="match_parent"

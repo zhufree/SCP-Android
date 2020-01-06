@@ -4,7 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import apiCall
 import executeResponse
 import info.free.scp.bean.PortalModel
-import info.free.scp.service.PortalService
+import info.free.scp.service.FreeService
 import toast
 
 
@@ -15,7 +15,7 @@ class PortalRepository {
 
     suspend fun loadPortalList(): MutableLiveData<List<PortalModel>> {
 
-        val response = apiCall { PortalService.getAllPortal() }
+        val response = apiCall { FreeService.getAllPortal() }
         response?.let {
             executeResponse(response, {
                 toast("加载失败")

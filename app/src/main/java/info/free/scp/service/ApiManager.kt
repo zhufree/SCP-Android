@@ -20,7 +20,7 @@ object ApiManager {
             .addConverterFactory(GsonConverterFactory.create())
             .client(httpClientBuilder.build())
             .build()
-    val portalApi: PortalApi = retrofit.create(PortalApi::class.java)
+    val portalApi: FreeApi = retrofit.create(FreeApi::class.java)
 //    val pictureApi: PictureApi = retrofit.create(PictureApi::class.java)
 //    val userApi: UserApi = retrofit.create(UserApi::class.java)
 //    val commentApi: CommentApi = retrofit.create(CommentApi::class.java)

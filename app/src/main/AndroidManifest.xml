@@ -19,6 +19,13 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".view.eatroom.MealListActivity"
+            android:parentActivityName=".BaseActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="BaseActivity" />
+        </activity>
+        <activity
             android:name=".view.portal.PortalActivity"
             android:parentActivityName=".BaseActivity">
             <meta-data

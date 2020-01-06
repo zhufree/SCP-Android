@@ -6,27 +6,27 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="info.free.scp.view.portal.PortalActivity">
+        tools:context="info.free.scp.view.eatroom.MealListActivity">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/abl_portal_list"
+            android:id="@+id/abl_meal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/portal_toolbar"
+                android:id="@+id/meal_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
-                android:background="@color/colorPrimaryDark"
+                android:background="@color/colorAccent"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:title="@string/portal" />
+                app:title="@string/meal" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <TextView
-            android:id="@+id/tv_empty_portal"
+            android:id="@+id/tv_empty_meal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
@@ -35,15 +35,16 @@
             android:textSize="22sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/abl_portal_list" />
+            app:layout_constraintTop_toBottomOf="@id/abl_meal_list" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rl_portal_list"
+            android:id="@+id/rl_meal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            app:layout_constraintTop_toBottomOf="@id/abl_portal_list"
-            tools:listitem="@layout/item_portal">
+            app:layout_constraintTop_toBottomOf="@id/abl_meal_list"
+            tools:listitem="@layout/item_meal">
 
         </androidx.recyclerview.widget.RecyclerView>
     </androidx.constraintlayout.widget.ConstraintLayout>

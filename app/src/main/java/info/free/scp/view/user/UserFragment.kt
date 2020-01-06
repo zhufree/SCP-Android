@@ -32,6 +32,7 @@ import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
+import info.free.scp.view.eatroom.MealListActivity
 import info.free.scp.view.game.GameListActivity
 import info.free.scp.view.like.LikeBoxActivity
 import info.free.scp.view.portal.PortalActivity
@@ -124,6 +125,7 @@ class UserFragment : BaseFragment() {
 
         st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
         st_game.onClick = { startActivity<GameListActivity>() }
+        st_meal.onClick = { startActivity<MealListActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
         // TODO 改文字
         st_dark_mode.onClick = {

@@ -78,7 +78,7 @@ class SeriesDocActivity : BaseActivity() {
                         CategoryFragment.newInstance(SERIES, 4),
                         CategoryFragment.newInstance(SERIES_CN, 0),
                         CategoryFragment.newInstance(SERIES_CN, 1),
-                        CategoryFragment.newInstance(SCP_INTERNATIONAL, 1),
+                        CategoryFragment.newInstance(SCP_INTERNATIONAL, 0),
                         ScpListFragment.newInstance(SCP_EX, 0), // cn合并
                         CategoryFragment.newInstance(SCP_ARCHIVES, 0)
                 )

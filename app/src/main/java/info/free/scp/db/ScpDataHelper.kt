@@ -76,10 +76,24 @@ class ScpDataHelper {
         return queryList
     }
 
-    // TODO
-//    fun getInternationalByCountryAndType(): MutableList<ScpModel> {
-//
-//    }
+    fun getInternationalByCountry(country: String): MutableList<ScpModel> {
+        val queryList = emptyList<ScpModel>().toMutableList()
+        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        // 数据库检索
+        queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getInternationalByCountry("$country%")
+                ?: emptyList())
+        if (PreferenceUtil.getHideFinished()) {
+            // 去掉已读部分
+            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+            queryList.removeAll {
+                hasReadList.map { it_ ->
+                    it_.link
+                }.contains(it.link)
+            }
+        }
+
+        return queryList
+    }
 
 
     fun getSinglePageByType(type: Int): MutableList<ScpItemModel> {

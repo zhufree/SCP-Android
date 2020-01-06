@@ -45,15 +45,13 @@ class ScpListFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         val lm = LinearLayoutManager(mContext, VERTICAL, false)
         rv_category_list?.layoutManager = lm
-        initScpAdapter()
+        categoryType = arguments?.getInt("category_type") ?: -1
+        clickPosition = arguments?.getInt("click_position") ?: -1
     }
 
     private fun initScpAdapter() {
-        categoryType = arguments?.getInt("category_type") ?: -1
-        clickPosition = arguments?.getInt("click_position") ?: -1
         if (scpAdapter == null) {
             Log.i(tag, "初始化scpAdapter")
-            getScpList()
             scpList?.let {
                 scpAdapter = ScpAdapter(mContext!!, it)
             }
@@ -95,11 +93,23 @@ class ScpListFragment : BaseFragment() {
                 scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
             }
             SCPConstants.Category.SCP_INTERNATIONAL -> {
-                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_INTERNATIONAL))
+                when (clickPosition) {
+                    0 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("俄国分部"))
+                    1 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("韩国分部"))
+                    2 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("法国分部"))
+                    3 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("波兰分部"))
+                    4 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("西班牙分部"))
+                    5 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("泰国分部"))
+                    6 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("日本分部"))
+                    7 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("德国分部"))
+                    8 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("意大利分部"))
+                    9 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("乌克兰分部"))
+                    10 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("葡萄牙语分部"))
+                    11 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("捷克分部"))
+                    12 -> scpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("非官方分部"))
+
+                }
             }
-//            SCPConstants.Category.SCP_EX_CN -> {
-//                scpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
-//            }
             SCPConstants.Category.SCP_ABNORMAL -> {
                 scpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
                 // 三句话外围
@@ -181,7 +191,11 @@ class ScpListFragment : BaseFragment() {
             }
         }
         if (scpList?.size == 0) {
-            toast("该页没有内容或数据加载未完成")
+            if (categoryType == SCPConstants.Category.SCP_INTERNATIONAL) {
+                toast("该页没有内容或数据加载未完成，请检查数据库是否是最新版本")
+            } else {
+                toast("该页没有内容或数据加载未完成")
+            }
         }
         scpAdapter?.notifyDataSetChanged()
     }
@@ -189,6 +203,7 @@ class ScpListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         getScpList()
+        initScpAdapter()
         if (currentScrollPosition > -1 && currentScrollPosition < scpList?.size ?: 0) {
             rv_category_list?.scrollToPosition(currentScrollPosition)
         }

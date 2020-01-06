@@ -38,17 +38,17 @@ class CategoryFragment : BaseFragment() {
     }
 
     private fun initData() {
-        categoryType = arguments?.getInt("category_type")?:-1
-        subPosition = arguments?.getInt("sub_position")?:-1
+        categoryType = arguments?.getInt("category_type") ?: -1
+        subPosition = arguments?.getInt("sub_position") ?: -1
         categoryList.clear()
         // 一级目录
         when (categoryType) {
             SCPConstants.Category.SERIES -> {
                 // count = 100 0..10->001~900
-                categoryList.addAll((0 until (1000/categoryCount)).map { (it+subPosition*10)*categoryCount })
+                categoryList.addAll((0 until (1000 / categoryCount)).map { (it + subPosition * 10) * categoryCount })
             }
             SCPConstants.Category.SERIES_CN -> {
-                categoryList.addAll((0 until (1000/categoryCount)).map { (it+subPosition*10)*categoryCount })
+                categoryList.addAll((0 until (1000 / categoryCount)).map { (it + subPosition * 10) * categoryCount })
             }
             SCPConstants.Category.SCP_ARCHIVES -> {
                 categoryList.addAll(arrayOf("已归档SCP", "废弃SCP", "删除SCP"))
@@ -69,6 +69,11 @@ class CategoryFragment : BaseFragment() {
             SCPConstants.Category.TALES_BY_TIME -> {
                 categoryList.addAll(arrayOf("2014", "2015", "2016", "2017", "2018"))
             }
+            SCPConstants.Category.SCP_INTERNATIONAL -> {
+                categoryList.addAll(arrayOf("俄国分部", "韩国分部", "法国分部", "波兰分部", "西班牙分部",
+                        "泰国分部", "日本分部", "德国分部", "意大利分部", "乌克兰分部", "葡萄牙语分部",
+                        "捷克分部", "非官方分部"))
+            }
         }
 
         if (categoryAdapter == null) {
@@ -81,7 +86,7 @@ class CategoryFragment : BaseFragment() {
                         currentCategoryPosition = position
                         val subCateIntent = Intent(it, ScpListActivity::class.java)
                         subCateIntent.putExtra("category_type", categoryType)
-                        subCateIntent.putExtra("click_position", (subPosition*10)+position)
+                        subCateIntent.putExtra("click_position", (subPosition * 10) + position)
                         startActivity(subCateIntent)
                     }
                 }

@@ -16,6 +16,7 @@ interface FreeApi {
     @Headers(PrivateConstants.CONTENT_TYPE_JSON, PrivateConstants.APP_ID, PrivateConstants.API_KEY)
     @GET("1/classes/MealModel")
     suspend fun getAllMeal(@Query("skip") skip: Int = 0,
+                           @Query("where") enable: String = "{\"enable\":true}", // 只显示enable的
                            @Query("order") order: String = "order")
             : ApiBean.ApiListResponse<MealModel>
 }

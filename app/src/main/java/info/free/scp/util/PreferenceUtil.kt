@@ -69,6 +69,14 @@ object PreferenceUtil {
         return if (prefUrl.isNotEmpty()) prefUrl else SCPConstants.FEED_API_URL
     }
 
+    fun setShowMeal(show: Boolean) {
+        setBooleanValue(APP_SP, "show_meal", show)
+    }
+
+    fun getShowMeal(): Boolean {
+        return getBooleanValue(APP_SP, "show_meal")
+    }
+
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all
@@ -135,24 +143,6 @@ object PreferenceUtil {
     fun setCurrentTheme(theme: Int) {
         setIntValue("theme", "currentTheme", theme)
     }
-
-    /**
-     * 检测小组件当天是否更新
-     */
-
-    fun setLastUpdateWidgetTime(time: Long) {
-        setLongValue(APP_SP, "lastUpdateWidgetTime", time)
-    }
-
-    fun checkNeedUpdateWidget(): Boolean {
-        val lastTime = getLongValue(APP_SP, "lastUpdateWidgetTime")
-        val cal = Calendar.getInstance()
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
-                0, 0, 0)
-        val beginOfDate = cal.timeInMillis
-        return lastTime < beginOfDate
-    }
-
 
     /**
      * 积分系统

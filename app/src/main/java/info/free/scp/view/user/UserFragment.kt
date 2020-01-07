@@ -18,6 +18,7 @@ import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -114,6 +115,9 @@ class UserFragment : BaseFragment() {
         }
         tv_nickname.setOnClickListener { checkUserInfo() }
         getHeadImg()
+        if (PreferenceUtil.getShowMeal()) {
+            st_meal.visibility = VISIBLE
+        }
         setSettingEvent()
     }
 

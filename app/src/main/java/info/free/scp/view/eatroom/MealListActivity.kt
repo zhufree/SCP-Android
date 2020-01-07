@@ -5,6 +5,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import info.free.scp.R
 import info.free.scp.bean.MealModel
 import info.free.scp.bean.PortalModel
@@ -27,6 +29,8 @@ class MealListActivity : BaseActivity() {
 
         val adapter = MealAdapter()
         bd.rlMealList.adapter = adapter
+        val lm = StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+        bd.rlMealList.layoutManager = lm
 
         model.getMealList()
                 ?.observe(this, Observer<List<MealModel>> { portals ->

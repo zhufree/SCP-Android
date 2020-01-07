@@ -1,5 +1,8 @@
 package info.free.scp.view.eatroom
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +33,11 @@ class MealAdapter : ListAdapter<MealModel, MealAdapter.MealHolder>(MealDiffCallb
 
     private fun createOnClickListener(meal: MealModel): View.OnClickListener {
         return View.OnClickListener {
-
+            val updateIntent = Intent()
+            updateIntent.action = "android.intent.action.VIEW"
+            val updateUrl = Uri.parse(meal.link)
+            updateIntent.data = updateUrl
+            (it.context as Activity).startActivity(updateIntent)
         }
     }
 

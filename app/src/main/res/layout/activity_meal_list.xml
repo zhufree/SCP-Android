@@ -19,7 +19,7 @@
                 android:id="@+id/meal_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
-                android:background="@color/colorAccent"
+                android:background="@color/colorPrimaryDark"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:title="@string/meal" />
@@ -41,7 +41,6 @@
             android:id="@+id/rl_meal_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintTop_toBottomOf="@id/abl_meal_list"
             tools:listitem="@layout/item_meal">

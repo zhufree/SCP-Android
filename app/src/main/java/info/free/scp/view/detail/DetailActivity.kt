@@ -127,7 +127,7 @@ class DetailActivity : BaseActivity() {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
-            viewModel.setScp(url)
+            viewModel.setScp(url) // 设置scp
         }
 
         viewModel.getScp()?.observe(this, Observer {
@@ -137,6 +137,11 @@ class DetailActivity : BaseActivity() {
             }
             // TODO
             scp = it
+            viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
+            viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
+                viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
+                invalidateOptionsMenu()
+            })
             setData(it)
         }) ?: run {
             // 数据库没有，加载链接
@@ -144,9 +149,7 @@ class DetailActivity : BaseActivity() {
             webView.loadUrl(fullUrl)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
-        viewModel.getScpInfo()?.observe(this, Observer { scpInfo ->
-            invalidateOptionsMenu()
-        })
+
 
 
         webView?.requestFocus()
@@ -432,8 +435,7 @@ class DetailActivity : BaseActivity() {
      * 已收藏
      */
     private fun likeScp() {
-        val scpInfo = viewModel.getScpInfo()?.value
-        if (scpInfo == null) return
+        val scpInfo = viewModel.getScpLikeInfo()?.value ?: return
         val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
         if (!scpInfo.like) {
             // 未收藏
@@ -486,7 +488,7 @@ class DetailActivity : BaseActivity() {
                 input?.clearFocus()
                 val defaultBox = ScpLikeBox(0, input?.text?.toString() ?: "")
                 info { defaultBox }
-                AppInfoDatabase.getInstance().likeAndReadDao().addLikeBox(defaultBox)
+                AppInfoDatabase.getInstance().likeAndReadDao().saveLikeBox(defaultBox)
                 likeScp()
             }
             negativeButton("取消") {}

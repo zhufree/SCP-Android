@@ -58,12 +58,13 @@ TODO
 - [x] 修改个人页面
 - [x] 增加【站点传送门】页面（主站，主站B站账号，SCP配音团等）
 - [x] 增加国际分部文档
-- [ ] 增加恰饭页面
+- [x] 增加恰饭页面
+- [ ] 增加收藏夹的操作
 - [ ] 目录条目bug（还没找到原因）
 
 历史版本
 # v0.1.4
-- [x] 解决数据库下载慢的问题（备案域名中，15天剩余）
+- [x] 解决数据库下载慢的问题
 - [x] 更新一遍数据库
 - [x] [最高评分页面](http://scp-wiki-cn.wikidot.com/top-rated-pages)
   - [x] 最受欢迎的原创SCP请[点击这里](http://scp-wiki-cn.wikidot.com/top-rated-pages/pagescp_limit/1/all_range/-/scp_range/others)。

@@ -2,12 +2,9 @@ package info.free.scp.view.detail
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.util.PreferenceUtil
-import org.jetbrains.anko.selector
 
 class DetailViewModel : ViewModel() {
     var repo = DetailRepository()
@@ -16,7 +13,7 @@ class DetailViewModel : ViewModel() {
         return repo.scp
     }
 
-    fun getScpInfo(): LiveData<ScpLikeModel>? {
+    fun getScpLikeInfo(): LiveData<ScpLikeModel>? {
         return repo.scpLikeInfo
     }
 
@@ -29,6 +26,14 @@ class DetailViewModel : ViewModel() {
      */
     fun setScp(link: String) {
         repo.setScp(link)
+    }
+
+    fun setScpReadInfo() {
+        repo.setScpReadInfo()
+    }
+
+    fun setScpLikeInfo() {
         repo.setScpLikeInfo()
+
     }
 }

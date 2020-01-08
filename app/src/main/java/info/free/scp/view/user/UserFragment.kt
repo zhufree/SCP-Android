@@ -273,7 +273,7 @@ class UserFragment : BaseFragment() {
         user_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(ThemeUtil.lightText)
-        arrayOf(st_draft, st_like, st_history, st_game, st_portal, st_dark_mode, st_read, st_data, st_use,
+        arrayOf(st_draft, st_like, st_history, st_game, st_meal, st_portal, st_dark_mode, st_read, st_data, st_use,
                 st_copyright, st_donate, st_query).forEach { it?.refreshTheme() }
     }
 

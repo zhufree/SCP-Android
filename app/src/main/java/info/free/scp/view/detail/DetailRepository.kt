@@ -3,16 +3,12 @@ package info.free.scp.view.detail
 import androidx.lifecycle.LiveData
 import info
 import info.free.scp.SCPConstants
-import info.free.scp.bean.DraftModel
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
-import info.free.scp.service.HttpManager
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 class DetailRepository {
@@ -24,15 +20,18 @@ class DetailRepository {
 
     fun setScp(link: String) {
         scp = scpDao?.getLiveScpByLink(link) ?: scpDao?.getLiveCollectionByLink(link)
+    }
+
+    fun setScpReadInfo() {
         scp?.value?.let {
             ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
             AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+            scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
         }
     }
 
     fun setScpLikeInfo() {
         scp?.value?.let {
-            scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
             if (scpLikeInfo?.value == null) {
                 val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
                 likeDao.save(likeInfo)
@@ -45,7 +44,7 @@ class DetailRepository {
     fun setScpBoxList() {
         scpLikeBoxList.value?.let {
             if (it.isEmpty()) {
-                likeDao.addLikeBox(ScpLikeBox(0, "默认收藏夹"))
+                likeDao.saveLikeBox(ScpLikeBox(0, "默认收藏夹"))
             }
         }
         scpLikeBoxList = likeDao.getLiveLikeBox()

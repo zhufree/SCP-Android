@@ -133,6 +133,14 @@ object PreferenceUtil {
         sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
     }
 
+    fun setShownReadSuggest() {
+        setBooleanValue(INIT_SP, "shownReadSuggest", true)
+    }
+
+    fun getShownReadSuggest(): Boolean {
+        return getBooleanValue(INIT_SP, "shownReadSuggest")
+    }
+
     /**
      * 主题相关
      */

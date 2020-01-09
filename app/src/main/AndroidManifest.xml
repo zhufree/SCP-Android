@@ -20,24 +20,23 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".view.eatroom.MealListActivity"
-            android:parentActivityName=".BaseActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="BaseActivity" />
+            android:screenOrientation="nosensor">
         </activity>
         <activity
             android:name=".view.portal.PortalActivity"
-            android:parentActivityName=".BaseActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="BaseActivity" />
+            android:screenOrientation="nosensor">
         </activity>
-        <activity android:name=".view.feed.TopRatedListActivity" />
-        <activity android:name=".view.user.DonationActivity" />
+        <activity
+            android:name=".view.feed.TopRatedListActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.user.DonationActivity"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
+            android:screenOrientation="nosensor"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -46,17 +45,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.category.ScpListActivity" />
-        <activity android:name=".view.detail.DetailActivity" />
-        <activity android:name=".view.base.BaseActivity" />
-        <activity android:name=".view.user.AboutAppActivity">
+        <activity
+            android:name=".view.category.ScpListActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.detail.DetailActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.base.BaseActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.user.AboutAppActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutAppActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.user.DonationQrActivity">
+        <activity
+            android:name=".view.user.DonationQrActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutMeActivity" />
 
@@ -65,23 +74,33 @@
         </activity> <!-- <service -->
         <!-- android:name=".service.InitDetailService" -->
         <!-- android:enabled="true" /> -->
-        <activity android:name=".view.search.SearchActivity" />
-        <activity android:name=".view.like.LikeBoxActivity">
+        <activity
+            android:name=".view.search.SearchActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.like.LikeBoxActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.like.LikeBoxActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.like.LikeActivity" />
-        <activity android:name=".view.user.LaterAndHistoryActivity">
+        <activity
+            android:name=".view.like.LikeActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.user.LaterAndHistoryActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.game.GameListActivity">
+        <activity
+            android:name=".view.game.GameListActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.game.GameListActivity" />
 
@@ -90,6 +109,7 @@
         </activity>
         <activity
             android:name=".view.user.SettingsActivity"
+            android:screenOrientation="nosensor"
             android:label="@string/title_activity_settings">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.SettingsActivity" />
@@ -97,17 +117,27 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.category.SeriesDocActivity" />
-        <activity android:name=".view.home.DirectActivity" />
-        <activity android:name=".view.draft.DraftEditActivity">
+        <activity
+            android:name=".view.category.SeriesDocActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.home.DirectActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.draft.DraftEditActivity"
+            android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.draft.DraftEditActivity" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.draft.DraftListActivity" />
-        <activity android:name=".view.download.DownloadActivity" />
+        <activity
+            android:name=".view.draft.DraftListActivity"
+            android:screenOrientation="nosensor" />
+        <activity
+            android:name=".view.download.DownloadActivity"
+            android:screenOrientation="nosensor" />
 
         <meta-data
             android:name="UMENG_CHANNEL"

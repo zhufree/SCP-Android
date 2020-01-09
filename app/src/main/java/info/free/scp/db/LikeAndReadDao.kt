@@ -5,9 +5,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import androidx.room.Delete
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
-import retrofit2.http.DELETE
 
 /**
  * 读过和like信息
@@ -18,7 +18,7 @@ interface LikeAndReadDao {
     fun save(info: ScpLikeModel)
 
     @Insert(onConflict = REPLACE)
-    fun saveAll(infos: List<ScpLikeModel>)
+    fun saveAll(info: List<ScpLikeModel>)
 
     @Query("SELECT * FROM like_table WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpLikeModel?
@@ -37,6 +37,9 @@ interface LikeAndReadDao {
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 AND `boxId` = :boxId")
     fun getLikeListByBoxId(boxId: Int): List<ScpLikeModel>
+
+    @Delete
+    fun deleteLike(like: ScpLikeModel)
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 ORDER BY title")
     fun getOrderedLikeList(): List<ScpLikeModel>

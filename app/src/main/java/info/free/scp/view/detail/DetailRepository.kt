@@ -16,7 +16,6 @@ class DetailRepository {
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
     private var scpDao = ScpDatabase.getInstance()?.scpDao()
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    var scpLikeBoxList: LiveData<List<ScpLikeBox>> = likeDao.getLiveLikeBox()
 
     fun setScp(link: String) {
         scp = scpDao?.getLiveScpByLink(link) ?: scpDao?.getLiveCollectionByLink(link)
@@ -34,19 +33,10 @@ class DetailRepository {
         scp?.value?.let {
             if (scpLikeInfo?.value == null) {
                 val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                info("save new like info:${likeInfo}")
                 likeDao.save(likeInfo)
-                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
-                info("create new like info:${scpLikeInfo?.value?.title ?: ""}")
+//                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
             }
         }
-    }
-
-    fun setScpBoxList() {
-        scpLikeBoxList.value?.let {
-            if (it.isEmpty()) {
-                likeDao.saveLikeBox(ScpLikeBox(0, "默认收藏夹"))
-            }
-        }
-        scpLikeBoxList = likeDao.getLiveLikeBox()
     }
 }

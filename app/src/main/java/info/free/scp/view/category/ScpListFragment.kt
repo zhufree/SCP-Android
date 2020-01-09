@@ -57,6 +57,7 @@ class ScpListFragment : BaseFragment() {
             }
             scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                 override fun onItemClick(view: View, position: Int) {
+                    currentScrollPosition = position
                     scpList?.let {
                         PreferenceUtil.addPoints(2)
                         val intent = Intent()

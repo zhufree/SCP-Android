@@ -139,8 +139,11 @@ class DetailActivity : BaseActivity() {
             scp = it
             viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
             viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
-                viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
-                invalidateOptionsMenu()
+                if (scpInfo == null) {
+                    info("init like info")
+                    viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
+                    invalidateOptionsMenu()
+                }
             })
             setData(it)
         }) ?: run {
@@ -381,17 +384,15 @@ class DetailActivity : BaseActivity() {
                         if (currentTextSizeIndex < 4) {
                             currentTextSizeIndex++
                             refreshStyle()
-                        } else {
-
                         }
+                        return@let
                     }
                     R.id.small_text -> {
                         if (currentTextSizeIndex > 0) {
                             currentTextSizeIndex--
                             refreshStyle()
-                        } else {
-
                         }
+                        return@let
                     }
                     R.id.translate_to_simple -> {
                         translate(simple)
@@ -435,6 +436,7 @@ class DetailActivity : BaseActivity() {
      * 已收藏
      */
     private fun likeScp() {
+        info("get like info when like:${viewModel.getScpLikeInfo()?.value}")
         val scpInfo = viewModel.getScpLikeInfo()?.value ?: return
         val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
         if (!scpInfo.like) {

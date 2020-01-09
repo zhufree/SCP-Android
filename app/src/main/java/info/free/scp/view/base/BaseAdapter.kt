@@ -19,7 +19,7 @@ abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any?>(context: Context
     : RecyclerView.Adapter<H>(),
         View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null
-    private var mOnItemLongClickListener: OnItemLongClickListener? = null
+    var mOnItemLongClickListener: OnItemLongClickListener? = null
     var mInflater: LayoutInflater? = LayoutInflater.from(context)
     var mContext: Context? = context
 

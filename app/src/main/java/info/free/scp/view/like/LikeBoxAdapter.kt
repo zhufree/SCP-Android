@@ -47,7 +47,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
 
     private fun createOnLongClickListener(box: ScpLikeBox): View.OnLongClickListener {
         return View.OnLongClickListener {
-            onLongClick(it.id)
+            onLongClick(box.id)
             true
         }
     }
@@ -55,7 +55,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
     private fun onLongClick(id: Int) {
         if (id == 1) return
         val selectOption = listOf("删除收藏夹并删除其中收藏内容", "删除收藏夹，将其中内容转移到默认收藏夹", "重命名收藏夹", "我手滑了")
-        ScpApplication.currentActivity?.selector("确定要删除收藏夹吗?", selectOption) { out, which ->
+        ScpApplication.currentActivity?.selector("Notice", selectOption) { out, which ->
             val field = out.javaClass.superclass?.getDeclaredField(
                     "mShowing")
             field?.isAccessible = true
@@ -75,6 +75,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
                             likeDao.deleteLikeBoxById(id)
                             field?.set(out, true)
                             out.dismiss()
+                            updateList()
                         }
                         negativeButton("我手滑了") { field?.set(out, true) }
                     }?.show()
@@ -91,6 +92,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
                             }
                             likeDao.saveAll(likeList)
                             likeDao.deleteLikeBoxById(id)
+                            updateList()
                         }
                         negativeButton("我手滑了") { field?.set(out, true) }
                     }?.show()
@@ -103,7 +105,19 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
                     out.dismiss()
                 }
             }
+
         }
+    }
+
+    private fun updateList() {
+        val boxList = arrayListOf<ScpLikeBox>()
+        boxList.addAll(likeDao.getLikeBox())
+        if (boxList.isEmpty()) {
+            val defaultBox = ScpLikeBox(0, "默认收藏夹")
+            boxList.add(defaultBox)
+            likeDao.saveLikeBox(defaultBox)
+        }
+        submitList(boxList)
     }
 
     private fun showInputAlert(out: DialogInterface, field: Field?, boxId: Int) {
@@ -128,6 +142,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
                 val likeBox = likeDao.getLikeBoxById(boxId)
                 likeBox.name = input?.text?.toString() ?: likeBox.name
                 likeDao.saveLikeBox(likeBox)
+                updateList()
                 field?.set(out, true)
                 out.dismiss()
             }

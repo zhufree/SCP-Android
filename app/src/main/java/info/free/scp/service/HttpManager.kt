@@ -1,6 +1,7 @@
 package info.free.scp.service
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.SCPConstants.TOP_RATED_ALL
@@ -74,7 +75,14 @@ class HttpManager {
                 feedApiService.getLatestCn(pageIndex)
             }
         }
+    }
 
+    suspend fun getCategory(scpType: Int = SERIES): ApiBean.ApiListResponse<ScpItemModel> {
+        return feedApiService.getCategory(scpType)
+    }
+
+    suspend fun getDetail(link: String = "sco-001"): ApiBean.ApiListResponse<String> {
+        return feedApiService.getDetail(link)
     }
 
 

@@ -1,6 +1,7 @@
 package info.free.scp.db
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -45,9 +46,11 @@ class ScpDataHelper {
         val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
         if (type in (13..22)) {
-            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)?: emptyList())
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)
+                    ?: emptyList())
         } else {
-            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)
+                    ?: emptyList())
         }
 
         if (PreferenceUtil.getHideFinished()) {

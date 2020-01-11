@@ -6,13 +6,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.databinding.FragmentCategoryBinding
+import info.free.scp.databinding.SubFeedFragmentBinding
 import info.free.scp.db.ScpDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
@@ -30,50 +35,49 @@ class ScpListFragment : BaseFragment() {
     private var clickPosition = -1
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private val scpList: MutableList<ScpModel?>? = emptyList<ScpModel>().toMutableList()
-    private var scpAdapter: ScpAdapter? = null
     private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    private var currentScrollPosition = -1
 
     private val taleCategory = arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
             "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
+    private lateinit var binding: FragmentCategoryBinding
+    private val viewModel by lazy {
+        ViewModelProvider(this)
+                .get(CategoryViewModel::class.java)
+    }
+    private val adapter by lazy {
+        ScpAdapter()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_category, container, false)
+        binding = FragmentCategoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val lm = LinearLayoutManager(mContext, VERTICAL, false)
-        rv_category_list?.layoutManager = lm
         categoryType = arguments?.getInt("category_type") ?: -1
         clickPosition = arguments?.getInt("click_position") ?: -1
-    }
 
-    private fun initScpAdapter() {
-        if (scpAdapter == null) {
-            Log.i(tag, "初始化scpAdapter")
-            scpList?.let {
-                scpAdapter = ScpAdapter(mContext!!, it)
-            }
-            scpAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
-                override fun onItemClick(view: View, position: Int) {
-                    currentScrollPosition = position
-                    scpList?.let {
-                        PreferenceUtil.addPoints(2)
-                        val intent = Intent()
-                        intent.putExtra("link", it[position]?.link)
-                        intent.putExtra("scp_type", if (it[position] is ScpCollectionModel) 1 else 0)
-                        intent.setClass(mContext, DetailActivity::class.java)
-                        startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
-                    }
-                }
-            }
+        viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
+            binding.slCategory.isRefreshing = false
+            if (result != null && result.isNotEmpty()) adapter.submitList(result)
+        })
+        binding.rvCategoryList.adapter = adapter
+        if (PreferenceUtil.getAppMode() == ONLINE) {
+            binding.slCategory.isRefreshing = true
         }
-        rv_category_list?.adapter = scpAdapter
-        scpAdapter?.notifyDataSetChanged()
+        if (PreferenceUtil.getAppMode() != ONLINE) {
+            viewModel.loadCat(categoryType)
+        } else {
+            getScpListOffline()
+            adapter.submitList(scpList)
+        }
+        binding.slCategory.setOnRefreshListener {
+            //            todo binding.slCategory.isRefreshing = false
+        }
     }
 
-    private fun getScpList() {
+    private fun getScpListOffline() {
         Log.i("category", "加载scp列表")
         scpList?.clear()
         when (categoryType) {
@@ -198,21 +202,17 @@ class ScpListFragment : BaseFragment() {
                 toast("该页没有内容或数据加载未完成")
             }
         }
-        scpAdapter?.notifyDataSetChanged()
     }
 
     override fun onResume() {
         super.onResume()
-        getScpList()
-        initScpAdapter()
-        if (currentScrollPosition > -1 && currentScrollPosition < scpList?.size ?: 0) {
-            rv_category_list?.scrollToPosition(currentScrollPosition)
+        if (adapter.currentScrollPosition > -1 && adapter.currentScrollPosition < scpList?.size ?: 0) {
+            rv_category_list?.scrollToPosition(adapter.currentScrollPosition)
         }
     }
 
     fun reverseScpList() {
         scpList?.reverse()
-        scpAdapter?.notifyDataSetChanged()
     }
 
 

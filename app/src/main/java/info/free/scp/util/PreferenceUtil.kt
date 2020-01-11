@@ -77,6 +77,14 @@ object PreferenceUtil {
         return getBooleanValue(APP_SP, "show_meal")
     }
 
+    // 设置全局在线模式or离线模式
+    fun setAppMode(mode: Int) {
+        setIntValue(APP_SP, "app_mode", mode)
+    }
+
+    fun getAppMode(): Int {
+        return getIntValue(APP_SP, "app_mode")
+    }
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all

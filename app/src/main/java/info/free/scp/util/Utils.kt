@@ -257,15 +257,4 @@ object Utils {
         bos.close()
         return RequestBody.create(MediaType.parse("application/octet-stream"), bos.toByteArray())
     }
-
-    fun getDownloadTitleByType(downloadType: Int): String{
-        return when (downloadType) {
-            SCPConstants.Download.DOWNLOAD_SCP -> "SCP系列"
-            SCPConstants.Download.DOWNLOAD_SCP_CN -> "SCP-CN系列"
-            SCPConstants.Download.DOWNLOAD_TALE -> "基金会故事"
-            SCPConstants.Download.DOWNLOAD_ARCHIVES -> "其他文档"
-            SCPConstants.Download.DOWNLOAD_COLLECTIONS -> "故事系列，设定中心，正文竞赛等"
-            else -> "正文"
-        }
-    }
 }

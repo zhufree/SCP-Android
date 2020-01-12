@@ -17,4 +17,8 @@ class CategoryViewModel : ViewModel() {
             catRepo.loadCatList(feedType)
         }
     }
+
+    fun reverseCat() {
+        catRepo.reverseCat()
+    }
 }

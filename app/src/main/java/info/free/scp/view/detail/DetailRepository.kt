@@ -18,7 +18,8 @@ class DetailRepository {
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
 
     fun setScp(link: String) {
-        scp = scpDao?.getLiveScpByLink(link) ?: scpDao?.getLiveCollectionByLink(link)
+        val liveScp = scpDao?.getLiveScpByLink(link)
+        scp = if (liveScp?.value != null) liveScp else scpDao?.getLiveCollectionByLink(link)
     }
 
     fun setScpReadInfo() {

@@ -263,6 +263,7 @@ class DetailActivity : BaseActivity() {
         tv_detail_toolbar?.isSelected = true
         url = scp.link
         refreshReadBtnStatus()
+        // TODO get detail
         detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
         // 显示frame
         if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {

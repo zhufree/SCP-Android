@@ -1,7 +1,12 @@
 package info.free.scp.service
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.CONTEST
+import info.free.scp.SCPConstants.Category.CONTEST_CN
 import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.Category.SERIES_CN
+import info.free.scp.SCPConstants.Category.SETTINGS
+import info.free.scp.SCPConstants.Category.SETTINGS_CN
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.SCPConstants.TOP_RATED_ALL
@@ -77,11 +82,15 @@ class HttpManager {
         }
     }
 
-    suspend fun getCategory(scpType: Int = SERIES): ApiBean.ApiListResponse<ScpItemModel> {
-        return feedApiService.getCategory(scpType)
+    // TODO range
+    suspend fun getCategory(scpType: Int = SERIES): ApiBean.ApiListResponse<out ScpModel> {
+        val collectionTypeList = arrayOf(SETTINGS, SETTINGS_CN, CONTEST, CONTEST_CN)
+        return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
+            if (scpType in arrayOf(SERIES, SERIES_CN)) feedApiService.getScpCategory(scpType, 500)
+            else feedApiService.getScpCategory(scpType)
     }
 
-    suspend fun getDetail(link: String = "sco-001"): ApiBean.ApiListResponse<String> {
+    suspend fun getDetail(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
         return feedApiService.getDetail(link)
     }
 

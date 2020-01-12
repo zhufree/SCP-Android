@@ -16,7 +16,14 @@ class CategoryRepository {
 
             }, {
                 scpList.value = response.results
+                // TODO 加上阅读信息
             })
         }
+    }
+
+    fun reverseCat() {
+        val innerList = scpList.value?.toMutableList()
+        innerList?.reverse()
+        scpList.postValue(innerList)
     }
 }

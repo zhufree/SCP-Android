@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
@@ -61,6 +62,7 @@ class DetailActivity : BaseActivity() {
             field = value
             fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
         }
+    private var title = ""
     private var scp: ScpModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
@@ -112,13 +114,12 @@ class DetailActivity : BaseActivity() {
         webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
+        title = intent.getStringExtra("title") ?: ""
         // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
         itemType = intent.getIntExtra("scp_type", 0)
-
-
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
 
@@ -127,11 +128,12 @@ class DetailActivity : BaseActivity() {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else {
-            viewModel.setScp(url) // 设置scp
+            viewModel.setScp(url, title) // 设置scp
         }
 
         viewModel.getScp()?.observe(this, Observer {
             // 数据库取到
+            it as ScpModel
             if (readType == 1) {
                 randomList.add(it)
             }
@@ -154,6 +156,25 @@ class DetailActivity : BaseActivity() {
         }
 
 
+        viewModel.getDetail().observe(this, Observer { detail ->
+            var detailHtml = detail
+            // 显示frame
+            if (detailHtml?.contains("""<iframe src="//player.bilibili.com""") == false) {
+                detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+            }
+            detailHtml = detailHtml?.replace("html-block-iframe", "")
+
+            if (detailHtml?.isEmpty() == true) {
+                pbLoading.visibility = VISIBLE
+                webView.loadUrl(fullUrl)
+            } else {
+                pbLoading.visibility = GONE
+                webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                        + detailHtml + jsScript,
+                        "text/html", "utf-8", null)
+            }
+            nsv_web_wrapper?.scrollTo(0, 0)
+        })
 
         webView?.requestFocus()
 
@@ -263,24 +284,7 @@ class DetailActivity : BaseActivity() {
         tv_detail_toolbar?.isSelected = true
         url = scp.link
         refreshReadBtnStatus()
-        // TODO get detail
-        detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
-        // 显示frame
-        if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
-            detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
-        }
-        detailHtml = detailHtml.replace("html-block-iframe", "")
-
-        if (detailHtml.isEmpty()) {
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
-        } else {
-            pbLoading.visibility = GONE
-            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                    + detailHtml + jsScript,
-                    "text/html", "utf-8", null)
-        }
-        nsv_web_wrapper?.scrollTo(0, 0)
+        viewModel.loadDetail(url)
     }
 
 

@@ -85,6 +85,7 @@ object PreferenceUtil {
     fun getAppMode(): Int {
         return getIntValue(APP_SP, "app_mode")
     }
+
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all
@@ -148,6 +149,16 @@ object PreferenceUtil {
     fun getShownReadSuggest(): Boolean {
         return getBooleanValue(INIT_SP, "shownReadSuggest")
     }
+
+    fun setShownModeNotice() {
+        setBooleanValue(INIT_SP, "shownModeNotice", true)
+    }
+
+    fun getShownModeNotice(): Boolean {
+        return getBooleanValue(INIT_SP, "ShownModeNotice")
+    }
+
+
 
     /**
      * 主题相关

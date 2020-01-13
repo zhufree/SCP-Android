@@ -98,6 +98,8 @@ class HomeFragment : BaseFragment() {
                 }
             }.show()
             PreferenceUtil.setShownModeNotice()
+        } else {
+            startActivity<SeriesDocActivity>("entry_type" to entry_type)
         }
     }
 

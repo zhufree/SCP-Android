@@ -11,15 +11,18 @@
             android:key="category_count"
             android:title="@string/category_count"
             android:entries="@array/category_count_key"
+            android:defaultValue="100"
             android:entryValues="@array/category_count_value" />
         <DropDownPreference
             android:key="category_height"
             android:title="@string/category_height"
+            android:defaultValue="50"
             android:entries="@array/category_height_key"
             android:entryValues="@array/category_height_value" />
         <DropDownPreference
             android:key="category_interval"
             android:title="@string/category_interval"
+            android:defaultValue="4"
             android:entries="@array/category_interval_key"
             android:entryValues="@array/category_interval_value" />
     </PreferenceCategory>

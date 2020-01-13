@@ -137,7 +137,6 @@ class DetailActivity : BaseActivity() {
             if (readType == 1) {
                 randomList.add(it)
             }
-            // TODO
             scp = it
             viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
             viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->

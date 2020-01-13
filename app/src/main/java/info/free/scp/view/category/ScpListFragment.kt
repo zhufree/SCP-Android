@@ -59,13 +59,13 @@ class ScpListFragment : BaseFragment() {
             binding.slCategory.isRefreshing = true
         }
         if (PreferenceUtil.getAppMode() == ONLINE) {
-            viewModel.loadCat(categoryType)
+            viewModel.loadCat(categoryType, clickPosition)
         } else {
             getScpListOffline()
             adapter.submitList(localScpList)
         }
         binding.slCategory.setOnRefreshListener {
-            viewModel.loadCat(categoryType)
+            viewModel.loadCat(categoryType, clickPosition)
         }
     }
 

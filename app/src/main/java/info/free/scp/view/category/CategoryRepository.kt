@@ -9,14 +9,13 @@ import info.free.scp.service.HttpManager
 class CategoryRepository {
     var scpList = MutableLiveData<List<ScpModel>>()
 
-    suspend fun loadCatList(scpType: Int) {
-        val response = apiCall { HttpManager.instance.getCategory(scpType) }
+    suspend fun loadCatList(scpType: Int, limit: Int, start: Int) {
+        val response = apiCall { HttpManager.instance.getCategory(scpType, limit, start) }
         response?.let {
             executeResponse(response, {
 
             }, {
                 scpList.value = response.results
-                // TODO 加上阅读信息
             })
         }
     }

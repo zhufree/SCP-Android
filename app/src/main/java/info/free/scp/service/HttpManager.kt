@@ -82,11 +82,10 @@ class HttpManager {
         }
     }
 
-    // TODO range
-    suspend fun getCategory(scpType: Int = SERIES): ApiBean.ApiListResponse<out ScpModel> {
+    suspend fun getCategory(scpType: Int = SERIES, limit: Int = 100, rangeStart: Int = 0): ApiBean.ApiListResponse<out ScpModel> {
         val collectionTypeList = arrayOf(SETTINGS, SETTINGS_CN, CONTEST, CONTEST_CN)
         return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
-            if (scpType in arrayOf(SERIES, SERIES_CN)) feedApiService.getScpCategory(scpType, 500)
+            if (scpType in arrayOf(SERIES, SERIES_CN)) feedApiService.getScpCategory(scpType, limit, rangeStart)
             else feedApiService.getScpCategory(scpType)
     }
 

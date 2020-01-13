@@ -155,7 +155,7 @@ object PreferenceUtil {
     }
 
     fun getShownModeNotice(): Boolean {
-        return getBooleanValue(INIT_SP, "ShownModeNotice")
+        return getBooleanValue(INIT_SP, "shownModeNotice")
     }
 
 

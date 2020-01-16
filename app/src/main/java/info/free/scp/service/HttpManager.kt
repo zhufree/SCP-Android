@@ -9,6 +9,12 @@ import info.free.scp.SCPConstants.Category.SETTINGS
 import info.free.scp.SCPConstants.Category.SETTINGS_CN
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
+import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
+import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
+import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
@@ -83,9 +89,9 @@ class HttpManager {
     }
 
     suspend fun getCategory(scpType: Int = SERIES, limit: Int = 100, rangeStart: Int = 0): ApiBean.ApiListResponse<out ScpModel> {
-        val collectionTypeList = arrayOf(SETTINGS, SETTINGS_CN, CONTEST, CONTEST_CN)
+        val collectionTypeList = arrayOf(SAVE_SETTINGS, SAVE_SETTINGS_CN, SAVE_CONTEST, SAVE_CONTEST_CN)
         return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
-            if (scpType in arrayOf(SERIES, SERIES_CN)) feedApiService.getScpCategory(scpType, limit, rangeStart)
+            if (scpType in arrayOf(SAVE_SERIES, SAVE_SERIES_CN)) feedApiService.getScpCategory(scpType, limit, rangeStart)
             else feedApiService.getScpCategory(scpType)
     }
 

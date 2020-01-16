@@ -37,7 +37,7 @@ interface ApiService {
 
     @GET("/get_type_category/{scpType}/{limit}/{start}")
     suspend fun getScpCategory(@Path("scpType") scpType: Int, @Path("limit") limit: Int = 500,
-                               @Path("start") rangeStart: Int = -1)
+                               @Path("start") rangeStart: Int = 0)
             : ApiBean.ApiListResponse<ScpItemModel>
 
     @GET("/get_type_category/{scp_type}")

@@ -1,6 +1,7 @@
 package info.free.scp.view.category
 
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_category.*
 import org.jetbrains.anko.support.v4.toast
+import java.util.*
 
 /**
  * 一级目录，点进去是正文
@@ -45,32 +47,6 @@ class ScpListFragment : BaseFragment() {
         return binding.root
     }
 
-    fun getSinglePageByType(resultList: List<ScpModel>, type: Int): List<ScpModel> {
-        val abnormalPageList = arrayOf(
-                "/log-of-extranormal-events",
-                "/log-of-extranormal-events-cn",
-                "/log-of-anomalous-items",
-                "/log-of-anomalous-items-cn")
-        val introPageList = arrayOf(
-                "/faq",
-                "/guide-for-newbies",
-                "/how-to-write-an-scp")
-        val infoPageList = arrayOf(
-                "/secure-facilities-locations",
-                "/secure-facilities-locations-cn",
-                "/object-classes",
-                "/security-clearance-levels",
-                "/task-forces")
-        return resultList.filter {
-            when (type) {
-                SCPConstants.Category.ABOUT_INFO -> infoPageList.contains(it.link)
-                SCPConstants.Category.ABOUT_INTRO -> introPageList.contains(it.link)
-                SCPConstants.Category.SCP_ABNORMAL -> abnormalPageList.contains(it.link)
-                else -> abnormalPageList.contains(it.link)
-            }
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryType = arguments?.getInt("category_type") ?: -1
@@ -79,22 +55,10 @@ class ScpListFragment : BaseFragment() {
         viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
             binding.slCategory.isRefreshing = false
             if (result != null && result.isNotEmpty()) {
-                if (categoryType in arrayOf(SCPConstants.Category.ABOUT_INFO,
-                                SCPConstants.Category.ABOUT_INTRO,
-                                SCPConstants.Category.SCP_ABNORMAL)) {
-                    val filterResult = getSinglePageByType(result, categoryType)
-                    if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
-                        // 三句话外围
-                        val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
-                        val mutableResult = filterResult.toMutableList()
-                        mutableResult.add(shortStories)
-                        adapter.submitList(mutableResult)
-                    } else {
-                        adapter.submitList(filterResult)
-                    }
-                } else {
-                    adapter.submitList(result)
-                }
+                adapter.submitList(result)
+                Handler().postDelayed({
+                    binding.rvCategoryList.scrollToPosition(0)
+                }, 500)
             }
         })
         binding.rvCategoryList.adapter = adapter

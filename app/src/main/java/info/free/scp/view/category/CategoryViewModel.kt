@@ -140,7 +140,7 @@ class CategoryViewModel : ViewModel() {
             }
         }
         viewModelScope.launch {
-            catRepo.loadCatList(saveType, subScpType, limit, start)
+            catRepo.loadCatList(saveType, subScpType, limit, start, categoryType)
         }
     }
 

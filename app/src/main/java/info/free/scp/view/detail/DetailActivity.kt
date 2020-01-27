@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeBox
@@ -633,11 +634,19 @@ class DetailActivity : BaseActivity() {
     private fun initSwitchBtn() {
         refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
-            toPreviewArticle()
+            if (PreferenceUtil.getAppMode() == OFFLINE) {
+                toPreviewArticle()
+            } else {
+                toast("仅限离线模式下使用")
+            }
         }
 
         tv_bottom_next?.setOnClickListener {
-            toNextArticle()
+            if (PreferenceUtil.getAppMode() == OFFLINE) {
+                toNextArticle()
+            } else {
+                toast("仅限离线模式下使用")
+            }
         }
 
         tv_bottom_set_has_read?.setOnClickListener {

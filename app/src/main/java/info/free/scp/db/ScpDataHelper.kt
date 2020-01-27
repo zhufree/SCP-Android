@@ -159,6 +159,8 @@ class ScpDataHelper {
         var scpRecord = AppInfoDatabase.getInstance().readRecordDao().getInfoByLink(link)
         if (scpRecord == null) {
             scpRecord = ScpRecordModel(link, title, viewType)
+        } else {
+            scpRecord.viewListType = viewType
         }
         AppInfoDatabase.getInstance().readRecordDao().save(scpRecord)
     }

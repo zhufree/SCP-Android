@@ -35,8 +35,6 @@ import org.jetbrains.anko.toast
 class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()) {
     var currentScrollPosition = -1
 
-
-
     val holderList: MutableList<ScpHolder> = emptyList<ScpHolder>().toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {

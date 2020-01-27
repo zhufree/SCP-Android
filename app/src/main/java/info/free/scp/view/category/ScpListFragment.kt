@@ -45,6 +45,32 @@ class ScpListFragment : BaseFragment() {
         return binding.root
     }
 
+    fun getSinglePageByType(resultList: List<ScpModel>, type: Int): List<ScpModel> {
+        val abnormalPageList = arrayOf(
+                "/log-of-extranormal-events",
+                "/log-of-extranormal-events-cn",
+                "/log-of-anomalous-items",
+                "/log-of-anomalous-items-cn")
+        val introPageList = arrayOf(
+                "/faq",
+                "/guide-for-newbies",
+                "/how-to-write-an-scp")
+        val infoPageList = arrayOf(
+                "/secure-facilities-locations",
+                "/secure-facilities-locations-cn",
+                "/object-classes",
+                "/security-clearance-levels",
+                "/task-forces")
+        return resultList.filter {
+            when (type) {
+                SCPConstants.Category.ABOUT_INFO -> infoPageList.contains(it.link)
+                SCPConstants.Category.ABOUT_INTRO -> introPageList.contains(it.link)
+                SCPConstants.Category.SCP_ABNORMAL -> abnormalPageList.contains(it.link)
+                else -> abnormalPageList.contains(it.link)
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         categoryType = arguments?.getInt("category_type") ?: -1
@@ -53,12 +79,19 @@ class ScpListFragment : BaseFragment() {
         viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
             binding.slCategory.isRefreshing = false
             if (result != null && result.isNotEmpty()) {
-                if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
-                    // 三句话外围
-                    val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
-                    val mutableResult = result.toMutableList()
-                    mutableResult.add(shortStories)
-                    adapter.submitList(mutableResult)
+                if (categoryType in arrayOf(SCPConstants.Category.ABOUT_INFO,
+                                SCPConstants.Category.ABOUT_INTRO,
+                                SCPConstants.Category.SCP_ABNORMAL)) {
+                    val filterResult = getSinglePageByType(result, categoryType)
+                    if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
+                        // 三句话外围
+                        val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
+                        val mutableResult = filterResult.toMutableList()
+                        mutableResult.add(shortStories)
+                        adapter.submitList(mutableResult)
+                    } else {
+                        adapter.submitList(filterResult)
+                    }
                 } else {
                     adapter.submitList(result)
                 }

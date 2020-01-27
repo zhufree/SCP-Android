@@ -35,12 +35,14 @@ interface ApiService {
     @GET("/top_rated_wanderers/{pageIndex}")
     suspend fun getTopRatedWander(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
 
-    @GET("/get_type_category/{scpType}/{limit}/{start}")
-    suspend fun getScpCategory(@Path("scpType") scpType: Int, @Path("limit") limit: Int = 500,
+    @GET("/get_type_category/{scpType}/{subScpType}/{limit}/{start}")
+    suspend fun getScpCategory(@Path("scpType") scpType: Int,
+                               @Path("subScpType") subScpType: String = "0",
+                               @Path("limit") limit: Int = 500,
                                @Path("start") rangeStart: Int = 0)
             : ApiBean.ApiListResponse<ScpItemModel>
 
-    @GET("/get_type_category/{scp_type}")
+    @GET("/get_collection_category/{scp_type}")
     suspend fun getCollectionCategory(@Path("scp_type") scpType: Int): ApiBean.ApiListResponse<ScpCollectionModel>
 
     @GET("/get_detail/{link}") // 不带/

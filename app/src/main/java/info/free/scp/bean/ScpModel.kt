@@ -15,7 +15,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Entity(tableName = "scps")
-abstract class ScpModel(
+open class ScpModel(
         @PrimaryKey @ColumnInfo(name = "_id") var id: Int = -1,
         @ColumnInfo(name = "_index")
         var index: Int = -1, // 本地数据表中的次序

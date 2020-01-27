@@ -52,7 +52,17 @@ class ScpListFragment : BaseFragment() {
 
         viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
             binding.slCategory.isRefreshing = false
-            if (result != null && result.isNotEmpty()) adapter.submitList(result)
+            if (result != null && result.isNotEmpty()) {
+                if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
+                    // 三句话外围
+                    val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
+                    val mutableResult = result.toMutableList()
+                    mutableResult.add(shortStories)
+                    adapter.submitList(mutableResult)
+                } else {
+                    adapter.submitList(result)
+                }
+            }
         })
         binding.rvCategoryList.adapter = adapter
         if (PreferenceUtil.getAppMode() == ONLINE) {

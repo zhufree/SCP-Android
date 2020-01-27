@@ -12,6 +12,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_DECOMMISSIONED
 import info.free.scp.SCPConstants.ScpType.SAVE_EX
 import info.free.scp.SCPConstants.ScpType.SAVE_EX_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_INFO
+import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
 import info.free.scp.SCPConstants.ScpType.SAVE_INTRO
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
@@ -22,6 +23,9 @@ import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
 import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_TALES
+import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
+import info.free.scp.SCPConstants.ScpType.SINGLE_PAGE
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
@@ -30,6 +34,10 @@ import kotlinx.coroutines.launch
 class CategoryViewModel : ViewModel() {
     private val catRepo = CategoryRepository()
     private val categoryCount = PreferenceUtil.getCategoryCount()
+    private val taleCategory = arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
+            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
+    private val country = arrayOf("俄国分部", "韩国分部", "法国分部", "波兰分部", "西班牙分部", "泰国分部",
+            "日本分部", "德国分部", "意大利分部", "乌克兰分部", "葡萄牙语分部", "捷克分部", "非官方分部")
 
     fun getCat(): MutableLiveData<List<ScpModel>>? {
         return catRepo.scpList
@@ -39,6 +47,7 @@ class CategoryViewModel : ViewModel() {
         var start = 0
         var limit = 100
         var saveType = categoryType // TODO
+        var subScpType = "0"
         when (categoryType) {
             SCPConstants.Category.SERIES -> {
                 // 0,499,999
@@ -55,20 +64,11 @@ class CategoryViewModel : ViewModel() {
                 saveType = SAVE_EX // + EX_CN
             }
             SCPConstants.Category.SCP_INTERNATIONAL -> {
-
+                saveType = SAVE_INTERNATIONAL
+                subScpType = country[clickPosition] + '%'
             }
-            SCPConstants.Category.SCP_ABNORMAL -> {
-                saveType = SAVE_ABNORMAL
-                // 三句话外围
-//                localScpList?.add(ScpDatabase.getInstance()?.scpDao()?.getScpByLink("/short-stories"))
-            }
-            SCPConstants.Category.ABOUT_INFO -> {
-                // 相关材料
-                saveType = SAVE_INFO
-            }
-            SCPConstants.Category.ABOUT_INTRO -> {
-                // 相关材料
-                saveType = SAVE_INTRO
+            SCPConstants.Category.SCP_ABNORMAL, SCPConstants.Category.ABOUT_INFO, SCPConstants.Category.ABOUT_INTRO -> {
+                saveType = SINGLE_PAGE
             }
 
             SCPConstants.Category.SCP_ARCHIVES -> {
@@ -81,20 +81,20 @@ class CategoryViewModel : ViewModel() {
                 }
             }
             SCPConstants.Category.TALES -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES
-//                        , taleCategory[clickPosition]))
+                saveType = SAVE_TALES
+                subScpType = taleCategory[clickPosition]
             }
             SCPConstants.Category.TALES_CN -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES_CN
-//                        , taleCategory[clickPosition]))
+                saveType = SAVE_TALES_CN
+                subScpType = taleCategory[clickPosition]
             }
             // 废弃
-//            SCPConstants.Category.STORY_SERIES -> {
-//                saveType = SAVE_STORY_SERIES
-//            }
-//            SCPConstants.Category.STORY_SERIES_CN -> {
-//                saveType = SAVE_STORY_SERIES_CN
-//            }
+            SCPConstants.Category.STORY_SERIES -> {
+                saveType = SAVE_STORY_SERIES
+            }
+            SCPConstants.Category.STORY_SERIES_CN -> {
+                saveType = SAVE_STORY_SERIES_CN
+            }
             SCPConstants.Category.JOKE -> {
                 // 内容较少，直接全部加载
                 saveType = SAVE_JOKE
@@ -116,31 +116,31 @@ class CategoryViewModel : ViewModel() {
                 saveType = SAVE_CONTEST_CN
             }
 
+            // 废弃,应该是用createTime判断
             SCPConstants.Category.TALES_BY_TIME -> {
-//                if (taleTimeList.isEmpty()) {
-//                    taleTimeList.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_TALES_CN))
-//                }
-//                when (clickPosition) {
-//                    0 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2018") == true })
-//                    }
-//                    1 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2017") == true })
-//                    }
-//                    2 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2016") == true })
-//                    }
-//                    3 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2015") == true })
-//                    }
-//                    4 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2014") == true })
-//                    }
-//                }
+                saveType = SAVE_TALES_CN
+                subScpType = when (clickPosition) {
+                    0 -> {
+                        "2018"
+                    }
+                    1 -> {
+                        "2017"
+                    }
+                    2 -> {
+                        "2016"
+                    }
+                    3 -> {
+                        "2015"
+                    }
+                    4 -> {
+                        "2014"
+                    }
+                    else -> "2018"
+                }
             }
         }
         viewModelScope.launch {
-            catRepo.loadCatList(saveType, limit, start)
+            catRepo.loadCatList(saveType, subScpType, limit, start)
         }
     }
 

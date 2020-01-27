@@ -9,8 +9,8 @@ import info.free.scp.service.HttpManager
 class CategoryRepository {
     var scpList = MutableLiveData<List<ScpModel>>()
 
-    suspend fun loadCatList(scpType: Int, limit: Int, start: Int) {
-        val response = apiCall { HttpManager.instance.getCategory(scpType, limit, start) }
+    suspend fun loadCatList(scpType: Int, subScpType: String, limit: Int, start: Int) {
+        val response = apiCall { HttpManager.instance.getCategory(scpType, subScpType, limit, start) }
         response?.let {
             executeResponse(response, {
 

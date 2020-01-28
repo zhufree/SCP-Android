@@ -8,6 +8,8 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
 import info.free.scp.R
+import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.*
@@ -85,6 +87,10 @@ class DownloadActivity : BaseActivity() {
                     toast("备份完成")
                 }
             }
+        }
+        sw_app_mode?.setOnCheckedChangeListener { _, isChecked ->
+            PreferenceUtil.setAppMode(if (isChecked) OFFLINE else ONLINE)
+            tv_mode_notice.text = if (isChecked) "全局离线模式" else "全局在线模式"
         }
         registerReceiver(downloadReceiver,
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))

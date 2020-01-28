@@ -60,6 +60,7 @@ class SettingItem : ConstraintLayout {
     }
 
     fun refreshTheme() {
+        tv_setting_title.setTextColor(ThemeUtil.darkText)
         val cornerRadius = Utils.dp2px(18).toFloat()
         when {
             isGroupFirst -> {
@@ -72,5 +73,9 @@ class SettingItem : ConstraintLayout {
                 backgroundColor = ThemeUtil.settingItemBg
             }
         }
+    }
+
+    fun changeTitle(title: String) {
+        tv_setting_title.text = title
     }
 }

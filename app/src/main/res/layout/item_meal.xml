@@ -61,7 +61,7 @@
                 android:layout_height="0dp"
                 android:background="@color/colorPrimary"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_meal_recommend"
-                app:layout_constraintEnd_toEndOf="@+id/tv_meal_recommend"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/tv_meal_recommend" />
 

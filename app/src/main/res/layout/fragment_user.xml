@@ -1,271 +1,290 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/containerBg">
+    android:background="?attr/containerBg"
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/ablToolbarWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/ablToolbarWrapper"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/user_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/toolbarBg"
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:title="个人档案" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.AppBarOverlay"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingBottom="24dp">
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/user_toolbar"
+            <ImageView
+                android:id="@+id/iv_user_head"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_marginTop="16dp"
+                android:alpha="0.8"
+                android:background="@drawable/user_head_bg"
+                android:contentDescription="@string/app_name"
+                android:padding="5dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icon_read"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:lineSpacingMultiplier="1.2"
+                android:textAlignment="center"
+                android:textColor="?attr/darkText"
+                android:textSize="14sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_data_desc"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_user_head" />
+
+            <TextView
+                android:id="@+id/tv_data_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.2"
+                android:textColor="?attr/lightText"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_slogan"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
+
+            <TextView
+                android:id="@+id/tv_slogan"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:maxLines="1"
+                android:text="控制，收容，保护。"
+                android:textAlignment="center"
+                android:textColor="@color/colorAccent"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_data_desc" />
+
+            <TextView
+                android:id="@+id/iv_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:alpha="0.3"
+                android:background="@drawable/user_label_bg"
+                android:paddingStart="10dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="8dp"
+                android:text="机密人员"
+                android:textColor="@color/colorAccent"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="@id/iv_user_head"
+                app:layout_constraintEnd_toEndOf="@id/iv_user_head"
+                app:layout_constraintStart_toStartOf="@id/iv_user_head"
+                app:layout_constraintTop_toTopOf="@id/iv_user_head" />
+
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_draft"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/toolbarBg"
-                app:popupTheme="@style/ToolbarPopupTheme"
-                app:title="个人档案" />
-        </com.google.android.material.appbar.AppBarLayout>
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupFirst="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_slogan"
+                app:name="草稿箱" />
 
-        <ImageView
-            android:id="@+id/iv_user_head"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_marginTop="16dp"
-            android:alpha="0.8"
-            android:background="@drawable/user_head_bg"
-            android:contentDescription="@string/app_name"
-            android:padding="5dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/icon_read"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_like"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_draft"
+                app:name="收藏列表" />
 
-        <TextView
-            android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:lineSpacingMultiplier="1.2"
-            android:textAlignment="center"
-            android:textColor="?attr/darkText"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_data_desc"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_user_head" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_history"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupLast="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_like"
+                app:name="历史浏览" />
 
-        <TextView
-            android:id="@+id/tv_data_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.2"
-            android:textColor="?attr/lightText"
-            android:textSize="13sp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_slogan"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_game"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupFirst="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_history"
+                app:name="游戏列表" />
 
-        <TextView
-            android:id="@+id/tv_slogan"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:maxLines="1"
-            android:text="控制，收容，保护。"
-            android:textAlignment="center"
-            android:textColor="@color/colorAccent"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_data_desc" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_meal"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_game"
+                app:name="恰饭屋" />
 
-        <TextView
-            android:id="@+id/iv_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:alpha="0.3"
-            android:background="@drawable/user_label_bg"
-            android:paddingStart="10dp"
-            android:paddingTop="8dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="8dp"
-            android:text="机密人员"
-            android:textColor="@color/colorAccent"
-            android:textSize="22sp"
-            app:layout_constraintBottom_toBottomOf="@id/iv_user_head"
-            app:layout_constraintEnd_toEndOf="@id/iv_user_head"
-            app:layout_constraintStart_toStartOf="@id/iv_user_head"
-            app:layout_constraintTop_toTopOf="@id/iv_user_head" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_wuhan"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_meal"
+                app:name="武汉加油" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_draft"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupFirst="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_slogan"
-            app:name="草稿箱" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_portal"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupLast="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_wuhan"
+                app:name="传送门" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_like"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_draft"
-            app:name="收藏列表" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_dark_mode"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupFirst="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_portal"
+                app:name="夜间模式" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_history"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupLast="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_like"
-            app:name="历史浏览" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_read"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_dark_mode"
+                app:name="阅读设置" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_game"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupFirst="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_history"
-            app:name="游戏列表" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_data"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupLast="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_read"
+                app:name="数据下载及配置" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_meal"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_game"
-            app:name="恰饭屋" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_use"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupFirst="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_data"
+                app:name="app使用说明" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_portal"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupLast="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_meal"
-            app:name="传送门" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_copyright"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_use"
+                app:name="版权说明" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_dark_mode"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupFirst="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_portal"
-            app:name="夜间模式" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_donate"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_copyright"
+                app:name="支持开发者" />
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_read"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_dark_mode"
-            app:name="阅读设置" />
+            <info.free.scp.view.widget.SettingItem
+                android:id="@+id/st_query"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="16dp"
+                app:isGroupLast="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/st_donate"
+                app:name="用户问卷" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_data"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupLast="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_read"
-            app:name="数据下载及配置" />
+</androidx.appcompat.widget.LinearLayoutCompat>
 
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_use"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupFirst="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_data"
-            app:name="app使用说明" />
-
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_copyright"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_use"
-            app:name="版权说明" />
-
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_donate"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_copyright"
-            app:name="支持开发者" />
-
-        <info.free.scp.view.widget.SettingItem
-            android:id="@+id/st_query"
-            android:layout_width="match_parent"
-            android:layout_height="55dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="16dp"
-            app:isGroupLast="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/st_donate"
-            app:name="用户问卷" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-</ScrollView>

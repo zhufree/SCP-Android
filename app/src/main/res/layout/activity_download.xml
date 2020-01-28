@@ -138,6 +138,28 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_backup_notice" />
+
+            <TextView
+                android:id="@+id/tv_mode_notice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:text="全局在线模式"
+                app:layout_constraintEnd_toStartOf="@+id/sw_app_mode"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_backup" />
+
+            <Switch
+                android:id="@+id/sw_app_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false"
+                app:layout_constraintBottom_toBottomOf="@id/tv_mode_notice"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_mode_notice"
+                app:layout_constraintTop_toTopOf="@id/tv_mode_notice" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>

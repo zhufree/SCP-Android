@@ -77,6 +77,14 @@ object PreferenceUtil {
         return getBooleanValue(APP_SP, "show_meal")
     }
 
+    fun setShowWh(show: Boolean) {
+        setBooleanValue(APP_SP, "show_wh", show)
+    }
+
+    fun getShowWh(): Boolean {
+        return getBooleanValue(APP_SP, "show_wh")
+    }
+
     // 设置全局在线模式or离线模式
     fun setAppMode(mode: Int) {
         setIntValue(APP_SP, "app_mode", mode)

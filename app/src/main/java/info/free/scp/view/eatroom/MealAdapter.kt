@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import info.free.scp.bean.MealModel
 import info.free.scp.databinding.ItemMealBinding
+import info.free.scp.util.EventUtil
 
 class MealAdapter : ListAdapter<MealModel, MealAdapter.MealHolder>(MealDiffCallback()) {
 
@@ -33,6 +34,7 @@ class MealAdapter : ListAdapter<MealModel, MealAdapter.MealHolder>(MealDiffCallb
 
     private fun createOnClickListener(meal: MealModel): View.OnClickListener {
         return View.OnClickListener {
+            EventUtil.onEvent(it.context, EventUtil.clickMeal, meal.link)
             val updateIntent = Intent()
             updateIntent.action = "android.intent.action.VIEW"
             val updateUrl = Uri.parse(meal.link)

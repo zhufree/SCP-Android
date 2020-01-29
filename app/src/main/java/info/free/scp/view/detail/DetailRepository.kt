@@ -7,6 +7,7 @@ import executeResponse
 import info
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -19,15 +20,18 @@ import info.free.scp.util.PreferenceUtil
 
 class DetailRepository {
     var scp: MutableLiveData<in ScpModel> = MutableLiveData()
+    var offlineScp: LiveData<ScpItemModel>? = null
+    var offlineCollection: LiveData<ScpCollectionModel>? = null
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
-    var detail: MutableLiveData<String?> = MutableLiveData()
+    var detail: MutableLiveData<String?> = MutableLiveData("")
+    var offlineDetail: LiveData<String> = MutableLiveData()
     private var scpDao = ScpDatabase.getInstance()?.scpDao()
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
 
     fun setScp(link: String, title: String) {
         if (PreferenceUtil.getAppMode() == OFFLINE) {
-            val liveScp = scpDao?.getLiveScpByLink(link)
-            scp.postValue(if (liveScp?.value != null) liveScp.value else scpDao?.getLiveCollectionByLink(link)?.value)
+            offlineScp = scpDao?.getLiveScpByLink(link)
+            offlineCollection = scpDao?.getLiveCollectionByLink(link)
         } else {
             val tempScp = ScpItemModel("", "")
             tempScp.title = title
@@ -57,21 +61,28 @@ class DetailRepository {
         }
     }
 
-    suspend fun loadDetail(link: String) {
-        if (PreferenceUtil.getAppMode() == OFFLINE) {
-            detail.postValue(ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)?.value
-                    ?: "")
-        } else {
-            val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
-            response?.let {
-                executeResponse(response, {
+    fun loadOfflineDetail(link: String) {
+        offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+                ?: MutableLiveData()
+        offlineDetail
+    }
 
-                }, {
-                    if (response.results.isNotEmpty()) {
-                        detail.postValue(response.results[0])
-                    }
-                })
-            }
+    suspend fun loadDetail(link: String) {
+//        if (PreferenceUtil.getAppMode() == OFFLINE) {
+//            offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+////            detail.postValue(ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)?.value
+////                    ?: "")
+//        } else {
+        val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (response.results.isNotEmpty()) {
+                    detail.postValue(response.results[0])
+                }
+            })
         }
+//        }
     }
 }

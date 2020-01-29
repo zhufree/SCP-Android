@@ -78,4 +78,9 @@ class SettingItem : ConstraintLayout {
     fun changeTitle(title: String) {
         tv_setting_title.text = title
     }
+
+    fun setRight(msg: String) {
+        tv_setting_right.text = msg
+        tv_setting_right.setTextColor(Color.RED)
+    }
 }

@@ -20,7 +20,7 @@ interface DetailDao {
     fun getDetail(link: String): String?
 
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
-    fun getLiveDetail(link: String): LiveData<String?>
+    fun getLiveDetail(link: String): LiveData<String>?
 
     // AND last_update >= :timeout
 }

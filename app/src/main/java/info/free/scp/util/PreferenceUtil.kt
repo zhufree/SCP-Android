@@ -94,6 +94,22 @@ object PreferenceUtil {
         return getIntValue(APP_SP, "app_mode")
     }
 
+    fun setNewMealCount(count: Int) {
+        setIntValue(APP_SP, "new_meal_count", count)
+    }
+
+    fun setOldMealCount(count: Int) {
+        setIntValue(APP_SP, "old_meal_count", count)
+    }
+
+    fun getNewMealCount(): Int {
+        return getIntValue(APP_SP, "new_meal_count")
+    }
+
+    fun getOldMealCount(): Int {
+        return getIntValue(APP_SP, "old_meal_count")
+    }
+
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all

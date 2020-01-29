@@ -123,6 +123,9 @@ class UserFragment : BaseFragment() {
         if (PreferenceUtil.getShowWh()) {
             st_wuhan.visibility = VISIBLE
         }
+        if (PreferenceUtil.getNewMealCount() > PreferenceUtil.getOldMealCount()) {
+            st_meal.setRight("NEW")
+        }
         setSettingEvent()
     }
 

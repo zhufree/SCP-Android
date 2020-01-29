@@ -101,6 +101,9 @@ class UpdateManager(private var activity: BaseActivity) {
                     if (config.key == "show_meal") {
                         PreferenceUtil.setShowMeal(config.value == "yes")
                     }
+                    if (config.key == "meal_count") {
+                        PreferenceUtil.setNewMealCount(config.value.toInt())
+                    }
                     if (config.key == "show_wh") {
                         PreferenceUtil.setShowWh(config.value == "yes")
                     }

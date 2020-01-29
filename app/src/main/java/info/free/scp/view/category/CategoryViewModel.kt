@@ -46,7 +46,7 @@ class CategoryViewModel : ViewModel() {
     fun loadCat(categoryType: Int, clickPosition: Int) {
         var start = 0
         var limit = 100
-        var saveType = categoryType // TODO
+        var saveType = categoryType
         var subScpType = "0"
         when (categoryType) {
             SCPConstants.Category.SERIES -> {

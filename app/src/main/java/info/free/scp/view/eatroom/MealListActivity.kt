@@ -11,6 +11,7 @@ import info.free.scp.R
 import info.free.scp.bean.MealModel
 import info.free.scp.bean.PortalModel
 import info.free.scp.databinding.ActivityMealListBinding
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
 
 class MealListActivity : BaseActivity() {
@@ -23,7 +24,8 @@ class MealListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         val bd: ActivityMealListBinding = DataBindingUtil.setContentView(
                 this, R.layout.activity_meal_list)
-
+        PreferenceUtil.setOldMealCount(PreferenceUtil.getNewMealCount())
+        PreferenceUtil.setNewMealCount(0)
 
         baseToolbar = bd.mealToolbar
 

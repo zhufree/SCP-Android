@@ -301,8 +301,8 @@ class DetailActivity : BaseActivity() {
             if (scpInfo == null) {
                 info("init like info")
                 viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
-                invalidateOptionsMenu()
             }
+            invalidateOptionsMenu()
         })
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
@@ -494,6 +494,11 @@ class DetailActivity : BaseActivity() {
             // 获取数据库中的收藏夹
             val boxList = arrayListOf<ScpLikeBox>()
             boxList.addAll(likeDao.getLikeBox())
+            if (boxList.isEmpty()) {
+                val defaultBox = ScpLikeBox(0, "默认收藏夹")
+                boxList.add(defaultBox)
+                likeDao.saveLikeBox(defaultBox)
+            }
             val nameList = arrayListOf<String>()
             nameList.addAll(boxList.map { it.name })
             nameList.add("新建收藏夹")

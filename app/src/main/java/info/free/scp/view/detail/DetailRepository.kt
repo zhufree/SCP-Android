@@ -41,22 +41,51 @@ class DetailRepository {
     }
 
     fun setScpReadInfo() {
-        scp.value?.let {
-            it as ScpModel
-            ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
-            AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
-            scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            offlineScp?.value?.let {
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
+            offlineCollection?.value?.let {
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
+        } else {
+            scp.value?.let {
+                it as ScpModel
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
         }
     }
 
     fun setScpLikeInfo() {
-        scp.value?.let {
-            it as ScpModel
-            if (scpLikeInfo?.value == null) {
-                val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
-                info("save new like info:${likeInfo}")
-                likeDao.save(likeInfo)
-//                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            offlineScp?.value?.let {
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
+            }
+            offlineCollection?.value?.let {
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
+            }
+        } else {
+            scp.value?.let {
+                it as ScpModel
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
             }
         }
     }
@@ -64,7 +93,6 @@ class DetailRepository {
     fun loadOfflineDetail(link: String) {
         offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
                 ?: MutableLiveData()
-        offlineDetail
     }
 
     suspend fun loadDetail(link: String) {

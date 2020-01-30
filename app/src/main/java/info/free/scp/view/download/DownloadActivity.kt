@@ -88,6 +88,9 @@ class DownloadActivity : BaseActivity() {
                 }
             }
         }
+        // 选中是离线，不选中是在线
+        tv_mode_notice.text = if (PreferenceUtil.getAppMode() == OFFLINE) "全局离线模式" else "全局在线模式"
+        sw_app_mode?.isChecked = PreferenceUtil.getAppMode() == OFFLINE
         sw_app_mode?.setOnCheckedChangeListener { _, isChecked ->
             PreferenceUtil.setAppMode(if (isChecked) OFFLINE else ONLINE)
             tv_mode_notice.text = if (isChecked) "全局离线模式" else "全局在线模式"

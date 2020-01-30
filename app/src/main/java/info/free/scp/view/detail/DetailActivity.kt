@@ -255,14 +255,14 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setDetail(detail: String) {
-        var detailHtml = detail
+        detailHtml = detail
         // 显示frame
-        if (detailHtml?.contains("""<iframe src="//player.bilibili.com""") == false) {
+        if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
             detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
         }
-        detailHtml = detailHtml?.replace("html-block-iframe", "")
+        detailHtml = detailHtml.replace("html-block-iframe", "")
 
-        if (detailHtml?.isEmpty() == true) {
+        if (detailHtml.isEmpty()) {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
         } else {

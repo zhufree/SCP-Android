@@ -89,6 +89,8 @@ class LikeActivity : BaseActivity() {
                                 positiveButton("确定删除？") {
                                     likeDao.deleteLike(selectItem)
                                     likeList.removeAt(position)
+                                    orderedList.remove(selectItem)
+                                    reverseList.remove(selectItem)
                                     adapter?.notifyDataSetChanged()
                                     field?.set(out, true)
                                     out.dismiss()
@@ -105,6 +107,8 @@ class LikeActivity : BaseActivity() {
                                 likeDao.save(selectItem)
                                 if (selectItem.boxId != boxId) {
                                     likeList.removeAt(position)
+                                    orderedList.remove(selectItem)
+                                    reverseList.remove(selectItem)
                                     adapter?.notifyDataSetChanged()
                                 }
                                 field?.set(out, true)

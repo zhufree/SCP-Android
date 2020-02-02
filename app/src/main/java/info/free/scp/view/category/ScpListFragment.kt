@@ -207,6 +207,7 @@ class ScpListFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
+        adapter.notifyDataSetChanged()
         if (adapter.currentScrollPosition > -1 && adapter.currentScrollPosition < localScpList?.size ?: 0) {
             rv_category_list?.scrollToPosition(adapter.currentScrollPosition)
         }

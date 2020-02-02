@@ -99,8 +99,8 @@ class DownloadActivity : BaseActivity() {
                 IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
     }
 
-    var downloadId = -1L
-    var mStartVideoHandler: Handler = Handler()
+    private var downloadId = -1L
+    private var mStartVideoHandler: Handler = Handler()
     private var runnable: Runnable? = null
     private var isDownloading = false
 

@@ -140,7 +140,8 @@
     <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Documents文件夹的scp_download子文件夹中：\n
         ① scp_data.db——scp文档数据库，用于阅读文档，内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
         ② scp_info.db——用户信息数据库，保存收藏读过等信息，在更新文档数据库时不受影响\n
-        ③ level.xml——存用户等级职业等信息</string>
+        ③ level.xml——存用户等级职业等信息\n
+        下载完成后请切换页面最下方的全局开关，开启时是离线模式即使用数据库</string>
     <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
     <string name="download_notice">检测并使用scp_download文件夹中的数据库，没有就自动下载，也可以加群下载数据库文件手动复制到该文件夹使用；</string>

@@ -18,13 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.user.WuhanActivity"></activity>
+        <activity
+            android:name=".view.user.WuhanActivity"
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".view.eatroom.MealListActivity"
-            android:screenOrientation="nosensor"></activity>
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".view.portal.PortalActivity"
-            android:screenOrientation="nosensor"></activity>
+            android:screenOrientation="nosensor" />
         <activity
             android:name=".view.feed.TopRatedListActivity"
             android:screenOrientation="nosensor" />

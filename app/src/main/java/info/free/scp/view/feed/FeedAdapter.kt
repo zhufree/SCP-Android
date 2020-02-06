@@ -41,6 +41,7 @@ class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallb
         return View.OnClickListener {
             val intent = Intent()
             intent.putExtra("link", feed.link)
+            intent.putExtra("forceOnline", true)
             intent.setClass(it.context, DetailActivity::class.java)
             (it.context as Activity).startActivity(intent)
         }

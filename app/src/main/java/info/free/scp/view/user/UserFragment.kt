@@ -234,7 +234,7 @@ class UserFragment : BaseFragment() {
                 linearLayout {
                     padding = dip(16)
                     orientation = LinearLayout.VERTICAL
-                    textView("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）") {
+                    textView("欢迎来到SCP基金会，调查员，请输入你的名字") {
                         textColor = ThemeUtil.darkText
                         textSize = 18f
                     }

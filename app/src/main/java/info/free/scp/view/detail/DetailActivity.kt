@@ -28,7 +28,6 @@ import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
-import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
@@ -97,6 +96,7 @@ class DetailActivity : BaseActivity() {
     private var randomIndex = 0
     private var historyIndex = 0
     private var fullUrl = ""
+    private var forceOnline = false
 
     private val viewModel by lazy {
         ViewModelProvider(this)
@@ -121,6 +121,7 @@ class DetailActivity : BaseActivity() {
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
         itemType = intent.getIntExtra("scp_type", 0)
+        forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
 
@@ -128,8 +129,11 @@ class DetailActivity : BaseActivity() {
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
-        } else {
+        } else if (!forceOnline) {
             viewModel.setScp(url, title) // 设置scp
+        } else {
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(fullUrl)
         }
 
         viewModel.getScp()?.observe(this, Observer {
@@ -142,7 +146,6 @@ class DetailActivity : BaseActivity() {
             }
         }) ?: run {
             // 数据库没有，加载链接
-            pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
@@ -183,6 +186,7 @@ class DetailActivity : BaseActivity() {
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
+                info { "onPageshouldOverrideUrlLoading" }
                 if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
                     return false
                 }
@@ -216,8 +220,14 @@ class DetailActivity : BaseActivity() {
                 return false
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
+
+            override fun onPageCommitVisible(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                pbLoading.visibility = VISIBLE
             }
         }
 
@@ -251,7 +261,7 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
         initSwitchBtn()
-
+        refreshReadBtnStatus()
     }
 
     private fun setDetail(detail: String) {

@@ -4,8 +4,11 @@ import androidx.lifecycle.MutableLiveData
 import apiCall
 import executeResponse
 import info.free.scp.SCPConstants
+import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.db.AppInfoDatabase
 import info.free.scp.service.HttpManager
+import info.free.scp.util.PreferenceUtil
 
 class CategoryRepository {
     var scpList = MutableLiveData<List<ScpModel>>()
@@ -16,23 +19,32 @@ class CategoryRepository {
             executeResponse(response, {
 
             }, {
+                var mutableResult = response.results.toMutableList()
+
                 if (categoryType in arrayOf(SCPConstants.Category.SCP_ABNORMAL,
                                 SCPConstants.Category.ABOUT_INFO,
                                 SCPConstants.Category.ABOUT_INTRO)) {
                     val filterResult = getSinglePageByType(response.results, categoryType)
+                    mutableResult = filterResult.toMutableList()
                     if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
                         // 三句话外围
                         val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
-                        val mutableResult = filterResult.toMutableList()
                         mutableResult.add(shortStories)
-                        scpList.value = mutableResult
-                    } else {
-                        scpList.value = filterResult
                     }
                 } else {
-                    scpList.value = response.results
-
+                    mutableResult = response.results.toMutableList()
                 }
+                if (PreferenceUtil.getHideFinished()) {
+                    // 去掉已读部分
+                    val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+                    hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+                    mutableResult.removeAll {
+                        hasReadList.map { it_ ->
+                            it_.link
+                        }.contains(it.link)
+                    }
+                }
+                scpList.value = mutableResult
             })
         }
     }

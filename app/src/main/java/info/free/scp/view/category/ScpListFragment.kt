@@ -211,6 +211,7 @@ class ScpListFragment : BaseFragment() {
         if (adapter.currentScrollPosition > -1 && adapter.currentScrollPosition < localScpList?.size ?: 0) {
             rv_category_list?.scrollToPosition(adapter.currentScrollPosition)
         }
+        refreshTheme()
     }
 
     fun reverseScpList() {

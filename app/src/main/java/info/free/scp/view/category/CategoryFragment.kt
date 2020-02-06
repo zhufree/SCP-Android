@@ -105,6 +105,10 @@ class CategoryFragment : BaseFragment() {
         categoryAdapter?.notifyDataSetChanged()
     }
 
+    override fun onResume() {
+        super.onResume()
+        categoryAdapter?.notifyDataSetChanged()
+    }
 
     companion object {
 

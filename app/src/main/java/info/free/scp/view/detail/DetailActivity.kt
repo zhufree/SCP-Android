@@ -662,6 +662,7 @@ class DetailActivity : BaseActivity() {
         readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
             tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
+            tv_bottom_set_has_read?.setTextColor(ThemeUtil.lightText)
             tv_bottom_set_has_read?.background = ThemeUtil.customShape(
                     ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
             readBtnLp?.endToEnd = -1
@@ -671,6 +672,7 @@ class DetailActivity : BaseActivity() {
             tv_bottom_like?.visibility = VISIBLE
         } else {
             tv_bottom_set_has_read?.setText(R.string.set_has_read)
+            tv_bottom_set_has_read?.setTextColor(ThemeUtil.darkText)
             tv_bottom_set_has_read?.background = ThemeUtil.customShape(
                     ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
             readBtnLp?.endToEnd = 0
@@ -711,6 +713,7 @@ class DetailActivity : BaseActivity() {
                 ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
         tv_bottom_next?.background = ThemeUtil.customShape(
                 ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        tv_bottom_like?.setTextColor(ThemeUtil.darkText)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

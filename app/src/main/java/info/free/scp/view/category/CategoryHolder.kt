@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.Category.SERIES_CN
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.item_category.view.*
+import org.jetbrains.anko.backgroundColor
 
 /**
  * Created by zhufree on 2018/8/22.
@@ -39,5 +41,10 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
                 itemView.tv_scp_title.text = data as String
             }
         }
+    }
+
+    fun refreshTheme() {
+        itemView.cl_category_item.backgroundColor = ThemeUtil.itemBg
+        itemView.tv_scp_title.setTextColor(ThemeUtil.darkText)
     }
 }

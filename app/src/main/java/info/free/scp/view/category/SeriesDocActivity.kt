@@ -143,4 +143,17 @@ class SeriesDocActivity : BaseActivity() {
         tab_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
         tab_series_doc?.setTabTextColors(ThemeUtil.darkText, ThemeUtil.lightText)
     }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTheme()
+        fragmentList.forEach {
+            if (it is CategoryFragment) {
+                it.refreshTheme()
+            }
+            if (it is ScpListFragment) {
+                it.refreshTheme()
+            }
+        }
+    }
 }

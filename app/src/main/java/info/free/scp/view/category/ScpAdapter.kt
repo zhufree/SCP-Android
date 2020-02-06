@@ -10,6 +10,7 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import info
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.ScpApplication
@@ -35,24 +36,19 @@ import org.jetbrains.anko.toast
 class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()) {
     var currentScrollPosition = -1
 
-    val holderList: MutableList<ScpHolder> = emptyList<ScpHolder>().toMutableList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {
-        val newHolder = ScpHolder(ItemCategoryBinding.inflate(
+        return ScpHolder(ItemCategoryBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
-        holderList.add(newHolder)
-        return newHolder
     }
 
-    fun refreshTheme() {
-        holderList.forEach { it.refreshTheme() }
-    }
 
     override fun onBindViewHolder(holder: ScpHolder, position: Int) {
         val scp = getItem(position)
         holder.apply {
             bind(createOnClickListener(scp, position), scp)
             itemView.tag = scp
+            refreshTheme()
         }
     }
 

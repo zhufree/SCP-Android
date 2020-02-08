@@ -88,15 +88,15 @@ class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerA
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         if (position == 0) {
-            val rvPcGame = androidx.recyclerview.widget.RecyclerView(mContext)
-            val lm = androidx.recyclerview.widget.LinearLayoutManager(mContext, VERTICAL, false)
+            val rvPcGame = RecyclerView(mContext)
+            val lm = LinearLayoutManager(mContext, VERTICAL, false)
             rvPcGame.layoutManager = lm
             rvPcGame.adapter = pcGameAdapter
             container.addView(rvPcGame)
             return rvPcGame
         } else {
-            val rvMobileGame = androidx.recyclerview.widget.RecyclerView(mContext)
-            val lm = androidx.recyclerview.widget.StaggeredGridLayoutManager(2, VERTICAL)
+            val rvMobileGame = RecyclerView(mContext)
+            val lm = StaggeredGridLayoutManager(2, VERTICAL)
             rvMobileGame.layoutManager = lm
             rvMobileGame.adapter = mobileGameAdapter
             container.addView(rvMobileGame)

@@ -38,14 +38,13 @@
     <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.1.4更新内容\n
-1.文档收藏可分不同的收藏夹\n
-2.新增最高评分板块【全部/原创SCP/原创故事/原创GoI/原创被放逐者之图书馆作品】\n
-3.优化部分夜间模式\n
-4.简化下载流程和说明\n
-5.优化捐赠页面\n
-6.部分UI样式优化，首页新增一个公告展示\n
-7.修复部分已知bug\n
+        v0.1.5更新内容\n
+1.增加在线模式\n
+2.优化个人档案页面的样式\n
+3.增加收藏夹的删除改名转移等操作\n
+4.增加国际分部文档\n
+5.增加【传送门】，跳转常用网站页面\n
+6.修复部分已知bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
         以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
 
@@ -141,7 +140,8 @@
     <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Documents文件夹的scp_download子文件夹中：\n
         ① scp_data.db——scp文档数据库，用于阅读文档，内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
         ② scp_info.db——用户信息数据库，保存收藏读过等信息，在更新文档数据库时不受影响\n
-        ③ level.xml——存用户等级职业等信息</string>
+        ③ level.xml——存用户等级职业等信息\n
+        下载完成后请切换页面最下方的全局开关，开启时是离线模式即使用数据库</string>
     <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
     <string name="download_notice">检测并使用scp_download文件夹中的数据库，没有就自动下载，也可以加群下载数据库文件手动复制到该文件夹使用；</string>
@@ -171,4 +171,10 @@
     <string name="top_rated_tale">最受欢迎的原创故事</string>
     <string name="top_rated_goi">最受欢迎的原创GoI格式</string>
     <string name="top_rated_wanderer">最受欢迎的被放逐者之图书馆作品</string>
+
+    <string name="loading">加载中，请稍候</string>
+    <!--传送门页面-->
+    <string name="portal">传送门</string>
+    <!--qia饭页面-->
+    <string name="meal">恰饭屋</string>
 </resources>

@@ -9,6 +9,11 @@ object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
     const val SCP_DB_NAME = "scp_data.db"
     const val INFO_DB_NAME = "scp_info.db"
+
+    object AppMode {
+        const val ONLINE = 1
+        const val OFFLINE = 0
+    }
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档
@@ -16,14 +21,7 @@ object SCPConstants {
         const val ABOUT_SCP_DOC = 3 // 关于基金会 设定中心，GOI、hub等，相关材料，艺作、传承、精品、竞赛、征文等
         const val JOKE_DOC = 4 // 搞笑作品
     }
-    object Download {
-        const val DOWNLOAD_SCP = 0
-        const val DOWNLOAD_SCP_CN = 1
-        const val DOWNLOAD_TALE = 2
-        const val DOWNLOAD_ARCHIVES = 3
-        const val DOWNLOAD_COLLECTIONS = 4
-        const val DOWNLOAD_TOTAL = DOWNLOAD_COLLECTIONS
-    }
+
     object Category {
         const val SERIES = 1
         const val SERIES_CN = 2
@@ -47,6 +45,7 @@ object SCPConstants {
         const val CONTEST_CN = 13
         const val EVENT = 14
         const val TALES_BY_TIME = 15
+        const val SCP_INTERNATIONAL = 24
     }
 
     object ScpType {
@@ -78,6 +77,7 @@ object SCPConstants {
         const val SAVE_SETTINGS_CN = 14
         const val SAVE_CONTEST = 15
         const val SAVE_CONTEST_CN = 17
+        const val SAVE_INTERNATIONAL = 24
 
         // android
         const val SAVE_OFFSET = 21

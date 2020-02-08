@@ -70,6 +70,12 @@ object EventUtil {
     const val clickDraft = "draft"
     const val addWidget = "add_widget"
 
+    // v0.1.5 添加
+    const val clickMeal = "click_meal"
+    const val clickWuhan = "click_wuhan"
+    const val clickMap = "click_map"
+    const val clickDonateWuhan = "click_donate_wuhan"
+
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
         MobclickAgent.onEvent(context, event)
     }

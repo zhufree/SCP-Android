@@ -10,12 +10,23 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.bean.FeedModel
 import info.free.scp.databinding.ItemFeedBinding
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
+import org.jetbrains.anko.backgroundColor
 
 class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallback()) {
+
+    val holderList: MutableList<FeedHolder> = emptyList<FeedHolder>().toMutableList()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FeedHolder {
-        return FeedHolder(ItemFeedBinding.inflate(
+        val newHolder = FeedHolder(ItemFeedBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
+        holderList.add(newHolder)
+        return newHolder
+    }
+
+    fun refreshTheme() {
+        holderList.forEach { it.refreshTheme() }
     }
 
     override fun onBindViewHolder(holder: FeedHolder, position: Int) {
@@ -30,6 +41,7 @@ class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallb
         return View.OnClickListener {
             val intent = Intent()
             intent.putExtra("link", feed.link)
+            intent.putExtra("forceOnline", true)
             intent.setClass(it.context, DetailActivity::class.java)
             (it.context as Activity).startActivity(intent)
         }
@@ -42,6 +54,11 @@ class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallb
                 feed = item
                 executePendingBindings()
             }
+        }
+
+        fun refreshTheme() {
+            binding.clFeedContainer.backgroundColor = ThemeUtil.itemBg
+            binding.tvFeedTitle.setTextColor(ThemeUtil.darkText)
         }
     }
 

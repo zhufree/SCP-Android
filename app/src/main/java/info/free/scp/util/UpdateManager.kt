@@ -98,6 +98,15 @@ class UpdateManager(private var activity: BaseActivity) {
                     if (config.key == "api_url") {
                         PreferenceUtil.setApiUrl(config.value)
                     }
+                    if (config.key == "show_meal") {
+                        PreferenceUtil.setShowMeal(config.value == "yes")
+                    }
+                    if (config.key == "meal_count") {
+                        PreferenceUtil.setNewMealCount(config.value.toInt())
+                    }
+                    if (config.key == "show_wh") {
+                        PreferenceUtil.setShowWh(config.value == "yes")
+                    }
                 }
                 if (currentVersionCode < newVersionCode && !activity.isFinishing) {
                     activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")

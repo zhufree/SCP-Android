@@ -6,7 +6,8 @@
 
     <color name="itemBg">#b0d5df</color>
     <color name="textColor">#333</color>
-    <color name="containerBg">#fff</color>
+    <color name="containerBg">#f5f5f5</color>
+    <color name="containerBgNight">#222</color>
     <!--浅色底深色字-->
     <color name="darkText">#333</color>
     <color name="darkTextNight">#555</color>
@@ -15,7 +16,6 @@
     <color name="disabledBg">#dcdcdc</color>
     <color name="disabledBgNight">#555</color>
     <color name="toolbarBgNight">#191919</color>
-    <color name="containerBgNight">#222</color>
     <color name="itemBgNight">#202020</color>
     <!--浅色底深色字-->
     <!--<item name="darkTextNight">#999</item>-->
@@ -25,6 +25,8 @@
     <color name="clickedBtn">#2775b6</color>
     <color name="unClickBtnNight">#2e317c</color>
     <color name="clickedBtnNight">#1c2938</color>
+    <color name="settingItemBg">#fff</color>
+    <color name="settingItemBgNight">#2f2f2f</color>
 
     <color name="white">#fff</color>
 </resources>

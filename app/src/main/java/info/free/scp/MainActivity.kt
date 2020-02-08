@@ -42,32 +42,35 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         transaction.hide(currentFragment as Fragment)
         when (item.itemId) {
             R.id.navigation_home -> {
-                if (!homeFragment.isAdded && null == supportFragmentManager.findFragmentByTag("home")) {
-                    transaction.add(R.id.flMainContainer, homeFragment, "home")
+                if (!homeFragment.isAdded && null == supportFragmentManager
+                                .findFragmentByTag(homeFragment.javaClass.name)) {
+                    transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
                 } else {
-                    transaction.show(homeFragment)
                     transaction.hide(feedFragment)
                     transaction.hide(userFragment)
+                    transaction.show(homeFragment)
                 }
                 currentFragment = homeFragment
             }
             R.id.navigation_feed -> {
-                if (!feedFragment.isAdded && null == supportFragmentManager.findFragmentByTag("feed")) {
-                    transaction.add(R.id.flMainContainer, feedFragment, "feed")
+                if (!feedFragment.isAdded && null == supportFragmentManager
+                                .findFragmentByTag(feedFragment.javaClass.name)) {
+                    transaction.add(R.id.flMainContainer, feedFragment, feedFragment.javaClass.name)
                 } else {
-                    transaction.show(feedFragment)
                     transaction.hide(homeFragment)
                     transaction.hide(userFragment)
+                    transaction.show(feedFragment)
                 }
                 currentFragment = feedFragment
             }
             R.id.navigation_about -> {
-                if (!userFragment.isAdded && null == supportFragmentManager.findFragmentByTag("user")) {
-                    transaction.add(R.id.flMainContainer, userFragment, "user")
+                if (!userFragment.isAdded && null == supportFragmentManager
+                                .findFragmentByTag(userFragment.javaClass.name)) {
+                    transaction.add(R.id.flMainContainer, userFragment, userFragment.javaClass.name)
                 } else {
-                    transaction.show(userFragment)
                     transaction.hide(feedFragment)
                     transaction.hide(homeFragment)
+                    transaction.show(userFragment)
                 }
                 currentFragment = userFragment
             }
@@ -80,7 +83,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.onCreate(savedInstanceState)
         // 注册广播
         setContentView(R.layout.activity_main)
-
         // 设置默认fragment
         val transaction = supportFragmentManager.beginTransaction()
         currentFragment?.let {

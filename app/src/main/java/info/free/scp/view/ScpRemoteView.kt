@@ -7,6 +7,7 @@ import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.view.detail.DetailActivity
+import toast
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TopBar">
+        <attr name="title" format="string" />
+        <attr name="titleTextSize" format="dimension" />
+        <attr name="titleTextColor" format="color" />
+        <attr name="leftVisible" format="boolean" />
+        <attr name="rightIcon" format="reference" />
+        <attr name="rightVisible" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="SettingItem">
+        <attr name="name" format="string" />
+        <attr name="rightText" format="string" />
+        <attr name="settingRightVisible" format="boolean" />
+        <attr name="isGroupFirst" format="boolean" />
+        <attr name="isGroupLast" format="boolean" />
+    </declare-styleable>
+</resources>

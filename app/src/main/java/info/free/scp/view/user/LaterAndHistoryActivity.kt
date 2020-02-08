@@ -3,6 +3,7 @@ package info.free.scp.view.user
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -23,6 +24,7 @@ import info.free.scp.util.EventUtil
 import info.free.scp.util.EventUtil.clickHistoryList
 import info.free.scp.util.EventUtil.clickLaterList
 import info.free.scp.util.EventUtil.importReadList
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseAdapter
@@ -43,6 +45,19 @@ class LaterAndHistoryActivity : BaseActivity() {
             if (value == HISTORY_TYPE) {
                 EventUtil.onEvent(this, clickHistoryList)
             } else {
+                if (!PreferenceUtil.getShownReadSuggest()) {
+                    alert("要不要访问大佬们整理的待读列表（可以复制列表后在此导入）", "不知道读什么？") {
+                        positiveButton("带我去！") {
+                            val updateIntent = Intent()
+                            updateIntent.action = "android.intent.action.VIEW"
+                            val updateUrl = Uri.parse("http://scpsandboxcn.wikidot.com/collab:to-read-list")
+                            updateIntent.data = updateUrl
+                            startActivity(updateIntent)
+                        }
+                        negativeButton("不用了") {}
+                    }.show()
+                    PreferenceUtil.setShownReadSuggest()
+                }
                 EventUtil.onEvent(this, clickLaterList)
             }
             adapter?.notifyDataSetChanged()
@@ -86,10 +101,7 @@ class LaterAndHistoryActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        setSupportActionBar(like_toolbar)
-        like_toolbar?.inflateMenu(R.menu.menu_read_list)
-        like_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        like_toolbar?.setNavigationOnClickListener { finish() }
+        baseToolbar = like_toolbar
         like_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {

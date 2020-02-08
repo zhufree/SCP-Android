@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
@@ -61,6 +62,7 @@ class DetailActivity : BaseActivity() {
             field = value
             fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
         }
+    private var title = ""
     private var scp: ScpModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
@@ -94,6 +96,7 @@ class DetailActivity : BaseActivity() {
     private var randomIndex = 0
     private var historyIndex = 0
     private var fullUrl = ""
+    private var forceOnline = false
 
     private val viewModel by lazy {
         ViewModelProvider(this)
@@ -112,13 +115,13 @@ class DetailActivity : BaseActivity() {
         webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
+        title = intent.getStringExtra("title") ?: ""
         // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
         itemType = intent.getIntExtra("scp_type", 0)
-
-
+        forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
 
@@ -126,28 +129,56 @@ class DetailActivity : BaseActivity() {
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
+        } else if (!forceOnline) {
+            viewModel.setScp(url, title) // 设置scp
         } else {
-            viewModel.setScp(url)
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(fullUrl)
         }
 
         viewModel.getScp()?.observe(this, Observer {
             // 数据库取到
-            if (readType == 1) {
-                randomList.add(it)
+            if (it != null) {
+                scp = it as ScpModel
+                scp?.let { s ->
+                    setData(s)
+                }
             }
-            // TODO
-            scp = it
-            setData(it)
+        }) ?: run {
+            // 数据库没有，加载链接
+            webView.loadUrl(fullUrl)
+            nsv_web_wrapper?.scrollTo(0, 0)
+        }
+
+        viewModel.getOfflineScp()?.observe(this, Observer {
+            // 数据库取到
+            if (it != null) {
+                scp = it as ScpModel
+                scp?.let { s ->
+                    setData(s)
+                }
+            }
         }) ?: run {
             // 数据库没有，加载链接
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
             nsv_web_wrapper?.scrollTo(0, 0)
         }
-        viewModel.getScpInfo()?.observe(this, Observer { scpInfo ->
-            invalidateOptionsMenu()
-        })
 
+        viewModel.getOfflineCollection()?.observe(this, Observer {
+            // 数据库取到
+            if (it != null) {
+                scp = it as ScpModel
+                scp?.let { s ->
+                    setData(s)
+                }
+            }
+        }) ?: run {
+            // 数据库没有，加载链接
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(fullUrl)
+            nsv_web_wrapper?.scrollTo(0, 0)
+        }
 
         webView?.requestFocus()
 
@@ -155,6 +186,7 @@ class DetailActivity : BaseActivity() {
         webView?.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
+                info { "onPageshouldOverrideUrlLoading" }
                 if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
                     return false
                 }
@@ -188,8 +220,14 @@ class DetailActivity : BaseActivity() {
                 return false
             }
 
-            override fun onPageFinished(view: WebView?, url: String?) {
+
+            override fun onPageCommitVisible(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+                pbLoading.visibility = VISIBLE
             }
         }
 
@@ -223,7 +261,27 @@ class DetailActivity : BaseActivity() {
 
         initToolbar()
         initSwitchBtn()
+        refreshReadBtnStatus()
+    }
 
+    private fun setDetail(detail: String) {
+        detailHtml = detail
+        // 显示frame
+        if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
+            detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
+        }
+        detailHtml = detailHtml.replace("html-block-iframe", "")
+
+        if (detailHtml.isEmpty()) {
+            pbLoading.visibility = VISIBLE
+            webView.loadUrl(fullUrl)
+        } else {
+            pbLoading.visibility = GONE
+            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
+                    + detailHtml + jsScript,
+                    "text/html", "utf-8", null)
+        }
+        nsv_web_wrapper?.scrollTo(0, 0)
     }
 
     override fun refreshTheme() {
@@ -244,36 +302,44 @@ class DetailActivity : BaseActivity() {
                 "text/html", "utf-8", null)
     }
 
-    private fun setData(scp: ScpModel, back: Boolean = false) {
+    private fun setData(s: ScpModel, back: Boolean = false) {
+        if (readType == 1) {
+            randomList.add(s)
+        }
+        viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
+        viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
+            if (scpInfo == null) {
+                info("init like info")
+                viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
+            }
+            invalidateOptionsMenu()
+        })
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
-            historyList.add(scp)
+            historyList.add(s)
             historyIndex = historyList.size - 1
         }
-        tv_detail_toolbar?.text = scp.title
+        tv_detail_toolbar?.text = s.title
         tv_detail_toolbar?.isSelected = true
-        url = scp.link
+        url = s.link
         refreshReadBtnStatus()
-        detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(scp.link) ?: ""
-        // 显示frame
-        if (!detailHtml.contains("""<iframe src="//player.bilibili.com""")) {
-            detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
-        }
-        detailHtml = detailHtml.replace("html-block-iframe", "")
-
-        if (detailHtml.isEmpty()) {
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
+        viewModel.loadDetail(url)
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            viewModel.getOfflineDetail().observe(this, Observer { detail ->
+                if (!detail.isNullOrEmpty()) {
+                    setDetail(detail)
+                }
+            })
         } else {
-            pbLoading.visibility = GONE
-            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                    + detailHtml + jsScript,
-                    "text/html", "utf-8", null)
+            viewModel.getDetail().observe(this, Observer { detail ->
+                if (!detail.isNullOrEmpty()) {
+                    setDetail(detail)
+                }
+            })
         }
-        nsv_web_wrapper?.scrollTo(0, 0)
     }
 
 
@@ -378,17 +444,15 @@ class DetailActivity : BaseActivity() {
                         if (currentTextSizeIndex < 4) {
                             currentTextSizeIndex++
                             refreshStyle()
-                        } else {
-
                         }
+                        return@let
                     }
                     R.id.small_text -> {
                         if (currentTextSizeIndex > 0) {
                             currentTextSizeIndex--
                             refreshStyle()
-                        } else {
-
                         }
+                        return@let
                     }
                     R.id.translate_to_simple -> {
                         translate(simple)
@@ -432,14 +496,19 @@ class DetailActivity : BaseActivity() {
      * 已收藏
      */
     private fun likeScp() {
-        val scpInfo = viewModel.getScpInfo()?.value
-        if (scpInfo == null) return
+        info("get like info when like:${viewModel.getScpLikeInfo()?.value}")
+        val scpInfo = viewModel.getScpLikeInfo()?.value ?: return
         val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
         if (!scpInfo.like) {
             // 未收藏
             // 获取数据库中的收藏夹
             val boxList = arrayListOf<ScpLikeBox>()
             boxList.addAll(likeDao.getLikeBox())
+            if (boxList.isEmpty()) {
+                val defaultBox = ScpLikeBox(0, "默认收藏夹")
+                boxList.add(defaultBox)
+                likeDao.saveLikeBox(defaultBox)
+            }
             val nameList = arrayListOf<String>()
             nameList.addAll(boxList.map { it.name })
             nameList.add("新建收藏夹")
@@ -486,7 +555,7 @@ class DetailActivity : BaseActivity() {
                 input?.clearFocus()
                 val defaultBox = ScpLikeBox(0, input?.text?.toString() ?: "")
                 info { defaultBox }
-                AppInfoDatabase.getInstance().likeAndReadDao().addLikeBox(defaultBox)
+                AppInfoDatabase.getInstance().likeAndReadDao().saveLikeBox(defaultBox)
                 likeScp()
             }
             negativeButton("取消") {}
@@ -603,6 +672,7 @@ class DetailActivity : BaseActivity() {
         readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
             tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
+            tv_bottom_set_has_read?.setTextColor(ThemeUtil.lightText)
             tv_bottom_set_has_read?.background = ThemeUtil.customShape(
                     ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
             readBtnLp?.endToEnd = -1
@@ -612,6 +682,7 @@ class DetailActivity : BaseActivity() {
             tv_bottom_like?.visibility = VISIBLE
         } else {
             tv_bottom_set_has_read?.setText(R.string.set_has_read)
+            tv_bottom_set_has_read?.setTextColor(ThemeUtil.darkText)
             tv_bottom_set_has_read?.background = ThemeUtil.customShape(
                     ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
             readBtnLp?.endToEnd = 0
@@ -625,11 +696,19 @@ class DetailActivity : BaseActivity() {
     private fun initSwitchBtn() {
         refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
-            toPreviewArticle()
+            if (PreferenceUtil.getAppMode() == OFFLINE) {
+                toPreviewArticle()
+            } else {
+                toast("仅限离线模式下使用")
+            }
         }
 
         tv_bottom_next?.setOnClickListener {
-            toNextArticle()
+            if (PreferenceUtil.getAppMode() == OFFLINE) {
+                toNextArticle()
+            } else {
+                toast("仅限离线模式下使用")
+            }
         }
 
         tv_bottom_set_has_read?.setOnClickListener {
@@ -644,6 +723,7 @@ class DetailActivity : BaseActivity() {
                 ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
         tv_bottom_next?.background = ThemeUtil.customShape(
                 ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+        tv_bottom_like?.setTextColor(ThemeUtil.darkText)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {

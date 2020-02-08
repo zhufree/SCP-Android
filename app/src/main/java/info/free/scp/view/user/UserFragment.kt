@@ -1,16 +1,24 @@
 package info.free.scp.view.user
 
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.storage.StorageManager
 import android.provider.MediaStore
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -18,14 +26,25 @@ import androidx.documentfile.provider.DocumentFile
 import info.free.scp.R
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.ThemeUtil.DAY_THEME
+import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.download.DownloadActivity
+import info.free.scp.view.draft.DraftListActivity
+import info.free.scp.view.eatroom.MealListActivity
+import info.free.scp.view.game.GameListActivity
+import info.free.scp.view.like.LikeBoxActivity
+import info.free.scp.view.portal.PortalActivity
 import kotlinx.android.synthetic.main.fragment_user.*
+import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.selector
+import org.jetbrains.anko.support.v4.startActivity
 import java.io.FileInputStream
 import java.util.*
 
@@ -79,14 +98,13 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        about_toolbar?.setTitle(R.string.user_info)
-        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
+//        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                    "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                    "职务：${getRank(PreferenceUtil.getPoint())}   代号：${PreferenceUtil.getNickname()}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                "职务：点击设置\n代号：点击设置"
-        tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\n" +
+                "职务：点击设置   代号：点击设置"
+        tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
                 "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
         iv_user_head.setOnClickListener {
@@ -99,6 +117,100 @@ class UserFragment : BaseFragment() {
         }
         tv_nickname.setOnClickListener { checkUserInfo() }
         getHeadImg()
+        if (PreferenceUtil.getShowMeal()) {
+            st_meal.visibility = VISIBLE
+        }
+        if (PreferenceUtil.getShowWh()) {
+            st_wuhan.visibility = VISIBLE
+        }
+        if (PreferenceUtil.getNewMealCount() > PreferenceUtil.getOldMealCount()) {
+            st_meal.setRight("NEW")
+        }
+        setSettingEvent()
+    }
+
+    private fun setSettingEvent() {
+        st_draft.onClick = {
+            startActivity<DraftListActivity>()
+        }
+        st_like.onClick = { startActivity<LikeBoxActivity>() }
+
+        st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
+        st_game.onClick = { startActivity<GameListActivity>() }
+        st_meal.onClick = { startActivity<MealListActivity>() }
+        st_wuhan.onClick = { startActivity<WuhanActivity>() }
+        st_portal.onClick = { startActivity<PortalActivity>() }
+        st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
+        st_dark_mode.onClick = {
+            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
+            st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
+        }
+        st_read.onClick = {
+            EventUtil.onEvent(activity, EventUtil.clickReadSetting)
+            startActivity<SettingsActivity>()
+        }
+        st_data.onClick = {
+            startActivity<DownloadActivity>()
+        }
+        st_use.onClick = {
+            startActivity<AboutAppActivity>()
+        }
+        st_copyright.onClick = {
+            showCopyright()
+        }
+        st_donate.onClick = {
+            startActivity<DonationQrActivity>()
+        }
+        st_query.onClick = {
+            val updateIntent = Intent()
+            updateIntent.action = "android.intent.action.VIEW"
+            val updateUrl = Uri.parse("http://freeescp.mikecrm.com/zelnB9R")
+            updateIntent.data = updateUrl
+            startActivity(updateIntent)
+        }
+    }
+
+    private fun showCopyright() {
+        val copyrightView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_copyright, null)
+        val copySpan1 = SpannableString(getString(R.string.copyright_notice_1))
+        val copySpan2 = SpannableString(getString(R.string.copyright_notice_2))
+        val copySpan3 = SpannableString(getString(R.string.copyright_notice_3))
+        val startIndex1 = copySpan1.indexOf("http")
+        val startIndex2 = copySpan2.indexOf("http")
+        val startIndex3 = copySpan3.indexOf("http")
+        copySpan1.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/", activity), startIndex1,
+                copySpan1.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        copySpan2.setSpan(CopySpan("https://creativecommons.org/licenses/by-sa/3.0/deed.zh", activity), startIndex2,
+                copySpan2.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        copySpan3.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/licensing-guide", activity), startIndex3,
+                copySpan3.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        copyrightView.tv_copyright_1.text = copySpan1
+        copyrightView.tv_copyright_2.text = copySpan2
+        copyrightView.tv_copyright_3.text = copySpan3
+        copyrightView.tv_copyright_1.movementMethod = LinkMovementMethod.getInstance()
+        copyrightView.tv_copyright_2.movementMethod = LinkMovementMethod.getInstance()
+        copyrightView.tv_copyright_3.movementMethod = LinkMovementMethod.getInstance()
+        val copyrightDialog = AlertDialog.Builder(activity)
+                .setTitle("版权说明")
+                .setView(copyrightView) // 设置显示的view
+                .setPositiveButton("OK") { _, _ -> }
+                .create()
+// 因为后面要通过dialog获取button，此时要单独获取dialog对象，然后手动show()
+        copyrightDialog.show()
+// 获取button并设置点击事件
+        copyrightDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
+            copyrightDialog.dismiss()
+        }
+    }
+
+    class CopySpan(val url: String, val activity: androidx.fragment.app.FragmentActivity?) : ClickableSpan() {
+        override fun onClick(widget: View) {
+            val copyrightIntent = Intent()
+            copyrightIntent.action = "android.intent.action.VIEW"
+            val updateUrl = Uri.parse(url)
+            copyrightIntent.data = updateUrl
+            activity?.startActivity(copyrightIntent)
+        }
     }
 
     private fun getHeadImg() {
@@ -122,7 +234,7 @@ class UserFragment : BaseFragment() {
                 linearLayout {
                     padding = dip(16)
                     orientation = LinearLayout.VERTICAL
-                    textView("欢迎来到SCP基金会，调查员，请输入你的名字（重启app后生效显示）") {
+                    textView("欢迎来到SCP基金会，调查员，请输入你的名字") {
                         textColor = ThemeUtil.darkText
                         textSize = 18f
                     }
@@ -168,9 +280,11 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        about_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
+        user_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(ThemeUtil.lightText)
+        arrayOf(st_draft, st_like, st_history, st_game, st_meal, st_wuhan, st_portal, st_dark_mode, st_read, st_data, st_use,
+                st_copyright, st_donate, st_query).forEach { it?.refreshTheme() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -185,11 +299,12 @@ class UserFragment : BaseFragment() {
                     val scpDir = df?.findFile("SCP")
                     val picPath = scpDir?.findFile("scp_user_head.jpg")
                     picPath?.let {
-                        Log.i("img", picPath.toString())
-                        val pfd = context!!.contentResolver.openFileDescriptor(picPath.uri, "r")
-                        val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                        iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
-                        fileInputStream.close()
+                        val pfd = context?.contentResolver?.openFileDescriptor(picPath.uri, "r")
+                        pfd?.let {
+                            val fileInputStream = FileInputStream(pfd.fileDescriptor)
+                            iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
+                            fileInputStream.close()
+                        }
                     }
 
                 } else {
@@ -211,10 +326,6 @@ class UserFragment : BaseFragment() {
 
 
     companion object {
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//        private val LISTENER = "listener"
-//        private val ARG_PARAM2 = "param2"
-
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -223,15 +334,8 @@ class UserFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-//        fun newInstance(param1: String, param2: String): HomeFragment {
         fun newInstance(): UserFragment {
-            val fragment = UserFragment()
-//            val args = Bundle()
-//            args.putString(ARG_PARAM1, param1)
-//            args.putString(ARG_PARAM2, param2)
-//            fragment.arguments = args
-            return fragment
+            return UserFragment()
         }
     }
-
-} // Required empty public constructor
+}

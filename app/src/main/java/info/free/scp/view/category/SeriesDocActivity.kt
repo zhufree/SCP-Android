@@ -14,6 +14,7 @@ import info.free.scp.SCPConstants.Category.SCP_ARCHIVES
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.Category.SERIES_CN
 import info.free.scp.SCPConstants.Category.SCP_EX
+import info.free.scp.SCPConstants.Category.SCP_INTERNATIONAL
 import info.free.scp.SCPConstants.Category.SETTINGS
 import info.free.scp.SCPConstants.Category.SETTINGS_CN
 import info.free.scp.SCPConstants.Category.STORY_SERIES
@@ -77,12 +78,12 @@ class SeriesDocActivity : BaseActivity() {
                         CategoryFragment.newInstance(SERIES, 4),
                         CategoryFragment.newInstance(SERIES_CN, 0),
                         CategoryFragment.newInstance(SERIES_CN, 1),
-                        ScpListFragment.newInstance(SCP_EX, 0), // cn合并
+                        CategoryFragment.newInstance(SCP_INTERNATIONAL, 0),
                         CategoryFragment.newInstance(SCP_ARCHIVES, 0)
                 )
                         .toList()
                 titleList = arrayOf("SCP系列1", "SCP系列2", "SCP系列3", "SCP系列4", "SCP系列5",
-                        "SCP-CN系列1", "SCP-CN系列2", "已解明SCP", "其他SCP").toList()
+                        "SCP-CN系列1", "SCP-CN系列2", "SCP国际版", "其他SCP").toList()
             }
             STORY_DOC -> {
                 supportActionBar?.setTitle(R.string.title_scp_story)
@@ -141,5 +142,18 @@ class SeriesDocActivity : BaseActivity() {
         vp_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
         tab_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
         tab_series_doc?.setTabTextColors(ThemeUtil.darkText, ThemeUtil.lightText)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        refreshTheme()
+        fragmentList.forEach {
+            if (it is CategoryFragment) {
+                it.refreshTheme()
+            }
+            if (it is ScpListFragment) {
+                it.refreshTheme()
+            }
+        }
     }
 }

@@ -1,8 +1,17 @@
 package info.free.scp.service
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
+import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
+import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
+import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
@@ -74,7 +83,18 @@ class HttpManager {
                 feedApiService.getLatestCn(pageIndex)
             }
         }
+    }
 
+    suspend fun getCategory(scpType: Int = SERIES, subScpType: String = "0", limit: Int = 100, rangeStart: Int = 0): ApiBean.ApiListResponse<out ScpModel> {
+        val collectionTypeList = arrayOf(SAVE_SETTINGS, SAVE_SETTINGS_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
+                SAVE_STORY_SERIES_CN, SAVE_STORY_SERIES)
+        return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
+            if (scpType in arrayOf(SAVE_SERIES, SAVE_SERIES_CN)) feedApiService.getScpCategory(scpType, subScpType, limit, rangeStart)
+            else feedApiService.getScpCategory(scpType, subScpType)
+    }
+
+    suspend fun getDetail(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
+        return feedApiService.getDetail(link)
     }
 
 

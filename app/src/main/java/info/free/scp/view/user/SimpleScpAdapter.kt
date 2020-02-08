@@ -13,8 +13,8 @@ import info.free.scp.view.search.SearchHolder
  * 用于收藏列表的adapter
  */
 
-class SimpleScpAdapter(mContext: Context, dataList: MutableList<ScpLikeModel?>)
-    : BaseAdapter<SearchHolder, ScpLikeModel?>(mContext, dataList) {
+class SimpleScpAdapter(mContext: Context, dataList: MutableList<ScpLikeModel>)
+    : BaseAdapter<SearchHolder, ScpLikeModel>(mContext, dataList) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchHolder {
@@ -26,7 +26,7 @@ class SimpleScpAdapter(mContext: Context, dataList: MutableList<ScpLikeModel?>)
 
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         holder.itemView.tag = position
-        holder.setData(dataList[position]?.link?:"", dataList[position]?.title?:"",
+        holder.setData(dataList[position].link, dataList[position].title,
                 null, null)
     }
 }

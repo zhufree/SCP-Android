@@ -25,7 +25,7 @@
         <!--导航条颜色-->
         <item name="toolbarBg">@color/colorPrimaryDark</item>
         <!--页面容器背景色（白）-->
-        <item name="containerBg">@color/white</item>
+        <item name="containerBg">@color/containerBg</item>
         <!--条目背景色（浅蓝）-->
         <item name="itemBg">@color/itemBg</item>
         <!--浅色底深色字-->
@@ -38,6 +38,7 @@
         <item name="clickedBtn">@color/clickedBtn</item>
         <!--不可点击的按钮颜色-->
         <item name="disabledBg">@color/disabledBg</item>
+        <item name="settingItemBg">@color/settingItemBg</item>
     </style>
     <style name="NightTheme" parent="AppTheme">
         <item name="toolbarBg">@color/toolbarBgNight</item>
@@ -50,5 +51,6 @@
         <item name="unClickBtn">@color/unClickBtnNight</item>
         <item name="clickedBtn">@color/clickedBtnNight</item>
         <item name="disabledBg">@color/disabledBgNight</item>
+        <item name="settingItemBg">@color/settingItemBgNight</item>
     </style>
 </resources>

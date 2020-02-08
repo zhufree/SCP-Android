@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.item_pc_game.view.*
  *
  */
 
-class GameHolder(view: View) : androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+class GameHolder(view: View) : RecyclerView.ViewHolder(view) {
     private var expandStatus = 0 // 0 收起 1 展开
 
     fun setData(model: GameModel) {

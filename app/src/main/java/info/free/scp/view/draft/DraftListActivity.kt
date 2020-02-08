@@ -4,15 +4,22 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.View
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.view.detail.DetailViewModel
 import info.free.scp.viewmodel.DraftListViewModel
 import kotlinx.android.synthetic.main.activity_draft_list.*
 import org.jetbrains.anko.startActivity
 
 class DraftListActivity : BaseActivity() {
+
+    private val model by lazy {
+        ViewModelProvider(this)
+                .get(DraftListViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +37,6 @@ class DraftListActivity : BaseActivity() {
 
         val adapter = DraftAdapter()
         rl_draft_list.adapter = adapter
-        val model = ViewModelProviders.of(this).get(DraftListViewModel::class.java)
 
         model.getDraft()?.observe(this, Observer<List<DraftModel>> { drafts ->
                     // update UI

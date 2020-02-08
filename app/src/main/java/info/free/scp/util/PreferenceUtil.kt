@@ -3,6 +3,7 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
@@ -68,6 +69,47 @@ object PreferenceUtil {
         return if (prefUrl.isNotEmpty()) prefUrl else SCPConstants.FEED_API_URL
     }
 
+    fun setShowMeal(show: Boolean) {
+        setBooleanValue(APP_SP, "show_meal", show)
+    }
+
+    fun getShowMeal(): Boolean {
+        return getBooleanValue(APP_SP, "show_meal")
+    }
+
+    fun setShowWh(show: Boolean) {
+        setBooleanValue(APP_SP, "show_wh", show)
+    }
+
+    fun getShowWh(): Boolean {
+        return getBooleanValue(APP_SP, "show_wh")
+    }
+
+    // 设置全局在线模式or离线模式
+    fun setAppMode(mode: Int) {
+        setIntValue(APP_SP, "app_mode", mode)
+    }
+
+    fun getAppMode(): Int {
+        return getIntValue(APP_SP, "app_mode")
+    }
+
+    fun setNewMealCount(count: Int) {
+        setIntValue(APP_SP, "new_meal_count", count)
+    }
+
+    fun setOldMealCount(count: Int) {
+        setIntValue(APP_SP, "old_meal_count", count)
+    }
+
+    fun getNewMealCount(): Int {
+        return getIntValue(APP_SP, "new_meal_count")
+    }
+
+    fun getOldMealCount(): Int {
+        return getIntValue(APP_SP, "old_meal_count")
+    }
+
     /**
      * 分库数据文件下载链接
      * db_link_0/1/2/3/4/all
@@ -124,6 +166,24 @@ object PreferenceUtil {
         sp?.edit()?.putBoolean("shownDetailNotice", true)?.apply()
     }
 
+    fun setShownReadSuggest() {
+        setBooleanValue(INIT_SP, "shownReadSuggest", true)
+    }
+
+    fun getShownReadSuggest(): Boolean {
+        return getBooleanValue(INIT_SP, "shownReadSuggest")
+    }
+
+    fun setShownModeNotice() {
+        setBooleanValue(INIT_SP, "shownModeNotice", true)
+    }
+
+    fun getShownModeNotice(): Boolean {
+        return getBooleanValue(INIT_SP, "shownModeNotice")
+    }
+
+
+
     /**
      * 主题相关
      */
@@ -134,24 +194,6 @@ object PreferenceUtil {
     fun setCurrentTheme(theme: Int) {
         setIntValue("theme", "currentTheme", theme)
     }
-
-    /**
-     * 检测小组件当天是否更新
-     */
-
-    fun setLastUpdateWidgetTime(time: Long) {
-        setLongValue(APP_SP, "lastUpdateWidgetTime", time)
-    }
-
-    fun checkNeedUpdateWidget(): Boolean {
-        val lastTime = getLongValue(APP_SP, "lastUpdateWidgetTime")
-        val cal = Calendar.getInstance()
-        cal.set(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH),
-                0, 0, 0)
-        val beginOfDate = cal.timeInMillis
-        return lastTime < beginOfDate
-    }
-
 
     /**
      * 积分系统

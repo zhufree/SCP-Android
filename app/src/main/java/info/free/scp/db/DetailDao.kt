@@ -1,5 +1,6 @@
 package info.free.scp.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
@@ -17,6 +18,9 @@ interface DetailDao {
 
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
     fun getDetail(link: String): String?
+
+    @Query("SELECT detail FROM scp_detail WHERE link = :link")
+    fun getLiveDetail(link: String): LiveData<String>?
 
     // AND last_update >= :timeout
 }

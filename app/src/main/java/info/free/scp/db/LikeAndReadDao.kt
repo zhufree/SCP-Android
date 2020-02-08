@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import androidx.room.Delete
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 
@@ -15,6 +16,9 @@ import info.free.scp.bean.ScpLikeModel
 interface LikeAndReadDao {
     @Insert(onConflict = REPLACE)
     fun save(info: ScpLikeModel)
+
+    @Insert(onConflict = REPLACE)
+    fun saveAll(info: List<ScpLikeModel>)
 
     @Query("SELECT * FROM like_table WHERE link = :link LIMIT 1")
     fun getInfoByLink(link: String): ScpLikeModel?
@@ -33,6 +37,9 @@ interface LikeAndReadDao {
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 AND `boxId` = :boxId")
     fun getLikeListByBoxId(boxId: Int): List<ScpLikeModel>
+
+    @Delete
+    fun deleteLike(like: ScpLikeModel)
 
     @Query("SELECT * FROM like_table WHERE `like` = 1 ORDER BY title")
     fun getOrderedLikeList(): List<ScpLikeModel>
@@ -55,7 +62,13 @@ interface LikeAndReadDao {
     @Query("SELECT * FROM like_box_table;")
     fun getLiveLikeBox(): LiveData<List<ScpLikeBox>>
 
+    @Query("SELECT * FROM like_box_table WHERE id = :boxId")
+    fun getLikeBoxById(boxId: Int): ScpLikeBox
+
     @Insert(onConflict = REPLACE)
-    fun addLikeBox(box: ScpLikeBox)
+    fun saveLikeBox(box: ScpLikeBox)
+
+    @Query("DELETE FROM like_box_table WHERE id = :boxId")
+    fun deleteLikeBoxById(boxId: Int)
 }
 

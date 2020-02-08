@@ -26,6 +26,7 @@ object ThemeUtil {
     var unClickBtn: Int = -1
     var clickedBtn: Int = -1
     var disabledBg: Int = -1
+    var settingItemBg: Int = -1
 
     var currentTheme: Int = -1
     const val DAY_THEME = 0
@@ -74,7 +75,8 @@ object ThemeUtil {
                 R.attr.lightText,
                 R.attr.unClickBtn,
                 R.attr.clickedBtn,
-                R.attr.disabledBg
+                R.attr.disabledBg,
+                R.attr.settingItemBg
         ))
         toolbarBg = allColor.getColor(0, Color.WHITE)
         containerBg = allColor.getColor(1, Color.WHITE)
@@ -84,6 +86,7 @@ object ThemeUtil {
         unClickBtn = allColor.getColor(5, Color.WHITE)
         clickedBtn = allColor.getColor(6, Color.WHITE)
         disabledBg = allColor.getColor(7, Color.WHITE)
+        settingItemBg = allColor.getColor(8, Color.WHITE)
         allColor.recycle()
     }
 
@@ -106,5 +109,17 @@ object ThemeUtil {
         gd.cornerRadius = roundRadius.toFloat()
         gd.setStroke(strokeWidth, strokeColor)
         return gd
+    }
+
+    fun customShape(fillColor: Int, strokeColor: Int, strokeWidth: Int, lt: Float, lb: Float, rt: Float, rb: Float): GradientDrawable {
+        val gd = GradientDrawable() // 创建drawable
+        gd.setColor(fillColor)
+        gd.setStroke(strokeWidth, strokeColor)
+        setGdCorner(gd, lt, lb, rt, rb)
+        return gd
+    }
+
+    fun setGdCorner(gd: GradientDrawable, lt: Float, lb: Float, rt: Float, rb: Float) {
+        gd.cornerRadii = arrayOf(lt, lt, rt, rt, lb, lb, rb, rb).toFloatArray()
     }
 }

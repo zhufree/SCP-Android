@@ -1,53 +1,116 @@
 package info.free.scp.view.detail
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import apiCall
+import executeResponse
 import info
 import info.free.scp.SCPConstants
-import info.free.scp.bean.DraftModel
-import info.free.scp.bean.ScpLikeBox
+import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.bean.ScpCollectionModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import info.free.scp.util.PreferenceUtil
 
 
 class DetailRepository {
-    var scp: LiveData<out ScpModel>? = null
+    var scp: MutableLiveData<in ScpModel> = MutableLiveData()
+    var offlineScp: LiveData<ScpItemModel>? = null
+    var offlineCollection: LiveData<ScpCollectionModel>? = null
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
+    var detail: MutableLiveData<String?> = MutableLiveData("")
+    var offlineDetail: LiveData<String> = MutableLiveData()
     private var scpDao = ScpDatabase.getInstance()?.scpDao()
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    var scpLikeBoxList: LiveData<List<ScpLikeBox>> = likeDao.getLiveLikeBox()
 
-    fun setScp(link: String) {
-        scp = scpDao?.getLiveScpByLink(link) ?: scpDao?.getLiveCollectionByLink(link)
-        scp?.value?.let {
-            ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
-            AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+    fun setScp(link: String, title: String) {
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            offlineScp = scpDao?.getLiveScpByLink(link)
+            offlineCollection = scpDao?.getLiveCollectionByLink(link)
+        } else {
+            val tempScp = ScpItemModel("", "")
+            tempScp.title = title
+            tempScp.link = link
+            scp.postValue(tempScp)
+        }
+    }
+
+    fun setScpReadInfo() {
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            offlineScp?.value?.let {
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
+            offlineCollection?.value?.let {
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
+        } else {
+            scp.value?.let {
+                it as ScpModel
+                ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
+                AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
+                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
+            }
         }
     }
 
     fun setScpLikeInfo() {
-        scp?.value?.let {
-            scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
-            if (scpLikeInfo?.value == null) {
-                val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
-                likeDao.save(likeInfo)
-                scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
-                info("create new like info:${scpLikeInfo?.value?.title ?: ""}")
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            offlineScp?.value?.let {
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
+            }
+            offlineCollection?.value?.let {
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
+            }
+        } else {
+            scp.value?.let {
+                it as ScpModel
+                if (scpLikeInfo?.value == null) {
+                    val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
+                    info("save new like info:${likeInfo}")
+                    likeDao.save(likeInfo)
+                }
             }
         }
     }
 
-    fun setScpBoxList() {
-        scpLikeBoxList.value?.let {
-            if (it.isEmpty()) {
-                likeDao.addLikeBox(ScpLikeBox(0, "默认收藏夹"))
-            }
+    fun loadOfflineDetail(link: String) {
+        offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+                ?: MutableLiveData()
+    }
+
+    suspend fun loadDetail(link: String) {
+//        if (PreferenceUtil.getAppMode() == OFFLINE) {
+//            offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+////            detail.postValue(ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)?.value
+////                    ?: "")
+//        } else {
+        val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (response.results.isNotEmpty()) {
+                    detail.postValue(response.results[0])
+                }
+            })
         }
-        scpLikeBoxList = likeDao.getLiveLikeBox()
+//        }
     }
 }

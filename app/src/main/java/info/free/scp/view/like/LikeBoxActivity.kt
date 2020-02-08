@@ -29,7 +29,7 @@ class LikeBoxActivity : BaseActivity() {
         if (boxList.isEmpty()) {
             val defaultBox = ScpLikeBox(0, "默认收藏夹")
             boxList.add(defaultBox)
-            likeDao.addLikeBox(defaultBox)
+            likeDao.saveLikeBox(defaultBox)
         }
         adapter.submitList(boxList)
     }

@@ -1,6 +1,7 @@
 package info.free.scp.db
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -45,9 +46,11 @@ class ScpDataHelper {
         val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
         if (type in (13..22)) {
-            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)?: emptyList())
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)
+                    ?: emptyList())
         } else {
-            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())
+            queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)
+                    ?: emptyList())
         }
 
         if (PreferenceUtil.getHideFinished()) {
@@ -71,6 +74,25 @@ class ScpDataHelper {
             queryList.removeAll { hasReadList.map { it_ ->
                 it_.link
             }.contains(it.link) }
+        }
+
+        return queryList
+    }
+
+    fun getInternationalByCountry(country: String): MutableList<ScpModel> {
+        val queryList = emptyList<ScpModel>().toMutableList()
+        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        // 数据库检索
+        queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getInternationalByCountry("$country%")
+                ?: emptyList())
+        if (PreferenceUtil.getHideFinished()) {
+            // 去掉已读部分
+            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
+            queryList.removeAll {
+                hasReadList.map { it_ ->
+                    it_.link
+                }.contains(it.link)
+            }
         }
 
         return queryList
@@ -137,6 +159,8 @@ class ScpDataHelper {
         var scpRecord = AppInfoDatabase.getInstance().readRecordDao().getInfoByLink(link)
         if (scpRecord == null) {
             scpRecord = ScpRecordModel(link, title, viewType)
+        } else {
+            scpRecord.viewListType = viewType
         }
         AppInfoDatabase.getInstance().readRecordDao().save(scpRecord)
     }

@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
@@ -22,6 +24,8 @@ import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.search.SearchActivity
 import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.selector
 import org.jetbrains.anko.support.v4.startActivity
 import org.jetbrains.anko.support.v4.toast
 
@@ -32,11 +36,6 @@ import org.jetbrains.anko.support.v4.toast
  *
  */
 class HomeFragment : BaseFragment() {
-
-//    private var mParam1: String? = null
-//    private var mParam2: String? = null
-
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -84,10 +83,23 @@ class HomeFragment : BaseFragment() {
     }
 
     private fun goToDocPage(entry_type: Int) {
-        ScpDatabase.getInstance()?.let {
+        if (!PreferenceUtil.getShownModeNotice()) {
+            alert("为了方便用户尽快开始阅读，0.1.5版本添加了全局在线阅读模式，如果需要下载数据库并使用离线模式，" +
+                    "请在【我的-数据下载及配置】中设置.\n注意：1.之前已离线的用户仍将使用离线模式，新用户默认使用在线模式" +
+                    "\n2.在线阅读模式的数据仍和数据库相同，并非和官网完全同步，具体同步日期可在离线页面查看。\n" +
+                    "3.正文页面菜单中的在线模式是强制访问网页，和全局阅读模式不同") {
+                positiveButton("我知道了") {
+                    ScpDatabase.getInstance()?.let {
+                        PreferenceUtil.setAppMode(OFFLINE)
+                    } ?: run {
+                        PreferenceUtil.setAppMode(ONLINE)
+                    }
+                    startActivity<SeriesDocActivity>("entry_type" to entry_type)
+                }
+            }.show()
+            PreferenceUtil.setShownModeNotice()
+        } else {
             startActivity<SeriesDocActivity>("entry_type" to entry_type)
-        }?:run {
-            startActivity<DownloadActivity>()
         }
     }
 
@@ -107,10 +119,6 @@ class HomeFragment : BaseFragment() {
 
 
     companion object {
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//        private val LISTENER = "listener"
-//        private val ARG_PARAM2 = "param2"
-
         /**
          * Use this factory method to create a new instance of
          * this fragment using the provided parameters.
@@ -119,15 +127,9 @@ class HomeFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-//        fun newInstance(param1: String, param2: String): HomeFragment {
         fun newInstance(): HomeFragment {
             val fragment = HomeFragment()
-//            val args = Bundle()
-//            args.putString(ARG_PARAM1, param1)
-//            args.putString(ARG_PARAM2, param2)
-//            fragment.arguments = args
             return fragment
         }
     }
-
-} // Required empty public constructor
+}

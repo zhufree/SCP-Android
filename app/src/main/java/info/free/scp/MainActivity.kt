@@ -46,9 +46,9 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                                 .findFragmentByTag(homeFragment.javaClass.name)) {
                     transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
                 } else {
+                    transaction.show(homeFragment)
                     transaction.hide(feedFragment)
                     transaction.hide(userFragment)
-                    transaction.show(homeFragment)
                 }
                 currentFragment = homeFragment
             }
@@ -57,9 +57,9 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                                 .findFragmentByTag(feedFragment.javaClass.name)) {
                     transaction.add(R.id.flMainContainer, feedFragment, feedFragment.javaClass.name)
                 } else {
+                    transaction.show(feedFragment)
                     transaction.hide(homeFragment)
                     transaction.hide(userFragment)
-                    transaction.show(feedFragment)
                 }
                 currentFragment = feedFragment
             }
@@ -68,9 +68,9 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                                 .findFragmentByTag(userFragment.javaClass.name)) {
                     transaction.add(R.id.flMainContainer, userFragment, userFragment.javaClass.name)
                 } else {
+                    transaction.show(userFragment)
                     transaction.hide(feedFragment)
                     transaction.hide(homeFragment)
-                    transaction.show(userFragment)
                 }
                 currentFragment = userFragment
             }

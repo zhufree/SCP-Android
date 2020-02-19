@@ -229,6 +229,10 @@ class DetailActivity : BaseActivity() {
                 super.onPageStarted(view, url, favicon)
                 pbLoading.visibility = VISIBLE
             }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                pbLoading.visibility = GONE
+            }
         }
 
         if (!PreferenceUtil.getShownDetailNotice()) {

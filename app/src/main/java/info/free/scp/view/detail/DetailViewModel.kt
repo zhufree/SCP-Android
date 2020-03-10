@@ -69,4 +69,10 @@ class DetailViewModel : ViewModel() {
             }
         }
     }
+
+    fun loadComment(link: String) {
+        viewModelScope.launch {
+            repo.loadComment(link)
+        }
+    }
 }

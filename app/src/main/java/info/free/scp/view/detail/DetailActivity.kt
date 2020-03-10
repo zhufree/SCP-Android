@@ -7,20 +7,18 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.KeyEvent
+import android.view.*
+import android.view.Gravity.CENTER
 import android.view.KeyEvent.KEYCODE_BACK
-import android.view.LayoutInflater
-import android.view.Menu
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.ViewTreeObserver
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.LinearLayout.VERTICAL
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -98,6 +96,8 @@ class DetailActivity : BaseActivity() {
     private var fullUrl = ""
     private var forceOnline = false
 
+    private var tvLoad: TextView? = null
+
     private val viewModel by lazy {
         ViewModelProvider(this)
                 .get(DetailViewModel::class.java)
@@ -106,6 +106,9 @@ class DetailActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        tvLoad = TextView(this)
+        tvLoad?.text = "评论加载中..."
+        tvLoad?.gravity = CENTER
         screenHeight = Utils.getScreenHeight(this)
 
         EventUtil.onEvent(this, EventUtil.clickReadDetail)
@@ -257,7 +260,6 @@ class DetailActivity : BaseActivity() {
             }
         }
         nsv_web_wrapper?.onScrollChange { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            info { "$scrollY, ${webView?.height}" }
             webView?.let {
                 sb_detail?.progress = ((scrollY.toFloat() / webView.height) * 100).toInt()
             }
@@ -286,6 +288,9 @@ class DetailActivity : BaseActivity() {
                     "text/html", "utf-8", null)
         }
         nsv_web_wrapper?.scrollTo(0, 0)
+        btn_comment?.show()
+        ll_comment_container.removeAllViews()
+        ll_comment_container.addView(tvLoad, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
     }
 
     override fun refreshTheme() {
@@ -313,7 +318,6 @@ class DetailActivity : BaseActivity() {
         viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
         viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
             if (scpInfo == null) {
-                info("init like info")
                 viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
             }
             invalidateOptionsMenu()
@@ -385,7 +389,6 @@ class DetailActivity : BaseActivity() {
                         reportDialog.show()
                         reportDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
                             val reportString = reportView.et_report.text.toString()
-                            Log.i("report", reportString)
                             MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
                             reportDialog.dismiss()
                         }
@@ -500,7 +503,6 @@ class DetailActivity : BaseActivity() {
      * 已收藏
      */
     private fun likeScp() {
-        info("get like info when like:${viewModel.getScpLikeInfo()?.value}")
         val scpInfo = viewModel.getScpLikeInfo()?.value ?: return
         val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
         if (!scpInfo.like) {
@@ -599,7 +601,6 @@ class DetailActivity : BaseActivity() {
                     scp?.let {
                         randomList.add(it)
                         randomIndex++
-                        Log.i("random", randomIndex.toString())
                         setData(it)
                     }
                 }
@@ -632,7 +633,6 @@ class DetailActivity : BaseActivity() {
             1 -> {
                 if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
                     scp = randomList[--randomIndex]
-                    Log.i("random", randomIndex.toString())
                     scp?.let {
                         setData(it)
                     }
@@ -720,6 +720,21 @@ class DetailActivity : BaseActivity() {
         }
 
         tv_bottom_like?.setOnClickListener { likeScp() }
+
+        viewModel.repo.commentList.observe(this, Observer {
+            ll_comment_container.removeAllViews()
+            it.forEach { c ->
+                val newComment = TextView(this)
+                newComment.text = c.comment
+                ll_comment_container.addView(newComment, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            }
+        })
+        btn_comment?.setOnClickListener {
+            ll_comment_container.visibility = VISIBLE
+            nsv_web_wrapper?.scrollTo(0, nsv_web_wrapper.height)
+            btn_comment?.hide()
+            viewModel.loadComment(url)
+        }
     }
 
     private fun refreshButtonStyle() {

@@ -48,6 +48,9 @@ interface ApiService {
     @GET("/get_detail/{link}") // 不带/
     suspend fun getDetail(@Path("link") link: String): ApiBean.ApiListResponse<String>
 
+    @GET("/get_comment/{link}") // 不带/
+    suspend fun getComment(@Path("link") link: String): ApiBean.ApiListResponse<CommentModel>
+
     @Headers(
             PrivateConstants.APP_ID,
             PrivateConstants.API_KEY,

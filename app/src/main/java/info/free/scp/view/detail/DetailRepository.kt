@@ -7,10 +7,7 @@ import executeResponse
 import info
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
-import info.free.scp.bean.ScpCollectionModel
-import info.free.scp.bean.ScpItemModel
-import info.free.scp.bean.ScpLikeModel
-import info.free.scp.bean.ScpModel
+import info.free.scp.bean.*
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
@@ -24,7 +21,10 @@ class DetailRepository {
     var offlineCollection: LiveData<ScpCollectionModel>? = null
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
     var detail: MutableLiveData<String?> = MutableLiveData("")
+    var commentList: MutableLiveData<List<CommentModel>> = MutableLiveData()
     var offlineDetail: LiveData<String> = MutableLiveData()
+
+
     private var scpDao = ScpDatabase.getInstance()?.scpDao()
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
 
@@ -96,11 +96,6 @@ class DetailRepository {
     }
 
     suspend fun loadDetail(link: String) {
-//        if (PreferenceUtil.getAppMode() == OFFLINE) {
-//            offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
-////            detail.postValue(ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)?.value
-////                    ?: "")
-//        } else {
         val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
         response?.let {
             executeResponse(response, {
@@ -111,6 +106,19 @@ class DetailRepository {
                 }
             })
         }
-//        }
+    }
+
+    suspend fun loadComment(link: String) {
+        val response = apiCall { HttpManager.instance.getComment(link.substring(1)) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (response.results.isNotEmpty()) {
+                    info(response.results.toString())
+                    commentList.postValue(response.results)
+                }
+            })
+        }
     }
 }

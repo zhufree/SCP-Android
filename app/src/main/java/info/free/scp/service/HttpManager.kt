@@ -97,6 +97,10 @@ class HttpManager {
         return feedApiService.getDetail(link)
     }
 
+    suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
+        return feedApiService.getComment(link)
+    }
+
 
     companion object {
         val instance = HttpManager()

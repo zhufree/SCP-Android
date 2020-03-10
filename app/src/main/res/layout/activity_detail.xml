@@ -98,42 +98,64 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_download_qrcode" />
 
+            <LinearLayout
+                android:id="@+id/ll_comment_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="64dp"
+                android:minHeight="100dp"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/webView">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="评论加载中..."
+                    android:textSize="20sp" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:paddingBottom="0dp">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_preview"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginStart="16dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center"
             android:padding="0dp"
             android:text="@string/preview_article"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_detail_center"
             android:layout_width="0dp"
-
             android:layout_height="match_parent"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_begin="206dp" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_set_has_read"
             android:layout_width="80dp"
             android:layout_height="30dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center"
             android:padding="0dp"
             android:text="@string/set_has_read"
@@ -141,13 +163,13 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_like"
             android:layout_width="80dp"
             android:layout_height="30dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center"
             android:padding="0dp"
             android:text="@string/menu_like"
@@ -155,22 +177,35 @@
             android:textStyle="bold"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@id/gl_detail_center"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="@id/gl_detail_center" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/tv_bottom_next"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="4dp"
             android:gravity="center"
             android:padding="0dp"
             android:text="@string/next_article"
             android:textColor="?attr/darkText"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/btn_comment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:elevation="10dp"
+            android:src="@drawable/ic_comment_white_24dp"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toTopOf="@id/tv_bottom_next"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:rippleColor="@color/colorPrimaryDark" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper

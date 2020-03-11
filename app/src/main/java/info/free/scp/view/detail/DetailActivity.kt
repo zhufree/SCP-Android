@@ -724,8 +724,8 @@ class DetailActivity : BaseActivity() {
         viewModel.repo.commentList.observe(this, Observer {
             ll_comment_container.removeAllViews()
             it.forEach { c ->
-                val newComment = TextView(this)
-                newComment.text = c.comment
+                val newComment = CommentLayout(this)
+                newComment.setData(c)
                 ll_comment_container.addView(newComment, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
             }
         })

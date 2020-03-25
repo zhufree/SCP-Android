@@ -17,9 +17,12 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
+import androidx.core.view.marginTop
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
@@ -42,6 +45,7 @@ import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import okhttp3.internal.Util
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
@@ -109,6 +113,7 @@ class DetailActivity : BaseActivity() {
         tvLoad = TextView(this)
         tvLoad?.text = "评论加载中..."
         tvLoad?.gravity = CENTER
+        tvLoad?.setTextColor(ThemeUtil.darkText)
         screenHeight = Utils.getScreenHeight(this)
 
         EventUtil.onEvent(this, EventUtil.clickReadDetail)
@@ -235,6 +240,8 @@ class DetailActivity : BaseActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 pbLoading.visibility = GONE
+                info { "webView.height = ${webView.height}" }
+                info { "nsv_web_wrapper.height = ${nsv_web_wrapper.height}" }
             }
         }
 
@@ -252,15 +259,18 @@ class DetailActivity : BaseActivity() {
                     .create().show()
         }
 
+
         sb_detail?.onSeekBarChangeListener {
             this.onProgressChanged { seekBar, i, b ->
                 if (b) {
+                    info(i)
                     nsv_web_wrapper?.scrollTo(0, (webView.height * (i / 100f)).toInt())
                 }
             }
         }
         nsv_web_wrapper?.onScrollChange { v, scrollX, scrollY, oldScrollX, oldScrollY ->
             webView?.let {
+                info(scrollY)
                 sb_detail?.progress = ((scrollY.toFloat() / webView.height) * 100).toInt()
             }
         }
@@ -290,6 +300,7 @@ class DetailActivity : BaseActivity() {
         nsv_web_wrapper?.scrollTo(0, 0)
         btn_comment?.show()
         ll_comment_container.removeAllViews()
+        ll_comment_container.visibility = GONE
         ll_comment_container.addView(tvLoad, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
     }
 
@@ -299,6 +310,13 @@ class DetailActivity : BaseActivity() {
         refreshStyle()
         refreshReadBtnStatus()
         refreshButtonStyle()
+        ll_comment_container.children.forEach {
+            if (it is CommentLayout) {
+                it.refreshTheme()
+            } else {
+                (it as TextView).setTextColor(ThemeUtil.darkText)
+            }
+        }
     }
 
     /**
@@ -315,6 +333,7 @@ class DetailActivity : BaseActivity() {
         if (readType == 1) {
             randomList.add(s)
         }
+        tvLoad?.text = "评论加载中..."
         viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
         viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
             if (scpInfo == null) {
@@ -722,11 +741,17 @@ class DetailActivity : BaseActivity() {
         tv_bottom_like?.setOnClickListener { likeScp() }
 
         viewModel.repo.commentList.observe(this, Observer {
-            ll_comment_container.removeAllViews()
-            it.forEach { c ->
-                val newComment = CommentLayout(this)
-                newComment.setData(c)
-                ll_comment_container.addView(newComment, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            if (it.isEmpty()) {
+                tvLoad?.text = "这篇文档没有评论"
+            } else {
+                ll_comment_container.removeAllViews()
+                val commentLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+                commentLp.topMargin = Utils.dp2px(4)
+                it.forEach { c ->
+                    val newComment = CommentLayout(this)
+                    newComment.setData(c)
+                    ll_comment_container.addView(newComment, commentLp)
+                }
             }
         })
         btn_comment?.setOnClickListener {

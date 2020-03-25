@@ -2,13 +2,15 @@ package info.free.scp.view.detail
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
 import info.free.scp.R
 import info.free.scp.bean.CommentModel
-import info.free.scp.util.Utils
+import info.free.scp.util.ThemeUtil
 import kotlinx.android.synthetic.main.layout_comment.view.*
+import org.jetbrains.anko.collections.forEachWithIndex
 
 class CommentLayout : ConstraintLayout {
     constructor(context: Context) : this(context, null)
@@ -21,6 +23,8 @@ class CommentLayout : ConstraintLayout {
         inflate(context, R.layout.layout_comment, this)
     }
 
+    val replyList = emptyList<CommentLayout>().toMutableList()
+
     fun setData(comment: CommentModel) {
         if (comment.title.isEmpty()) {
             tv_comment_title.visibility = GONE
@@ -30,19 +34,22 @@ class CommentLayout : ConstraintLayout {
         tv_comment_username.text = comment.username
         tv_comment_time.text = comment.time
         tv_comment_content.text = comment.comment
-        val replyLp = LayoutParams(0, WRAP_CONTENT)
-        replyLp.topToBottom = tv_comment_content.id
-        replyLp.startToStart = tv_comment_content.id
-        replyLp.endToEnd = PARENT_ID
-        replyLp.marginStart = Utils.dp2px(16)
-        replyLp.topMargin = Utils.dp2px(8)
+        val replyLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         tv_comment_content.post {
-            comment.reply.forEach {
+            comment.reply.forEachWithIndex { index, it ->
                 val replyLayout = CommentLayout(this.context)
                 replyLayout.setData(it)
-                addView(replyLayout, replyLp)
-                replyLp.topToBottom = replyLayout.id
+                ll_reply_container.addView(replyLayout, replyLp)
+                replyList.add(replyLayout)
             }
         }
+    }
+
+    fun refreshTheme() {
+        tv_comment_title.setTextColor(ThemeUtil.darkText)
+        tv_comment_content.setTextColor(ThemeUtil.darkText)
+        tv_comment_username.setTextColor(ThemeUtil.lightText)
+        tv_comment_time.setTextColor(ThemeUtil.lightText)
+        replyList.forEach { it.refreshTheme() }
     }
 }

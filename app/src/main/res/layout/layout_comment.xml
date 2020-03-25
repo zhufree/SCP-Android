@@ -8,8 +8,11 @@
         android:id="@+id/tv_comment_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:textSize="18sp"
         android:textStyle="bold"
+        android:textColor="?attr/darkText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -17,9 +20,11 @@
         android:id="@+id/tv_comment_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="@id/tv_comment_title"
+        android:textColor="?attr/lightText"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_comment_title" />
 
     <TextView
@@ -28,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16sp"
         android:textSize="12sp"
+        android:textColor="?attr/lightText"
         app:layout_constraintBottom_toBottomOf="@id/tv_comment_username"
         app:layout_constraintStart_toEndOf="@id/tv_comment_username" />
 
@@ -35,9 +41,32 @@
         android:id="@+id/tv_comment_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="@id/tv_comment_title"
+        android:textColor="?attr/darkText"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_comment_username" />
 
+    <View
+        android:id="@+id/v_comment_sign"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="2dp"
+        android:background="@color/colorPrimary"
+        app:layout_constraintBottom_toBottomOf="@id/tv_comment_content"
+        app:layout_constraintEnd_toStartOf="@id/tv_comment_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/ll_reply_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="4dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tv_comment_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_comment_content" />
 </merge>

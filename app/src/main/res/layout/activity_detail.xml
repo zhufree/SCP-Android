@@ -104,7 +104,6 @@
                 android:layout_marginBottom="64dp"
                 android:minHeight="100dp"
                 android:orientation="vertical"
-                android:background="@color/colorPrimary"
                 android:paddingStart="12dp"
                 android:paddingTop="12dp"
                 android:paddingEnd="12dp"

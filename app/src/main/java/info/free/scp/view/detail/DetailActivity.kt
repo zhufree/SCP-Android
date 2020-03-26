@@ -259,19 +259,23 @@ class DetailActivity : BaseActivity() {
                     .create().show()
         }
 
+        var isMoving = false
+        val screenHeight = Utils.getScreenHeight(this@DetailActivity)
 
         sb_detail?.onSeekBarChangeListener {
-            this.onProgressChanged { seekBar, i, b ->
+            onProgressChanged { _, i, b ->
                 if (b) {
                     info(i)
-                    nsv_web_wrapper?.scrollTo(0, (webView.height * (i / 100f)).toInt())
+                    nsv_web_wrapper?.scrollTo(0, ((webView.height - screenHeight) * (i / 100f)).toInt())
                 }
             }
+            onStartTrackingTouch { isMoving = true }
+            onStopTrackingTouch { isMoving = false }
         }
-        nsv_web_wrapper?.onScrollChange { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            webView?.let {
+        nsv_web_wrapper?.onScrollChange { _, _, scrollY, _, _ ->
+            if (!isMoving) {
                 info(scrollY)
-                sb_detail?.progress = ((scrollY.toFloat() / webView.height) * 100).toInt()
+                sb_detail?.progress = ((scrollY.toFloat() / (webView.height - screenHeight) * 100)).toInt()
             }
         }
 
@@ -756,7 +760,7 @@ class DetailActivity : BaseActivity() {
         })
         btn_comment?.setOnClickListener {
             ll_comment_container.visibility = VISIBLE
-            nsv_web_wrapper?.scrollTo(0, nsv_web_wrapper.height)
+            nsv_web_wrapper?.scrollTo(0, (webView.height - screenHeight) + 100)
             btn_comment?.hide()
             viewModel.loadComment(url)
         }

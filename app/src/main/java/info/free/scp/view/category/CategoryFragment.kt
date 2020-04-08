@@ -8,8 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.SERIES
+import info.free.scp.SCPConstants.Category.SERIES_CN
+import info.free.scp.SCPConstants.Category.TALES
+import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseAdapter
 import info.free.scp.view.base.BaseFragment
@@ -32,33 +37,42 @@ class CategoryFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val lm = LinearLayoutManager(mContext, VERTICAL, false)
-        rv_category_list?.layoutManager = lm
+        // 根据categoryType设置layoutManager
+
+//        val lm = LinearLayoutManager(mContext, VERTICAL, false)
+//        rv_category_list?.layoutManager = lm
         initData()
     }
 
     private fun initData() {
         categoryType = arguments?.getInt("category_type") ?: -1
         subPosition = arguments?.getInt("sub_position") ?: -1
+        if (categoryType in arrayOf(SERIES, SERIES_CN, TALES, TALES_CN)) {
+            val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+            rv_category_list.layoutManager = layoutManager
+        } else {
+            val layoutManager = LinearLayoutManager(mContext, VERTICAL, false)
+            rv_category_list.layoutManager = layoutManager
+        }
         categoryList.clear()
         // 一级目录
         when (categoryType) {
-            SCPConstants.Category.SERIES -> {
+            SERIES -> {
                 // count = 100 0..10->001~900
                 categoryList.addAll((0 until (1000 / categoryCount)).map { (it + subPosition * 10) * categoryCount })
             }
-            SCPConstants.Category.SERIES_CN -> {
+            SERIES_CN -> {
                 categoryList.addAll((0 until (1000 / categoryCount)).map { (it + subPosition * 10) * categoryCount })
             }
             SCPConstants.Category.SCP_ARCHIVES -> {
                 categoryList.addAll(arrayOf("已解明SCP", "已解明SCP-CN", "已归档SCP", "废弃SCP", "删除SCP"))
             }
-            SCPConstants.Category.TALES -> {
+            TALES -> {
                 // 1021
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9"))
             }
-            SCPConstants.Category.TALES_CN -> {
+            TALES_CN -> {
                 // 1021
                 categoryList.addAll(arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
                         "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9"))

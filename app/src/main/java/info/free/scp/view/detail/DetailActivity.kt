@@ -334,9 +334,6 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setData(s: ScpModel, back: Boolean = false) {
-        if (readType == 1) {
-            randomList.add(s)
-        }
         tvLoad?.text = "评论加载中..."
         viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
         viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->

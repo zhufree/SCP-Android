@@ -22,7 +22,6 @@ import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import androidx.core.view.marginTop
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
@@ -45,7 +44,6 @@ import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import okhttp3.internal.Util
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
@@ -107,6 +105,14 @@ class DetailActivity : BaseActivity() {
                 .get(DetailViewModel::class.java)
     }
 
+    private var randomRange: String = "0"
+        get() = when (randomType) {
+            1 -> "1,2"
+            2 -> "3,4"
+            3 -> "5,6"
+            else -> "0"
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -136,7 +142,18 @@ class DetailActivity : BaseActivity() {
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
-            finish()
+            if (readType == 1) {
+                if (PreferenceUtil.getAppMode() == OFFLINE) {
+                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+                    scp?.let {
+                        setData(it)
+                    }
+                } else {
+                    viewModel.loadRandom(randomRange)
+                }
+            } else {
+                finish()
+            }
         } else if (!forceOnline) {
             viewModel.setScp(url, title) // 设置scp
         } else {
@@ -346,9 +363,16 @@ class DetailActivity : BaseActivity() {
         invalidateOptionsMenu()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        // TODO BUG FIX history
         if (!back) {
             historyList.add(s)
             historyIndex = historyList.size - 1
+        }
+
+        if (newRandom) {
+            randomList.add(s)
+            randomIndex++
+            newRandom = false
         }
         tv_detail_toolbar?.text = s.title
         tv_detail_toolbar?.isSelected = true
@@ -589,6 +613,7 @@ class DetailActivity : BaseActivity() {
         }.show()
     }
 
+    var newRandom = false
     private fun toNextArticle() {
         val index = scp?.index ?: 0
         val scpType = scp?.scpType ?: 0
@@ -605,30 +630,29 @@ class DetailActivity : BaseActivity() {
                 } ?: toast("已经是最后一篇了")
             }
             1 -> {
+                // 下一篇
                 if (randomIndex < randomList.size - 1) {
-                    scp = randomList[++randomIndex]
-                    scp?.let {
-                        setData(it)
-                    }
+                    val nextScp = randomList[++randomIndex]
+                    viewModel.setScp(nextScp.link, nextScp.title)
+//                    scp =
+//                    scp?.let {
+//                        setData(it)
+//                    }
                 } else {
-                    val randomRange = when (randomType) {
-                        1 -> "1,2"
-                        2 -> "3,4"
-                        3 -> "5,6"
-                        else -> ""
+                    if (PreferenceUtil.getAppMode() == OFFLINE) {
+                        val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+                        viewModel.setScp(nextScp?.link ?: "", nextScp?.title ?: "")
+                    } else {
+                        viewModel.loadRandom(randomRange)
                     }
-                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-                    scp?.let {
-                        randomList.add(it)
-                        randomIndex++
-                        setData(it)
-                    }
+                    newRandom = true
                 }
             }
             else -> {
             }
         }
     }
+
 
     private fun toPreviewArticle() {
         val index = scp?.index ?: 0
@@ -652,10 +676,12 @@ class DetailActivity : BaseActivity() {
             }
             1 -> {
                 if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
-                    scp = randomList[--randomIndex]
-                    scp?.let {
-                        setData(it)
-                    }
+                    val prevScp = randomList[--randomIndex]
+                    viewModel.setScp(prevScp.link, prevScp.title)
+//                    scp = randomList[--randomIndex]
+//                    scp?.let {
+//                        setData(it, true)
+//                    }
                 } else {
                     toast("已经是第一篇了")
                 }
@@ -720,19 +746,11 @@ class DetailActivity : BaseActivity() {
     private fun initSwitchBtn() {
         refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
-            if (PreferenceUtil.getAppMode() == OFFLINE) {
-                toPreviewArticle()
-            } else {
-                toast("仅限离线模式下使用")
-            }
+            toPreviewArticle()
         }
 
         tv_bottom_next?.setOnClickListener {
-            if (PreferenceUtil.getAppMode() == OFFLINE) {
-                toNextArticle()
-            } else {
-                toast("仅限离线模式下使用")
-            }
+            toNextArticle()
         }
 
         tv_bottom_set_has_read?.setOnClickListener {

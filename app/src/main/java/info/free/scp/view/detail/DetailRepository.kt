@@ -121,4 +121,18 @@ class DetailRepository {
             })
         }
     }
+
+    suspend fun getRandom(typeRange: String) {
+        val response = apiCall { HttpManager.instance.getRandom(typeRange) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (!response.results.isNullOrEmpty()) {
+                    info(response.results.toString())
+                    scp.postValue(response.results[0])
+                }
+            })
+        }
+    }
 }

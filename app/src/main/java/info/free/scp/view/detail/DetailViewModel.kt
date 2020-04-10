@@ -75,4 +75,10 @@ class DetailViewModel : ViewModel() {
             repo.loadComment(link)
         }
     }
+
+    fun loadRandom(typeRange: String) {
+        viewModelScope.launch {
+            repo.getRandom(typeRange)
+        }
+    }
 }

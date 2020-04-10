@@ -620,24 +620,23 @@ class DetailActivity : BaseActivity() {
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                scp = if (itemType == 0) {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
-                } else {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                // TODO
+                if (PreferenceUtil.getAppMode() == OFFLINE) {
+                    scp = if (itemType == 0) {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                    } else {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                    }
+                    scp?.let {
+                        viewModel.setScp(it.link, it.title)
+                    } ?: toast("已经是最后一篇了")
                 }
-                scp?.let {
-                    setData(it)
-                } ?: toast("已经是最后一篇了")
             }
             1 -> {
                 // 下一篇
                 if (randomIndex < randomList.size - 1) {
                     val nextScp = randomList[++randomIndex]
                     viewModel.setScp(nextScp.link, nextScp.title)
-//                    scp =
-//                    scp?.let {
-//                        setData(it)
-//                    }
                 } else {
                     if (PreferenceUtil.getAppMode() == OFFLINE) {
                         val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)

@@ -13,6 +13,8 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
+import org.jetbrains.anko.toast
+import toast
 
 
 class DetailRepository {
@@ -131,6 +133,22 @@ class DetailRepository {
                 if (!response.results.isNullOrEmpty()) {
                     info(response.results.toString())
                     scp.postValue(response.results[0])
+                }
+            })
+        }
+    }
+
+    suspend fun getSibling(scpType: Int, index: Int, direct: String = "next") {
+        val response = apiCall { HttpManager.instance.getSibling(scpType, index, direct) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (!response.results.isNullOrEmpty()) {
+                    info(response.results.toString())
+                    scp.postValue(response.results[0])
+                } else {
+                    toast(if (direct == "next") "已经是最后一篇了" else "已经是第一篇了")
                 }
             })
         }

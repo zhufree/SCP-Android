@@ -81,4 +81,10 @@ class DetailViewModel : ViewModel() {
             repo.getRandom(typeRange)
         }
     }
+
+    fun loadSibling(scpType: Int, index: Int, direct: String = "next") {
+        viewModelScope.launch {
+            repo.getSibling(scpType, index, direct)
+        }
+    }
 }

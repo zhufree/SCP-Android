@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
@@ -61,6 +63,15 @@ class HomeFragment : BaseFragment() {
         tv_read_later?.background?.alpha = 50
         tv_joke_doc?.background?.alpha = 50
         tv_direct?.background?.alpha = 50
+
+        if (!PreferenceUtil.getShowNotice()) {
+            cd_notice_container.visibility = GONE
+        }
+        iv_remove_notice?.setOnClickListener {
+            PreferenceUtil.setShowNotice(false)
+            cd_notice_container.visibility = GONE
+            toast("公告已隐藏，可在app使用说明中查看")
+        }
         tv_series_doc?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }

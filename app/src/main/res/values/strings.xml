@@ -163,6 +163,7 @@
     <!--草稿-->
     <string name="empty_draft">还没有草稿</string>
     <string name="add_draft">添加草稿</string>
+    <string name="draft_help">如何撰写一篇SCP文档</string>
     <string name="save_draft">保存草稿</string>
 
     <!--最受欢迎页面-->

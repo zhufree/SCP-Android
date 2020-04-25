@@ -16,10 +16,10 @@
             android:id="@+id/tv_qq_group"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/contact_qq_group"
             android:textColor="?attr/darkText"
             app:layout_constraintBottom_toTopOf="@+id/tv_user_notice"
@@ -31,9 +31,9 @@
             android:id="@+id/tv_user_notice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/user_notice"
             android:textColor="?attr/darkText"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,14 +41,26 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_qq_group" />
 
         <TextView
+            android:id="@+id/tv_app_notice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:textColor="?attr/darkText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_user_notice" />
+
+        <TextView
             android:id="@+id/tv_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:textColor="?attr/darkText"
-            app:layout_constraintTop_toBottomOf="@id/tv_user_notice"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_app_notice" />
 
         <TextView
             android:id="@+id/tv_data_update_time"
@@ -57,9 +69,9 @@
             android:layout_marginTop="20dp"
             android:gravity="center"
             android:textColor="?attr/darkText"
-            app:layout_constraintTop_toBottomOf="@id/tv_version"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_version" />
 
         <TextView
             android:id="@+id/tv_server_data_latest_time"
@@ -69,10 +81,10 @@
             android:layout_marginBottom="20dp"
             android:gravity="center"
             android:textColor="?attr/darkText"
-            app:layout_constraintTop_toBottomOf="@id/tv_data_update_time"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_data_update_time" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

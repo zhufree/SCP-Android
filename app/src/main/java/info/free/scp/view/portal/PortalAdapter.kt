@@ -33,11 +33,11 @@ class PortalAdapter : ListAdapter<PortalModel, PortalAdapter.PortalHolder>(Porta
 
     private fun createOnClickListener(portal: PortalModel): View.OnClickListener {
         return View.OnClickListener {
-            val updateIntent = Intent()
-            updateIntent.action = "android.intent.action.VIEW"
+            val jumpIntent = Intent()
+            jumpIntent.action = "android.intent.action.VIEW"
             val updateUrl = Uri.parse(portal.url)
-            updateIntent.data = updateUrl
-            (it.context as Activity).startActivity(updateIntent)
+            jumpIntent.data = updateUrl
+            (it.context as Activity).startActivity(jumpIntent)
         }
     }
 

@@ -63,6 +63,9 @@ class DetailActivity : BaseActivity() {
             fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
         }
     private var title = ""
+    private var index = 0
+    private var scpType = 0
+
     private var scp: ScpModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
@@ -130,11 +133,13 @@ class DetailActivity : BaseActivity() {
 
         url = intent.getStringExtra("link") ?: ""
         title = intent.getStringExtra("title") ?: ""
+        index = intent.getIntExtra("index", 0)
+        scpType = intent.getIntExtra("scp_type", 0)
         // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
-        itemType = intent.getIntExtra("scp_type", 0)
+        itemType = intent.getIntExtra("item_type", 0)
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
@@ -615,20 +620,23 @@ class DetailActivity : BaseActivity() {
 
     var newRandom = false
     private fun toNextArticle() {
-        val index = scp?.index ?: 0
-        val scpType = scp?.scpType ?: 0
+        index = if (scp?.index != -1) scp?.index ?: 0 else index
+        scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                // 在线模式没传index，做不了
-                scp = if (itemType == 0) {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                if (PreferenceUtil.getAppMode() == OFFLINE) {
+                    scp = if (itemType == 0) {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                    } else {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                    }
+                    scp?.let {
+                        viewModel.setScp(it.link, it.title)
+                    } ?: toast("已经是最后一篇了")
                 } else {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                    viewModel.loadSibling(scpType, index, "next")
                 }
-                scp?.let {
-                    viewModel.setScp(it.link, it.title)
-                } ?: toast("已经是最后一篇了")
             }
             1 -> {
                 // 下一篇
@@ -652,21 +660,25 @@ class DetailActivity : BaseActivity() {
 
 
     private fun toPreviewArticle() {
-        val index = scp?.index ?: 0
-        val scpType = scp?.scpType ?: 0
+        index = if (scp?.index != -1) scp?.index ?: 0 else index
+        scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
                 when (index) {
                     0 -> toast("已经是第一篇了")
                     else -> {
-                        scp = if (itemType == 0) {
-                            ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
+                        if (PreferenceUtil.getAppMode() == OFFLINE) {
+                            scp = if (itemType == 0) {
+                                ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
+                            } else {
+                                ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
+                            }
+                            scp?.let {
+                                setData(it)
+                            }
                         } else {
-                            ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
-                        }
-                        scp?.let {
-                            setData(it)
+                            viewModel.loadSibling(scpType, index, "prev")
                         }
                     }
                 }

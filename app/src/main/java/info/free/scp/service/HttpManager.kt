@@ -111,7 +111,7 @@ class HttpManager {
     suspend fun getSibling(scpType: Int = SERIES, index: Int = 1, direct: String = "next")
             : ApiBean.ApiListResponse<out ScpModel> {
         return if (scpType in collectionTypeList) feedApiService.getSiblingCollection(direct,
-                scpType, index) else feedApiService.getSiblingScp(direct, scpType, index)
+                index, scpType) else feedApiService.getSiblingScp(direct, index, scpType)
     }
 
     suspend fun getDirect(scpType: Int = SERIES, numberString: String = "-001")

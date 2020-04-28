@@ -28,7 +28,7 @@ class CategoryRepository {
                     mutableResult = filterResult.toMutableList()
                     if (categoryType == SCPConstants.Category.SCP_ABNORMAL) {
                         // 三句话外围
-                        val shortStories = ScpModel(link = "/short-stories", title = "三句话外围")
+                        val shortStories = ScpModel(link = "/short-stories", title = "三句话外围", index = 1000, scpType = 4)
                         mutableResult.add(shortStories)
                     }
                 } else {

@@ -12,7 +12,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import info
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.*
 import info.free.scp.databinding.ItemCategoryBinding
@@ -60,7 +62,9 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
             val intent = Intent()
             intent.putExtra("link", scp.link)
             intent.putExtra("title", scp.title)
-            intent.putExtra("scp_type", if (scp is ScpCollectionModel) 1 else 0)
+            intent.putExtra("index", scp.index)
+            intent.putExtra("scp_type", scp.scpType)
+            intent.putExtra("item_type", if (scp is ScpCollectionModel) 1 else 0)
             intent.setClass(it.context, DetailActivity::class.java)
             (it.context as Activity).startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
 

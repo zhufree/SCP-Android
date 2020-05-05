@@ -108,12 +108,12 @@ class DetailActivity : BaseActivity() {
                 .get(DetailViewModel::class.java)
     }
 
-    private var randomRange: String = "0"
+    private var randomRange: String = ""
         get() = when (randomType) {
             1 -> "1,2"
             2 -> "3,4"
             3 -> "5,6"
-            else -> "0"
+            else -> ""
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -324,6 +324,7 @@ class DetailActivity : BaseActivity() {
                     "text/html", "utf-8", null)
         }
         nsv_web_wrapper?.scrollTo(0, 0)
+        translate(PreferenceUtil.getTraditionalText())
         btn_comment?.show()
         ll_comment_container.removeAllViews()
         ll_comment_container.visibility = GONE
@@ -510,12 +511,12 @@ class DetailActivity : BaseActivity() {
                         }
                         return@let
                     }
-                    R.id.translate_to_simple -> {
-                        translate(simple)
-                    }
-                    R.id.translate_to_traditional -> {
-                        translate(traditional)
-                    }
+//                    R.id.translate_to_simple -> {
+//                        translate(simple)
+//                    }
+//                    R.id.translate_to_traditional -> {
+//                        translate(traditional)
+//                    }
                     else -> {
                     }
                 }

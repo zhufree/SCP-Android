@@ -336,6 +336,11 @@ object PreferenceUtil {
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
 
+    fun getTraditionalText(): Int {
+        val textSize = getStringValue("read_settings", "detail_text_traditional")
+        return if (textSize.isNotEmpty()) textSize.toInt() else 0
+    }
+
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)
     }

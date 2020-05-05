@@ -78,7 +78,11 @@ class DetailViewModel : ViewModel() {
 
     fun loadRandom(typeRange: String) {
         viewModelScope.launch {
-            repo.getRandom(typeRange)
+            if (typeRange.isEmpty()) {
+                repo.getRandom("0")
+            } else {
+                repo.getRandom(typeRange)
+            }
         }
     }
 

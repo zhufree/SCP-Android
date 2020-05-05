@@ -39,12 +39,13 @@
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
         v0.2.0更新内容\n
-1.正文增加查看评论功能\n
+1.正文增加查看评论功能（因中分官网限制未登录状态下不能看评论，此功能暂时不可使用）\n
 2.在线模式下可以使用直达，随机等功能\n
 3.公告等部分细节优化\n
-4.修复部分vivo手机点击正文闪退的bug\n
-5.修复部分手机首页不显示入口的bug\n
-6.修复点击我的闪退的bug\n
+4.繁简设置转移到【我的】-【阅读设置】中\n
+5.修复部分vivo手机点击正文闪退的bug（如果仍然闪退，建议换手机（划掉））\n
+6.修复部分手机首页不显示入口的bug\n
+7.修复点击我的闪退的bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
         以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
 
@@ -125,6 +126,7 @@
     <string name="category_height">目录条目高度</string>
     <string name="category_interval">目录条目间距</string>
     <string name="font_size_setting">字体设置</string>
+    <string name="traditional_setting">繁简字设置</string>
     <string name="copyright_notice_1">APP内容来源自SCP基金会：http://scp-wiki-cn.wikidot.com/</string>
     <string name="copyright_notice_2">除非特别注明，文章内容采用CC-BY-SA 3.0协议：https://creativecommons.org/licenses/by-sa/3.0/deed.zh</string>
     <string name="copyright_notice_3">欲了解更多信息，查看授权指南：http://scp-wiki-cn.wikidot.com/licensing-guide</string>

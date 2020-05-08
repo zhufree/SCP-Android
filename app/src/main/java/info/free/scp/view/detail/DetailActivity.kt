@@ -22,7 +22,6 @@ import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
-import androidx.core.view.marginTop
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.umeng.analytics.MobclickAgent
@@ -38,6 +37,7 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.PreferenceUtil.APP_SP
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -45,7 +45,6 @@ import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_report.view.*
-import okhttp3.internal.Util
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
@@ -65,6 +64,9 @@ class DetailActivity : BaseActivity() {
             fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
         }
     private var title = ""
+    private var index = 0
+    private var scpType = 0
+
     private var scp: ScpModel? = null
     private var detailHtml = ""
     private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
@@ -107,6 +109,14 @@ class DetailActivity : BaseActivity() {
                 .get(DetailViewModel::class.java)
     }
 
+    private var randomRange: String = ""
+        get() = when (randomType) {
+            1 -> "1,2"
+            2 -> "3,4"
+            3 -> "5,6"
+            else -> ""
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
@@ -124,11 +134,13 @@ class DetailActivity : BaseActivity() {
 
         url = intent.getStringExtra("link") ?: ""
         title = intent.getStringExtra("title") ?: ""
+        index = intent.getIntExtra("index", 0)
+        scpType = intent.getIntExtra("scp_type", 0)
         // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
         // 0 所有，1仅scp，2 故事，3 joke
         randomType = intent.getIntExtra("random_type", 0)
-        itemType = intent.getIntExtra("scp_type", 0)
+        itemType = intent.getIntExtra("item_type", 0)
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
@@ -136,7 +148,18 @@ class DetailActivity : BaseActivity() {
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
-            finish()
+            if (readType == 1) {
+                if (PreferenceUtil.getAppMode() == OFFLINE) {
+                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+                    scp?.let {
+                        setData(it)
+                    }
+                } else {
+                    viewModel.loadRandom(randomRange)
+                }
+            } else {
+                finish()
+            }
         } else if (!forceOnline) {
             viewModel.setScp(url, title) // 设置scp
         } else {
@@ -259,19 +282,23 @@ class DetailActivity : BaseActivity() {
                     .create().show()
         }
 
+        var isMoving = false
+        val screenHeight = Utils.getScreenHeight(this@DetailActivity)
 
         sb_detail?.onSeekBarChangeListener {
-            this.onProgressChanged { seekBar, i, b ->
+            onProgressChanged { _, i, b ->
                 if (b) {
                     info(i)
-                    nsv_web_wrapper?.scrollTo(0, (webView.height * (i / 100f)).toInt())
+                    nsv_web_wrapper?.scrollTo(0, ((webView.height - screenHeight) * (i / 100f)).toInt())
                 }
             }
+            onStartTrackingTouch { isMoving = true }
+            onStopTrackingTouch { isMoving = false }
         }
-        nsv_web_wrapper?.onScrollChange { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-            webView?.let {
+        nsv_web_wrapper?.onScrollChange { _, _, scrollY, _, _ ->
+            if (!isMoving) {
                 info(scrollY)
-                sb_detail?.progress = ((scrollY.toFloat() / webView.height) * 100).toInt()
+                sb_detail?.progress = ((scrollY.toFloat() / (webView.height - screenHeight) * 100)).toInt()
             }
         }
 
@@ -298,6 +325,7 @@ class DetailActivity : BaseActivity() {
                     "text/html", "utf-8", null)
         }
         nsv_web_wrapper?.scrollTo(0, 0)
+        translate(PreferenceUtil.getTraditionalText())
         btn_comment?.show()
         ll_comment_container.removeAllViews()
         ll_comment_container.visibility = GONE
@@ -330,9 +358,6 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun setData(s: ScpModel, back: Boolean = false) {
-        if (readType == 1) {
-            randomList.add(s)
-        }
         tvLoad?.text = "评论加载中..."
         viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
         viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
@@ -345,9 +370,16 @@ class DetailActivity : BaseActivity() {
         invalidateOptionsMenu()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        // TODO BUG FIX history
         if (!back) {
             historyList.add(s)
             historyIndex = historyList.size - 1
+        }
+
+        if (newRandom) {
+            randomList.add(s)
+            randomIndex++
+            newRandom = false
         }
         tv_detail_toolbar?.text = s.title
         tv_detail_toolbar?.isSelected = true
@@ -480,12 +512,12 @@ class DetailActivity : BaseActivity() {
                         }
                         return@let
                     }
-                    R.id.translate_to_simple -> {
-                        translate(simple)
-                    }
-                    R.id.translate_to_traditional -> {
-                        translate(traditional)
-                    }
+//                    R.id.translate_to_simple -> {
+//                        translate(simple)
+//                    }
+//                    R.id.translate_to_traditional -> {
+//                        translate(traditional)
+//                    }
                     else -> {
                     }
                 }
@@ -588,40 +620,39 @@ class DetailActivity : BaseActivity() {
         }.show()
     }
 
+    var newRandom = false
     private fun toNextArticle() {
-        val index = scp?.index ?: 0
-        val scpType = scp?.scpType ?: 0
+        index = if (scp?.index != -1) scp?.index ?: 0 else index
+        scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                scp = if (itemType == 0) {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                if (PreferenceUtil.getAppMode() == OFFLINE) {
+                    scp = if (itemType == 0) {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
+                    } else {
+                        ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                    }
+                    scp?.let {
+                        viewModel.setScp(it.link, it.title)
+                    } ?: toast("已经是最后一篇了")
                 } else {
-                    ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
+                    viewModel.loadSibling(scpType, index, "next")
                 }
-                scp?.let {
-                    setData(it)
-                } ?: toast("已经是最后一篇了")
             }
             1 -> {
+                // 下一篇
                 if (randomIndex < randomList.size - 1) {
-                    scp = randomList[++randomIndex]
-                    scp?.let {
-                        setData(it)
-                    }
+                    val nextScp = randomList[++randomIndex]
+                    viewModel.setScp(nextScp.link, nextScp.title)
                 } else {
-                    val randomRange = when (randomType) {
-                        1 -> "1,2"
-                        2 -> "3,4"
-                        3 -> "5,6"
-                        else -> ""
+                    if (PreferenceUtil.getAppMode() == OFFLINE) {
+                        val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+                        viewModel.setScp(nextScp?.link ?: "", nextScp?.title ?: "")
+                    } else {
+                        viewModel.loadRandom(randomRange)
                     }
-                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-                    scp?.let {
-                        randomList.add(it)
-                        randomIndex++
-                        setData(it)
-                    }
+                    newRandom = true
                 }
             }
             else -> {
@@ -629,32 +660,39 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+
     private fun toPreviewArticle() {
-        val index = scp?.index ?: 0
-        val scpType = scp?.scpType ?: 0
+        index = if (scp?.index != -1) scp?.index ?: 0 else index
+        scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
                 when (index) {
                     0 -> toast("已经是第一篇了")
                     else -> {
-                        scp = if (itemType == 0) {
-                            ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
+                        if (PreferenceUtil.getAppMode() == OFFLINE) {
+                            scp = if (itemType == 0) {
+                                ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
+                            } else {
+                                ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
+                            }
+                            scp?.let {
+                                setData(it)
+                            }
                         } else {
-                            ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
-                        }
-                        scp?.let {
-                            setData(it)
+                            viewModel.loadSibling(scpType, index, "prev")
                         }
                     }
                 }
             }
             1 -> {
                 if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
-                    scp = randomList[--randomIndex]
-                    scp?.let {
-                        setData(it)
-                    }
+                    val prevScp = randomList[--randomIndex]
+                    viewModel.setScp(prevScp.link, prevScp.title)
+//                    scp = randomList[--randomIndex]
+//                    scp?.let {
+//                        setData(it, true)
+//                    }
                 } else {
                     toast("已经是第一篇了")
                 }
@@ -719,19 +757,11 @@ class DetailActivity : BaseActivity() {
     private fun initSwitchBtn() {
         refreshButtonStyle()
         tv_bottom_preview?.setOnClickListener {
-            if (PreferenceUtil.getAppMode() == OFFLINE) {
-                toPreviewArticle()
-            } else {
-                toast("仅限离线模式下使用")
-            }
+            toPreviewArticle()
         }
 
         tv_bottom_next?.setOnClickListener {
-            if (PreferenceUtil.getAppMode() == OFFLINE) {
-                toNextArticle()
-            } else {
-                toast("仅限离线模式下使用")
-            }
+            toNextArticle()
         }
 
         tv_bottom_set_has_read?.setOnClickListener {
@@ -742,7 +772,11 @@ class DetailActivity : BaseActivity() {
 
         viewModel.repo.commentList.observe(this, Observer {
             if (it.isEmpty()) {
-                tvLoad?.text = "这篇文档没有评论"
+                if (PreferenceUtil.getStringValue(APP_SP, "show_comment") == "yes") {
+                    tvLoad?.text = "这篇文档没有评论"
+                } else {
+                    tvLoad?.text = "因中分官网要求登录才能查看评论，暂时无法获取"
+                }
             } else {
                 ll_comment_container.removeAllViews()
                 val commentLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
@@ -756,7 +790,7 @@ class DetailActivity : BaseActivity() {
         })
         btn_comment?.setOnClickListener {
             ll_comment_container.visibility = VISIBLE
-            nsv_web_wrapper?.scrollTo(0, nsv_web_wrapper.height)
+            nsv_web_wrapper?.scrollTo(0, (webView.height - screenHeight) + 100)
             btn_comment?.hide()
             viewModel.loadComment(url)
         }

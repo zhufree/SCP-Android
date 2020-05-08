@@ -40,14 +40,14 @@
         android:id="@+id/share_picture"
         android:title="@string/share_with_picture"
         app:showAsAction="collapseActionView"/>
-    <item
-        android:id="@+id/translate_to_simple"
-        android:title="@string/translate_to_simple"
-        app:showAsAction="collapseActionView"/>
-    <item
-        android:id="@+id/translate_to_traditional"
-        android:title="@string/translate_to_traditional"
-        app:showAsAction="collapseActionView"/>
+    <!--    <item-->
+    <!--        android:id="@+id/translate_to_simple"-->
+    <!--        android:title="@string/translate_to_simple"-->
+    <!--        app:showAsAction="collapseActionView"/>-->
+    <!--    <item-->
+    <!--        android:id="@+id/translate_to_traditional"-->
+    <!--        android:title="@string/translate_to_traditional"-->
+    <!--        app:showAsAction="collapseActionView"/>-->
 
 
 </menu>

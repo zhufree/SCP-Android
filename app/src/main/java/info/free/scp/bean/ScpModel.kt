@@ -2,10 +2,8 @@ package info.free.scp.bean
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import kotlinx.serialization.Optional
-import kotlinx.serialization.SerialName
+import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 /**
@@ -21,6 +19,7 @@ open class ScpModel(
         var index: Int = -1, // 本地数据表中的次序
         var link: String = "", var title: String = "", // 都有的
         @ColumnInfo(name = "scp_type")
+        @SerializedName("scp_type")
         var scpType: Int = -1,
         @ColumnInfo(name = "download_type")
         var downloadType: Int = -1,

@@ -3,18 +3,28 @@ package info.free.scp.view.home
 import android.os.Bundle
 import android.view.Menu
 import android.widget.ArrayAdapter
+import apiCall
+import executeResponse
 import info.free.scp.R
+import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
+import info.free.scp.service.HttpManager
 import info.free.scp.util.EventUtil
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
@@ -92,18 +102,51 @@ class DirectActivity : BaseActivity() {
             updateExpress()
         }
         btn_go_direct?.setOnClickListener {
-            val scp = when (chooseType) {
-                0 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES, "%-$numberString %")
-                1 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES_CN, "%-$numberString %")
-                2 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_JOKE, "%-$numberString-%")
-                3 -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_JOKE_CN, "%-$numberString-%")
-                else -> ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(SAVE_SERIES, "%-$numberString")
-            }
+            GlobalScope.launch { goDirect() }
+        }
+    }
+
+    private suspend fun goDirect() {
+        val scpType = when (chooseType) {
+            0 -> SAVE_SERIES
+            1 -> SAVE_SERIES_CN
+            2 -> SAVE_JOKE
+            3 -> SAVE_JOKE_CN
+            else -> SAVE_SERIES
+        }
+        val number = when (chooseType) {
+            0 -> "%-$numberString %"
+            1 -> "%-$numberString %"
+            2 -> "%-$numberString-%"
+            3 -> "%-$numberString-%"
+            else -> "%-$numberString"
+        }
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(scpType, number)
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
                 startActivity<DetailActivity>("link" to s.link)
-            } ?: toast("没有这篇文章")
+            } ?: runOnUiThread { toast("没有这篇文章") }
 
+        } else {
+            loadDirect(scpType, number)
+        }
+    }
+
+    private suspend fun loadDirect(scpType: Int, number: String) {
+        val response = apiCall { HttpManager.instance.getDirect(scpType, number) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (!response.results.isNullOrEmpty()) {
+                    val scp = response.results[0]
+                    EventUtil.onEvent(this, EventUtil.clickDirect)
+                    startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
+                } else {
+                    toast("没有这篇文章")
+                }
+            })
         }
     }
 
@@ -115,43 +158,27 @@ class DirectActivity : BaseActivity() {
             when (it.itemId) {
                 R.id.random_all -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomAll)
-                    val targetScp = ScpDataHelper.getInstance().getRandomScp("")
-                    targetScp?.let {
-                        startActivity<DetailActivity>(
-                                "link" to targetScp.link,
-                                "read_type" to 1,
-                                "random_type" to 0)
-                    } ?: toast("没有离线的文档，无法随机")
+                    startActivity<DetailActivity>(
+                            "read_type" to 1,
+                            "random_type" to 0)
                 }
                 R.id.random_scp -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomScp)
-                    val targetScp = ScpDataHelper.getInstance().getRandomScp("1,2")
-                    targetScp?.let {
-                        startActivity<DetailActivity>(
-                                "link" to targetScp.link,
-                                "read_type" to 1,
-                                "random_type" to 1)
-                    } ?: toast("没有离线的该部分内容，无法随机")
+                    startActivity<DetailActivity>(
+                            "read_type" to 1,
+                            "random_type" to 1)
                 }
                 R.id.random_tales -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomTale)
-                    val targetScp = ScpDataHelper.getInstance().getRandomScp("3,4")
-                    targetScp?.let {
-                        startActivity<DetailActivity>(
-                                "link" to targetScp.link,
-                                "read_type" to 1,
-                                "random_type" to 2)
-                    } ?: toast("没有离线的该部分内容，无法随机")
+                    startActivity<DetailActivity>(
+                            "read_type" to 1,
+                            "random_type" to 2)
                 }
                 R.id.random_joke -> {
                     EventUtil.onEvent(this, EventUtil.clickRandomJoke)
-                    val targetScp = ScpDataHelper.getInstance().getRandomScp("5,6")
-                    targetScp?.let {
-                        startActivity<DetailActivity>(
-                                "link" to targetScp.link,
-                                "read_type" to 1,
-                                "random_type" to 3)
-                    } ?: toast("没有离线的该部分内容，无法随机")
+                    startActivity<DetailActivity>(
+                            "read_type" to 1,
+                            "random_type" to 3)
                 }
             }
             true

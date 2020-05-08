@@ -1,5 +1,8 @@
 package info.free.scp.view.draft
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
@@ -30,6 +33,13 @@ class DraftListActivity : BaseActivity() {
             when(it.itemId) {
                 R.id.add_draft -> {
                     startActivity<DraftEditActivity>()
+                }
+                R.id.draft_help -> {
+                    val jumpIntent = Intent()
+                    jumpIntent.action = "android.intent.action.VIEW"
+                    val updateUrl = Uri.parse("http://scp-wiki-cn.wikidot.com/how-to-write-an-scp")
+                    jumpIntent.data = updateUrl
+                    startActivity(jumpIntent)
                 }
             }
             true

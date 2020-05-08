@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.bean.ScpItemModel
@@ -62,6 +65,7 @@ class ScpListFragment : BaseFragment() {
             }
         })
         binding.rvCategoryList.adapter = adapter
+
         if (PreferenceUtil.getAppMode() == ONLINE) {
             binding.slCategory.isRefreshing = true
         }
@@ -216,6 +220,7 @@ class ScpListFragment : BaseFragment() {
 
     fun reverseScpList() {
         localScpList?.reverse()
+        adapter.notifyDataSetChanged()
         viewModel.reverseCat()
     }
 

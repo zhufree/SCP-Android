@@ -16,8 +16,8 @@ import java.util.*
 
 object PreferenceUtil {
 
-    const val INIT_SP = "init"
-    const val DOWNLOAD_SP = "download"
+    private const val INIT_SP = "init"
+    private const val DOWNLOAD_SP = "download"
     const val APP_SP = "app"
 
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
@@ -57,7 +57,15 @@ object PreferenceUtil {
     }
 
     fun getNotice(): String {
-        return getStringValue(APP_SP, "notice", "这里是公告")
+        return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）")
+    }
+
+    fun getShowNotice(): Boolean {
+        return getBooleanValue(APP_SP, "show_notice", true)
+    }
+
+    fun setShowNotice(show: Boolean) {
+        return setBooleanValue(APP_SP, "show_notice", show)
     }
 
     fun setApiUrl(url: String) {
@@ -181,7 +189,6 @@ object PreferenceUtil {
     fun getShownModeNotice(): Boolean {
         return getBooleanValue(INIT_SP, "shownModeNotice")
     }
-
 
 
     /**
@@ -329,6 +336,11 @@ object PreferenceUtil {
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
 
+    fun getTraditionalText(): Int {
+        val textSize = getStringValue("read_settings", "detail_text_traditional")
+        return if (textSize.isNotEmpty()) textSize.toInt() else 0
+    }
+
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)
     }
@@ -409,7 +421,7 @@ object PreferenceUtil {
         }
     }
 
-    private fun getStringValue(spName: String, key: String): String {
+    fun getStringValue(spName: String, key: String): String {
         return getPrivateSharedPreference(spName)?.getString(key, "") ?: ""
     }
 

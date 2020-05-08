@@ -16,7 +16,6 @@ import info.free.scp.bean.GameModel
  */
 
 class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerAdapter() {
-    private var gameTypeList: MutableList<RecyclerView> = emptyList<RecyclerView>().toMutableList()
     private var pcGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var mobileGameList: MutableList<GameModel> = emptyList<GameModel>().toMutableList()
     private var pcGameAdapter: GameListAdapter? = null
@@ -56,14 +55,14 @@ class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerA
                 "26.b0.upaiyun.com/2018/11/25/3e57c00e40a1f882801b860e52296a63.webp","Free"))
         mobileGameList.add(GameModel("SCP: Breach 2D", "检查你是否能活下来，并可能逃离危险的SCP综合体！ " +
                 "目前游戏有：SCP-173|SCP-106|SCP-966|SCP-714|SCP-096。","mobile", "Google Play",
-                "https://pan.baidu.com/s/1UlsTOSrKJkVcrwgM92T_BA", "http://bmob-cdn-22426." +
+                "https://play.google.com/store/apps/details?id=com.IntelligentCat.SCP2D", "http://bmob-cdn-22426." +
                 "b0.upaiyun.com/2018/11/25/421d41ec406a0ebc8048714322a28cbe.webp","Free"))
         mobileGameList.add(GameModel("SCP-087-B", "SCP-087-B手机版","mobile", "Google Play",
-                "https://pan.baidu.com/s/1Q57d1IrwPSuwyczsct00eQ", "http://bmob-cdn-22426." +
+                "https://play.google.com/store/apps/details?id=com.skymidnight.scp087b", "http://bmob-cdn-22426." +
                 "b0.upaiyun.com/2018/11/25/6ddf383c401e18dc8013b331e1c125b2.webp","Free"))
         mobileGameList.add(GameModel("The Lost Signal: SCP", "在这个3D游戏中调查，其中有很大的作用，并精心制作的3D图形超自然的活动！\n" +
                 "有趣的任务和爬行的怪物等待着你！新的工件或在每次更新超自然事件！","mobile", "Google Play",
-                "https://pan.baidu.com/s/1Rfy-k4GZd43iopI4jiCMTQ", "http://bmob-cdn-22426." +
+                "https://play.google.com/store/apps/details?id=com.BezglasnyAA.SCP1499", "http://bmob-cdn-22426." +
                 "b0.upaiyun.com/2018/11/25/cc17e819409dfff980e222ed96c456ce.webp","Free"))
         mobileGameList.add(GameModel("SCP: Run", "逃出工厂！逃离SCP-173和SCP-106和SCP-049和" +
                 "SCP-1048和SCP-1048-A。","mobile", "Google Play",
@@ -73,12 +72,12 @@ class GamePagerAdapter(val mContext: Context) : androidx.viewpager.widget.PagerA
                 "Site-19是目前运营中最大的基础设施，包含数百个安全和欧几里德级异常。" +
                 "此设施中包含的物体（某些SCP尚未在游戏中）包括：SCP-055，SCP-131，SCP-173，SCP-387，SCP-668，SCP-931。",
                 "mobile", "Google Play",
-                "https://pan.baidu.com/s/1gsPop38_dZ0ryisC7sx82Q", "http://bmob-cdn-22426." +
+                "https://play.google.com/store/apps/details?id=com.FiveUpreme.Site19", "http://bmob-cdn-22426." +
                 "b0.upaiyun.com/2018/11/25/39a74ddd40b4989180654e9c5708c952.webp","Free"))
         mobileGameList.add(GameModel("SCP-087-Remake Horror Quest", "作为测试对象（d类员工），" +
                 "你派人去调查与SCP-087的编号的对象。游戏一开始用深色的楼梯，路径沿着伴随着可怕的声音。很多困难的解决方案，" +
                 "有趣的谜题会遇到自己的方式，以及怪物渴望抓住你。","mobile", "Google Play",
-                "https://pan.baidu.com/s/1wqJ3QlDhhydyIkH_uvW7wQ", "http://bmob-cdn-22426." +
+                "https://play.google.com/store/apps/details?id=com.Jokerzv.SCP087Remake", "http://bmob-cdn-22426." +
                 "b0.upaiyun.com/2018/11/25/70735ce7401e74678079647082bfabfd.webp","Free"))
 
 

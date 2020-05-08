@@ -116,10 +116,8 @@ class DetailRepository {
             executeResponse(response, {
 
             }, {
-                if (response.results.isNotEmpty()) {
-                    info(response.results.toString())
-                    commentList.postValue(response.results)
-                }
+                info(response.results.toString())
+                commentList.postValue(response.results)
             })
         }
     }

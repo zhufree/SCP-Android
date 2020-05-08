@@ -18,7 +18,7 @@ object PreferenceUtil {
 
     private const val INIT_SP = "init"
     private const val DOWNLOAD_SP = "download"
-    private const val APP_SP = "app"
+    const val APP_SP = "app"
 
     private fun getPrivateSharedPreference(name: String): SharedPreferences? {
         return ScpApplication.context.getSharedPreferences(name, Context.MODE_PRIVATE)
@@ -421,7 +421,7 @@ object PreferenceUtil {
         }
     }
 
-    private fun getStringValue(spName: String, key: String): String {
+    fun getStringValue(spName: String, key: String): String {
         return getPrivateSharedPreference(spName)?.getString(key, "") ?: ""
     }
 

@@ -69,6 +69,7 @@ TODO
 
 # bug fix
 - [x] 修复随机模式Bug
+- [x] 随机toast没有在主线程调用
 
 
 # bug

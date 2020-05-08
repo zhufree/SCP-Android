@@ -126,7 +126,8 @@ class DirectActivity : BaseActivity() {
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
                 startActivity<DetailActivity>("link" to s.link)
-            } ?: toast("没有这篇文章")
+            } ?: runOnUiThread { toast("没有这篇文章") }
+
         } else {
             loadDirect(scpType, number)
         }
@@ -142,6 +143,8 @@ class DirectActivity : BaseActivity() {
                     val scp = response.results[0]
                     EventUtil.onEvent(this, EventUtil.clickDirect)
                     startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
+                } else {
+                    toast("没有这篇文章")
                 }
             })
         }

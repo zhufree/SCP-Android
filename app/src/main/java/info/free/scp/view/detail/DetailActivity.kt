@@ -37,6 +37,7 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.PreferenceUtil.APP_SP
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -771,7 +772,11 @@ class DetailActivity : BaseActivity() {
 
         viewModel.repo.commentList.observe(this, Observer {
             if (it.isEmpty()) {
-                tvLoad?.text = "这篇文档没有评论"
+                if (PreferenceUtil.getStringValue(APP_SP, "show_comment") == "yes") {
+                    tvLoad?.text = "这篇文档没有评论"
+                } else {
+                    tvLoad?.text = "因中分官网要求登录才能查看评论，暂时无法获取"
+                }
             } else {
                 ll_comment_container.removeAllViews()
                 val commentLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)

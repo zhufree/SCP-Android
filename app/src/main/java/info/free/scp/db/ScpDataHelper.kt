@@ -144,7 +144,7 @@ class ScpDataHelper {
             link = scp.link
             val detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(link)
             detailHtml?.let {
-                scpModel = if (it.contains("抱歉，该页面尚无内容") || it.isEmpty())
+                scpModel = if (it.contains("null") || it.isEmpty())
                     getRandomScp(typeRange) else scpModel
             }?:run{
                 scpModel = getRandomScp(typeRange)

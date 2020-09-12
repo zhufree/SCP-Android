@@ -19,8 +19,8 @@ import toast
 
 class DetailRepository {
     var scp: MutableLiveData<in ScpModel> = MutableLiveData()
-    var offlineScp: LiveData<ScpItemModel>? = null
-    var offlineCollection: LiveData<ScpCollectionModel>? = null
+    var offlineScp: MutableLiveData<ScpItemModel> = MutableLiveData()
+    var offlineCollection: MutableLiveData<ScpCollectionModel> = MutableLiveData()
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
     var detail: MutableLiveData<String?> = MutableLiveData("")
     var commentList: MutableLiveData<List<CommentModel>> = MutableLiveData()
@@ -32,8 +32,8 @@ class DetailRepository {
 
     fun setScp(link: String, title: String) {
         if (PreferenceUtil.getAppMode() == OFFLINE) {
-            offlineScp = scpDao?.getLiveScpByLink(link)
-            offlineCollection = scpDao?.getLiveCollectionByLink(link)
+            offlineScp.postValue(scpDao?.getScpByLink(link))
+            offlineCollection.postValue(scpDao?.getCollectionByLink(link))
         } else {
             val tempScp = ScpItemModel("", "")
             tempScp.title = title
@@ -44,12 +44,12 @@ class DetailRepository {
 
     fun setScpReadInfo() {
         if (PreferenceUtil.getAppMode() == OFFLINE) {
-            offlineScp?.value?.let {
+            offlineScp.value?.let {
                 ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
                 AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
                 scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
             }
-            offlineCollection?.value?.let {
+            offlineCollection.value?.let {
                 ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
                 AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
                 scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
@@ -66,14 +66,14 @@ class DetailRepository {
 
     fun setScpLikeInfo() {
         if (PreferenceUtil.getAppMode() == OFFLINE) {
-            offlineScp?.value?.let {
+            offlineScp.value?.let {
                 if (scpLikeInfo?.value == null) {
                     val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
                     info("save new like info:${likeInfo}")
                     likeDao.save(likeInfo)
                 }
             }
-            offlineCollection?.value?.let {
+            offlineCollection.value?.let {
                 if (scpLikeInfo?.value == null) {
                     val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
                     info("save new like info:${likeInfo}")

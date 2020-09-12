@@ -26,8 +26,7 @@
             android:entries="@array/category_interval_key"
             android:entryValues="@array/category_interval_value" />
     </PreferenceCategory>
-    <PreferenceCategory
-        android:title="阅读设置">
+    <PreferenceCategory android:title="阅读设置">
 
         <DropDownPreference
             android:defaultValue="16px"
@@ -35,11 +34,11 @@
             android:entryValues="@array/detail_text_size_value"
             android:key="detail_text_size"
             android:title="@string/font_size_setting" />
-        <DropDownPreference
-            android:defaultValue="1"
-            android:entries="@array/detail_traditional_key"
-            android:entryValues="@array/detail_traditional_value"
-            android:key="detail_text_traditional"
-            android:title="@string/traditional_setting" />
+        <!--        <DropDownPreference-->
+        <!--            android:defaultValue="1"-->
+        <!--            android:entries="@array/detail_traditional_key"-->
+        <!--            android:entryValues="@array/detail_traditional_value"-->
+        <!--            android:key="detail_text_traditional"-->
+        <!--            android:title="@string/traditional_setting" />-->
     </PreferenceCategory>
 </PreferenceScreen>

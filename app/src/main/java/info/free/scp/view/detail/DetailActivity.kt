@@ -325,7 +325,7 @@ class DetailActivity : BaseActivity() {
                     "text/html", "utf-8", null)
         }
         nsv_web_wrapper?.scrollTo(0, 0)
-        translate(PreferenceUtil.getTraditionalText())
+//        translate(PreferenceUtil.getTraditionalText())
         btn_comment?.show()
         ll_comment_container.removeAllViews()
         ll_comment_container.visibility = GONE
@@ -512,12 +512,12 @@ class DetailActivity : BaseActivity() {
                         }
                         return@let
                     }
-//                    R.id.translate_to_simple -> {
-//                        translate(simple)
-//                    }
-//                    R.id.translate_to_traditional -> {
-//                        translate(traditional)
-//                    }
+                    R.id.translate_to_simple -> {
+                        translate(simple)
+                    }
+                    R.id.translate_to_traditional -> {
+                        translate(traditional)
+                    }
                     else -> {
                     }
                 }
@@ -640,7 +640,7 @@ class DetailActivity : BaseActivity() {
                     viewModel.loadSibling(scpType, index, "next")
                 }
             }
-            1 -> {
+            1 -> {// 随机模式
                 // 下一篇
                 if (randomIndex < randomList.size - 1) {
                     val nextScp = randomList[++randomIndex]

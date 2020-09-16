@@ -372,6 +372,9 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false)
         // TODO BUG FIX history
         if (!back) {
+            historyList.removeAll {
+                historyList.map { it.link }.contains(s.link)
+            }
             historyList.add(s)
             historyIndex = historyList.size - 1
         }

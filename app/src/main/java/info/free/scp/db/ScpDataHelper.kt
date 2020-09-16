@@ -17,6 +17,7 @@ import info.free.scp.util.PreferenceUtil
 
 class ScpDataHelper {
     private var randomCount = 0
+    private var hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
 
     /**
      * 获取某一type的scp list
@@ -24,7 +25,6 @@ class ScpDataHelper {
     fun getScpByTypeAndRange(type: Int, start: Int, range: Int): MutableList<ScpItemModel> {
         val end = start + range
         var queryList = emptyList<ScpItemModel>().toMutableList()
-        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
         // 数据库检索
         queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(type)?: emptyList())
         // 截取序列中的一部分
@@ -33,7 +33,6 @@ class ScpDataHelper {
         }
         if (PreferenceUtil.getHideFinished()) {
             // 去掉已读部分
-            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
             queryList.removeAll { hasReadList.map { it_ ->
                 it_.link
             }.contains(it.link) }
@@ -43,7 +42,7 @@ class ScpDataHelper {
     }
     fun getScpByType(type: Int): MutableList<ScpModel> {
         val queryList = emptyList<ScpModel>().toMutableList()
-        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
         // 数据库检索
         if (type in (13..22)) {
             queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getAllCollectionByType(type)
@@ -55,7 +54,6 @@ class ScpDataHelper {
 
         if (PreferenceUtil.getHideFinished()) {
             // 去掉已读部分
-            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
             queryList.removeAll { hasReadList.map { it_ ->
                 it_.link
             }.contains(it.link) }
@@ -65,12 +63,11 @@ class ScpDataHelper {
     }
     fun getTalesByTypeAndSubType(type: Int, subType: String): MutableList<ScpModel> {
         val queryList = emptyList<ScpModel>().toMutableList()
-        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
         // 数据库检索
         queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getTalesByTypeAndSubType(type, subType)?: emptyList())
         if (PreferenceUtil.getHideFinished()) {
             // 去掉已读部分
-            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
             queryList.removeAll { hasReadList.map { it_ ->
                 it_.link
             }.contains(it.link) }
@@ -81,13 +78,12 @@ class ScpDataHelper {
 
     fun getInternationalByCountry(country: String): MutableList<ScpModel> {
         val queryList = emptyList<ScpModel>().toMutableList()
-        val hasReadList = emptyList<ScpLikeModel>().toMutableList()
+        hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
         // 数据库检索
         queryList.addAll(ScpDatabase.getInstance()?.scpDao()?.getInternationalByCountry("$country%")
                 ?: emptyList())
         if (PreferenceUtil.getHideFinished()) {
             // 去掉已读部分
-            hasReadList.addAll(AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList())
             queryList.removeAll {
                 hasReadList.map { it_ ->
                     it_.link
@@ -134,6 +130,7 @@ class ScpDataHelper {
             randomCount = 0
             return null
         }
+        hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
         var scpModel: ScpItemModel?
         var link = ""
         val args = typeRange.split(",")
@@ -142,12 +139,17 @@ class ScpDataHelper {
 
         scpModel?.let { scp->
             link = scp.link
-            val detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(link)
-            detailHtml?.let {
-                scpModel = if (it.contains("null") || it.isEmpty())
-                    getRandomScp(typeRange) else scpModel
-            }?:run{
+            if (PreferenceUtil.getHideFinished() && link in (hasReadList.map { it.link })) {
+                // 已读过，重新随机
                 scpModel = getRandomScp(typeRange)
+            } else {
+                val detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(link)
+                detailHtml?.let {
+                    scpModel = if (it.contains("null") || it.isEmpty())
+                        getRandomScp(typeRange) else scpModel
+                } ?: run {
+                    scpModel = getRandomScp(typeRange)
+                }
             }
         }
         return scpModel

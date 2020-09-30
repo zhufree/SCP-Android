@@ -151,9 +151,7 @@ class DetailActivity : BaseActivity() {
             if (readType == 1) {
                 if (PreferenceUtil.getAppMode() == OFFLINE) {
                     scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-                    scp?.let {
-                        setData(it)
-                    }
+                    viewModel.setScp(scp?.link ?: "", scp?.title ?: "")
                 } else {
                     viewModel.loadRandom(randomRange)
                 }
@@ -184,7 +182,7 @@ class DetailActivity : BaseActivity() {
         viewModel.getOfflineScp()?.observe(this, Observer {
             // 数据库取到
             if (it != null) {
-                scp = it as ScpModel
+                scp = it
                 scp?.let { s ->
                     setData(s)
                 }
@@ -370,7 +368,6 @@ class DetailActivity : BaseActivity() {
         invalidateOptionsMenu()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        // TODO BUG FIX history
         if (!back) {
             historyList.removeAll {
                 historyList.map { it.link }.contains(s.link)

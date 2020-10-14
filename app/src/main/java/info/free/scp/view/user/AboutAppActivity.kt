@@ -26,7 +26,7 @@ class AboutAppActivity : BaseActivity() {
         tv_qq_group?.setOnLongClickListener {
             val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
             val clipData = ClipData.newPlainText("qqGroup", "805194504")
-            clipboardManager?.primaryClip = clipData
+            clipboardManager?.setPrimaryClip(clipData)
             toast("已复制到剪贴板")
             true
         }

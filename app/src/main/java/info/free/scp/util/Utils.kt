@@ -126,9 +126,11 @@ object Utils {
             }
             url = contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
             //其实质是返回 Image.Media.DATA中图片路径path的转变而成的uri
-            val imageOut = contentResolver?.openOutputStream(url)
-            imageOut?.use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut)
+            url?.let {
+                val imageOut = contentResolver?.openOutputStream(url)
+                imageOut?.use {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut)
+                }
             }
 
             val id = ContentUris.parseId(url)

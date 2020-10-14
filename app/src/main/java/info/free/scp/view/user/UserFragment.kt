@@ -18,6 +18,7 @@ import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
@@ -25,6 +26,7 @@ import android.widget.LinearLayout
 import androidx.documentfile.provider.DocumentFile
 import info.free.scp.R
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
+import info.free.scp.ScpApplication
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -130,6 +132,9 @@ class UserFragment : BaseFragment() {
     }
 
     private fun setSettingEvent() {
+        if (ScpApplication.channelName == "GooglePlay") {
+            st_donate.visibility = GONE
+        }
         st_draft.onClick = {
             startActivity<DraftListActivity>()
         }

@@ -457,7 +457,7 @@ class DetailActivity : BaseActivity() {
                         EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
                         val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                         val clipData = ClipData.newPlainText("scp_link", fullUrl)
-                        clipboardManager?.primaryClip = clipData
+                        clipboardManager?.setPrimaryClip(clipData)
                         toast("已复制到剪贴板")
                     }
                     R.id.like -> {

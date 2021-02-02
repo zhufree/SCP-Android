@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/containerBg"
+    android:paddingStart="7dp"
+    android:paddingEnd="7dp">
+
+    <!--    轮播图-->
+    <View
+        android:id="@+id/v_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <GridLayout
+        android:id="@+id/gl_entry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_entry_box"
+        android:columnCount="5"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/v_scroll">
+        <!--白色圆角背景-->
+        <info.free.scp.view.widget.EntryItem
+            android:id="@+id/ei_scp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:entryTitle="@string/entry_scp_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            android:id="@+id/ei_scp_cn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+
+        <info.free.scp.view.widget.EntryItem
+            app:entryTitle="@string/entry_scp_cn_series"
+            app:imgSrc="@drawable/img_logo_cn" />
+    </GridLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,8 @@
     <string name="tab_mine">我的</string>
 
     <!--主页入口-->
+    <string name="entry_scp_series">SCP系列</string>
+    <string name="entry_scp_cn_series">CN系列</string>
     <string name="title_scp_documents">SCP文档</string>
     <string name="title_other_documents">其他文档</string>
     <string name="title_more_about">更多相关</string>

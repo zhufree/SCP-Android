@@ -53,7 +53,20 @@ TODO
 
 
 当前开发版本
-
+UI改版
+- [ ]HomeFragment
+  - [ ] Search
+    - [x] UI
+    - [ ] 功能
+  - [x] ViewPager+Tab
+    - [x] 滑动切换N个Fragment（首页-故事-图书馆...）
+- 首页
+  - [ ] 轮播图
+  - [ ] 目录入口 （Grid）
+  - [ ] Latest Top3
+  - [ ] Top Rate Page入口
+- [ ] Others
+ 
 # bug fix
 - [x] 随机出现null
 - [x] 国际分部条目重复（爬虫问题，数据库重复，重新抓

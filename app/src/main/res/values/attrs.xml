@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TopBar">
-        <attr name="title" format="string" />
+        <attr name="topbarTitle" format="string" />
         <attr name="titleTextSize" format="dimension" />
         <attr name="titleTextColor" format="color" />
         <attr name="leftVisible" format="boolean" />
@@ -14,5 +14,9 @@
         <attr name="settingRightVisible" format="boolean" />
         <attr name="isGroupFirst" format="boolean" />
         <attr name="isGroupLast" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="EntryItem">
+        <attr name="entryTitle" format="string" />
+        <attr name="imgSrc" format="reference" />
     </declare-styleable>
 </resources>

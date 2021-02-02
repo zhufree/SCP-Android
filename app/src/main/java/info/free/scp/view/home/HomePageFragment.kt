@@ -1,48 +1,63 @@
 package info.free.scp.view.home
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
+import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
+import info.free.scp.util.FileUtil
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
+import info.free.scp.util.UpdateManager
+import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.SeriesDocActivity
-import info.free.scp.view.feed.SubFeedFragment
-import info.free.scp.view.feed.TopRatedFragment
-import kotlinx.android.synthetic.main.fragment_feed.*
+import info.free.scp.view.download.DownloadActivity
+import info.free.scp.view.search.SearchActivity
+import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
+import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.startActivity
 
 
 /**
- * UI新版本
- * Use the [HomeFragment.newInstance] factory method to
+ * Use the [HomePageFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
-class HomeFragment : BaseFragment() {
-    var fragmentList = arrayListOf<BaseFragment>()
+class HomePageFragment : BaseFragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        return inflater.inflate(R.layout.fragment_home_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentList = arrayListOf(HomePageFragment.newInstance(),
-                SubFeedFragment.newInstance(SCPConstants.LATEST_TRANSLATED), TopRatedFragment.newInstance())
-        val titleList = arrayListOf("首页", "故事", "CN系列")
-        val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
-        vp_home?.adapter = homePagerAdapter
-        tab_home?.setupWithViewPager(vp_home)
+        // TODO notice
+//        tv_home_notice?.text = PreferenceUtil.getNotice()
+//        if (!PreferenceUtil.getShowNotice()) {
+//            cd_notice_container.visibility = GONE
+//        }
+//        iv_remove_notice?.setOnClickListener {
+//            PreferenceUtil.setShowNotice(false)
+//            cd_notice_container.visibility = GONE
+//            toast("公告已隐藏，可在app使用说明中查看")
+//        }
+        ei_scp?.setOnClickListener {
+            goToDocPage(SCPConstants.Entry.SCP_DOC)
+        }
     }
 
     private fun goToDocPage(entry_type: Int) {
@@ -68,7 +83,9 @@ class HomeFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-
+//        cd_notice_container?.setBackgroundColor(ThemeUtil.containerBg)
+//        tv_home_notice?.setTextColor(ThemeUtil.darkText)
+        ei_scp?.refreshTheme()
     }
 
 
@@ -81,8 +98,8 @@ class HomeFragment : BaseFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment HomeFragment.
          */
-        fun newInstance(): HomeFragment {
-            val fragment = HomeFragment()
+        fun newInstance(): HomePageFragment {
+            val fragment = HomePageFragment()
             return fragment
         }
     }

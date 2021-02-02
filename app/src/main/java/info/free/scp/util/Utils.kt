@@ -23,6 +23,7 @@ import kotlinx.io.IOException
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.windowManager
 import java.io.*
 import java.text.DateFormat.LONG
 import java.text.DateFormat.SHORT
@@ -40,7 +41,7 @@ object Utils {
         return metric.heightPixels
     }
 
-    fun getScreenWidth(context: Activity): Int {
+    fun getScreenWidth(context: Context): Int {
         val metric = DisplayMetrics()
         context.windowManager.defaultDisplay.getMetrics(metric)
         return metric.widthPixels

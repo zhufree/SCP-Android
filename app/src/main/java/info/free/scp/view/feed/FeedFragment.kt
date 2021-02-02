@@ -24,9 +24,9 @@ import kotlinx.android.synthetic.main.fragment_feed.*
  */
 class FeedFragment : BaseFragment() {
 
-//    private var mParam1: String? = null
-//    private var mParam2: String? = null
-var fragmentList = arrayListOf<BaseFragment>()
+    //    private var mParam1: String? = null
+    //    private var mParam2: String? = null
+    var fragmentList = arrayListOf<BaseFragment>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {

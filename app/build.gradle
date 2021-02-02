@@ -117,6 +117,7 @@ dependencies {
 
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
+    implementation 'com.youth.banner:banner:2.1.0'
 
 //    implementation files('libs/TGSDK.1.8.4.aar')
 }

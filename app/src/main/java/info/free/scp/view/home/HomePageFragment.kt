@@ -1,33 +1,31 @@
 package info.free.scp.view.home
 
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.ViewGroup
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
+import com.youth.banner.adapter.BannerImageAdapter
+import com.youth.banner.config.IndicatorConfig.Direction.RIGHT
+import com.youth.banner.holder.BannerImageHolder
+import com.youth.banner.indicator.CircleIndicator
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
-import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
-import info.free.scp.util.FileUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.UpdateManager
-import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.SeriesDocActivity
-import info.free.scp.view.download.DownloadActivity
-import info.free.scp.view.search.SearchActivity
-import info.free.scp.view.user.LaterAndHistoryActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -58,6 +56,22 @@ class HomePageFragment : BaseFragment() {
         ei_scp?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }
+        val bannerImgUrlList = listOf("https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg",
+                "https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg")
+        banner_home_page.addBannerLifecycleObserver(this)
+                .setAdapter(object : BannerImageAdapter<String>(bannerImgUrlList) {
+                    override fun onBindView(holder: BannerImageHolder, url: String?, position: Int, size: Int) {
+                        Glide.with(holder.itemView)
+                                .load(url)
+                                .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
+                                .into(holder.imageView)
+                    }
+                })
+                .addBannerLifecycleObserver(this)//添加生命周期观察者
+                .setIndicator(CircleIndicator(this.context))
+                .setIndicatorGravity(RIGHT)
+                .setIndicatorWidth(dip(8), dip(8))
+                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
     }
 
     private fun goToDocPage(entry_type: Int) {

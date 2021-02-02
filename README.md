@@ -60,9 +60,9 @@ UI改版
     - [ ] 功能
   - [x] ViewPager+Tab
     - [x] 滑动切换N个Fragment（首页-故事-图书馆...）
-- 首页
-  - [ ] 轮播图
-  - [ ] 目录入口 （Grid）
+- 首页UI
+  - [x] 轮播图
+  - [x] 目录入口 （GridLayout）
   - [ ] Latest Top3
   - [ ] Top Rate Page入口
 - [ ] Others

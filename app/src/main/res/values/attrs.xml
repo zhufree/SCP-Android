@@ -19,4 +19,8 @@
         <attr name="entryTitle" format="string" />
         <attr name="imgSrc" format="reference" />
     </declare-styleable>
+    <declare-styleable name="ArticleListItem">
+        <attr name="articleTitle" format="string" />
+        <attr name="rank" format="string" />
+    </declare-styleable>
 </resources>

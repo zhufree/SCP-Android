@@ -12,7 +12,7 @@
     <string name="title_scp_documents">SCP文档</string>
     <string name="title_other_documents">其他文档</string>
     <string name="title_more_about">更多相关</string>
-    <string name="title_direct">编号直达/随机</string>
+    <string name="title_direct">编号直达</string>
     <string name="title_series_about">相关信息</string>
 
     <!--目录tab-->

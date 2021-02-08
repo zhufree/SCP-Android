@@ -67,6 +67,8 @@ UI改版
   - [x] Top Rate Page入口
 - [x] 直达
 - [ ] 随机
+  - [x] 入口UI
+  - [ ] 随机文档列表
 
  
 # bug fix

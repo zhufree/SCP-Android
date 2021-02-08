@@ -10,15 +10,22 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.db.ScpDatabase
+import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.SeriesDocActivity
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.feed.SubFeedFragment
 import info.free.scp.view.feed.TopRatedFragment
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.jetbrains.anko.alert
+import org.jetbrains.anko.selector
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.selector
 import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.yesButton
 
 
 /**
@@ -45,6 +52,37 @@ class HomeFragment : BaseFragment() {
         tab_home?.setupWithViewPager(vp_home)
         btn_direct?.setOnClickListener {
             startActivity<DirectActivity>()
+        }
+        btn_random?.setOnClickListener {
+            val randomTypes = listOf("随机全部", "随机SCP", "随机故事", "随机搞笑")
+            selector("", randomTypes) { _, i ->
+                when (i) {
+                    0 -> {
+                        EventUtil.onEvent(context, EventUtil.clickRandomAll)
+                        startActivity<DetailActivity>(
+                                "read_type" to 1,
+                                "random_type" to 0)
+                    }
+                    1 -> {
+                        EventUtil.onEvent(context, EventUtil.clickRandomScp)
+                        startActivity<DetailActivity>(
+                                "read_type" to 1,
+                                "random_type" to 1)
+                    }
+                    2 -> {
+                        EventUtil.onEvent(context, EventUtil.clickRandomTale)
+                        startActivity<DetailActivity>(
+                                "read_type" to 1,
+                                "random_type" to 2)
+                    }
+                    3 -> {
+                        EventUtil.onEvent(context, EventUtil.clickRandomJoke)
+                        startActivity<DetailActivity>(
+                                "read_type" to 1,
+                                "random_type" to 3)
+                    }
+                }
+            }
         }
     }
 

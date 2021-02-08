@@ -155,36 +155,6 @@ class DirectActivity : BaseActivity() {
     private fun initToolbar() {
         baseToolbar = direct_toolbar
         supportActionBar?.setTitle(R.string.title_direct)
-        direct_toolbar?.inflateMenu(R.menu.direct_menu) //设置右上角的填充菜单
-        direct_toolbar?.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.random_all -> {
-                    EventUtil.onEvent(this, EventUtil.clickRandomAll)
-                    startActivity<DetailActivity>(
-                            "read_type" to 1,
-                            "random_type" to 0)
-                }
-                R.id.random_scp -> {
-                    EventUtil.onEvent(this, EventUtil.clickRandomScp)
-                    startActivity<DetailActivity>(
-                            "read_type" to 1,
-                            "random_type" to 1)
-                }
-                R.id.random_tales -> {
-                    EventUtil.onEvent(this, EventUtil.clickRandomTale)
-                    startActivity<DetailActivity>(
-                            "read_type" to 1,
-                            "random_type" to 2)
-                }
-                R.id.random_joke -> {
-                    EventUtil.onEvent(this, EventUtil.clickRandomJoke)
-                    startActivity<DetailActivity>(
-                            "read_type" to 1,
-                            "random_type" to 3)
-                }
-            }
-            true
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

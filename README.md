@@ -63,9 +63,10 @@ UI改版
 - 首页UI
   - [x] 轮播图
   - [x] 目录入口 （GridLayout）
-  - [ ] Latest Top3
-  - [ ] Top Rate Page入口
-- [ ] Others
+  - [x] Latest Top3
+  - [x] Top Rate Page入口
+- [ ] 直达
+
  
 # bug fix
 - [x] 随机出现null

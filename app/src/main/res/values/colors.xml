@@ -12,7 +12,8 @@
     <color name="darkText">#4A4A4A</color>
     <color name="darkTextNight">#777</color>
     <!--深色底浅色字-->
-    <color name="lightText">#888888</color>
+    <color name="mediumText">#888888</color>
+    <color name="lightText">#B9B9B9</color>
     <color name="disabledBg">#dcdcdc</color>
     <color name="disabledBgNight">#555</color>
     <color name="toolbarBgNight">#191919</color>

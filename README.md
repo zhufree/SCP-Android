@@ -65,7 +65,8 @@ UI改版
   - [x] 目录入口 （GridLayout）
   - [x] Latest Top3
   - [x] Top Rate Page入口
-- [ ] 直达
+- [x] 直达
+- [ ] 随机
 
  
 # bug fix

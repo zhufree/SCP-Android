@@ -31,7 +31,7 @@
         <!--浅色底深色字-->
         <item name="darkText">@color/darkText</item>
         <!--深色底浅色字-->
-        <item name="lightText">@color/lightText</item>
+        <item name="lightText">@color/mediumText</item>
         <!--未点击的按钮颜色-->
         <item name="unClickBtn">@color/unClickBtn</item>
         <!--点击过的按钮颜色（选中状态-->
@@ -47,7 +47,7 @@
         <!--浅色底深色字-->
         <item name="darkText">@color/darkTextNight</item>
         <!--深色底浅色字-->
-        <item name="lightText">@color/lightText</item>
+        <item name="lightText">@color/mediumText</item>
         <item name="unClickBtn">@color/unClickBtnNight</item>
         <item name="clickedBtn">@color/clickedBtnNight</item>
         <item name="disabledBg">@color/disabledBgNight</item>

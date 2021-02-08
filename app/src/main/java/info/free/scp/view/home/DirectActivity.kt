@@ -3,6 +3,7 @@ package info.free.scp.view.home
 import android.os.Bundle
 import android.view.Menu
 import android.widget.ArrayAdapter
+import androidx.core.view.children
 import apiCall
 import executeResponse
 import info.free.scp.R
@@ -57,31 +58,8 @@ class DirectActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_direct)
         initToolbar()
-        val numberList = arrayOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "<-") //准备字符串数组or别的什么
-        val numberAdapter = ArrayAdapter(this, R.layout.item_direct_number, R.id.tv_direct_number, numberList)
-        gv_direct_number?.adapter = numberAdapter
-        gv_direct_number?.setOnItemClickListener { _, _, position, _ ->
-            if (position < 9) {
-                numberString += (position + 1)
-            } else if (position == 10) {
-                numberString += "0"
-            } else if (position == 9) {
-                chooseType = 0
-                numberString = ""
-                cnString = ""
-            } else if (position == 11 && numberString.isNotEmpty()) {
-                numberString = numberString.substring(0, numberString.length - 1)
-            }
-            updateExpress()
-        }
 
-        arrayOf(btn_direct_cn, btn_direct_j, btn_go_direct).forEach {
-            it.post {
-                it.background = ThemeUtil.customShape(ThemeUtil.itemBg, 0, 0, it.height / 2)
-            }
-        }
-
-        btn_direct_cn.setOnClickListener {
+        tv_direct_cn.setOnClickListener {
             chooseType = when (chooseType) {
                 0 -> 1
                 1 -> 0
@@ -91,7 +69,7 @@ class DirectActivity : BaseActivity() {
             }
             updateExpress()
         }
-        btn_direct_j.setOnClickListener {
+        tv_direct_j.setOnClickListener {
             chooseType = when (chooseType) {
                 0 -> 2
                 1 -> 3
@@ -101,8 +79,32 @@ class DirectActivity : BaseActivity() {
             }
             updateExpress()
         }
-        btn_go_direct?.setOnClickListener {
-            GlobalScope.launch { goDirect() }
+        tv_direct_c.setOnClickListener {
+            if (numberString.isNotEmpty()) {
+                numberString = numberString.substring(0, numberString.length - 1)
+                updateExpress()
+            }
+        }
+        gl_direct_btns.children.forEachIndexed { index, view ->
+            if (index > 2) {
+                view.setOnClickListener {
+                    when (index - 3) {
+                        in 0..8 -> {
+                            numberString += (index - 2)
+                            updateExpress()
+                        }
+                        9 -> {
+                            numberString += "0"
+                            updateExpress()
+                        }
+                        10 -> {
+                            GlobalScope.launch { goDirect() }
+                        }
+                        else -> {
+                        }
+                    }
+                }
+            }
         }
     }
 

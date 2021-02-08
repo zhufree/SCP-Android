@@ -43,6 +43,9 @@ class HomeFragment : BaseFragment() {
         val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_home?.adapter = homePagerAdapter
         tab_home?.setupWithViewPager(vp_home)
+        btn_direct?.setOnClickListener {
+            startActivity<DirectActivity>()
+        }
     }
 
     private fun goToDocPage(entry_type: Int) {

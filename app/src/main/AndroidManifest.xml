@@ -18,6 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".view.random.RandomActivity"></activity>
         <activity
             android:name=".view.user.WuhanActivity"
             android:screenOrientation="nosensor" />

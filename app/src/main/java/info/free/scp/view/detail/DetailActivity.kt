@@ -149,12 +149,12 @@ class DetailActivity : BaseActivity() {
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             if (readType == 1) {
-                if (PreferenceUtil.getAppMode() == OFFLINE) {
-                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-                    viewModel.setScp(scp?.link ?: "", scp?.title ?: "")
-                } else {
-                    viewModel.loadRandom(randomRange)
-                }
+//                if (PreferenceUtil.getAppMode() == OFFLINE) {
+//                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+//                    viewModel.setScp(scp?.link ?: "", scp?.title ?: "")
+//                } else {
+//                    viewModel.loadRandom(randomRange)
+//                }
             } else {
                 finish()
             }
@@ -640,21 +640,21 @@ class DetailActivity : BaseActivity() {
                     viewModel.loadSibling(scpType, index, "next")
                 }
             }
-            1 -> {// 随机模式
-                // 下一篇
-                if (randomIndex < randomList.size - 1) {
-                    val nextScp = randomList[++randomIndex]
-                    viewModel.setScp(nextScp.link, nextScp.title)
-                } else {
-                    if (PreferenceUtil.getAppMode() == OFFLINE) {
-                        val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-                        viewModel.setScp(nextScp?.link ?: "", nextScp?.title ?: "")
-                    } else {
-                        viewModel.loadRandom(randomRange)
-                    }
-                    newRandom = true
-                }
-            }
+//            1 -> {// 随机模式
+//                // 下一篇
+//                if (randomIndex < randomList.size - 1) {
+//                    val nextScp = randomList[++randomIndex]
+//                    viewModel.setScp(nextScp.link, nextScp.title)
+//                } else {
+//                    if (PreferenceUtil.getAppMode() == OFFLINE) {
+//                        val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)
+//                        viewModel.setScp(nextScp?.link ?: "", nextScp?.title ?: "")
+//                    } else {
+//                        viewModel.loadRandom(randomRange)
+//                    }
+//                    newRandom = true
+//                }
+//            }
             else -> {
             }
         }

@@ -26,6 +26,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
 import info.free.scp.SCPConstants.ScpType.SINGLE_PAGE
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
@@ -146,5 +147,13 @@ class CategoryViewModel : ViewModel() {
 
     fun reverseCat() {
         catRepo.reverseCat()
+    }
+
+    fun getRandomList(): MutableLiveData<List<ScpItemModel>> {
+        return catRepo.randomList
+    }
+
+    fun refreshRandomList(range: String) {
+        catRepo.getRandomList(range)
     }
 }

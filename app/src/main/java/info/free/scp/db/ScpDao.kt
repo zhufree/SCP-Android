@@ -50,7 +50,7 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `scp_type` = :type AND `sub_scp_type` = :letterOrMonth ")
     fun getTalesByTypeAndSubType(type: Int, letterOrMonth: String): List<ScpItemModel>
 
-    @Query("SELECT * FROM scps WHERE `scp_type` = 24 AND sub_scp_type LIKE :country ORDER BY _index")
+    @Query("SELECT * FROM scps WHERE `scp_type` = 24 AND `sub_scp_type` LIKE :country ORDER BY _index")
     fun getInternationalByCountry(country: String): List<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")
@@ -59,11 +59,11 @@ interface ScpDao {
     @Query("SELECT * FROM scps as scp left join scp_detail as detail on scp.link = detail.link WHERE detail.detail LIKE :keyword;")
     fun searchScpByDetail(keyword: String): List<ScpItemModel>
 
-    @Query("SELECT * FROM scps WHERE scp_type = :type1 OR scp_type = :type2 ORDER BY random() LIMIT 1;")
-    fun getRandomScpByType(type1: String, type2: String): ScpItemModel?
+    @Query("SELECT * FROM scps WHERE scp_type = :type1 OR scp_type = :type2 ORDER BY random() LIMIT :count;")
+    fun getRandomScpByType(type1: String, type2: String, count: Int): Array<ScpItemModel>
 
-    @Query("SELECT * FROM scps ORDER BY random() LIMIT 1;")
-    fun getRandomScp(): ScpItemModel?
+    @Query("SELECT * FROM scps ORDER BY random() LIMIT :count;")
+    fun getRandomScp(count: Int): Array<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE scp_type = :type AND title LIKE :number;")
     fun getScpByNumber(type: Int, number: String): ScpItemModel?

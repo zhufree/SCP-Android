@@ -17,6 +17,7 @@
         android:layout_height="60dp"
         android:layout_marginHorizontal="7dp"
         android:layout_marginTop="10dp"
+        android:onClick="@{clickListener}"
         android:background="@color/white">
 
         <ImageView
@@ -32,14 +33,18 @@
 
         <TextView
             android:id="@+id/tv_random_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="13dp"
             android:text="@{title}"
             android:textColor="@color/textColor"
             android:textSize="18sp"
+            android:layout_marginEnd="20dp"
+            android:ellipsize="marquee"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/iv_random_icon"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <!--评分暂无-->
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,6 @@ class RandomAdapter : ListAdapter<ScpModel, RandomAdapter.RandomHolder>(RandomDi
             val intent = Intent()
             // TODO
             intent.putExtra("link", scp.link)
-            intent.putExtra("forceOnline", true)
             intent.setClass(it.context, DetailActivity::class.java)
             (it.context as Activity).startActivity(intent)
         }

@@ -17,6 +17,7 @@ import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.feed.SubFeedFragment
 import info.free.scp.view.feed.TopRatedFragment
+import info.free.scp.view.random.RandomActivity
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.alert
@@ -59,27 +60,23 @@ class HomeFragment : BaseFragment() {
                 when (i) {
                     0 -> {
                         EventUtil.onEvent(context, EventUtil.clickRandomAll)
-                        startActivity<DetailActivity>(
-                                "read_type" to 1,
-                                "random_type" to 0)
+                        startActivity<RandomActivity>("random_type" to 0,
+                                "random_title" to randomTypes[i])
                     }
                     1 -> {
                         EventUtil.onEvent(context, EventUtil.clickRandomScp)
-                        startActivity<DetailActivity>(
-                                "read_type" to 1,
-                                "random_type" to 1)
+                        startActivity<RandomActivity>("random_type" to 1,
+                                "random_title" to randomTypes[i])
                     }
                     2 -> {
                         EventUtil.onEvent(context, EventUtil.clickRandomTale)
-                        startActivity<DetailActivity>(
-                                "read_type" to 1,
-                                "random_type" to 2)
+                        startActivity<RandomActivity>("random_type" to 2,
+                                "random_title" to randomTypes[i])
                     }
                     3 -> {
                         EventUtil.onEvent(context, EventUtil.clickRandomJoke)
-                        startActivity<DetailActivity>(
-                                "read_type" to 1,
-                                "random_type" to 3)
+                        startActivity<RandomActivity>("random_type" to 3,
+                                "random_title" to randomTypes[i])
                     }
                 }
             }

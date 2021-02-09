@@ -6,12 +6,15 @@ import executeResponse
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
 
 class CategoryRepository {
     var scpList = MutableLiveData<List<ScpModel>>()
+    var randomList = MutableLiveData<List<ScpItemModel>>()
 
     suspend fun loadCatList(scpType: Int, subScpType: String, limit: Int, start: Int, categoryType: Int) {
         val response = apiCall { HttpManager.instance.getCategory(scpType, subScpType, limit, start) }
@@ -79,5 +82,9 @@ class CategoryRepository {
         val innerList = scpList.value?.toMutableList()
         innerList?.reverse()
         scpList.postValue(innerList)
+    }
+
+    fun getRandomList(range: String) {
+        randomList.postValue(ScpDataHelper.getInstance().getRandomScpList(range))
     }
 }

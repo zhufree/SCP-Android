@@ -11,6 +11,7 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 
 class CategoryRepository {
     var scpList = MutableLiveData<List<ScpModel>>()
@@ -84,7 +85,25 @@ class CategoryRepository {
         scpList.postValue(innerList)
     }
 
-    fun getRandomList(range: String) {
-        randomList.postValue(ScpDataHelper.getInstance().getRandomScpList(range))
+    suspend fun getRandomList(range: String) {
+        if (PreferenceUtil.getAppMode() == OFFLINE) {
+            randomList.postValue(ScpDataHelper.getInstance().getRandomScpList(range))
+        } else {
+            // TODO 改接口
+            getRandom(range)
+        }
+    }
+
+    suspend fun getRandom(typeRange: String) {
+        val response = apiCall { HttpManager.instance.getRandom(typeRange) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (!response.results.isNullOrEmpty()) {
+                    randomList.postValue(response.results)
+                }
+            })
+        }
     }
 }

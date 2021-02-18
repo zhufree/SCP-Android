@@ -56,7 +56,10 @@ class DetailActivity : BaseActivity() {
 
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
-    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
+
+    //    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
+    private var randomLinkList = emptyList<String>()
+    private var randomTitleList = emptyList<String>()
     private var itemType = 0 //
     private var url = ""
         set(value) {
@@ -96,7 +99,8 @@ class DetailActivity : BaseActivity() {
     private val jsScript = "$jqScript$initScript$tabScript$wikiScript"
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
-    private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+
+    //    private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var randomIndex = 0
     private var historyIndex = 0
     private var fullUrl = ""
@@ -109,13 +113,6 @@ class DetailActivity : BaseActivity() {
                 .get(DetailViewModel::class.java)
     }
 
-    private var randomRange: String = ""
-        get() = when (randomType) {
-            1 -> "1,2"
-            2 -> "3,4"
-            3 -> "5,6"
-            else -> ""
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,8 +135,11 @@ class DetailActivity : BaseActivity() {
         scpType = intent.getIntExtra("scp_type", 0)
         // 0 普通（按顺序） 1 随机 2 TODO 未读列表
         readType = intent.getIntExtra("read_type", 0)
-        // 0 所有，1仅scp，2 故事，3 joke
-        randomType = intent.getIntExtra("random_type", 0)
+        if (readType == 1) {
+            randomIndex = intent.getIntExtra("random_index", 0)
+            randomLinkList = intent?.getStringArrayListExtra("random_link_list") ?: emptyList()
+            randomTitleList = intent?.getStringArrayListExtra("random_title_list") ?: emptyList()
+        }
         itemType = intent.getIntExtra("item_type", 0)
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
@@ -148,16 +148,7 @@ class DetailActivity : BaseActivity() {
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
-            if (readType == 1) {
-//                if (PreferenceUtil.getAppMode() == OFFLINE) {
-//                    scp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-//                    viewModel.setScp(scp?.link ?: "", scp?.title ?: "")
-//                } else {
-//                    viewModel.loadRandom(randomRange)
-//                }
-            } else {
-                finish()
-            }
+            finish()
         } else if (!forceOnline) {
             viewModel.setScp(url, title) // 设置scp
         } else {
@@ -265,7 +256,10 @@ class DetailActivity : BaseActivity() {
                 info { "nsv_web_wrapper.height = ${nsv_web_wrapper.height}" }
             }
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         if (!PreferenceUtil.getShownDetailNotice()) {
             AlertDialog.Builder(this)
                     .setTitle("Notice")
@@ -376,11 +370,11 @@ class DetailActivity : BaseActivity() {
             historyIndex = historyList.size - 1
         }
 
-        if (newRandom) {
-            randomList.add(s)
-            randomIndex++
-            newRandom = false
-        }
+//        if (newRandom) {
+//            randomList.add(s)
+//            randomIndex++
+//            newRandom = false
+//        }
         tv_detail_toolbar?.text = s.title
         tv_detail_toolbar?.isSelected = true
         url = s.link
@@ -620,7 +614,6 @@ class DetailActivity : BaseActivity() {
         }.show()
     }
 
-    var newRandom = false
     private fun toNextArticle() {
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
@@ -640,21 +633,17 @@ class DetailActivity : BaseActivity() {
                     viewModel.loadSibling(scpType, index, "next")
                 }
             }
-//            1 -> {// 随机模式
-//                // 下一篇
-//                if (randomIndex < randomList.size - 1) {
-//                    val nextScp = randomList[++randomIndex]
-//                    viewModel.setScp(nextScp.link, nextScp.title)
-//                } else {
-//                    if (PreferenceUtil.getAppMode() == OFFLINE) {
-//                        val nextScp = ScpDataHelper.getInstance().getRandomScp(randomRange)
-//                        viewModel.setScp(nextScp?.link ?: "", nextScp?.title ?: "")
-//                    } else {
-//                        viewModel.loadRandom(randomRange)
-//                    }
-//                    newRandom = true
-//                }
-//            }
+            1 -> {// 随机模式
+                // 下一篇
+                if (randomIndex + 1 in randomLinkList.indices) {
+                    randomIndex += 1
+                    val nextLink = randomLinkList[randomIndex]
+                    val nextTitle = randomTitleList[randomIndex]
+                    viewModel.setScp(nextLink, nextTitle) // TODO
+                } else {
+                    toast("已经是最后一篇了")
+                }
+            }
             else -> {
             }
         }
@@ -685,14 +674,12 @@ class DetailActivity : BaseActivity() {
                     }
                 }
             }
-            1 -> {
-                if (randomList.isNotEmpty() && randomIndex - 1 >= 0) {
-                    val prevScp = randomList[--randomIndex]
-                    viewModel.setScp(prevScp.link, prevScp.title)
-//                    scp = randomList[--randomIndex]
-//                    scp?.let {
-//                        setData(it, true)
-//                    }
+            1 -> { // random
+                if (randomIndex - 1 >= 0) {
+                    randomIndex -= 1
+                    val prevLink = randomLinkList[randomIndex]
+                    val prevTitle = randomTitleList[randomIndex]
+                    viewModel.setScp(prevLink, prevTitle) // TODO
                 } else {
                     toast("已经是第一篇了")
                 }

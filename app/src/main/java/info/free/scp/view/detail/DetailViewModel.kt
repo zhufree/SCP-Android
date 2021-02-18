@@ -76,16 +76,6 @@ class DetailViewModel : ViewModel() {
         }
     }
 
-    fun loadRandom(typeRange: String) {
-        viewModelScope.launch {
-            if (typeRange.isEmpty()) {
-                repo.getRandom("0")
-            } else {
-                repo.getRandom(typeRange)
-            }
-        }
-    }
-
     fun loadSibling(scpType: Int, index: Int, direct: String = "next") {
         viewModelScope.launch {
             repo.getSibling(scpType, index, direct)

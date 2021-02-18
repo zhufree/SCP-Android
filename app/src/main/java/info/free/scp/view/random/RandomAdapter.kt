@@ -23,17 +23,24 @@ class RandomAdapter : ListAdapter<ScpModel, RandomAdapter.RandomHolder>(RandomDi
     override fun onBindViewHolder(holder: RandomHolder, position: Int) {
         val scp = getItem(position)
         holder.apply {
-            bind(createOnClickListener(scp), scp)
+            bind(createOnClickListener(scp, position), scp)
         }
     }
 
-    private fun createOnClickListener(scp: ScpModel): View.OnClickListener {
-        return View.OnClickListener {
+    private fun createOnClickListener(scp: ScpModel, pos: Int): View.OnClickListener {
+        return View.OnClickListener { v ->
             val intent = Intent()
             // TODO
             intent.putExtra("link", scp.link)
-            intent.setClass(it.context, DetailActivity::class.java)
-            (it.context as Activity).startActivity(intent)
+            intent.putExtra("title", scp.title)
+            intent.putExtra("read_type", 1)
+            intent.putExtra("random_index", pos)
+            val randomLinkList = currentList.map { it.link } as ArrayList
+            val randomTitleList = currentList.map { it.title } as ArrayList
+            intent.putStringArrayListExtra("random_link_list", randomLinkList)
+            intent.putStringArrayListExtra("random_title_list", randomTitleList)
+            intent.setClass(v.context, DetailActivity::class.java)
+            (v.context as Activity).startActivity(intent)
         }
     }
 

@@ -122,19 +122,7 @@ class DetailRepository {
         }
     }
 
-    suspend fun getRandom(typeRange: String) {
-        val response = apiCall { HttpManager.instance.getRandom(typeRange) }
-        response?.let {
-            executeResponse(response, {
 
-            }, {
-                if (!response.results.isNullOrEmpty()) {
-                    info(response.results.toString())
-                    scp.postValue(response.results[0])
-                }
-            })
-        }
-    }
 
     suspend fun getSibling(scpType: Int, index: Int, direct: String = "next") {
         val response = apiCall { HttpManager.instance.getSibling(scpType, index, direct) }

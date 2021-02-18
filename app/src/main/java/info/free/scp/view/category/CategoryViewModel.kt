@@ -154,6 +154,8 @@ class CategoryViewModel : ViewModel() {
     }
 
     fun refreshRandomList(range: String) {
-        catRepo.getRandomList(range)
+        viewModelScope.launch {
+            catRepo.getRandomList(range)
+        }
     }
 }

@@ -24,6 +24,9 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import androidx.documentfile.provider.DocumentFile
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import info.free.scp.R
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
 import info.free.scp.ScpApplication
@@ -45,6 +48,7 @@ import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.selector
 import org.jetbrains.anko.support.v4.startActivity
 import java.io.FileInputStream
@@ -57,10 +61,6 @@ import java.util.*
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
 class UserFragment : BaseFragment() {
-
-//    private var mParam1: String? = null
-//    private var mParam2: String? = null
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -101,7 +101,8 @@ class UserFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
-        tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+        tv_nickname?.text = "代号" // TODO
+        tv_job?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                     "职务：${getRank(PreferenceUtil.getPoint())}   代号：${PreferenceUtil.getNickname()}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
@@ -122,34 +123,34 @@ class UserFragment : BaseFragment() {
         if (PreferenceUtil.getShowMeal()) {
             st_meal.visibility = VISIBLE
         }
-        if (PreferenceUtil.getShowWh()) {
-            st_wuhan.visibility = VISIBLE
-        }
         if (PreferenceUtil.getNewMealCount() > PreferenceUtil.getOldMealCount()) {
-            st_meal.setRight("NEW")
+//            st_meal.setRight("NEW") TODO
         }
         setSettingEvent()
+
+        Glide.with(this).load(R.drawable.author_head)
+                .apply(RequestOptions.bitmapTransform(RoundedCorners(dip(25))))
+                .into(iv_author_head)
     }
 
     private fun setSettingEvent() {
         if (ScpApplication.channelName == "GooglePlay") {
-            st_donate.visibility = GONE
+//            st_donate.visibility = GONE
         }
         st_draft.onClick = {
             startActivity<DraftListActivity>()
         }
         st_like.onClick = { startActivity<LikeBoxActivity>() }
 
-        st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
+//        st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
         st_game.onClick = { startActivity<GameListActivity>() }
         st_meal.onClick = { startActivity<MealListActivity>() }
-        st_wuhan.onClick = { startActivity<WuhanActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
-        st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
-        st_dark_mode.onClick = {
-            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
-            st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
-        }
+//        st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
+//        st_dark_mode.onClick = {
+//            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
+//            st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
+//        } TODO
         st_read.onClick = {
             EventUtil.onEvent(activity, EventUtil.clickReadSetting)
             startActivity<SettingsActivity>()
@@ -163,9 +164,9 @@ class UserFragment : BaseFragment() {
         st_copyright.onClick = {
             showCopyright()
         }
-        st_donate.onClick = {
-            startActivity<DonationQrActivity>()
-        }
+//        st_donate.onClick = {
+//            startActivity<DonationQrActivity>()
+//        }
         st_query.onClick = {
             val updateIntent = Intent()
             updateIntent.action = "android.intent.action.VIEW"
@@ -285,11 +286,10 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        user_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         tv_nickname?.setTextColor(ThemeUtil.darkText)
-        tv_data_desc?.setTextColor(ThemeUtil.lightText)
-        arrayOf(st_draft, st_like, st_history, st_game, st_meal, st_wuhan, st_portal, st_dark_mode, st_read, st_data, st_use,
-                st_copyright, st_donate, st_query).forEach { it?.refreshTheme() }
+        tv_data_desc?.setTextColor(resources.getColor(R.color.colorAccent))
+        arrayOf(st_draft, st_like, st_game, st_meal, st_portal, st_read, st_data, st_use,
+                st_copyright, st_query).forEach { it?.refreshTheme() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

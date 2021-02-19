@@ -1,6 +1,5 @@
 package info.free.scp.view.widget
 
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -8,6 +7,7 @@ import info.free.scp.R
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.layout_entry_item.view.*
+import kotlinx.android.synthetic.main.layout_setting_item.view.*
 import org.jetbrains.anko.dip
 
 class EntryItem : ConstraintLayout {

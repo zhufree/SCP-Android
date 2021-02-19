@@ -99,7 +99,7 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
-    <!--设置-->
+    <!--我的-->
     <string name="user_info">员工档案</string>
     <string name="about_view_content">浏览相关</string>
     <string name="draft_list">草稿箱</string>
@@ -139,6 +139,7 @@
     <string name="download_other_title">其他文档和offset部分</string>
     <string name="download_collection">故事系列，设定中心等</string>
     <string name="sync_category_title">更新目录</string>
+    <string name="slogan">控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护</string>
 
     <!--新的离线逻辑-->
     <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Documents文件夹的scp_download子文件夹中：\n

@@ -5,12 +5,11 @@ import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.R
 import info.free.scp.util.ThemeUtil
-import kotlinx.android.synthetic.main.layout_article_item.view.*
+import kotlinx.android.synthetic.main.layout_history_item.view.*
 
-class ArticleListItem : ConstraintLayout {
+class HistoryListItem : ConstraintLayout {
     var title = ""
-    var rank = ""
-    var onLaterClick: () -> Unit = {}
+    var time = ""
     var onItemClick: () -> Unit = {}
 
     constructor(context: Context) : this(context, null)
@@ -21,26 +20,24 @@ class ArticleListItem : ConstraintLayout {
     }
 
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_article_item, this)
+        inflate(context, R.layout.layout_history_item, this)
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.ArticleListItem)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.HistoryListItem)
 
         // 赋值给属性变量
-        title = ta.getString(R.styleable.ArticleListItem_articleTitle) ?: ""
-        rank = ta.getString(R.styleable.ArticleListItem_rank) ?: ""
+        title = ta.getString(R.styleable.HistoryListItem_historyTitle) ?: ""
+        time = ta.getString(R.styleable.HistoryListItem_time) ?: ""
         ta.recycle()
 
-        tv_article_item_title.text = title
-        tv_article_item_rank.text = rank
-        cl_read_later.setOnClickListener {
-            onLaterClick()
-        }
+        tv_history_item_title.text = title
+        tv_history_item_time.text = time
         setOnClickListener { onItemClick() }
     }
 
     fun refreshTheme() {
-        tv_article_item_title.setTextColor(ThemeUtil.darkText)
+        tv_history_item_title.setTextColor(ThemeUtil.darkText)
+        tv_history_item_time.setTextColor(ThemeUtil.lightText)
     }
 }

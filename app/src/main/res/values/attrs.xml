@@ -23,4 +23,8 @@
         <attr name="articleTitle" format="string" />
         <attr name="rank" format="string" />
     </declare-styleable>
+    <declare-styleable name="HistoryListItem">
+        <attr name="historyTitle" format="string" />
+        <attr name="time" format="string" />
+    </declare-styleable>
 </resources>

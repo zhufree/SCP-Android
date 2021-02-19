@@ -22,6 +22,7 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.SeriesDocActivity
+import info.free.scp.view.feed.TopRatedActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.alert
@@ -72,6 +73,9 @@ class HomePageFragment : BaseFragment() {
                 .setIndicatorGravity(RIGHT)
                 .setIndicatorWidth(dip(8), dip(8))
                 .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
+        btn_top_page_entry?.setOnClickListener {
+            startActivity<TopRatedActivity>()
+        }
     }
 
     private fun goToDocPage(entry_type: Int) {

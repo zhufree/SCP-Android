@@ -15,11 +15,12 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
+        <activity android:name=".view.feed.TopRatedActivity"></activity>
         <activity android:name=".view.random.RandomActivity" />
         <activity
             android:name=".view.user.WuhanActivity"

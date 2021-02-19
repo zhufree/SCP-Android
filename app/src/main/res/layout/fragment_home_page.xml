@@ -193,6 +193,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <Button
+            android:id="@+id/btn_top_page_entry"
             android:layout_width="0dp"
             android:layout_height="120dp"
             android:layout_marginTop="14dp"

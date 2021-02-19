@@ -4,7 +4,7 @@ import android.graphics.drawable.BitmapDrawable
 import info.free.scp.R
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_about_me.*
+import kotlinx.android.synthetic.main.activity_donation_qr.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -20,24 +20,23 @@ import org.jetbrains.anko.*
 
 class DonationQrActivity : BaseActivity() {
     private var payType = 0 // 0 wechat 1 zhi
-//    private var ad: InterstitialAD? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventUtil.onEvent(this, EventUtil.clickAboutMe)
-        setContentView(R.layout.activity_about_me)
+        setContentView(R.layout.activity_donation_qr)
 
         baseToolbar = about_me_toolbar
-        btn_donation_wechat?.setOnClickListener {
+        tv_donation_wechat?.setOnClickListener {
             payType = 0
             iv_qr?.setImageResource(R.drawable.img_donation_wechat)
         }
-        btn_donation_alipay?.setOnClickListener {
+        tv_donation_alipay?.setOnClickListener {
             payType = 1
             iv_qr?.setImageResource(R.drawable.img_donation_alipay)
         }
 
-        iv_qr?.setOnLongClickListener {
+        btn_donate?.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
             PreferenceUtil.addPoints(2)
             Utils.saveBitmapFile((iv_qr.drawable as BitmapDrawable).bitmap, "scp_donation")
@@ -84,6 +83,6 @@ class DonationQrActivity : BaseActivity() {
         val pm = cxt.packageManager ?: return false
         val list = pm.queryIntentActivities(
                 intent, PackageManager.MATCH_DEFAULT_ONLY)
-        return list != null && list.size > 0
+        return list.size > 0
     }
 }

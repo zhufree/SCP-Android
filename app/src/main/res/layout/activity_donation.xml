@@ -59,27 +59,11 @@
                 android:text="@string/go_afdian"
                 android:background="#8A62DC"
                 android:textColor="?attr/darkText"
-                app:layout_constraintEnd_toStartOf="@+id/btn_chongya"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="spread"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_donation_list" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_chongya"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:text="@string/go_chongya"
-                android:background="#FFCF00"
-                android:textColor="?attr/darkText"
-                app:layout_constraintBottom_toBottomOf="@id/btn_afdian"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/btn_afdian"
-                app:layout_constraintTop_toTopOf="@id/btn_afdian" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

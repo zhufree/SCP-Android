@@ -135,7 +135,7 @@ class UserFragment : BaseFragment() {
 
     private fun setSettingEvent() {
         if (ScpApplication.channelName == "GooglePlay") {
-//            st_donate.visibility = GONE
+            cl_donation.visibility = GONE
         }
         st_draft.onClick = {
             startActivity<DraftListActivity>()
@@ -164,9 +164,9 @@ class UserFragment : BaseFragment() {
         st_copyright.onClick = {
             showCopyright()
         }
-//        st_donate.onClick = {
-//            startActivity<DonationQrActivity>()
-//        }
+        btn_donation.setOnClickListener {
+            startActivity<DonationQrActivity>()
+        }
         st_query.onClick = {
             val updateIntent = Intent()
             updateIntent.action = "android.intent.action.VIEW"

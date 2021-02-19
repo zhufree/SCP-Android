@@ -206,12 +206,13 @@
                     app:layout_constraintTop_toTopOf="@id/iv_donate_bg" />
 
                 <Button
+                    android:id="@+id/btn_donation"
                     android:layout_width="138dp"
                     android:layout_height="30dp"
                     android:layout_marginTop="20dp"
-                    android:background="@drawable/bg_donate_btn"
+                    android:background="@drawable/bg_donate_entry_btn"
                     android:padding="0dp"
-                    android:text="支持作者"
+                    android:text="支持开发者"
                     android:textColor="@color/white"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="@id/iv_donate_bg"

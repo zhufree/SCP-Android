@@ -22,12 +22,5 @@ class DonationActivity :BaseActivity() {
             updateIntent.data = updateUrl
             startActivity(updateIntent)
         }
-        btn_chongya?.setOnClickListener {
-            val updateIntent = Intent()
-            updateIntent.action = "android.intent.action.VIEW"
-            val updateUrl = Uri.parse("https://www.chongya.com/@zhufree")
-            updateIntent.data = updateUrl
-            startActivity(updateIntent)
-        }
     }
 }

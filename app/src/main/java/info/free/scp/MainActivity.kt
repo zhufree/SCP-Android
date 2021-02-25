@@ -11,6 +11,7 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
+import info.free.scp.view.later.LaterFragment
 import info.free.scp.view.user.UserFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import pub.devrel.easypermissions.AfterPermissionGranted
@@ -20,7 +21,7 @@ import pub.devrel.easypermissions.EasyPermissions
 class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
-    private val feedFragment = FeedFragment.newInstance()
+    private val laterFragment = LaterFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 
 
@@ -47,21 +48,21 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                     transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
                 } else {
                     transaction.show(homeFragment)
-                    transaction.hide(feedFragment)
+                    transaction.hide(laterFragment)
                     transaction.hide(userFragment)
                 }
                 currentFragment = homeFragment
             }
             R.id.navigation_feed -> {
-                if (!feedFragment.isAdded && null == supportFragmentManager
-                                .findFragmentByTag(feedFragment.javaClass.name)) {
-                    transaction.add(R.id.flMainContainer, feedFragment, feedFragment.javaClass.name)
+                if (!laterFragment.isAdded && null == supportFragmentManager
+                                .findFragmentByTag(laterFragment.javaClass.name)) {
+                    transaction.add(R.id.flMainContainer, laterFragment, laterFragment.javaClass.name)
                 } else {
-                    transaction.show(feedFragment)
+                    transaction.show(laterFragment)
                     transaction.hide(homeFragment)
                     transaction.hide(userFragment)
                 }
-                currentFragment = feedFragment
+                currentFragment = laterFragment
             }
             R.id.navigation_about -> {
                 if (!userFragment.isAdded && null == supportFragmentManager
@@ -69,7 +70,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                     transaction.add(R.id.flMainContainer, userFragment, userFragment.javaClass.name)
                 } else {
                     transaction.show(userFragment)
-                    transaction.hide(feedFragment)
+                    transaction.hide(laterFragment)
                     transaction.hide(homeFragment)
                 }
                 currentFragment = userFragment
@@ -116,7 +117,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
-        feedFragment.refreshTheme()
+        laterFragment.refreshTheme()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

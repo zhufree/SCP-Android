@@ -14,6 +14,12 @@ object SCPConstants {
         const val ONLINE = 1
         const val OFFLINE = 0
     }
+
+    object OrderType {
+        const val ASC = 0
+        const val DESC = 1
+    }
+
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档

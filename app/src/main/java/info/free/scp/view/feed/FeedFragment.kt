@@ -2,7 +2,6 @@ package info.free.scp.view.feed
 
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +9,6 @@ import androidx.fragment.app.Fragment
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
-import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
 import kotlinx.android.synthetic.main.fragment_feed.*

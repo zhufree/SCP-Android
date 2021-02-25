@@ -8,8 +8,8 @@
 
     <item
         android:id="@+id/navigation_feed"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/tab_latest" />
+        android:icon="@drawable/baseline_menu_book_black_24dp"
+        android:title="@string/later" />
 
     <item
         android:id="@+id/navigation_about"

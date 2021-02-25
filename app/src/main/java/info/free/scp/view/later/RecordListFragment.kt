@@ -1,25 +1,32 @@
 package info.free.scp.view.later
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
-import info.free.scp.SCPConstants.LATEST_CREATED
+import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.databinding.FragmentLaterListBinding
 
 import info.free.scp.view.base.BaseFragment
+import org.jetbrains.anko.noButton
+import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.yesButton
 
-class LaterListFragment : BaseFragment() {
+/**
+ * 待读和历史列表共用一个fragment
+ * recordType区分
+ */
+class RecordListFragment : BaseFragment() {
 
-    var feedType = LATEST_CREATED
+    var recordType = LATER_TYPE
 
     companion object {
-        fun newInstance(): LaterListFragment {
-            val fragment = LaterListFragment()
+        fun newInstance(recordType: Int): RecordListFragment {
+            val fragment = RecordListFragment()
             val args = Bundle()
-//            args.putInt("feedType", feedType)
+            args.putInt("record_type", recordType)
             fragment.arguments = args
             return fragment
         }
@@ -31,7 +38,7 @@ class LaterListFragment : BaseFragment() {
     }
 
     private val laterAdapter by lazy {
-        LaterListAdapter()
+        RecordListAdapter()
     }
 
     private lateinit var binding: FragmentLaterListBinding
@@ -40,7 +47,7 @@ class LaterListFragment : BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentLaterListBinding.inflate(inflater, container, false)
         binding.rvLater.adapter = laterAdapter
         subscribeUi(laterAdapter)
@@ -48,10 +55,18 @@ class LaterListFragment : BaseFragment() {
     }
 
 
-    private fun subscribeUi(adapter: LaterListAdapter) {
-//        feedType = arguments?.getInt("feedType") ?: LATEST_CREATED
-//        Log.i("feed", "type = $feedType")
-        adapter.submitList(viewModel.getLaterList())
+    private fun subscribeUi(adapter: RecordListAdapter) {
+        recordType = arguments?.getInt("record_type") ?: LATER_TYPE
+        adapter.submitList(viewModel.getRecordList(recordType, ASC))
+        adapter.onLongClick = { record ->
+            alert("是否确认删除？") {
+                yesButton {
+                    viewModel.deleteRecord(record)
+                    adapter.submitList(viewModel.getRecordList(recordType, ASC))
+                }
+                noButton { }
+            }.show()
+        }
     }
 
     override fun refreshTheme() {

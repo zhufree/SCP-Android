@@ -34,15 +34,12 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.ThemeUtil.DAY_THEME
-import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
 import info.free.scp.view.eatroom.MealListActivity
 import info.free.scp.view.game.GameListActivity
-import info.free.scp.view.like.LikeBoxActivity
 import info.free.scp.view.portal.PortalActivity
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
@@ -140,7 +137,6 @@ class UserFragment : BaseFragment() {
         st_draft.onClick = {
             startActivity<DraftListActivity>()
         }
-        st_like.onClick = { startActivity<LikeBoxActivity>() }
 
 //        st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
         st_game.onClick = { startActivity<GameListActivity>() }
@@ -288,7 +284,7 @@ class UserFragment : BaseFragment() {
         super.refreshTheme()
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(resources.getColor(R.color.colorAccent))
-        arrayOf(st_draft, st_like, st_game, st_meal, st_portal, st_read, st_data, st_use,
+        arrayOf(st_draft, st_game, st_meal, st_portal, st_read, st_data, st_use,
                 st_copyright, st_query).forEach { it?.refreshTheme() }
     }
 

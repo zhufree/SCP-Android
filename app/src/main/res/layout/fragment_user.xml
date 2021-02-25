@@ -136,10 +136,6 @@
                     app:entryTitle="草稿箱" />
 
                 <info.free.scp.view.widget.EntryItem
-                    android:id="@+id/st_like"
-                    app:entryTitle="收藏列表" />
-
-                <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_game"
                     app:entryTitle="游戏列表" />
 

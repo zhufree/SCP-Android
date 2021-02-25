@@ -5,7 +5,7 @@ SCP Android 第三方客户端
 
 `kotlin`
 
-# game list
+# Recommend game list
 - 以撒
 - distrust
 - 幽浮

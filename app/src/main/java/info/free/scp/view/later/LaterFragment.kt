@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import info.free.scp.R
+import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
 import kotlinx.android.synthetic.main.fragment_later.*
@@ -20,19 +21,16 @@ import kotlinx.android.synthetic.main.fragment_later.*
  */
 class LaterFragment : BaseFragment() {
 
-    //    private var mParam1: String? = null
-    //    private var mParam2: String? = null
     var fragmentList = arrayListOf<BaseFragment>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_later, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentList = arrayListOf(LaterListFragment.newInstance(),
+        fragmentList = arrayListOf(RecordListFragment.newInstance(LATER_TYPE),
                 LikeBoxListFragment.newInstance())
         val titleList = arrayListOf("待读", "收藏夹")
         val laterPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
@@ -51,5 +49,4 @@ class LaterFragment : BaseFragment() {
             return fragment
         }
     }
-
-} // Required empty public constructor
+}

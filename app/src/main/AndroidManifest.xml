@@ -92,7 +92,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.like.LikeActivity"
+            android:name=".view.later.LikeListActivity"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".view.user.LaterAndHistoryActivity"

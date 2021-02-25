@@ -40,7 +40,7 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
             val intent = Intent()
             intent.putExtra("box_id", box.id)
             intent.putExtra("box_name", box.name)
-//            intent.setClass(it.context, LikeActivity::class.java) TODO
+            intent.setClass(it.context, LikeListActivity::class.java)
             (it.context as Activity).startActivity(intent)
         }
     }

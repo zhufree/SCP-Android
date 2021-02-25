@@ -15,13 +15,10 @@ import info.free.scp.view.base.BaseFragment
 
 class LikeBoxListFragment : BaseFragment() {
 
-    var feedType = LATEST_CREATED
-
     companion object {
         fun newInstance(): LikeBoxListFragment {
             val fragment = LikeBoxListFragment()
             val args = Bundle()
-//            args.putInt("feedType", feedType)
             fragment.arguments = args
             return fragment
         }
@@ -42,7 +39,7 @@ class LikeBoxListFragment : BaseFragment() {
             inflater: LayoutInflater,
             container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentLikeBoxListBinding.inflate(inflater, container, false)
         binding.rvLikeBox.adapter = boxAdapter
         subscribeUi(boxAdapter)
@@ -51,8 +48,6 @@ class LikeBoxListFragment : BaseFragment() {
 
 
     private fun subscribeUi(adapter: LikeBoxAdapter) {
-//        feedType = arguments?.getInt("feedType") ?: LATEST_CREATED
-//        Log.i("feed", "type = $feedType")
         adapter.submitList(viewModel.getLikeBoxList())
     }
 

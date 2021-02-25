@@ -12,12 +12,12 @@ import info.free.scp.bean.ScpRecordModel
 import info.free.scp.databinding.ItemLaterBinding
 import info.free.scp.view.detail.DetailActivity
 
-class LaterListAdapter : ListAdapter<ScpRecordModel, LaterListAdapter.LaterHolder>(LaterDiffCallback()) {
+class RecordListAdapter : ListAdapter<ScpRecordModel, RecordListAdapter.RecordHolder>(LaterDiffCallback()) {
+    var onLongClick: (item: ScpRecordModel) -> Unit = { _ -> }
+    val holderList: MutableList<RecordHolder> = emptyList<RecordHolder>().toMutableList()
 
-    val holderList: MutableList<LaterHolder> = emptyList<LaterHolder>().toMutableList()
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LaterHolder {
-        val newHolder = LaterHolder(ItemLaterBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordHolder {
+        val newHolder = RecordHolder(ItemLaterBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
         holderList.add(newHolder)
         return newHolder
@@ -27,11 +27,11 @@ class LaterListAdapter : ListAdapter<ScpRecordModel, LaterListAdapter.LaterHolde
         holderList.forEach { it.refreshTheme() }
     }
 
-    override fun onBindViewHolder(holder: LaterHolder, position: Int) {
-        val feed = getItem(position)
+    override fun onBindViewHolder(holder: RecordHolder, position: Int) {
+        val record = getItem(position)
         holder.apply {
-            bind(createOnClickListener(feed), feed)
-            itemView.tag = feed
+            bind(createOnClickListener(record), createOnLongClickListener(record), record)
+            itemView.tag = record
         }
     }
 
@@ -45,10 +45,18 @@ class LaterListAdapter : ListAdapter<ScpRecordModel, LaterListAdapter.LaterHolde
         }
     }
 
-    class LaterHolder(private val binding: ItemLaterBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(listener: View.OnClickListener, item: ScpRecordModel) {
+    private fun createOnLongClickListener(record: ScpRecordModel): View.OnLongClickListener {
+        return View.OnLongClickListener {
+            onLongClick(record)
+            true
+        }
+    }
+
+    class RecordHolder(private val binding: ItemLaterBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(listener: View.OnClickListener, longListener: View.OnLongClickListener, item: ScpRecordModel) {
             binding.apply {
                 clickListener = listener
+                longClickListener = longListener
                 record = item
                 executePendingBindings()
             }

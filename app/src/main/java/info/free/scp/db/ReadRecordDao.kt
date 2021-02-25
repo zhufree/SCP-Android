@@ -1,6 +1,7 @@
 package info.free.scp.db
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
@@ -25,6 +26,9 @@ interface ReadRecordDao {
 
     @Query("DELETE FROM records WHERE link = :link AND viewListType = :viewType")
     fun delete(link: String, viewType: Int)
+
+    @Delete
+    fun delete(recordModel: ScpRecordModel)
 
     @Query("DELETE FROM records WHERE viewListType = 0")
     fun clearHistory()

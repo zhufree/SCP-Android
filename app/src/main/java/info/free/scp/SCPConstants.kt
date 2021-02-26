@@ -20,6 +20,11 @@ object SCPConstants {
         const val DESC = 1
     }
 
+    object SearchType {
+        const val TITLE = 0
+        const val CONTENT = 1
+    }
+
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档

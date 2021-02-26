@@ -107,6 +107,7 @@ dependencies {
     // 升级之后字段必须标注是否可为null
     implementation "androidx.room:room-runtime:2.1.0"
     kapt "androidx.room:room-compiler:2.1.0"
+    implementation "androidx.room:room-ktx:2.1.0"
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-rc03'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'

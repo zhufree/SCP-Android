@@ -1,19 +1,12 @@
 package info.free.scp.view.later
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
-import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.VERTICAL
 import info.free.scp.R
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.base.BaseActivity
-import info.free.scp.view.base.BaseAdapter
-import info.free.scp.view.user.SimpleScpAdapter
 import kotlinx.android.synthetic.main.activity_like.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector

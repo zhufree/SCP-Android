@@ -51,36 +51,7 @@ class HomeFragment : BaseFragment() {
         val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_home?.adapter = homePagerAdapter
         tab_home?.setupWithViewPager(vp_home)
-        btn_direct?.setOnClickListener {
-            startActivity<DirectActivity>()
-        }
-        btn_random?.setOnClickListener {
-            val randomTypes = listOf("随机全部", "随机SCP", "随机故事", "随机搞笑")
-            selector("", randomTypes) { _, i ->
-                when (i) {
-                    0 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomAll)
-                        startActivity<RandomActivity>("random_type" to 0,
-                                "random_title" to randomTypes[i])
-                    }
-                    1 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomScp)
-                        startActivity<RandomActivity>("random_type" to 1,
-                                "random_title" to randomTypes[i])
-                    }
-                    2 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomTale)
-                        startActivity<RandomActivity>("random_type" to 2,
-                                "random_title" to randomTypes[i])
-                    }
-                    3 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomJoke)
-                        startActivity<RandomActivity>("random_type" to 3,
-                                "random_title" to randomTypes[i])
-                    }
-                }
-            }
-        }
+
     }
 
     private fun goToDocPage(entry_type: Int) {

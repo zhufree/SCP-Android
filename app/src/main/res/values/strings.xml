@@ -168,7 +168,7 @@
     <string name="introduction">SCP基金会是我独立开发的作品。目前服务器的费用是我自掏腰包在支撑，有闲钱的朋友们可以转账支持下。我会做得更好，谢谢！</string>
 
     <!--草稿-->
-    <string name="empty_draft">还没有草稿</string>
+    <string name="empty_draft">还没有草稿，本地草稿仅供记录，正式编写scp请上沙盒站</string>
     <string name="add_draft">添加草稿</string>
     <string name="draft_help">如何撰写一篇SCP文档</string>
     <string name="save_draft">保存草稿</string>

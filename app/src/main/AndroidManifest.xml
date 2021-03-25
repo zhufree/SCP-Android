@@ -20,11 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.feed.TopRatedActivity"></activity>
+        <activity android:name=".view.feed.TopRatedActivity" />
         <activity android:name=".view.random.RandomActivity" />
-        <activity
-            android:name=".view.user.WuhanActivity"
-            android:screenOrientation="nosensor" />
         <activity
             android:name=".view.eatroom.MealListActivity"
             android:screenOrientation="nosensor" />
@@ -53,9 +50,7 @@
         <activity
             android:name=".view.category.ScpListActivity"
             android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.detail.DetailActivity"
-            android:screenOrientation="nosensor" />
+        <activity android:name=".view.detail.DetailActivity" />
         <activity
             android:name=".view.base.BaseActivity"
             android:screenOrientation="nosensor" />

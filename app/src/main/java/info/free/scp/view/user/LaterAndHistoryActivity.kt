@@ -75,7 +75,7 @@ class LaterAndHistoryActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_like)
+        setContentView(R.layout.activity_history)
         initToolbar()
 
         val lm = LinearLayoutManager(this, VERTICAL, false)

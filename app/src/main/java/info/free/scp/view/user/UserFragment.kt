@@ -34,6 +34,8 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.ThemeUtil.DAY_THEME
+import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.download.DownloadActivity
@@ -131,22 +133,23 @@ class UserFragment : BaseFragment() {
     }
 
     private fun setSettingEvent() {
-        if (ScpApplication.channelName == "GooglePlay") {
-            cl_donation.visibility = GONE
+        ib_theme.setOnClickListener {
+            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
+//            ib_theme.background = (if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
         }
+
+//        if (ScpApplication.channelName == "GooglePlay") {
+//            cl_donation.visibility = GONE
+//        }
         st_draft.onClick = {
             startActivity<DraftListActivity>()
         }
-
-//        st_history.onClick = { startActivity<LaterAndHistoryActivity>() }
         st_game.onClick = { startActivity<GameListActivity>() }
         st_meal.onClick = { startActivity<MealListActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
-//        st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
-//        st_dark_mode.onClick = {
-//            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
-//            st_dark_mode.changeTitle(if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
-//        } TODO
+
+        iv_more_history.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
+
         st_read.onClick = {
             EventUtil.onEvent(activity, EventUtil.clickReadSetting)
             startActivity<SettingsActivity>()

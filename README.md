@@ -57,7 +57,7 @@ UI改版
 - [ ]HomeFragment
   - [ ] Search
     - [x] UI
-    - [ ] 功能
+    - [x] 功能
   - [x] ViewPager+Tab
     - [x] 滑动切换N个Fragment（首页-故事-图书馆...）
 - 首页UI
@@ -79,6 +79,7 @@ UI改版
   - [ ] 故事
 - [ ] 详情页
 - [x] 待读（收藏列表待有收藏后测试
+- [ ] 夜间模式
 
  
 # bug fix

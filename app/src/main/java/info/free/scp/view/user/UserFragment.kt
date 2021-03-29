@@ -185,9 +185,9 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
-        st_copyright.onClick = {
-            showCopyright()
-        }
+//        st_copyright.onClick = {
+//            showCopyright()
+//        } TODO
         btn_donation.setOnClickListener {
             startActivity<DonationQrActivity>()
         }
@@ -313,7 +313,8 @@ class UserFragment : BaseFragment() {
         tv_nickname?.setTextColor(ThemeUtil.darkText)
         tv_data_desc?.setTextColor(resources.getColor(R.color.colorAccent))
         arrayOf(st_draft, st_game, st_meal, st_portal, st_read, st_data, st_use,
-                st_copyright, st_query).forEach { it?.refreshTheme() }
+//                st_copyright,
+                st_query).forEach { it?.refreshTheme() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -123,7 +123,7 @@
                 android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/bg_entry_box"
-                android:columnCount="5"
+                android:columnCount="4"
                 android:elevation="2dp"
                 android:orientation="horizontal"
                 android:paddingBottom="30dp"
@@ -133,38 +133,46 @@
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_draft"
+                    app:count="4"
                     app:entryTitle="草稿箱" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_game"
+                    app:count="4"
                     app:entryTitle="游戏列表" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_meal"
+                    app:count="4"
                     app:entryTitle="恰饭屋" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_portal"
+                    app:count="4"
                     app:entryTitle="传送门" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_read"
+                    app:count="4"
                     app:entryTitle="阅读设置" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_data"
+                    app:count="4"
                     app:entryTitle="文档缓存" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_use"
+                    app:count="4"
                     app:entryTitle="app使用说明" />
 
-                <info.free.scp.view.widget.EntryItem
-                    android:id="@+id/st_copyright"
-                    app:entryTitle="版权说明" />
+                <!--                <info.free.scp.view.widget.EntryItem-->
+                <!--                    android:id="@+id/st_copyright"-->
+                <!--                    app:entryTitle="版权说明" />-->
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_query"
+                    app:count="4"
                     app:entryTitle="用户问卷" />
             </GridLayout>
 
@@ -220,8 +228,8 @@
                 android:id="@+id/ll_history_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="14dp"
                 android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="14dp"
                 android:background="@drawable/bg_entry_box"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"

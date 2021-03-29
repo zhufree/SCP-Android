@@ -18,6 +18,7 @@
     <declare-styleable name="EntryItem">
         <attr name="entryTitle" format="string" />
         <attr name="imgSrc" format="reference" />
+        <attr name="count" format="integer" />
     </declare-styleable>
     <declare-styleable name="ArticleListItem">
         <attr name="articleTitle" format="string" />

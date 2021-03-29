@@ -69,7 +69,7 @@ class SeriesDocActivity : BaseActivity() {
         entryType = intent.getIntExtra("entry_type", -1)
         when (entryType) {
             SCP_DOC -> {
-                supportActionBar?.setTitle(R.string.title_scp_documents)
+                supportActionBar?.setTitle(R.string.app_name)
                 fragmentList = arrayOf(
                         CategoryFragment.newInstance(SERIES, 0),
                         CategoryFragment.newInstance(SERIES, 1),

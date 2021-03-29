@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".view.category.CategoryListActivity"></activity>
         <activity android:name=".view.feed.TopRatedActivity" />
         <activity android:name=".view.random.RandomActivity" />
         <activity

@@ -30,11 +30,12 @@ class EntryItem : ConstraintLayout {
         val ta = context.obtainStyledAttributes(attrs, R.styleable.EntryItem)
 
         val screenWidth = Utils.getScreenWidth(context)
-        maxWidth = (screenWidth - dip(14)) / 5
         // 赋值给属性变量
         title = ta.getString(R.styleable.EntryItem_entryTitle) ?: ""
         logo = ta.getResourceId(R.styleable.EntryItem_imgSrc, R.drawable.img_logo_cn)
+        val count = ta.getInteger(R.styleable.EntryItem_count, 3)
         ta.recycle()
+        maxWidth = (screenWidth - dip(14)) / count
 
         tv_entry_title.text = title
         iv_entry_logo.setImageResource(logo)

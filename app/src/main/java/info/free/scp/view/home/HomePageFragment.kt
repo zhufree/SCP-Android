@@ -54,25 +54,28 @@ class HomePageFragment : BaseFragment() {
 //            cd_notice_container.visibility = GONE
 //            toast("公告已隐藏，可在app使用说明中查看")
 //        }
+
+        // TODO banner
+        val bannerImgUrlList = listOf("https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg",
+                "https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg")
+//        banner_home_page.addBannerLifecycleObserver(this)
+//                .setAdapter(object : BannerImageAdapter<String>(bannerImgUrlList) {
+//                    override fun onBindView(holder: BannerImageHolder, url: String?, position: Int, size: Int) {
+//                        Glide.with(holder.itemView)
+//                                .load(url)
+//                                .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
+//                                .into(holder.imageView)
+//                    }
+//                })
+//                .addBannerLifecycleObserver(this)//添加生命周期观察者
+//                .setIndicator(CircleIndicator(this.context))
+//                .setIndicatorGravity(RIGHT)
+//                .setIndicatorWidth(dip(8), dip(8))
+//                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
         ei_scp?.setOnClickListener {
             goToDocPage(SCPConstants.Entry.SCP_DOC)
         }
-        val bannerImgUrlList = listOf("https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg",
-                "https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg")
-        banner_home_page.addBannerLifecycleObserver(this)
-                .setAdapter(object : BannerImageAdapter<String>(bannerImgUrlList) {
-                    override fun onBindView(holder: BannerImageHolder, url: String?, position: Int, size: Int) {
-                        Glide.with(holder.itemView)
-                                .load(url)
-                                .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
-                                .into(holder.imageView)
-                    }
-                })
-                .addBannerLifecycleObserver(this)//添加生命周期观察者
-                .setIndicator(CircleIndicator(this.context))
-                .setIndicatorGravity(RIGHT)
-                .setIndicatorWidth(dip(8), dip(8))
-                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
+
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()
         }

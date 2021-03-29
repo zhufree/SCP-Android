@@ -8,10 +8,12 @@
 
     <!--主页入口-->
     <string name="entry_scp_series">SCP系列</string>
-    <string name="entry_scp_cn_series">CN系列</string>
-    <string name="title_scp_documents">SCP文档</string>
-    <string name="title_other_documents">其他文档</string>
-    <string name="title_more_about">更多相关</string>
+    <string name="entry_scp_cn_series">SCP-CN系列</string>
+    <string name="entry_scp_story">故事与设定</string>
+    <string name="entry_scp_library">图书馆</string>
+    <string name="entry_scp_international">SCP国际版</string>
+    <string name="entry_scp_information">背景资料与指导</string>
+
     <string name="title_direct">编号直达</string>
     <string name="title_series_about">相关信息</string>
 

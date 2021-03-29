@@ -216,46 +216,57 @@
                     app:layout_constraintTop_toBottomOf="@id/iv_author_head" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
+                android:id="@+id/ll_history_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="14dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_entry_box"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:background="@drawable/bg_entry_box"
                 app:layout_constraintTop_toBottomOf="@id/cl_donation">
 
-                <TextView
-                    android:id="@+id/tv_history_list_head"
-                    android:layout_width="wrap_content"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="浏览历史"
-                    android:textColor="#4A4A4A"
-                    android:textSize="20sp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/iv_more_history"
-                    android:layout_width="46dp"
-                    android:layout_height="46dp"
-                    android:padding="8dp"
-                    android:src="@drawable/baseline_keyboard_arrow_right_black_24dp"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_history_list_head"
+                    android:layout_marginTop="14dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_history_list_head" />
-
-                <info.free.scp.view.widget.HistoryListItem
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:historyTitle="南极交流"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_history_list_head"
-                    app:time="2020年5月1日 11：32" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    app:layout_constraintTop_toBottomOf="@id/cl_donation">
+
+                    <TextView
+                        android:id="@+id/tv_history_list_head"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:text="浏览历史"
+                        android:textColor="#4A4A4A"
+                        android:textSize="20sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_more_history"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:padding="8dp"
+                        android:src="@drawable/baseline_keyboard_arrow_right_black_24dp"
+                        app:layout_constraintBottom_toBottomOf="@id/tv_history_list_head"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="@id/tv_history_list_head" />
+
+                    <!--                    <info.free.scp.view.widget.HistoryListItem-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        app:historyTitle="南极交流"-->
+                    <!--                        app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                        app:layout_constraintTop_toBottomOf="@id/tv_history_list_head"-->
+                    <!--                        app:time="2020年5月1日 11：32" />-->
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.appcompat.widget.LinearLayoutCompat>

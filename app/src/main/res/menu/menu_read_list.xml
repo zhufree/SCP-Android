@@ -7,11 +7,6 @@
         android:title="@string/menu_reverse"
         app:showAsAction="always" />
     <item
-        android:id="@+id/import_read_list"
-        android:title="@string/menu_import_read_list"
-        android:icon="@drawable/ic_import_white_24dp"
-        app:showAsAction="ifRoom"/>
-    <item
         android:id="@+id/clear_read_history"
         android:title="@string/menu_clear_read_history"
         android:icon="@drawable/ic_delete_white_24dp"

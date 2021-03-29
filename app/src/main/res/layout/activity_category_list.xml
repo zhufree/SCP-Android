@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.category.CategoryListActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/ablToolbarWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/category_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/toolbarBg"
+            app:popupTheme="@style/ToolbarPopupTheme" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_side_bar"
+        android:layout_width="105dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_doc_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/containerBg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ll_side_bar"
+        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper">
+
+        <TextView
+            android:id="@+id/tv_group_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="36dp"
+            android:textColor="?attr/darkText"
+            android:textSize="22sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_group_desc"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/lightText"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@id/tv_group_title"
+            app:layout_constraintStart_toStartOf="@id/tv_group_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_group_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

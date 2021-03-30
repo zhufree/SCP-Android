@@ -28,6 +28,7 @@ object SCPConstants {
     // category type
     object Entry {
         const val SCP_DOC = 0 // SCP文档，包含其他文档
+        const val SCP_CN_DOC = 5 // SCP-CN文档，包含其他文档
         const val STORY_DOC = 1 // 故事外围
         const val ABOUT_SCP_DOC = 3 // 关于基金会 设定中心，GOI、hub等，相关材料，艺作、传承、精品、竞赛、征文等
         const val JOKE_DOC = 4 // 搞笑作品

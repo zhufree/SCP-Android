@@ -5,7 +5,9 @@ import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
@@ -121,5 +123,9 @@ object ThemeUtil {
 
     fun setGdCorner(gd: GradientDrawable, lt: Float, lb: Float, rt: Float, rb: Float) {
         gd.cornerRadii = arrayOf(lt, lt, rt, rt, lb, lb, rb, rb).toFloatArray()
+    }
+
+    fun getDrawable(context: Context, resId: Int): Drawable? {
+        return ResourcesCompat.getDrawable(context.resources, resId, context.theme)
     }
 }

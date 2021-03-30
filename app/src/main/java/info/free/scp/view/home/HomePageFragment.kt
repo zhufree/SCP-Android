@@ -6,27 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
-import com.youth.banner.adapter.BannerImageAdapter
-import com.youth.banner.config.IndicatorConfig.Direction.RIGHT
-import com.youth.banner.holder.BannerImageHolder
-import com.youth.banner.indicator.CircleIndicator
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.category.CategoryListActivity
 import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.feed.TopRatedActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
 
 
@@ -73,7 +65,7 @@ class HomePageFragment : BaseFragment() {
 //                .setIndicatorWidth(dip(8), dip(8))
 //                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
         ei_scp?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.SCP_DOC)
+            goToGroupPage(SCPConstants.Entry.SCP_DOC)
         }
 
         btn_top_page_entry?.setOnClickListener {
@@ -81,7 +73,7 @@ class HomePageFragment : BaseFragment() {
         }
     }
 
-    private fun goToDocPage(entry_type: Int) {
+    private fun goToGroupPage(entry_type: Int) {
         if (!PreferenceUtil.getShownModeNotice()) {
             alert("为了方便用户尽快开始阅读，0.1.5版本添加了全局在线阅读模式，如果需要下载数据库并使用离线模式，" +
                     "请在【我的-数据下载及配置】中设置.\n注意：1.之前已离线的用户仍将使用离线模式，新用户默认使用在线模式" +
@@ -93,12 +85,12 @@ class HomePageFragment : BaseFragment() {
                     } ?: run {
                         PreferenceUtil.setAppMode(ONLINE)
                     }
-                    startActivity<SeriesDocActivity>("entry_type" to entry_type)
+                    startActivity<CategoryListActivity>("entry_type" to entry_type)
                 }
             }.show()
             PreferenceUtil.setShownModeNotice()
         } else {
-            startActivity<SeriesDocActivity>("entry_type" to entry_type)
+            startActivity<CategoryListActivity>("entry_type" to entry_type)
         }
     }
 

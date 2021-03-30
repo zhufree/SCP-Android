@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
@@ -16,6 +17,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
 import kotlinx.io.ByteArrayOutputStream
@@ -259,5 +263,26 @@ object Utils {
         fis.close()
         bos.close()
         return RequestBody.create(MediaType.parse("application/octet-stream"), bos.toByteArray())
+    }
+
+    fun getUrlIntent(url: String): Intent {
+        val updateIntent = Intent()
+        updateIntent.action = "android.intent.action.VIEW"
+        val updateUrl = Uri.parse(url)
+        updateIntent.data = updateUrl
+        return updateIntent
+    }
+
+    fun share(file: File, activity: AppCompatActivity) {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "image/*"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(activity,
+                    activity.applicationContext.packageName + ".provider", file)
+            )
+        } else {
+            shareIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
+        }
+        activity.startActivity(Intent.createChooser(shareIntent, "分享到"))
     }
 }

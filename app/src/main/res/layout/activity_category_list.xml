@@ -30,8 +30,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_doc_list"
+    <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/containerBg"
@@ -40,28 +39,36 @@
         app:layout_constraintStart_toEndOf="@id/ll_side_bar"
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper">
 
-        <TextView
-            android:id="@+id/tv_group_title"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="36dp"
-            android:textColor="?attr/darkText"
-            android:textSize="22sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
-        <TextView
-            android:id="@+id/tv_group_desc"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/lightText"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="@id/tv_group_title"
-            app:layout_constraintStart_toStartOf="@id/tv_group_title"
-            app:layout_constraintTop_toBottomOf="@id/tv_group_title" />
+            <TextView
+                android:id="@+id/tv_group_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="36dp"
+                android:textColor="?attr/darkText"
+                android:textSize="22sp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_group_desc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="30dp"
+                android:textColor="@color/lightText"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/ll_group_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"></LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,6 +46,7 @@
                 app:imgSrc="@drawable/img_logo_cn" />
 
             <info.free.scp.view.widget.EntryItem
+                android:id="@+id/ei_scp_story"
                 android:layout_width="match_parent"
                 app:count="3"
                 app:entryTitle="@string/entry_scp_story"

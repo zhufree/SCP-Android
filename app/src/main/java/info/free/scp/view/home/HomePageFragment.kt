@@ -66,6 +66,9 @@ class HomePageFragment : BaseFragment() {
         ei_scp?.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.SCP_DOC)
         }
+        ei_scp_cn?.setOnClickListener {
+            goToGroupPage(SCPConstants.Entry.SCP_CN_DOC)
+        }
 
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()

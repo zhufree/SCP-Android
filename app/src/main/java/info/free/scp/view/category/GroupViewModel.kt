@@ -5,6 +5,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
+import toast
 
 class GroupViewModel : ViewModel() {
     private val readDao = AppInfoDatabase.getInstance().likeAndReadDao()
@@ -22,6 +23,9 @@ class GroupViewModel : ViewModel() {
             // 截取序列中的一部分
             if (docList.isNotEmpty() && start < docList.size) {
                 docList = docList.subList(start, if (end < docList.size) end else docList.size - 1)
+            } else {
+                docList.clear()
+                toast("数据不存在")
             }
         }
         // 去掉已读部分

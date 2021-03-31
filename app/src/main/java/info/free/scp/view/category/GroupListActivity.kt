@@ -177,10 +177,12 @@ class GroupListActivity : BaseActivity() {
             lp.rightMargin = dip(10)
 
             ll_group_list.removeAllViews()
-            getGroupListTitle(index).forEach {
-                val newGroupItem = DocGroupItem(this, it)
+            getGroupListTitle(index).forEachIndexed { i, s ->
+                val newGroupItem = DocGroupItem(this, s)
                 newGroupItem.onClick {
-                    // go to doc list todo
+                    startActivity<DocListActivity>("saveType" to getSaveType(index),
+                            "groupIndex" to (index - 1) * 10 + i
+                    )
                 }
                 ll_group_list.addView(newGroupItem, lp)
             }

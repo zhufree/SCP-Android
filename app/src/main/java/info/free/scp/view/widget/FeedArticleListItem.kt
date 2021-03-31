@@ -7,7 +7,7 @@ import info.free.scp.R
 import info.free.scp.util.ThemeUtil
 import kotlinx.android.synthetic.main.layout_article_item.view.*
 
-class ArticleListItem : ConstraintLayout {
+class FeedArticleListItem : ConstraintLayout {
     var title = ""
     var rank = ""
     var onLaterClick: () -> Unit = {}
@@ -25,11 +25,11 @@ class ArticleListItem : ConstraintLayout {
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.ArticleListItem)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.FeedArticleListItem)
 
         // 赋值给属性变量
-        title = ta.getString(R.styleable.ArticleListItem_articleTitle) ?: ""
-        rank = ta.getString(R.styleable.ArticleListItem_rank) ?: ""
+        title = ta.getString(R.styleable.FeedArticleListItem_articleTitle) ?: ""
+        rank = ta.getString(R.styleable.FeedArticleListItem_rank) ?: ""
         ta.recycle()
 
         tv_article_item_title.text = title

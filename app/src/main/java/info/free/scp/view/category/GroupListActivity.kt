@@ -8,22 +8,38 @@ import android.view.View.GONE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
+import info.free.scp.SCPConstants.Category.JOKE
+import info.free.scp.SCPConstants.Category.SCP_EX
 import info.free.scp.SCPConstants.Entry.SCP_CN_DOC
 import info.free.scp.SCPConstants.Entry.SCP_DOC
+import info.free.scp.SCPConstants.ScpType.SAVE_EX
+import info.free.scp.SCPConstants.ScpType.SAVE_EX_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
+import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
+import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.widget.DocGroupItem
 import kotlinx.android.synthetic.main.activity_category_list.*
 import org.jetbrains.anko.dip
 import org.jetbrains.anko.info
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.textColor
 
-class CategoryListActivity : BaseActivity() {
+/**
+ * 2-3层
+ */
+class GroupListActivity : BaseActivity() {
     private var entryType = SCP_DOC
     private var seriesList = emptyList<TextView>().toMutableList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_list)
@@ -50,9 +66,29 @@ class CategoryListActivity : BaseActivity() {
 
     private fun getSeriesTitle(index: Int): String {
         return when (index) {
-            101 -> "搞笑SCP"
-            102 -> "已解明SCP"
+            JOKE -> "搞笑SCP"
+            SCP_EX -> "已解明SCP"
             else -> "系列$index"
+        }
+    }
+
+    private fun getSaveType(type: Int): Int {
+        return when (entryType) {
+            SCP_DOC -> {
+                when (type) {
+                    JOKE -> SAVE_JOKE
+                    SCP_EX -> SAVE_EX
+                    else -> SAVE_SERIES
+                }
+            }
+            SCP_CN_DOC -> {
+                when (type) {
+                    JOKE -> SAVE_JOKE_CN
+                    SCP_EX -> SAVE_EX_CN
+                    else -> SAVE_SERIES_CN
+                }
+            }
+            else -> SAVE_SERIES
         }
     }
 
@@ -75,9 +111,11 @@ class CategoryListActivity : BaseActivity() {
                 it.textColor = ThemeUtil.darkText
                 it.background = null
             }
-            newSeriesItem.textColor = Color.WHITE
-            newSeriesItem.background = ThemeUtil.customShape(ThemeUtil.toolbarBg,
-                    0, 0, dip(18))
+            if (i < 100) {
+                newSeriesItem.textColor = Color.WHITE
+                newSeriesItem.background = ThemeUtil.customShape(ThemeUtil.toolbarBg,
+                        0, 0, dip(18))
+            }
         }
         seriesList.add(newSeriesItem)
         return newSeriesItem
@@ -115,26 +153,40 @@ class CategoryListActivity : BaseActivity() {
         }
     }
 
-    private val categoryCount = PreferenceUtil.getCategoryCount()
-    private fun switchSeries(index: Int) {
-        tv_group_title.text = getSeriesTitle(index)
-        tv_group_desc.visibility = GONE
-        val groupList = (0 until (1000 / categoryCount)).map { (it + (index - 1) * 10) * categoryCount }
-        val lp = LinearLayout.LayoutParams(MATCH_PARENT, dip(60))
-        lp.topMargin = dip(10)
-        lp.leftMargin = dip(10)
-        lp.rightMargin = dip(10)
-        val viewCount = ll_group_list.childCount
-        for (i in 2 until viewCount) {
-            info { ll_group_list.getChildAt(i) }
-            ll_group_list.removeAllViews()
-        }
-        groupList.forEach {
-            val newGroupItem = DocGroupItem(this, "${getTitlePrefix()}$it+")
-            newGroupItem.onClick {
-                // go to doc list
+    private fun getGroupListTitle(index: Int): List<String> {
+        var groupList = listOf<String>()
+        groupList = when (index) {
+            else -> {
+                (0 until (1000 / categoryCount)).map { "${getTitlePrefix()}${(it + (index - 1) * 10) * categoryCount}+" }
             }
-            ll_group_list.addView(newGroupItem, lp)
+        }
+        return groupList
+    }
+
+    private val categoryCount = PreferenceUtil.getCategoryCount()
+
+    private fun switchSeries(index: Int) {
+        tv_group_desc.visibility = GONE
+
+        if (index < 100) {
+            tv_group_title.text = getSeriesTitle(index)
+
+            val lp = LinearLayout.LayoutParams(MATCH_PARENT, dip(60))
+            lp.topMargin = dip(10)
+            lp.leftMargin = dip(10)
+            lp.rightMargin = dip(10)
+
+            ll_group_list.removeAllViews()
+            getGroupListTitle(index).forEach {
+                val newGroupItem = DocGroupItem(this, it)
+                newGroupItem.onClick {
+                    // go to doc list todo
+                }
+                ll_group_list.addView(newGroupItem, lp)
+            }
+        } else {
+            // 直接跳列表页
+            startActivity<DocListActivity>("saveType" to getSaveType(index))
         }
     }
 }

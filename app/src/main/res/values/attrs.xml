@@ -20,7 +20,7 @@
         <attr name="imgSrc" format="reference" />
         <attr name="count" format="integer" />
     </declare-styleable>
-    <declare-styleable name="ArticleListItem">
+    <declare-styleable name="FeedArticleListItem">
         <attr name="articleTitle" format="string" />
         <attr name="rank" format="string" />
     </declare-styleable>

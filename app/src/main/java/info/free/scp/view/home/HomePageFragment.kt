@@ -13,8 +13,7 @@ import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.CategoryListActivity
-import info.free.scp.view.category.SeriesDocActivity
+import info.free.scp.view.category.GroupListActivity
 import info.free.scp.view.feed.TopRatedActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
@@ -85,12 +84,12 @@ class HomePageFragment : BaseFragment() {
                     } ?: run {
                         PreferenceUtil.setAppMode(ONLINE)
                     }
-                    startActivity<CategoryListActivity>("entry_type" to entry_type)
+                    startActivity<GroupListActivity>("entry_type" to entry_type)
                 }
             }.show()
             PreferenceUtil.setShownModeNotice()
         } else {
-            startActivity<CategoryListActivity>("entry_type" to entry_type)
+            startActivity<GroupListActivity>("entry_type" to entry_type)
         }
     }
 

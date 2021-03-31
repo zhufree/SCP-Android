@@ -9,6 +9,10 @@
             type="android.view.View.OnClickListener" />
 
         <variable
+            name="longClickListener"
+            type="android.view.View.OnLongClickListener" />
+
+        <variable
             name="scp"
             type="info.free.scp.bean.ScpModel" />
     </data>
@@ -17,19 +21,31 @@
         android:id="@+id/cv_category_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="5dp"
-        app:cardBackgroundColor="?attr/itemBg"
+        android:layout_marginEnd="8dp"
+        app:cardCornerRadius="4dp"
         app:cardElevation="1dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_category_item"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:minHeight="50dp"
-            android:onClick="@{clickListener}">
+            android:onClick="@{clickListener}"
+            android:onLongClick="@{longClickListener}">
+
+            <ImageView
+                android:id="@+id/iv_doc_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="5dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/baseline_article_black_24dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_scp_title"
@@ -42,45 +58,35 @@
                 android:textColor="?attr/darkText"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_read_later"
-                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_doc_icon"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/iv_like_star"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginStart="5dp"
-                android:layout_marginTop="5dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/ic_star_yellow_900_24dp"
-                android:visibility="gone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
+            <!--            <ImageView-->
+            <!--                android:id="@+id/iv_like_star"-->
+            <!--                android:layout_width="20dp"-->
+            <!--                android:layout_height="20dp"-->
+            <!--                android:layout_marginStart="5dp"-->
+            <!--                android:layout_marginTop="5dp"-->
+            <!--                android:contentDescription="@string/app_name"-->
+            <!--                android:src="@drawable/baseline_bookmark_blue_300_24dp"-->
+            <!--                android:visibility="gone"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toTopOf="parent"-->
+            <!--                tools:visibility="visible" />-->
 
-            <ImageView
-                android:id="@+id/iv_read_label"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_marginEnd="5dp"
-                android:layout_marginBottom="5dp"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/icon_read"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btn_read_later"
-                tools:visibility="visible" />
 
-            <ImageButton
-                android:id="@+id/btn_read_later"
-                android:layout_width="60dp"
-                android:layout_height="match_parent"
-                android:background="?attr/unClickBtn"
-                android:contentDescription="@string/later_list"
-                android:src="@drawable/ic_watch_later_white_24dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent" />
+            <!--            <ImageButton-->
+            <!--                android:id="@+id/btn_read_later"-->
+            <!--                android:layout_width="60dp"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:background="?attr/unClickBtn"-->
+            <!--                android:contentDescription="@string/later_list"-->
+            <!--                android:src="@drawable/baseline_watch_later_black_24dp"-->
+            <!--                android:visibility="gone"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent" />-->
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

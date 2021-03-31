@@ -27,17 +27,22 @@ object SCPConstants {
 
     // category type
     object Entry {
-        const val SCP_DOC = 0 // SCP文档，包含其他文档
-        const val SCP_CN_DOC = 5 // SCP-CN文档，包含其他文档
-        const val STORY_DOC = 1 // 故事外围
+        const val SCP_DOC = 1 // SCP文档，包含其他文档
+        const val SCP_CN_DOC = 2 // SCP-CN文档，包含其他文档
+        const val STORY_DOC = 3 // 故事外围
+
+        // no use
         const val ABOUT_SCP_DOC = 3 // 关于基金会 设定中心，GOI、hub等，相关材料，艺作、传承、精品、竞赛、征文等
         const val JOKE_DOC = 4 // 搞笑作品
     }
 
+
     object Category {
         const val SERIES = 1
         const val SERIES_CN = 2
-        const val SCP_EX = 3
+        const val JOKE = 101
+        const val SCP_EX = 102
+        const val JOKE_CN = 22
         const val SCP_EX_CN = 4
         const val SCP_ARCHIVES = 17
         const val SCP_REMOVED = 18
@@ -49,8 +54,6 @@ object SCPConstants {
         const val TALES_CN = 7
         const val STORY_SERIES = 8
         const val STORY_SERIES_CN = 9
-        const val JOKE = 21
-        const val JOKE_CN = 22
         const val SETTINGS = 10
         const val SETTINGS_CN = 11
         const val CONTEST = 12

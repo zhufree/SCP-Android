@@ -1,6 +1,7 @@
 package info.free.scp.view.category
 
 import androidx.lifecycle.ViewModel
+import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
@@ -13,8 +14,23 @@ class GroupViewModel : ViewModel() {
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private var hasReadList = readDao.getHasReadList()
 
-    fun getDocList(saveType: Int, groupIndex: Int = -1): List<ScpModel> {
-        var docList = scpDao.getAllScpListByType(saveType).toMutableList() // 获取总列表
+    fun getDocList(saveType: Int, groupIndex: Int = -1, extraType: String = ""): List<ScpModel> {
+        var docList = when (saveType) {
+            SCPConstants.ScpType.SAVE_SERIES, SCPConstants.ScpType.SAVE_SERIES_CN, SCPConstants.ScpType.SAVE_JOKE, SCPConstants.ScpType.SAVE_JOKE_CN, SCPConstants.ScpType.SAVE_EX, SCPConstants.ScpType.SAVE_EX_CN -> {
+                scpDao.getAllScpListByType(saveType)
+            }
+            SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN, SCPConstants.ScpType.SAVE_TALES_BY_TIME -> {
+                scpDao.getTalesByTypeAndSubType(saveType, extraType)
+            }
+            SCPConstants.ScpType.SAVE_SETTINGS, SCPConstants.ScpType.SAVE_SETTINGS_CN,
+            SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN,
+            SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
+                scpDao.getAllCollectionByType(saveType)
+            }
+            else -> {
+                scpDao.getAllScpListByType(saveType)
+            }
+        }.toMutableList()
         if (groupIndex >= 0) {
             // 处理index 和offset
             val start = if (groupIndex == 0) 0 else groupIndex * categoryCount

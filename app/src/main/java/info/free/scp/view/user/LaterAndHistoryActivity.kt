@@ -38,7 +38,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         history_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
-                    orderType = if (orderType == 0) 1 else 0
+                    orderType = -orderType
                 }
                 R.id.clear_read_history -> {
                     // 清除历史记录

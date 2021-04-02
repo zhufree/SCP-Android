@@ -16,8 +16,8 @@ object SCPConstants {
     }
 
     object OrderType {
-        const val ASC = 0
-        const val DESC = 1
+        const val ASC = 1
+        const val DESC = -1
     }
 
     object SearchType {
@@ -42,6 +42,16 @@ object SCPConstants {
         const val SERIES_CN = 2
         const val JOKE = 101
         const val SCP_EX = 102
+        const val TALES = 99
+        const val TALES_CN = 98
+        const val TALES_BY_TIME = 97
+        const val SETTINGS = 106
+        const val SETTINGS_CN = 107
+        const val STORY_SERIES = 108
+        const val STORY_SERIES_CN = 109
+        const val CONTEST = 110
+        const val CONTEST_CN = 111
+
         const val JOKE_CN = 22
         const val SCP_EX_CN = 4
         const val SCP_ARCHIVES = 17
@@ -50,16 +60,10 @@ object SCPConstants {
         const val SCP_ABNORMAL = 20
         const val ABOUT_INFO = 5
         const val ABOUT_INTRO = 16
-        const val TALES = 6
-        const val TALES_CN = 7
-        const val STORY_SERIES = 8
-        const val STORY_SERIES_CN = 9
-        const val SETTINGS = 10
-        const val SETTINGS_CN = 11
-        const val CONTEST = 12
-        const val CONTEST_CN = 13
+
+
         const val EVENT = 14
-        const val TALES_BY_TIME = 15
+
         const val SCP_INTERNATIONAL = 24
     }
 

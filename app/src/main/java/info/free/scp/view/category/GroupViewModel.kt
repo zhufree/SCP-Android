@@ -13,6 +13,21 @@ class GroupViewModel : ViewModel() {
     private val scpDao = ScpDatabase.getInstance().scpDao()
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private var hasReadList = readDao.getHasReadList()
+    val abnormalPageList = arrayOf(
+            "/log-of-extranormal-events",
+            "/log-of-extranormal-events-cn",
+            "/log-of-anomalous-items",
+            "/log-of-anomalous-items-cn")
+    val introPageList = arrayOf(
+            "/faq",
+            "/guide-for-newbies",
+            "/how-to-write-an-scp")
+    val infoPageList = arrayOf(
+            "/secure-facilities-locations",
+            "/secure-facilities-locations-cn",
+            "/object-classes",
+            "/security-clearance-levels",
+            "/task-forces")
 
     fun getDocList(saveType: Int, groupIndex: Int = -1, extraType: String = ""): List<ScpModel> {
         var docList = when (saveType) {
@@ -26,6 +41,13 @@ class GroupViewModel : ViewModel() {
             SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN,
             SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
                 scpDao.getAllCollectionByType(saveType)
+            }
+            SCPConstants.ScpType.SAVE_ABNORMAL -> {
+                var resultList = scpDao.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
+                resultList = resultList.filter {
+                    introPageList.contains(it.link) || infoPageList.contains(it.link)
+                }
+                resultList
             }
             else -> {
                 scpDao.getAllScpListByType(saveType)

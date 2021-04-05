@@ -49,10 +49,10 @@ class CategoryFragment : BaseFragment() {
         subPosition = arguments?.getInt("sub_position") ?: -1
         if (categoryType in arrayOf(SERIES, SERIES_CN, TALES, TALES_CN)) {
             val layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-            rv_category_list.layoutManager = layoutManager
+//            rv_category_list.layoutManager = layoutManager
         } else {
             val layoutManager = LinearLayoutManager(mContext, VERTICAL, false)
-            rv_category_list.layoutManager = layoutManager
+//            rv_category_list.layoutManager = layoutManager
         }
         categoryList.clear()
         // 一级目录
@@ -93,7 +93,7 @@ class CategoryFragment : BaseFragment() {
         if (categoryAdapter == null) {
             mContext?.let {
                 categoryAdapter = CategoryAdapter(it, categoryType, categoryList)
-                rv_category_list?.adapter = categoryAdapter
+//                rv_category_list?.adapter = categoryAdapter
                 categoryAdapter?.mOnItemClickListener = object : BaseAdapter.OnItemClickListener {
                     override fun onItemClick(view: View, position: Int) {
                         Log.i(tag, "onItemClick")
@@ -107,9 +107,9 @@ class CategoryFragment : BaseFragment() {
             }
         } else {
             categoryAdapter?.notifyDataSetChanged()
-            rv_category_list?.adapter = categoryAdapter
+//            rv_category_list?.adapter = categoryAdapter
             if (currentCategoryPosition > 0) {
-                rv_category_list?.scrollToPosition(currentCategoryPosition)
+//                rv_category_list?.scrollToPosition(currentCategoryPosition)
             }
         }
     }

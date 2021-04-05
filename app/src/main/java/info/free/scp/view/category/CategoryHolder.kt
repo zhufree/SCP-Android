@@ -1,5 +1,6 @@
 package info.free.scp.view.category
 
+import android.graphics.Color
 import android.view.View
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -44,7 +45,7 @@ class CategoryHolder(view: View) : RecyclerView.ViewHolder(view){
     }
 
     fun refreshTheme() {
-        itemView.cl_category_item.backgroundColor = ThemeUtil.itemBg
+        itemView.cl_category_item.backgroundColor = Color.WHITE
         itemView.tv_scp_title.setTextColor(ThemeUtil.darkText)
     }
 }

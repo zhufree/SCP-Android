@@ -21,13 +21,19 @@
             app:popupTheme="@style/ToolbarPopupTheme" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_doc_list"
+    <FrameLayout
+        android:id="@+id/fl_doc_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/containerBg"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"
-        tools:listitem="@layout/item_category" />
+        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
+    <!--    <androidx.recyclerview.widget.RecyclerView-->
+    <!--        android:id="@+id/rv_doc_list"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:background="@color/containerBg"-->
+    <!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"-->
+    <!--        tools:listitem="@layout/item_category" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

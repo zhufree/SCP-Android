@@ -30,7 +30,7 @@ class ScpListActivity : BaseActivity() {
         category_toolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
-                    mFragment?.reverseScpList()
+//                    mFragment?.reverseScpList()
                 }
             }
             true
@@ -52,7 +52,7 @@ class ScpListActivity : BaseActivity() {
     private fun initData() {
         categoryType = intent.getIntExtra("category_type", -1)
         clickPosition = intent.getIntExtra("click_position", -1)
-        mFragment = ScpListFragment.newInstance(categoryType, clickPosition)
+//        mFragment = ScpListFragment.newInstance(categoryType, clickPosition)
         mFragment?.let {
             supportFragmentManager.beginTransaction().replace(R.id.fl_scp_list_container, it).commit()
         }

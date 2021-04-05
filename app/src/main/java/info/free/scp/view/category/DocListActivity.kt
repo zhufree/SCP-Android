@@ -36,13 +36,11 @@ class DocListActivity : BaseActivity() {
     private var saveType = 1
     private var groupIndex = -1
     private var extraType = ""
+    private var fragment: ScpListFragment? = null
     private var orderType = ASC
         set(value) {
             field = value
-            val ascList = vm.getDocList(saveType, groupIndex)
-            docAdapter.submitList(if (value == ASC) ascList else ascList.reversed()) {
-                rv_doc_list.scrollToPosition(0)
-            }
+            fragment?.reverseScpList(value)
         }
 
     private fun getListTitle(saveType: Int): String {
@@ -83,24 +81,12 @@ class DocListActivity : BaseActivity() {
         saveType = intent.getIntExtra("saveType", 1)
         groupIndex = intent.getIntExtra("groupIndex", -1)
         extraType = intent.getStringExtra("extraType") ?: ""
+        fragment = ScpListFragment.newInstance(saveType, groupIndex, extraType)
         supportActionBar?.title = getListTitle(saveType)
-        rv_doc_list.adapter = docAdapter
-        val docList = when (saveType) {
-            SAVE_SERIES, SAVE_SERIES_CN, SAVE_JOKE, SAVE_JOKE_CN, SAVE_EX, SAVE_EX_CN -> {
-                vm.getDocList(saveType, groupIndex)
-            }
-            SAVE_TALES, SAVE_TALES_CN, SAVE_TALES_BY_TIME -> {
-                vm.getDocList(saveType, extraType = extraType)
-            }
-            SAVE_SETTINGS, SAVE_SETTINGS_CN, SAVE_STORY_SERIES, SAVE_STORY_SERIES_CN, SAVE_CONTEST,
-            SAVE_CONTEST_CN -> {
-                vm.getDocList(saveType)
-            }
-            else -> {
-                vm.getDocList(saveType, groupIndex)
-            }
+        fragment?.let {
+            supportFragmentManager.beginTransaction()
+                    .add(R.id.fl_doc_list, it, "fl").commit()
         }
-        docAdapter.submitList(docList)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

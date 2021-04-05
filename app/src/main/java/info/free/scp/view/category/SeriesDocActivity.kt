@@ -51,7 +51,7 @@ class SeriesDocActivity : BaseActivity() {
                     if (currentFragment is CategoryFragment) {
                         (currentFragment as CategoryFragment?)?.reverseScpList()
                     } else if (currentFragment is ScpListFragment) {
-                        (currentFragment as ScpListFragment?)?.reverseScpList()
+//                        (currentFragment as ScpListFragment?)?.reverseScpList()
                     }
                 }
             }
@@ -89,33 +89,36 @@ class SeriesDocActivity : BaseActivity() {
             STORY_DOC -> {
                 supportActionBar?.setTitle(R.string.title_scp_story)
                 fragmentList = arrayOf(CategoryFragment.newInstance(TALES, 0),
-                        CategoryFragment.newInstance(TALES_CN, 0),
-                        ScpListFragment.newInstance(STORY_SERIES, 0),
-                        ScpListFragment.newInstance(STORY_SERIES_CN, 0),
-                        ScpListFragment.newInstance(SCP_ABNORMAL, 0)
+                        CategoryFragment.newInstance(TALES_CN, 0)
+//                        ScpListFragment.newInstance(STORY_SERIES, 0),
+//                        ScpListFragment.newInstance(STORY_SERIES_CN, 0),
+//                        ScpListFragment.newInstance(SCP_ABNORMAL, 0)
                 )
                         .toList()
                 titleList = arrayOf("基金会故事", "中国分部原创故事", "故事系列", "中国分部故事系列", "异常物品+超常记录+三句话外围").toList()
             }
             ABOUT_SCP_DOC -> {
                 supportActionBar?.setTitle(R.string.title_about_scp)
-                fragmentList = arrayOf(
-                        ScpListFragment.newInstance(SETTINGS, 0),
-                        ScpListFragment.newInstance(SETTINGS_CN, 0),
-                        ScpListFragment.newInstance(CONTEST, 0),
-                        ScpListFragment.newInstance(CONTEST_CN, 0),
-                        ScpListFragment.newInstance(ABOUT_INFO, 0),
-                        ScpListFragment.newInstance(ABOUT_INTRO, 0))
-                        .toList()
+//                fragmentList = arrayOf(
+//                        ScpListFragment.newInstance(SETTINGS, 0),
+//                        ScpListFragment.newInstance(SETTINGS_CN, 0),
+//                        ScpListFragment.newInstance(CONTEST, 0),
+//                        ScpListFragment.newInstance(CONTEST_CN, 0),
+//                        ScpListFragment.newInstance(ABOUT_INFO, 0),
+//                        ScpListFragment.newInstance(ABOUT_INTRO, 0)
+//                        )
+//                        .toList()
                 titleList = arrayOf("平行世界观（设定中心）", "中国分部设定中心", "征文竞赛", "中国分部征文竞赛",
                         "基金会设定", "入门简介").toList()
             }
             JOKE_DOC -> {
                 supportActionBar?.setTitle(R.string.title_joke_scp)
-                fragmentList = arrayOf(ScpListFragment.newInstance(JOKE, 0),
-                        ScpListFragment.newInstance(JOKE_CN, 0))
-                        .toList()
-                titleList = arrayOf("搞笑SCP", "搞笑SCP-CN").toList()
+//                fragmentList = arrayOf(
+////                        ScpListFragment.newInstance(JOKE, 0),
+////                        ScpListFragment.newInstance(JOKE_CN, 0)
+//                )
+//                        .toList()
+//                titleList = arrayOf("搞笑SCP", "搞笑SCP-CN").toList()
             }
         }
         if (fragmentList.isNotEmpty()) {

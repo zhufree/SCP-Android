@@ -14,6 +14,7 @@ import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryFragment
+import info.free.scp.view.category.ScpListFragment
 import info.free.scp.view.category.SeriesDocActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.feed.SubFeedFragment
@@ -47,13 +48,14 @@ class HomeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentList = arrayListOf(HomePageFragment.newInstance(),
-                SubFeedFragment.newInstance(SCPConstants.LATEST_TRANSLATED), TopRatedFragment.newInstance())
+                ScpListFragment.newInstance(SCPConstants.ScpType.SAVE_ABNORMAL, 0, ""),
+                CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
+                ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, ""))
 
         val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "背景资料与指导") // 单页放滑动分页
         val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_home?.adapter = homePagerAdapter
         tab_home?.setupWithViewPager(vp_home)
-
     }
 
     private fun goToDocPage(entry_type: Int) {

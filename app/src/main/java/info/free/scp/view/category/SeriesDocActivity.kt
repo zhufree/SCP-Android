@@ -49,7 +49,7 @@ class SeriesDocActivity : BaseActivity() {
             when (it.itemId) {
                 R.id.reverse -> {
                     if (currentFragment is CategoryFragment) {
-                        (currentFragment as CategoryFragment?)?.reverseScpList()
+//                        (currentFragment as CategoryFragment?)?.reverseScpList()
                     } else if (currentFragment is ScpListFragment) {
 //                        (currentFragment as ScpListFragment?)?.reverseScpList()
                     }

@@ -215,7 +215,6 @@ class GroupListActivity : BaseActivity() {
         return groupList
     }
 
-
     private val categoryCount = PreferenceUtil.getCategoryCount()
 
     private fun switchSeries(index: Int) {

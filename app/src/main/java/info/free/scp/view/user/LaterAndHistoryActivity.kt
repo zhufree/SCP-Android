@@ -28,7 +28,7 @@ class LaterAndHistoryActivity : BaseActivity() {
         setContentView(R.layout.activity_history)
         initToolbar()
         supportFragmentManager.beginTransaction()
-                .add(R.id.fl_history, fragment, "fh")
+                .add(R.id.fl_history, fragment, "f_record")
                 .commit()
     }
 

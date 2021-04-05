@@ -47,10 +47,12 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentList = arrayListOf(HomePageFragment.newInstance(),
+        fragmentList = arrayListOf(
+                HomePageFragment.newInstance(),
                 ScpListFragment.newInstance(SCPConstants.ScpType.SAVE_ABNORMAL, 0, ""),
                 CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
-                ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, ""))
+                ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, "")
+        )
 
         val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "背景资料与指导") // 单页放滑动分页
         val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)

@@ -49,6 +49,9 @@ class GroupViewModel : ViewModel() {
                 }
                 resultList
             }
+            SCPConstants.Category.SCP_INTERNATIONAL -> {
+                scpDao.getInternationalByCountry("$extraType%")
+            }
             else -> {
                 scpDao.getAllScpListByType(saveType)
             }

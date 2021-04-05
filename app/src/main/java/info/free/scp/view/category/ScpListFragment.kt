@@ -21,7 +21,7 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.activity_doc_list.*
-import kotlinx.android.synthetic.main.fragment_category.*
+import kotlinx.android.synthetic.main.fragment_scp_list.*
 import org.jetbrains.anko.support.v4.toast
 import java.util.*
 

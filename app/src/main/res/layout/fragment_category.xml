@@ -9,7 +9,7 @@
         <!--        android:layout_height="match_parent">-->
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_doc_list"
+            android:id="@+id/rv_category_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

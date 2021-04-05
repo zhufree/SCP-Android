@@ -18,6 +18,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.*
 import info.free.scp.databinding.ItemCategoryBinding
+import info.free.scp.databinding.ItemDocBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
@@ -26,7 +27,7 @@ import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.random.RandomActivity
-import kotlinx.android.synthetic.main.item_category.view.*
+import kotlinx.android.synthetic.main.item_doc.view.*
 import org.jetbrains.anko.*
 
 /**
@@ -41,7 +42,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {
-        return ScpHolder(ItemCategoryBinding.inflate(
+        return ScpHolder(ItemDocBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
     }
 
@@ -122,7 +123,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
         }
     }
 
-    class ScpHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ScpHolder(private val binding: ItemDocBinding) : RecyclerView.ViewHolder(binding.root) {
         private val categoryHeight = PreferenceUtil.getCategoryHeight()
         private val categoryInterval = PreferenceUtil.getCategoryInterval()
         val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
@@ -142,7 +143,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
             }
         }
 
-        private fun setReadData(binding: ItemCategoryBinding, model: ScpModel?) {
+        private fun setReadData(binding: ItemDocBinding, model: ScpModel?) {
             if (model == null) return
             if (likeReadDao.getLikeByLink(model.link) == true) {
                 // add like icon
@@ -187,7 +188,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
         }
 
         fun refreshTheme() {
-            binding.tvScpTitle.setTextColor(ThemeUtil.darkText)
+            binding.tvDocTitle.setTextColor(ThemeUtil.darkText)
         }
     }
 

@@ -30,9 +30,7 @@ class DocListActivity : BaseActivity() {
         ViewModelProvider(this)
                 .get(GroupViewModel::class.java)
     }
-    private val docAdapter by lazy {
-        ScpAdapter()
-    }
+
     private var saveType = 1
     private var groupIndex = -1
     private var extraType = ""
@@ -85,7 +83,7 @@ class DocListActivity : BaseActivity() {
         supportActionBar?.title = getListTitle(saveType)
         fragment?.let {
             supportFragmentManager.beginTransaction()
-                    .add(R.id.fl_doc_list, it, "fl").commit()
+                    .add(R.id.fl_doc_list, it, "f_doc").commit()
         }
     }
 

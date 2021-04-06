@@ -24,12 +24,12 @@ object ThemeUtil {
     var containerBg: Int = -1
     var itemBg: Int = -1
     var darkText: Int = -1
+    var mediumText: Int = -1
     var lightText: Int = -1
-    var unClickBtn: Int = -1
-    var clickedBtn: Int = -1
     var disabledBg: Int = -1
-    var settingItemBg: Int = -1
-
+    var linkBlue: Int = -1
+    var todoYellow: Int = -1
+    var dividerGray: Int = -1
     var currentTheme: Int = -1
     const val DAY_THEME = 0
     const val NIGHT_THEME = 1
@@ -74,21 +74,23 @@ object ThemeUtil {
                 R.attr.containerBg,
                 R.attr.itemBg,
                 R.attr.darkText,
+                R.attr.mediumText,
                 R.attr.lightText,
-                R.attr.unClickBtn,
-                R.attr.clickedBtn,
                 R.attr.disabledBg,
-                R.attr.settingItemBg
+                R.attr.linkBlue,
+                R.attr.todoYellow,
+                R.attr.dividerGray
         ))
         toolbarBg = allColor.getColor(0, Color.WHITE)
         containerBg = allColor.getColor(1, Color.WHITE)
         itemBg = allColor.getColor(2, Color.WHITE)
         darkText = allColor.getColor(3, Color.WHITE)
-        lightText = allColor.getColor(4, Color.WHITE)
-        unClickBtn = allColor.getColor(5, Color.WHITE)
-        clickedBtn = allColor.getColor(6, Color.WHITE)
-        disabledBg = allColor.getColor(7, Color.WHITE)
-        settingItemBg = allColor.getColor(8, Color.WHITE)
+        mediumText = allColor.getColor(4, Color.WHITE)
+        lightText = allColor.getColor(5, Color.WHITE)
+        disabledBg = allColor.getColor(6, Color.WHITE)
+        linkBlue = allColor.getColor(7, Color.WHITE)
+        todoYellow = allColor.getColor(8, Color.WHITE)
+        dividerGray = allColor.getColor(9, Color.WHITE)
         allColor.recycle()
     }
 

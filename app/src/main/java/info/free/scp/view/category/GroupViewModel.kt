@@ -13,16 +13,16 @@ class GroupViewModel : ViewModel() {
     private val scpDao = ScpDatabase.getInstance().scpDao()
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private var hasReadList = readDao.getHasReadList()
-    val abnormalPageList = arrayOf(
+    private val abnormalPageList = arrayOf(
             "/log-of-extranormal-events",
             "/log-of-extranormal-events-cn",
             "/log-of-anomalous-items",
             "/log-of-anomalous-items-cn")
-    val introPageList = arrayOf(
+    private val introPageList = arrayOf(
             "/faq",
             "/guide-for-newbies",
             "/how-to-write-an-scp")
-    val infoPageList = arrayOf(
+    private val infoPageList = arrayOf(
             "/secure-facilities-locations",
             "/secure-facilities-locations-cn",
             "/object-classes",

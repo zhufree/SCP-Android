@@ -45,6 +45,6 @@ class HistoryListItem : ConstraintLayout {
 
     fun refreshTheme() {
         tv_history_item_title.setTextColor(ThemeUtil.darkText)
-        tv_history_item_time.setTextColor(ThemeUtil.lightText)
+        tv_history_item_time.setTextColor(ThemeUtil.mediumText)
     }
 }

@@ -22,7 +22,7 @@
                 android:rotationX="20"
                 android:rotationY="20"
                 android:text="@string/slogan"
-                android:textColor="@color/lightText"
+                android:textColor="@color/lightTextGray"
                 android:textSize="20sp"
                 android:translationX="45dp"
                 android:translationY="-45dp"

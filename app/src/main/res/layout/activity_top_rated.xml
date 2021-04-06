@@ -53,7 +53,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="30dp"
                     android:text="@string/top_rated_all"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/lightText"
                     android:textSize="30sp" />
             </androidx.cardview.widget.CardView>
 
@@ -75,7 +75,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="30dp"
                     android:text="@string/top_rated_scp"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/lightText"
                     android:textSize="30sp" />
             </androidx.cardview.widget.CardView>
 
@@ -97,7 +97,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="30dp"
                     android:text="@string/top_rated_tale"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/lightText"
                     android:textSize="30sp" />
             </androidx.cardview.widget.CardView>
 
@@ -119,7 +119,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="30dp"
                     android:text="@string/top_rated_goi"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/lightText"
                     android:textSize="30sp" />
             </androidx.cardview.widget.CardView>
 
@@ -142,7 +142,7 @@
                     android:gravity="center"
                     android:paddingHorizontal="30dp"
                     android:text="@string/top_rated_wanderer"
-                    android:textColor="@color/white"
+                    android:textColor="?attr/lightText"
                     android:textSize="30sp" />
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

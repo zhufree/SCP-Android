@@ -1,6 +1,7 @@
 package info.free.scp.view.home
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,16 @@ import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.GroupListActivity
 import info.free.scp.view.feed.TopRatedActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.alert
+import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
+import toast
 
 
 /**
@@ -35,16 +39,16 @@ class HomePageFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO notice
-//        tv_home_notice?.text = PreferenceUtil.getNotice()
-//        if (!PreferenceUtil.getShowNotice()) {
-//            cd_notice_container.visibility = GONE
-//        }
-//        iv_remove_notice?.setOnClickListener {
-//            PreferenceUtil.setShowNotice(false)
-//            cd_notice_container.visibility = GONE
-//            toast("公告已隐藏，可在app使用说明中查看")
-//        }
+        // 下版本用banner代替
+        tv_notice?.text = PreferenceUtil.getNotice()
+        if (!PreferenceUtil.getShowNotice()) {
+            cv_notice.visibility = GONE
+        }
+        iv_remove_notice?.setOnClickListener {
+            PreferenceUtil.setShowNotice(false)
+            cv_notice.visibility = GONE
+            toast("公告已隐藏，可在app使用说明中查看")
+        }
 
         // TODO banner
         val bannerImgUrlList = listOf("https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg",
@@ -72,6 +76,9 @@ class HomePageFragment : BaseFragment() {
         ei_scp_story?.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.STORY_DOC)
         }
+
+        btn_more_recent?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
+        btn_more_recent_translate?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
 
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()

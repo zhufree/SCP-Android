@@ -67,7 +67,7 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp"
-                android:textColor="@color/lightText"
+                android:textColor="@color/lightTextGray"
                 android:textSize="16sp" />
 
             <LinearLayout

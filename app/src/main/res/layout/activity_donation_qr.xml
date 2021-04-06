@@ -78,7 +78,7 @@
         android:layout_marginBottom="60dp"
         android:background="@drawable/bg_donate_btn"
         android:text="@string/donation_notice"
-        android:textColor="@color/white"
+        android:textColor="@color/itemBgWhite"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

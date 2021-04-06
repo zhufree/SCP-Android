@@ -70,6 +70,6 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:background="#CCC"
+        android:background="?attr/dividerGray"
         app:layout_constraintTop_toBottomOf="@id/tv_article_item_rank" />
 </androidx.constraintlayout.widget.ConstraintLayout>

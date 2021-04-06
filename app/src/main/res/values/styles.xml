@@ -23,34 +23,34 @@
 
     <style name="DayTheme" parent="AppTheme">
         <!--导航条颜色-->
-        <item name="toolbarBg">@color/colorPrimaryDark</item>
+        <item name="toolbarBg">@color/colorPrimary</item>
         <!--页面容器背景色（白）-->
         <item name="containerBg">@color/containerBg</item>
         <!--条目背景色（浅蓝）-->
-        <item name="itemBg">@color/itemBg</item>
+        <item name="itemBg">@color/itemBgWhite</item>
         <!--浅色底深色字-->
         <item name="darkText">@color/darkText</item>
         <!--深色底浅色字-->
-        <item name="lightText">@color/mediumText</item>
-        <!--未点击的按钮颜色-->
-        <item name="unClickBtn">@color/unClickBtn</item>
-        <!--点击过的按钮颜色（选中状态-->
-        <item name="clickedBtn">@color/clickedBtn</item>
+        <item name="mediumText">@color/mediumText</item>
+        <item name="lightText">@color/lightTextGray</item>
         <!--不可点击的按钮颜色-->
-        <item name="disabledBg">@color/disabledBg</item>
-        <item name="settingItemBg">@color/settingItemBg</item>
+        <item name="disabledBg">@color/dividerGray</item>
+        <item name="linkBlue">@color/linkBlue</item>
+        <item name="todoYellow">@color/todoYellow</item>
+        <item name="dividerGray">@color/dividerGray</item>
+
     </style>
+
     <style name="NightTheme" parent="AppTheme">
-        <item name="toolbarBg">@color/toolbarBgNight</item>
+        <item name="toolbarBg">@color/colorPrimaryDark</item>
         <item name="containerBg">@color/containerBgNight</item>
         <item name="itemBg">@color/itemBgNight</item>
-        <!--浅色底深色字-->
         <item name="darkText">@color/darkTextNight</item>
-        <!--深色底浅色字-->
-        <item name="lightText">@color/mediumText</item>
-        <item name="unClickBtn">@color/unClickBtnNight</item>
-        <item name="clickedBtn">@color/clickedBtnNight</item>
+        <item name="mediumText">@color/mediumText</item>
+        <item name="lightText">@color/lightTextGray</item>
         <item name="disabledBg">@color/disabledBgNight</item>
-        <item name="settingItemBg">@color/settingItemBgNight</item>
+        <item name="linkBlue">@color/linkBlue</item>
+        <item name="todoYellow">@color/todoYellow</item>
+        <item name="dividerGray">@color/dividerGray</item>
     </style>
 </resources>

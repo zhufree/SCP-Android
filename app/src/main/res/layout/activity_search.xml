@@ -30,7 +30,7 @@
         app:tabBackground="?attr/toolbarBg"
         app:tabIndicatorColor="@color/colorPrimary"
         app:tabSelectedTextColor="#fff"
-        app:tabTextColor="?attr/lightText" />
+        app:tabTextColor="?attr/mediumText" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_search_result"

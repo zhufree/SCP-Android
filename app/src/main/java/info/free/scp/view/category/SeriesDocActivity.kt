@@ -3,22 +3,10 @@ package info.free.scp.view.category
 import android.os.Bundle
 import android.view.Menu
 import info.free.scp.R
-import info.free.scp.SCPConstants.Category.ABOUT_INFO
-import info.free.scp.SCPConstants.Category.ABOUT_INTRO
-import info.free.scp.SCPConstants.Category.CONTEST
-import info.free.scp.SCPConstants.Category.CONTEST_CN
-import info.free.scp.SCPConstants.Category.JOKE
-import info.free.scp.SCPConstants.Category.JOKE_CN
-import info.free.scp.SCPConstants.Category.SCP_ABNORMAL
 import info.free.scp.SCPConstants.Category.SCP_ARCHIVES
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.Category.SERIES_CN
-import info.free.scp.SCPConstants.Category.SCP_EX
 import info.free.scp.SCPConstants.Category.SCP_INTERNATIONAL
-import info.free.scp.SCPConstants.Category.SETTINGS
-import info.free.scp.SCPConstants.Category.SETTINGS_CN
-import info.free.scp.SCPConstants.Category.STORY_SERIES
-import info.free.scp.SCPConstants.Category.STORY_SERIES_CN
 import info.free.scp.SCPConstants.Category.TALES
 import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.SCPConstants.Entry.ABOUT_SCP_DOC
@@ -145,7 +133,7 @@ class SeriesDocActivity : BaseActivity() {
         super.refreshTheme()
         vp_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
         tab_series_doc?.setBackgroundColor(ThemeUtil.containerBg)
-        tab_series_doc?.setTabTextColors(ThemeUtil.darkText, ThemeUtil.lightText)
+        tab_series_doc?.setTabTextColors(ThemeUtil.darkText, ThemeUtil.mediumText)
     }
 
     override fun onResume() {

@@ -64,13 +64,13 @@ class SettingItem : ConstraintLayout {
         val cornerRadius = Utils.dp2px(18).toFloat()
         when {
             isGroupFirst -> {
-                background = ThemeUtil.customShape(ThemeUtil.settingItemBg, 0, 0, cornerRadius, 0f, cornerRadius, 0f)
+                background = ThemeUtil.customShape(ThemeUtil.itemBg, 0, 0, cornerRadius, 0f, cornerRadius, 0f)
             }
             isGroupLast -> {
-                background = ThemeUtil.customShape(ThemeUtil.settingItemBg, 0, 0, 0f, cornerRadius, 0f, cornerRadius)
+                background = ThemeUtil.customShape(ThemeUtil.itemBg, 0, 0, 0f, cornerRadius, 0f, cornerRadius)
             }
             else -> {
-                backgroundColor = ThemeUtil.settingItemBg
+                backgroundColor = ThemeUtil.itemBg
             }
         }
     }

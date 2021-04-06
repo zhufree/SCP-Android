@@ -27,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="44dp"
         app:tabTextColor="?attr/darkText"
-        app:tabSelectedTextColor="?attr/lightText"
+        app:tabSelectedTextColor="?attr/mediumText"
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper"/>
 
     <androidx.viewpager.widget.ViewPager

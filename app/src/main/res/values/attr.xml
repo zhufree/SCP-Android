@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="toolbarBg" format = "color"/>
-    <attr name="containerBg" format = "color"/>
-    <attr name="itemBg" format = "color"/>
-    <attr name="darkText" format = "color"/>
-    <attr name="lightText" format = "color"/>
-    <attr name="unClickBtn" format = "color"/>
-    <attr name="clickedBtn" format = "color"/>
-    <attr name="disabledBg" format = "color"/>
-    <attr name="settingItemBg" format="color" />
+    <attr name="toolbarBg" format="color" />
+    <attr name="containerBg" format="color" />
+    <attr name="itemBg" format="color" />
+    <attr name="darkText" format="color" />
+    <attr name="mediumText" format="color" />
+    <attr name="lightText" format="color" />
+    <attr name="disabledBg" format="color" />
+    <attr name="linkBlue" format="color" />
+    <attr name="todoYellow" format="color" />
+    <attr name="dividerGray" format="color" />
 </resources>

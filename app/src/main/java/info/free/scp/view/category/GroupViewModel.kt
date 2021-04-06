@@ -42,14 +42,23 @@ class GroupViewModel : ViewModel() {
             SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
                 scpDao.getAllCollectionByType(saveType)
             }
+            // 图书馆
             SCPConstants.ScpType.SAVE_ABNORMAL -> {
+                var resultList = scpDao.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
+                resultList = resultList.filter {
+                    abnormalPageList.contains(it.link)
+                }
+                resultList
+            }
+            // 背景资料
+            SCPConstants.ScpType.SAVE_INFO -> {
                 var resultList = scpDao.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
                 resultList = resultList.filter {
                     introPageList.contains(it.link) || infoPageList.contains(it.link)
                 }
                 resultList
             }
-            SCPConstants.Category.SCP_INTERNATIONAL -> {
+            SCPConstants.ScpType.SAVE_INTERNATIONAL -> {
                 scpDao.getInternationalByCountry("$extraType%")
             }
             else -> {

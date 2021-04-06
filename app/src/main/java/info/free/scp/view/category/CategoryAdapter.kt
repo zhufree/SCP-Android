@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import info.free.scp.SCPConstants
 import info.free.scp.databinding.ItemCategoryBinding
 import info.free.scp.util.PreferenceUtil
+import org.jetbrains.anko.startActivity
 
 /**
  * Created by zhufree on 2018/8/22.
@@ -35,12 +36,10 @@ class CategoryAdapter : ListAdapter<String, CategoryAdapter.CategoryHolder>(Stri
     private fun createOnClickListener(title: String, position: Int): View.OnClickListener {
         return View.OnClickListener {
             PreferenceUtil.addPoints(2)
-            val intent = Intent()
-            intent.putExtra("save_type", SCPConstants.ScpType.SAVE_INTERNATIONAL)
-            intent.putExtra("extra_type", title)
-            intent.setClass(it.context, DocListActivity::class.java)
-            (it.context as Activity).startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
-
+            (it.context as Activity).startActivity<DocListActivity>("saveType"
+                    to SCPConstants.ScpType.SAVE_INTERNATIONAL,
+                    "extraType" to title
+            )
         }
     }
 

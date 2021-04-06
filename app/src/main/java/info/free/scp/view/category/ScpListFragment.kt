@@ -1,45 +1,22 @@
 package info.free.scp.view.category
 
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import androidx.recyclerview.widget.StaggeredGridLayoutManager.VERTICAL
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.AppMode.ONLINE
-import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
-import info.free.scp.databinding.FragmentCategoryBinding
-import info.free.scp.db.ScpDatabase
-import info.free.scp.db.ScpDataHelper
-import info.free.scp.util.PreferenceUtil
+import info.free.scp.databinding.FragmentScpListBinding
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.activity_doc_list.*
 import kotlinx.android.synthetic.main.fragment_scp_list.*
-import org.jetbrains.anko.support.v4.toast
-import java.util.*
 
 /**
  * 一级目录，点进去是正文
  */
 class ScpListFragment : BaseFragment() {
-    private val categoryCount = PreferenceUtil.getCategoryCount()
-    private val localScpList: MutableList<ScpModel?>? = emptyList<ScpModel>().toMutableList()
-    private val taleTimeList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
+    private lateinit var binding: FragmentScpListBinding
 
-    private val taleCategory = arrayOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
-            "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
-    private lateinit var binding: FragmentCategoryBinding
-    private val viewModel by lazy {
-        ViewModelProvider(this)
-                .get(CategoryViewModel::class.java)
-    }
     private val vm by lazy {
         ViewModelProvider(this)
                 .get(GroupViewModel::class.java)
@@ -52,28 +29,10 @@ class ScpListFragment : BaseFragment() {
     private var saveType = 1
     private var groupIndex = -1
     private var extraType = ""
-    private var orderType = SCPConstants.OrderType.ASC
-        set(value) {
-            field = value
-            val ascList = vm.getDocList(saveType, groupIndex)
-            docAdapter.submitList(if (value == SCPConstants.OrderType.ASC) ascList else ascList.reversed()) {
-                rv_doc_list.scrollToPosition(0)
-            }
-        }
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCategoryBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        saveType = arguments?.getInt("save_type") ?: -1
-        groupIndex = arguments?.getInt("group_index") ?: -1
-
-        rv_doc_list.adapter = docAdapter
-        val docList = when (saveType) {
+    private fun getDocList(saveType: Int, groupIndex: Int, extraType: String): List<ScpModel> {
+        return when (saveType) {
             // SCP系列
             SCPConstants.ScpType.SAVE_SERIES, SCPConstants.ScpType.SAVE_SERIES_CN, SCPConstants.ScpType.SAVE_JOKE, SCPConstants.ScpType.SAVE_JOKE_CN, SCPConstants.ScpType.SAVE_EX, SCPConstants.ScpType.SAVE_EX_CN -> {
                 vm.getDocList(saveType, groupIndex)
@@ -90,10 +49,28 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.ScpType.SAVE_ABNORMAL -> {
                 vm.getDocList(saveType)
             }
+            SCPConstants.ScpType.SAVE_INTERNATIONAL -> {
+                vm.getDocList(saveType, extraType = extraType)
+            }
             else -> {
                 vm.getDocList(saveType, groupIndex)
             }
         }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentScpListBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        saveType = arguments?.getInt("save_type") ?: -1
+        groupIndex = arguments?.getInt("group_index") ?: -1
+        extraType = arguments?.getString("extra_type") ?: ""
+
+        rv_doc_list.adapter = docAdapter
+        val docList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(docList)
 //        viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
 //            binding.slCategory.isRefreshing = false
@@ -259,7 +236,7 @@ class ScpListFragment : BaseFragment() {
     }
 
     fun reverseScpList(orderType: Int) {
-        val ascList = vm.getDocList(saveType, groupIndex)
+        val ascList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(if (orderType == SCPConstants.OrderType.ASC) ascList else ascList.reversed()) {
             rv_doc_list.scrollToPosition(0)
         }

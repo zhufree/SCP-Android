@@ -31,8 +31,7 @@ class CategoryFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         entryType = arguments?.getInt("entry_type") ?: -1
         val titleList = when (entryType) {
-
-            SCPConstants.Category.SCP_INTERNATIONAL -> {
+            SCPConstants.Entry.INTERNATIONAL_DOC -> {
                 listOf("俄国分部", "韩国分部", "法国分部", "波兰分部", "西班牙分部",
                         "泰国分部", "日本分部", "德国分部", "意大利分部", "乌克兰分部", "葡萄牙语分部",
                         "捷克分部", "非官方分部")
@@ -54,10 +53,10 @@ class CategoryFragment : BaseFragment() {
 
     companion object {
 
-        fun newInstance(categoryType: Int, subPosition: Int): CategoryFragment {
+        fun newInstance(entryType: Int, subPosition: Int): CategoryFragment {
             val fragment = CategoryFragment()
             val args = Bundle()
-            args.putInt("category_type", categoryType)
+            args.putInt("entry_type", entryType)
             args.putInt("sub_position", subPosition)
 //            args.putString(ARG_PARAM2, param2)
             fragment.arguments = args

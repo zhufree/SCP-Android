@@ -51,7 +51,7 @@ class HomeFragment : BaseFragment() {
                 HomePageFragment.newInstance(),
                 ScpListFragment.newInstance(SCPConstants.ScpType.SAVE_ABNORMAL, 0, ""),
                 CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
-                ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, "")
+                ScpListFragment.newInstance(SCPConstants.ScpType.SAVE_INFO, 0, "")
         )
 
         val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "背景资料与指导") // 单页放滑动分页

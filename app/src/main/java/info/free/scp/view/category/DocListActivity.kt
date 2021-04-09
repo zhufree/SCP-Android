@@ -6,19 +6,12 @@ import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.OrderType.ASC
-import info.free.scp.SCPConstants.ScpType.SAVE_ARCHIVED
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_EX
 import info.free.scp.SCPConstants.ScpType.SAVE_EX_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
@@ -52,8 +45,8 @@ class DocListActivity : BaseActivity() {
             SAVE_TALES -> "基金会故事"
             SAVE_TALES_CN -> "CN原创故事"
             SAVE_TALES_BY_TIME -> "CN原创故事(按发布时间排列)"
-            SCPConstants.ScpType.SAVE_SETTINGS -> "设定中心"
-            SCPConstants.ScpType.SAVE_SETTINGS_CN -> "CN设定中心"
+            SCPConstants.ScpType.SAVE_CANON -> "设定中心"
+            SCPConstants.ScpType.SAVE_CANON_CN -> "CN设定中心"
             SCPConstants.ScpType.SAVE_STORY_SERIES -> "故事系列"
             SCPConstants.ScpType.SAVE_STORY_SERIES_CN -> "CN故事系列"
             SCPConstants.ScpType.SAVE_CONTEST -> "征文竞赛"

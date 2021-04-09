@@ -86,24 +86,8 @@ class HomePageFragment : BaseFragment() {
     }
 
     private fun goToGroupPage(entry_type: Int) {
-        if (!PreferenceUtil.getShownModeNotice()) {
-            alert("为了方便用户尽快开始阅读，0.1.5版本添加了全局在线阅读模式，如果需要下载数据库并使用离线模式，" +
-                    "请在【我的-数据下载及配置】中设置.\n注意：1.之前已离线的用户仍将使用离线模式，新用户默认使用在线模式" +
-                    "\n2.在线阅读模式的数据仍和数据库相同，并非和官网完全同步，具体同步日期可在离线页面查看。\n" +
-                    "3.正文页面菜单中的在线模式是强制访问网页，和全局阅读模式不同") {
-                positiveButton("我知道了") {
-                    ScpDatabase.getInstance()?.let {
-                        PreferenceUtil.setAppMode(OFFLINE)
-                    } ?: run {
-                        PreferenceUtil.setAppMode(ONLINE)
-                    }
-                    startActivity<GroupListActivity>("entry_type" to entry_type)
-                }
-            }.show()
-            PreferenceUtil.setShownModeNotice()
-        } else {
-            startActivity<GroupListActivity>("entry_type" to entry_type)
-        }
+        // TODO 埋点
+        startActivity<GroupListActivity>("entry_type" to entry_type)
     }
 
     override fun refreshTheme() {

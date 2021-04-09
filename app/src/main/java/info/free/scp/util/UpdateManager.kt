@@ -48,7 +48,7 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
             PreferenceUtil.clearDownloadPref()
-            FileUtil.getInstance(activity).restoreDB() // 第一次安装app时检测
+            FileUtil.getInstance(activity).showRestore() // 第一次安装app时检测
             return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {

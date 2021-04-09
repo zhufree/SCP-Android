@@ -7,7 +7,8 @@ package info.free.scp
 
 object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
-    const val SCP_DB_NAME = "scp_data.db"
+    const val SCP_DB_NAME = "scp_category_v2.db"
+    const val DETAIL_DB_NAME = "scp_detail_v2.db"
     const val INFO_DB_NAME = "scp_info.db"
 
     object AppMode {
@@ -27,16 +28,13 @@ object SCPConstants {
 
     // category type
     object Entry {
-        const val SCP_DOC = 1 // SCP文档，包含其他文档
-        const val SCP_CN_DOC = 2 // SCP-CN文档，包含其他文档
-        const val STORY_DOC = 3 // 故事外围
-        const val LIBRARY_DOC = 4 // 故事外围
-        const val INTERNATIONAL_DOC = 5 // 故事外围
-        const val INFORMATION_DOC = 6 // 故事外围
+        const val SCP_DOC = 1001 // SCP文档，包含其他文档
+        const val SCP_CN_DOC = 1002 // SCP-CN文档，包含其他文档
+        const val STORY_DOC = 1003 // 故事外围
+        const val LIBRARY_DOC = 1004 // 故事外围
+        const val INTERNATIONAL_DOC = 1005 // 故事外围
+        const val INFORMATION_DOC = 1006 // 故事外围
 
-        // no use
-        const val ABOUT_SCP_DOC = 3 // 关于基金会 设定中心，GOI、hub等，相关材料，艺作、传承、精品、竞赛、征文等
-        const val JOKE_DOC = 4 // 搞笑作品
     }
 
 
@@ -72,42 +70,43 @@ object SCPConstants {
 
     object ScpType {
         // save type
-        const val SINGLE_PAGE = 0 // 单页面
-        const val SAVE_INFO = 102 // 设定说明类页面
-        const val SAVE_ABNORMAL = 103 // 其中的异常物品超长事件等
-        const val SAVE_INTRO = 104 // 其中 faq，新手指南之类
-
         const val SAVE_SERIES = 1
         const val SAVE_SERIES_CN = 2
+        const val SAVE_JOKE = 3
+        const val SAVE_JOKE_CN = 4
+        const val SAVE_EX = 5
+        const val SAVE_EX_CN = 6
 
-        const val SAVE_TALES = 3
-        const val SAVE_TALES_CN = 4
+        const val SAVE_TALES = 7
+        const val SAVE_TALES_CN = 8
+        const val SAVE_CANON = 9
+        const val SAVE_CANON_CN = 10
+        const val SAVE_STORY_SERIES = 11
+        const val SAVE_STORY_SERIES_CN = 12
+
+        const val SAVE_REPORT = 13
+        const val SAVE_ANOMALOUS_CN = 14
+        const val SAVE_SHORT_STORY = 15
+
+        const val SAVE_LIBRARY_PAGE = 16
+        const val SAVE_GOI = 17
+        const val SAVE_ART = 18
+
+        const val SAVE_CONTEST = 19
+        const val SAVE_CONTEST_CN = 20
+        const val SAVE_WANDER = 21
+        const val SAVE_WANDER_CN = 22
+        const val SAVE_INTERNATIONAL = 23
+        const val SAVE_INFO_PAGE = 24 // 设定说明类页面
+
         const val SAVE_TALES_BY_TIME = 101
-
-        const val SAVE_JOKE = 5
-        const val SAVE_JOKE_CN = 6
-        const val SAVE_ARCHIVED = 7
-        const val SAVE_EX = 8
-        const val SAVE_EX_CN = 9
-        const val SAVE_DECOMMISSIONED = 10
-        const val SAVE_REMOVED = 11
-        // 后面加字母
-
-        const val SAVE_STORY_SERIES = 19
-        const val SAVE_STORY_SERIES_CN = 20
-        const val SAVE_SETTINGS = 13
-        const val SAVE_SETTINGS_CN = 14
-        const val SAVE_CONTEST = 15
-        const val SAVE_CONTEST_CN = 17
-        const val SAVE_INTERNATIONAL = 24
-
-        // android
-        const val SAVE_OFFSET = 21
-        const val SAVE_COLLECTION_ITEM = 22
+        const val SAVE_OFFSET = 100
     }
 
     const val BMOB_API_URL = "https://api.bmob.cn/"
     const val SCP_SITE_URL = "http://scp-wiki-cn.wikidot.com"
+
+    // https://portal.mcseekeri.top/http/scp-wiki-cn.wikidot.com
     const val FEED_API_URL = "http://api.zhufree.fun"
 
     // 广播类型

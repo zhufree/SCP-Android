@@ -41,12 +41,12 @@ class ScpListFragment : BaseFragment() {
             SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN, SCPConstants.ScpType.SAVE_TALES_BY_TIME -> {
                 vm.getDocList(saveType, extraType = extraType)
             }
-            SCPConstants.ScpType.SAVE_SETTINGS, SCPConstants.ScpType.SAVE_SETTINGS_CN, SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN, SCPConstants.ScpType.SAVE_CONTEST,
+            SCPConstants.ScpType.SAVE_CANON, SCPConstants.ScpType.SAVE_CANON_CN, SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN, SCPConstants.ScpType.SAVE_CONTEST,
             SCPConstants.ScpType.SAVE_CONTEST_CN -> {
                 vm.getDocList(saveType)
             }
             // 图书馆
-            SCPConstants.ScpType.SAVE_ABNORMAL -> {
+            SCPConstants.Entry.LIBRARY_DOC -> {
                 vm.getDocList(saveType)
             }
             SCPConstants.ScpType.SAVE_INTERNATIONAL -> {
@@ -97,134 +97,6 @@ class ScpListFragment : BaseFragment() {
 //        }
     }
 
-//    private fun getScpListOffline() {
-//        Log.i("category", "加载scp列表")
-//        localScpList?.clear()
-//        when (categoryType) {
-//            SCPConstants.Category.SERIES -> {
-//                // 0,499,999
-//                val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
-//                val limit = categoryCount
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByTypeAndRange(SCPConstants.ScpType.SAVE_SERIES, start, limit))
-//            }
-//            SCPConstants.Category.SERIES_CN -> {
-//                val start = if (clickPosition == 0) 0 else clickPosition * categoryCount
-//                val limit = categoryCount
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByTypeAndRange(SCPConstants.ScpType.SAVE_SERIES_CN, start, limit))
-//
-//            }
-//            SCPConstants.Category.SCP_EX -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
-//            }
-//            SCPConstants.Category.SCP_INTERNATIONAL -> {
-//                when (clickPosition) {
-//                    0 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("俄国分部"))
-//                    1 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("韩国分部"))
-//                    2 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("法国分部"))
-//                    3 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("波兰分部"))
-//                    4 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("西班牙分部"))
-//                    5 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("泰国分部"))
-//                    6 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("日本分部"))
-//                    7 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("德国分部"))
-//                    8 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("意大利分部"))
-//                    9 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("乌克兰分部"))
-//                    10 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("葡萄牙语分部"))
-//                    11 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("捷克分部"))
-//                    12 -> localScpList?.addAll(ScpDataHelper.getInstance().getInternationalByCountry("非官方分部"))
-//
-//                }
-//            }
-//            SCPConstants.Category.SCP_ABNORMAL -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_ABNORMAL))
-//                // 三句话外围
-//                localScpList?.add(ScpDatabase.getInstance()?.scpDao()?.getScpByLink("/short-stories"))
-//            }
-//            SCPConstants.Category.ABOUT_INFO -> {
-//                // 相关材料
-//                localScpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INFO))
-//            }
-//            SCPConstants.Category.ABOUT_INTRO -> {
-//                // 相关材料
-//                localScpList?.addAll(ScpDataHelper.getInstance().getSinglePageByType(SCPConstants.ScpType.SAVE_INTRO))
-//            }
-//
-//            SCPConstants.Category.SCP_ARCHIVES -> {
-//                when (clickPosition) {
-//                    0 -> localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX))
-//                    1 -> localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_EX_CN))
-//                    2 -> localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_ARCHIVED))
-//                    3 -> localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_DECOMMISSIONED))
-//                    4 -> localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_REMOVED))
-//                }
-//            }
-//            SCPConstants.Category.TALES -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES
-//                        , taleCategory[clickPosition]))
-//            }
-//            SCPConstants.Category.TALES_CN -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getTalesByTypeAndSubType(SCPConstants.ScpType.SAVE_TALES_CN
-//                        , taleCategory[clickPosition]))
-//            }
-//            SCPConstants.Category.STORY_SERIES -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES))
-//            }
-//            SCPConstants.Category.STORY_SERIES_CN -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_STORY_SERIES_CN))
-//            }
-//            SCPConstants.Category.JOKE -> {
-//                // 内容较少，直接全部加载
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE))
-//            }
-//            SCPConstants.Category.JOKE_CN -> {
-//                // 内容较少，直接全部加载
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_JOKE_CN))
-//            }
-//            SCPConstants.Category.SETTINGS -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS))
-//            }
-//            SCPConstants.Category.SETTINGS_CN -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_SETTINGS_CN))
-//            }
-//            SCPConstants.Category.CONTEST -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST))
-//            }
-//            SCPConstants.Category.CONTEST_CN -> {
-//                localScpList?.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_CONTEST_CN))
-//            }
-//
-//            SCPConstants.Category.TALES_BY_TIME -> {
-//                if (taleTimeList.isEmpty()) {
-//                    taleTimeList.addAll(ScpDataHelper.getInstance().getScpByType(SCPConstants.ScpType.SAVE_TALES_CN))
-//                }
-//                when (clickPosition) {
-//                    0 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2018") == true })
-//                    }
-//                    1 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2017") == true })
-//                    }
-//                    2 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2016") == true })
-//                    }
-//                    3 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2015") == true })
-//                    }
-//                    4 -> {
-//                        localScpList?.addAll(taleTimeList.filter { (it as ScpItemModel).subScpType?.startsWith("2014") == true })
-//                    }
-//                }
-//
-//            }
-//        }
-//        if (localScpList?.size == 0) {
-//            if (categoryType == SCPConstants.Category.SCP_INTERNATIONAL) {
-//                toast("该页没有内容或数据加载未完成，请检查数据库是否是最新版本")
-//            } else {
-//                toast("该页没有内容或数据加载未完成")
-//            }
-//        }
-//    }
 
     override fun onResume() {
         super.onResume()

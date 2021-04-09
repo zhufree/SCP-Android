@@ -120,9 +120,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.category.SeriesDocActivity"
-            android:screenOrientation="nosensor" />
-        <activity
             android:name=".view.home.DirectActivity"
             android:screenOrientation="nosensor" />
         <activity

@@ -8,8 +8,8 @@ import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.TOP_RATED_ALL
@@ -85,7 +85,7 @@ class HttpManager {
         }
     }
 
-    val collectionTypeList = arrayOf(SAVE_SETTINGS, SAVE_SETTINGS_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
+    val collectionTypeList = arrayOf(SAVE_CANON, SAVE_CANON_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
             SAVE_STORY_SERIES_CN, SAVE_STORY_SERIES)
 
     suspend fun getCategory(scpType: Int = SERIES, subScpType: String = "0", limit: Int = 100,

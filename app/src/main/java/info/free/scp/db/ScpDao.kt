@@ -50,7 +50,7 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `scp_type` = :type AND `sub_scp_type` = :letterOrMonth ")
     fun getTalesByTypeAndSubType(type: Int, letterOrMonth: String): List<ScpItemModel>
 
-    @Query("SELECT * FROM scps WHERE `scp_type` = 24 AND `sub_scp_type` LIKE :country ORDER BY _index")
+    @Query("SELECT * FROM scps WHERE `scp_type` = 23 AND `sub_scp_type` LIKE :country ORDER BY _index")
     fun getInternationalByCountry(country: String): List<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")

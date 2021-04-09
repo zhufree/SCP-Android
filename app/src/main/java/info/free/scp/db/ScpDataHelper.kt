@@ -103,35 +103,6 @@ class ScpDataHelper {
     }
 
 
-    fun getSinglePageByType(type: Int): MutableList<ScpItemModel> {
-        val abnormalPageList = arrayOf(
-                "/log-of-extranormal-events",
-                "/log-of-extranormal-events-cn",
-                "/log-of-anomalous-items",
-                "/log-of-anomalous-items-cn")
-        val introPageList = arrayOf(
-                "/faq",
-                "/guide-for-newbies",
-                "/how-to-write-an-scp")
-        val infoPageList = arrayOf(
-                "/secure-facilities-locations",
-                "/secure-facilities-locations-cn",
-                "/object-classes",
-                "/security-clearance-levels",
-                "/task-forces")
-        var resultList = ScpDatabase.getInstance()?.scpDao()?.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
-                ?: emptyList()
-        resultList = resultList.filter {
-            when (type) {
-                SCPConstants.ScpType.SAVE_INFO -> infoPageList.contains(it.link)
-                SCPConstants.ScpType.SAVE_INTRO -> introPageList.contains(it.link)
-                SCPConstants.ScpType.SAVE_ABNORMAL -> abnormalPageList.contains(it.link)
-                else -> abnormalPageList.contains(it.link)
-            }
-        }.toMutableList()
-        return resultList
-    }
-
 
     fun getRandomScpList(typeRange: String = ""): List<ScpItemModel>? {
         val randomList: MutableList<ScpItemModel> = emptyList<ScpItemModel>().toMutableList()

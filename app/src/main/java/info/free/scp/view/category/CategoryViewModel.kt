@@ -4,31 +4,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.ScpType.SAVE_ABNORMAL
-import info.free.scp.SCPConstants.ScpType.SAVE_ARCHIVED
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_DECOMMISSIONED
 import info.free.scp.SCPConstants.ScpType.SAVE_EX
 import info.free.scp.SCPConstants.ScpType.SAVE_EX_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_INFO
 import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
-import info.free.scp.SCPConstants.ScpType.SAVE_INTRO
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_REMOVED
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
-import info.free.scp.SCPConstants.ScpType.SINGLE_PAGE
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.PreferenceUtil
 import kotlinx.coroutines.launch
 
@@ -68,17 +60,12 @@ class CategoryViewModel : ViewModel() {
                 saveType = SAVE_INTERNATIONAL
                 subScpType = country[clickPosition] + '%'
             }
-            SCPConstants.Category.SCP_ABNORMAL, SCPConstants.Category.ABOUT_INFO, SCPConstants.Category.ABOUT_INTRO -> {
-                saveType = SINGLE_PAGE
-            }
+
 
             SCPConstants.Category.SCP_ARCHIVES -> {
                 when (clickPosition) {
                     0 -> saveType = SAVE_EX
                     1 -> saveType = SAVE_EX_CN
-                    2 -> saveType = SAVE_ARCHIVED
-                    3 -> saveType = SAVE_DECOMMISSIONED
-                    4 -> saveType = SAVE_REMOVED
                 }
             }
             SCPConstants.Category.TALES -> {
@@ -105,10 +92,10 @@ class CategoryViewModel : ViewModel() {
                 saveType = SAVE_JOKE_CN
             }
             SCPConstants.Category.SETTINGS -> {
-                saveType = SAVE_SETTINGS
+                saveType = SAVE_CANON
             }
             SCPConstants.Category.SETTINGS_CN -> {
-                saveType = SAVE_SETTINGS_CN
+                saveType = SAVE_CANON_CN
             }
             SCPConstants.Category.CONTEST -> {
                 saveType = SAVE_CONTEST

@@ -37,26 +37,18 @@ class GroupViewModel : ViewModel() {
             SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN, SCPConstants.ScpType.SAVE_TALES_BY_TIME -> {
                 scpDao.getTalesByTypeAndSubType(saveType, extraType)
             }
-            SCPConstants.ScpType.SAVE_SETTINGS, SCPConstants.ScpType.SAVE_SETTINGS_CN,
+            SCPConstants.ScpType.SAVE_CANON, SCPConstants.ScpType.SAVE_CANON_CN,
             SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN,
             SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
                 scpDao.getAllCollectionByType(saveType)
             }
             // 图书馆
-            SCPConstants.ScpType.SAVE_ABNORMAL -> {
-                var resultList = scpDao.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
-                resultList = resultList.filter {
-                    abnormalPageList.contains(it.link)
-                }
-                resultList
+            SCPConstants.Entry.LIBRARY_DOC -> {
+                scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_LIBRARY_PAGE)
             }
             // 背景资料
-            SCPConstants.ScpType.SAVE_INFO -> {
-                var resultList = scpDao.getAllScpListByType(SCPConstants.ScpType.SINGLE_PAGE)
-                resultList = resultList.filter {
-                    introPageList.contains(it.link) || infoPageList.contains(it.link)
-                }
-                resultList
+            SCPConstants.Entry.INFORMATION_DOC -> {
+                scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_INFO_PAGE)
             }
             SCPConstants.ScpType.SAVE_INTERNATIONAL -> {
                 scpDao.getInternationalByCountry("$extraType%")

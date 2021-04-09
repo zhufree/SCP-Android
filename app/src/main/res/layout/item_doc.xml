@@ -17,13 +17,12 @@
             type="info.free.scp.bean.ScpModel" />
     </data>
 
-    <androidx.cardview.widget.CardView xmlns:tools="http://schemas.android.com/tools"
+    <androidx.cardview.widget.CardView
         android:id="@+id/cv_doc_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="5dp"
         app:cardCornerRadius="4dp"
         app:cardElevation="1dp">
 

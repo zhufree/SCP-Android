@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
@@ -14,6 +15,7 @@ import info.free.scp.view.home.HomeFragment
 import info.free.scp.view.later.LaterFragment
 import info.free.scp.view.user.UserFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.info
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -98,6 +100,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         }
         transaction.commit()
         UpdateManager.getInstance(this).checkAppData()
+        FileUtil.getInstance(this).copyCategoryDb()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()
@@ -127,8 +130,11 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        info { "onPermissionsDenied" }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        info { "onPermissionsGranted" }
+
     }
 }

@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants.Category.CONTEST
 import info.free.scp.SCPConstants.Category.CONTEST_CN
@@ -33,18 +32,16 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON
+import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
-import info.free.scp.bean.ScpModel
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
-import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.widget.DocGroupItem
 import kotlinx.android.synthetic.main.activity_category_list.*
 import org.jetbrains.anko.*
@@ -111,8 +108,8 @@ class GroupListActivity : BaseActivity() {
                     TALES -> SAVE_TALES
                     TALES_CN -> SAVE_TALES_CN
                     TALES_BY_TIME -> SAVE_TALES_BY_TIME
-                    SETTINGS -> SAVE_SETTINGS
-                    SETTINGS_CN -> SAVE_SETTINGS_CN
+                    SETTINGS -> SAVE_CANON
+                    SETTINGS_CN -> SAVE_CANON_CN
                     STORY_SERIES -> SAVE_STORY_SERIES
                     STORY_SERIES_CN -> SAVE_STORY_SERIES_CN
                     CONTEST -> SAVE_CONTEST

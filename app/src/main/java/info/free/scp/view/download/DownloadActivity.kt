@@ -10,6 +10,7 @@ import android.os.Handler
 import info.free.scp.R
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.AppMode.ONLINE
+import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.*
@@ -33,7 +34,7 @@ class DownloadActivity : BaseActivity() {
                     try {
                         val pfd = ScpApplication.downloadManager.openDownloadedFile(completeDownloadId)
                         val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                        val destFile = File(FileUtil.privateDbDirPath + FileUtil.dataDbFilename)
+                        val destFile = File(FileUtil.privateDbDirPath + DETAIL_DB_NAME)
                         val outputStream = FileOutputStream(destFile)
                         destFile.outputStream().use { output ->
                             fileInputStream.copyTo(output)

@@ -23,6 +23,8 @@ import info.free.scp.SCPConstants.Category.TALES_BY_TIME
 import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.SCPConstants.Category.WANDER
 import info.free.scp.SCPConstants.Category.WANDER_CN
+import info.free.scp.SCPConstants.Entry.ART_DOC
+import info.free.scp.SCPConstants.Entry.GOI_DOC
 import info.free.scp.SCPConstants.Entry.SCP_CN_DOC
 import info.free.scp.SCPConstants.Entry.SCP_DOC
 import info.free.scp.SCPConstants.Entry.STORY_DOC
@@ -173,9 +175,9 @@ class GroupListActivity : BaseActivity() {
         lp.topMargin = dip(36)
         lp.leftMargin = dip(10)
         // 添加侧边栏
+        supportActionBar?.title = getTitlePrefix()
         when (entryType) {
             SCP_DOC -> {
-                supportActionBar?.setTitle(R.string.entry_scp_series)
                 for (i in 1..6) {
                     ll_side_bar.addView(createSeriesItem(i), lp)
                 }
@@ -184,8 +186,7 @@ class GroupListActivity : BaseActivity() {
                 switchSeries(1)
             }
             SCP_CN_DOC -> {
-                supportActionBar?.setTitle(R.string.entry_scp_cn_series)
-                for (i in 1..3) {// 3还没抓
+                for (i in 1..3) {
                     ll_side_bar.addView(createSeriesItem(i), lp)
                 }
                 ll_side_bar.addView(createSeriesItem(JOKE), lp)
@@ -193,7 +194,6 @@ class GroupListActivity : BaseActivity() {
                 switchSeries(1)
             }
             STORY_DOC -> {
-                supportActionBar?.setTitle(R.string.entry_scp_story)
                 ll_side_bar.addView(createSeriesItem(TALES), lp)
                 ll_side_bar.addView(createSeriesItem(TALES_CN), lp)
                 ll_side_bar.addView(createSeriesItem(TALES_BY_TIME), lp)
@@ -206,7 +206,6 @@ class GroupListActivity : BaseActivity() {
                 switchSeries(TALES)
             }
             WANDER_DOC -> {
-                supportActionBar?.title = getTitlePrefix()
                 ll_side_bar.addView(createSeriesItem(WANDER), lp)
                 ll_side_bar.addView(createSeriesItem(WANDER_CN), lp)
                 switchSeries(WANDER)

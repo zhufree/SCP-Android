@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             android:background="@drawable/bg_entry_box"
-            android:columnCount="3"
+            android:columnCount="4"
             android:orientation="horizontal"
             android:paddingBottom="30dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -69,42 +69,28 @@
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp"
                 android:layout_width="match_parent"
-                app:count="3"
+                app:count="4"
                 app:entryTitle="@string/entry_scp_series"
                 app:imgSrc="@drawable/img_logo_cn" />
 
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp_cn"
                 android:layout_width="match_parent"
-                app:count="3"
+                app:count="4"
                 app:entryTitle="@string/entry_scp_cn_series"
                 app:imgSrc="@drawable/img_logo_cn" />
 
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp_story"
                 android:layout_width="match_parent"
-                app:count="3"
+                app:count="4"
                 app:entryTitle="@string/entry_scp_story"
-                app:imgSrc="@drawable/img_logo_cn" />
-
-            <info.free.scp.view.widget.EntryItem
-                android:id="@+id/ei_scp_goi"
-                android:layout_width="match_parent"
-                app:count="3"
-                app:entryTitle="@string/entry_goi"
-                app:imgSrc="@drawable/img_logo_cn" />
-
-            <info.free.scp.view.widget.EntryItem
-                android:id="@+id/ei_scp_art"
-                android:layout_width="match_parent"
-                app:count="3"
-                app:entryTitle="@string/entry_art"
                 app:imgSrc="@drawable/img_logo_cn" />
 
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp_wander"
                 android:layout_width="match_parent"
-                app:count="3"
+                app:count="4"
                 app:entryTitle="@string/entry_wander"
                 app:imgSrc="@drawable/img_logo_cn" />
         </GridLayout>

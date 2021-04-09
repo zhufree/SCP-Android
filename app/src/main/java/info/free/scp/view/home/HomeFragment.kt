@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.tabs.TabLayout
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.view.base.BaseFragment
@@ -34,13 +35,16 @@ class HomeFragment : BaseFragment() {
                 HomePageFragment.newInstance(),
                 ScpListFragment.newInstance(SCPConstants.Entry.LIBRARY_DOC, 0, ""),
                 CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
+                CategoryFragment.newInstance(SCPConstants.Entry.GOI_DOC, 0),
+                CategoryFragment.newInstance(SCPConstants.Entry.ART_DOC, 0),
                 ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, "")
         )
 
-        val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "背景资料与指导") // 单页放滑动分页
+        val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "GOI格式", "艺术作品", "背景资料与指导") // 单页放滑动分页
         val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_home?.adapter = homePagerAdapter
         tab_home?.setupWithViewPager(vp_home)
+        tab_home?.tabMode = TabLayout.MODE_SCROLLABLE
     }
 
 

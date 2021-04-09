@@ -18,7 +18,7 @@ import org.jetbrains.anko.startActivity
  *
  */
 
-class CategoryAdapter : ListAdapter<String, CategoryAdapter.CategoryHolder>(StringDiffCallback()) {
+class CategoryAdapter(val saveType: Int) : ListAdapter<String, CategoryAdapter.CategoryHolder>(StringDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryHolder {
         return CategoryHolder(ItemCategoryBinding.inflate(
@@ -37,7 +37,8 @@ class CategoryAdapter : ListAdapter<String, CategoryAdapter.CategoryHolder>(Stri
         return View.OnClickListener {
             PreferenceUtil.addPoints(2)
             (it.context as Activity).startActivity<DocListActivity>("saveType"
-                    to SCPConstants.ScpType.SAVE_INTERNATIONAL,
+                    to saveType,
+                    "groupIndex" to position,
                     "extraType" to title
             )
         }

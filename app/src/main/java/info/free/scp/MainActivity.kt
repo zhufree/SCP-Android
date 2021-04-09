@@ -10,7 +10,6 @@ import info.free.scp.util.ThemeUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
 import info.free.scp.view.later.LaterFragment
 import info.free.scp.view.user.UserFragment

@@ -16,6 +16,7 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.GroupListActivity
+import info.free.scp.view.feed.FeedActivity
 import info.free.scp.view.feed.TopRatedActivity
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
@@ -83,6 +84,11 @@ class HomePageFragment : BaseFragment() {
         btn_more_recent?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
         btn_more_recent_translate?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
 
+        arrayOf(btn_more_recent, btn_more_recent_translate).forEach {
+            it.setOnClickListener {
+                startActivity<FeedActivity>()
+            }
+        }
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()
         }

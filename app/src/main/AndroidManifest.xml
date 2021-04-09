@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".view.category.DocListActivity"></activity>
+        <activity android:name=".view.feed.FeedActivity"></activity>
+        <activity android:name=".view.category.DocListActivity" />
         <activity android:name=".view.category.GroupListActivity" />
         <activity android:name=".view.feed.TopRatedActivity" />
         <activity android:name=".view.random.RandomActivity" />

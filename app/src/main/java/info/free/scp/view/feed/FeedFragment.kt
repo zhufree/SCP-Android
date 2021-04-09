@@ -35,8 +35,8 @@ class FeedFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         fragmentList = arrayListOf(SubFeedFragment.newInstance(LATEST_CREATED),
-                SubFeedFragment.newInstance(LATEST_TRANSLATED), TopRatedFragment.newInstance())
-        val titleList = arrayListOf("最近原创", "最近翻译", "最高评分")
+                SubFeedFragment.newInstance(LATEST_TRANSLATED))
+        val titleList = arrayListOf("最近原创", "最近翻译")
         val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
         vp_feed?.adapter = feedPagerAdapter
         tab_feed?.setupWithViewPager(vp_feed)

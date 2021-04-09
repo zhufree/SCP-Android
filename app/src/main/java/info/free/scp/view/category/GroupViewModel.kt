@@ -1,11 +1,15 @@
 package info.free.scp.view.category
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants
+import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
+import kotlinx.coroutines.launch
 import toast
 
 class GroupViewModel : ViewModel() {
@@ -81,10 +85,18 @@ class GroupViewModel : ViewModel() {
             }
         }
         return docList
-//        when (categoryType) {
-//            SCP_DOC -> {
-//                scpDao.getAllScpListByType(categoryType)
-//            }
-//        }
+    }
+
+
+    private val randRepo = RandomRepository()
+
+    fun getRandomList(): MutableLiveData<List<ScpItemModel>> {
+        return randRepo.randomList
+    }
+
+    fun refreshRandomList(range: String) {
+        viewModelScope.launch {
+            randRepo.getRandomList(range)
+        }
     }
 }

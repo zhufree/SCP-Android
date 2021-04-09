@@ -3,13 +3,10 @@ package info.free.scp.view
 import android.app.PendingIntent
 import android.content.Intent
 import android.widget.RemoteViews
-import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.db.ScpDataHelper
-import info.free.scp.view.category.CategoryViewModel
 import info.free.scp.view.detail.DetailActivity
-import toast
 import java.util.*
 import java.util.Calendar.DAY_OF_WEEK
 

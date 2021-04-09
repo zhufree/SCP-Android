@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView.*
 import info.free.scp.R
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
-import info.free.scp.view.category.CategoryViewModel
+import info.free.scp.view.category.GroupViewModel
 import kotlinx.android.synthetic.main.activity_random.*
 import org.jetbrains.anko.dip
 
@@ -17,9 +17,9 @@ class RandomActivity : BaseActivity() {
     val adapter: RandomAdapter by lazy {
         RandomAdapter()
     }
-    private val vm: CategoryViewModel by lazy {
+    private val vm: GroupViewModel by lazy {
         ViewModelProvider(this)
-                .get(CategoryViewModel::class.java)
+                .get(GroupViewModel::class.java)
     }
     private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private val randomRange: String

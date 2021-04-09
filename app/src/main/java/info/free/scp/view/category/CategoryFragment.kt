@@ -22,10 +22,6 @@ import kotlinx.android.synthetic.main.fragment_category.*
  */
 class CategoryFragment : BaseFragment() {
     private var entryType = -1
-    private var subPosition = -1
-    private val categoryCount = PreferenceUtil.getCategoryCount()
-    private val categoryList: MutableList<Any> = emptyList<Any>().toMutableList()
-    private var currentCategoryPosition = -1
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_category, container, false)

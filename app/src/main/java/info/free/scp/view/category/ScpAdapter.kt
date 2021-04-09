@@ -6,28 +6,20 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import info
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.*
-import info.free.scp.databinding.ItemCategoryBinding
 import info.free.scp.databinding.ItemDocBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
 import info.free.scp.view.detail.DetailActivity
-import info.free.scp.view.random.RandomActivity
-import kotlinx.android.synthetic.main.item_doc.view.*
 import org.jetbrains.anko.*
 
 /**

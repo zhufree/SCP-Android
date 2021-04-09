@@ -88,13 +88,6 @@ class HttpManager {
     val collectionTypeList = arrayOf(SAVE_CANON, SAVE_CANON_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
             SAVE_STORY_SERIES_CN, SAVE_STORY_SERIES)
 
-    suspend fun getCategory(scpType: Int = SERIES, subScpType: String = "0", limit: Int = 100,
-                            rangeStart: Int = 0): ApiBean.ApiListResponse<out ScpModel> {
-
-        return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
-            if (scpType in arrayOf(SAVE_SERIES, SAVE_SERIES_CN)) feedApiService.getScpCategory(scpType, subScpType, limit, rangeStart)
-            else feedApiService.getScpCategory(scpType, subScpType)
-    }
 
     suspend fun getDetail(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
         return feedApiService.getDetail(link)

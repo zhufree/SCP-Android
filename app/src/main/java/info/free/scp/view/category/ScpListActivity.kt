@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import info.free.scp.R
-import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_category.*
 

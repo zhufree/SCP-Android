@@ -38,11 +38,14 @@ class ScpListFragment : BaseFragment() {
                 vm.getDocList(saveType, groupIndex)
             }
             // 故事
-            SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN, SCPConstants.ScpType.SAVE_TALES_BY_TIME -> {
+            SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN,
+            SCPConstants.ScpType.SAVE_TALES_BY_TIME, SCPConstants.ScpType.SAVE_WANDER,
+            SCPConstants.ScpType.SAVE_WANDER_CN -> {
                 vm.getDocList(saveType, extraType = extraType)
             }
-            SCPConstants.ScpType.SAVE_CANON, SCPConstants.ScpType.SAVE_CANON_CN, SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN, SCPConstants.ScpType.SAVE_CONTEST,
-            SCPConstants.ScpType.SAVE_CONTEST_CN -> {
+            SCPConstants.ScpType.SAVE_CANON, SCPConstants.ScpType.SAVE_CANON_CN,
+            SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN,
+            SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
                 vm.getDocList(saveType)
             }
             // 图书馆
@@ -72,38 +75,11 @@ class ScpListFragment : BaseFragment() {
         rv_doc_list.adapter = docAdapter
         val docList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(docList)
-//        viewModel.getCat()?.observe(viewLifecycleOwner, Observer { result ->
-//            binding.slCategory.isRefreshing = false
-//            if (result != null && result.isNotEmpty()) {
-//                adapter.submitList(result)
-//                Handler().postDelayed({
-//                    binding.rvCategoryList.scrollToPosition(0)
-//                }, 500)
-//            }
-//        })
-//        binding.rvCategoryList.adapter = adapter
-//
-//        if (PreferenceUtil.getAppMode() == ONLINE) {
-//            binding.slCategory.isRefreshing = true
-//        }
-//        if (PreferenceUtil.getAppMode() == ONLINE) {
-//            viewModel.loadCat(categoryType, clickPosition)
-//        } else {
-//            getScpListOffline()
-//            adapter.submitList(localScpList)
-//        }
-//        binding.slCategory.setOnRefreshListener {
-//            viewModel.loadCat(categoryType, clickPosition)
-//        }
     }
 
 
     override fun onResume() {
         super.onResume()
-//        adapter.notifyDataSetChanged()
-//        if (adapter.currentScrollPosition > -1 && adapter.currentScrollPosition < localScpList?.size ?: 0) {
-//            rv_category_list?.scrollToPosition(adapter.currentScrollPosition)
-//        }
         refreshTheme()
     }
 

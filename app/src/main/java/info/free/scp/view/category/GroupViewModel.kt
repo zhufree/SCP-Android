@@ -34,13 +34,15 @@ class GroupViewModel : ViewModel() {
             SCPConstants.ScpType.SAVE_SERIES, SCPConstants.ScpType.SAVE_SERIES_CN, SCPConstants.ScpType.SAVE_JOKE, SCPConstants.ScpType.SAVE_JOKE_CN, SCPConstants.ScpType.SAVE_EX, SCPConstants.ScpType.SAVE_EX_CN -> {
                 scpDao.getAllScpListByType(saveType)
             }
-            SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN, SCPConstants.ScpType.SAVE_TALES_BY_TIME -> {
+            SCPConstants.ScpType.SAVE_TALES, SCPConstants.ScpType.SAVE_TALES_CN,
+            SCPConstants.ScpType.SAVE_TALES_BY_TIME, SCPConstants.ScpType.SAVE_WANDER,
+            SCPConstants.ScpType.SAVE_WANDER_CN -> {
                 scpDao.getTalesByTypeAndSubType(saveType, extraType)
             }
             SCPConstants.ScpType.SAVE_CANON, SCPConstants.ScpType.SAVE_CANON_CN,
             SCPConstants.ScpType.SAVE_STORY_SERIES, SCPConstants.ScpType.SAVE_STORY_SERIES_CN,
             SCPConstants.ScpType.SAVE_CONTEST, SCPConstants.ScpType.SAVE_CONTEST_CN -> {
-                scpDao.getAllCollectionByType(saveType)
+                scpDao.getAllScpListByType(saveType)
             }
             // 图书馆
             SCPConstants.Entry.LIBRARY_DOC -> {

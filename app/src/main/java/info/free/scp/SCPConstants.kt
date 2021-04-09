@@ -31,14 +31,18 @@ object SCPConstants {
         const val SCP_DOC = 1001 // SCP文档，包含其他文档
         const val SCP_CN_DOC = 1002 // SCP-CN文档，包含其他文档
         const val STORY_DOC = 1003 // 故事外围
-        const val LIBRARY_DOC = 1004 // 故事外围
-        const val INTERNATIONAL_DOC = 1005 // 故事外围
-        const val INFORMATION_DOC = 1006 // 故事外围
+        const val GOI_DOC = 1004 // 故事外围
+        const val ART_DOC = 1005 // 故事外围
+        const val WANDER_DOC = 1006 // 故事外围
+        const val LIBRARY_DOC = 1007 // 故事外围
+        const val INTERNATIONAL_DOC = 1008 // 故事外围
+        const val INFORMATION_DOC = 1009 // 故事外围
 
     }
 
 
     object Category {
+        // 直接跳转列表 100+
         const val SERIES = 1
         const val SERIES_CN = 2
         const val JOKE = 101
@@ -52,12 +56,11 @@ object SCPConstants {
         const val STORY_SERIES_CN = 109
         const val CONTEST = 110
         const val CONTEST_CN = 111
+        const val WANDER = 10
+        const val WANDER_CN = 11
 
         const val JOKE_CN = 22
-        const val SCP_EX_CN = 4
         const val SCP_ARCHIVES = 17
-        const val SCP_REMOVED = 18
-        const val SCP_DECOMMISSIONED = 19
         const val SCP_ABNORMAL = 20
         const val ABOUT_INFO = 5
         const val ABOUT_INTRO = 16

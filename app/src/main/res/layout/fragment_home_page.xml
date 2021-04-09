@@ -87,23 +87,26 @@
                 app:entryTitle="@string/entry_scp_story"
                 app:imgSrc="@drawable/img_logo_cn" />
 
-            <!--  <info.free.scp.view.widget.EntryItem-->
-            <!--      android:layout_width="match_parent"-->
-            <!--      app:entryTitle="@string/entry_scp_library"-->
-            <!--      app:imgSrc="@drawable/img_logo_cn"-->
-            <!--      app:count="3"/>-->
+            <info.free.scp.view.widget.EntryItem
+                android:id="@+id/ei_scp_goi"
+                android:layout_width="match_parent"
+                app:count="3"
+                app:entryTitle="@string/entry_goi"
+                app:imgSrc="@drawable/img_logo_cn" />
 
-            <!--  <info.free.scp.view.widget.EntryItem-->
-            <!--      android:layout_width="match_parent"-->
-            <!--      app:entryTitle="@string/entry_scp_international"-->
-            <!--      app:imgSrc="@drawable/img_logo_cn"-->
-            <!--      app:count="3"/>-->
+            <info.free.scp.view.widget.EntryItem
+                android:id="@+id/ei_scp_art"
+                android:layout_width="match_parent"
+                app:count="3"
+                app:entryTitle="@string/entry_art"
+                app:imgSrc="@drawable/img_logo_cn" />
 
-            <!--  <info.free.scp.view.widget.EntryItem-->
-            <!--      android:layout_width="match_parent"-->
-            <!--      app:entryTitle="@string/entry_scp_information"-->
-            <!--      app:imgSrc="@drawable/img_logo_cn"-->
-            <!--      app:count="3"/>-->
+            <info.free.scp.view.widget.EntryItem
+                android:id="@+id/ei_scp_wander"
+                android:layout_width="match_parent"
+                app:count="3"
+                app:entryTitle="@string/entry_wander"
+                app:imgSrc="@drawable/img_logo_cn" />
         </GridLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

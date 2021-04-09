@@ -21,9 +21,12 @@ import info.free.scp.SCPConstants.Category.STORY_SERIES_CN
 import info.free.scp.SCPConstants.Category.TALES
 import info.free.scp.SCPConstants.Category.TALES_BY_TIME
 import info.free.scp.SCPConstants.Category.TALES_CN
+import info.free.scp.SCPConstants.Category.WANDER
+import info.free.scp.SCPConstants.Category.WANDER_CN
 import info.free.scp.SCPConstants.Entry.SCP_CN_DOC
 import info.free.scp.SCPConstants.Entry.SCP_DOC
 import info.free.scp.SCPConstants.Entry.STORY_DOC
+import info.free.scp.SCPConstants.Entry.WANDER_DOC
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_EX
@@ -39,6 +42,8 @@ import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
+import info.free.scp.SCPConstants.ScpType.SAVE_WANDER
+import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
@@ -66,6 +71,7 @@ class GroupListActivity : BaseActivity() {
             SCP_DOC -> "SCP系列"
             SCP_CN_DOC -> "SCP-CN系列"
             STORY_DOC -> "故事"
+            WANDER_DOC -> "放逐者图书馆"
             else -> "SCP系列"
         }
     }
@@ -83,6 +89,8 @@ class GroupListActivity : BaseActivity() {
             STORY_SERIES_CN -> "CN故事系列"
             CONTEST -> "征文竞赛"
             CONTEST_CN -> "CN征文竞赛"
+            WANDER -> "放逐者图书馆"
+            WANDER_CN -> "CN放逐者图书馆"
             else -> "系列$index"
         }
     }
@@ -115,6 +123,13 @@ class GroupListActivity : BaseActivity() {
                     CONTEST -> SAVE_CONTEST
                     CONTEST_CN -> SAVE_CONTEST_CN
                     else -> SAVE_TALES
+                }
+            }
+            WANDER_DOC -> {
+                when (type) {
+                    WANDER -> SAVE_WANDER
+                    WANDER_CN -> SAVE_WANDER_CN
+                    else -> SAVE_WANDER
                 }
             }
             else -> SAVE_SERIES
@@ -157,6 +172,7 @@ class GroupListActivity : BaseActivity() {
         val lp = LinearLayout.LayoutParams(dip(84), WRAP_CONTENT)
         lp.topMargin = dip(36)
         lp.leftMargin = dip(10)
+        // 添加侧边栏
         when (entryType) {
             SCP_DOC -> {
                 supportActionBar?.setTitle(R.string.entry_scp_series)
@@ -189,6 +205,12 @@ class GroupListActivity : BaseActivity() {
                 ll_side_bar.addView(createSeriesItem(CONTEST_CN), lp)
                 switchSeries(TALES)
             }
+            WANDER_DOC -> {
+                supportActionBar?.title = getTitlePrefix()
+                ll_side_bar.addView(createSeriesItem(WANDER), lp)
+                ll_side_bar.addView(createSeriesItem(WANDER_CN), lp)
+                switchSeries(WANDER)
+            }
             else -> {
 
             }
@@ -198,7 +220,7 @@ class GroupListActivity : BaseActivity() {
     private fun getGroupListTitle(index: Int): List<String> {
         var groupList = listOf<String>()
         groupList = when (index) {
-            TALES, TALES_CN -> {
+            TALES, TALES_CN, WANDER, WANDER_CN -> {
                 listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
                         "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
             }
@@ -227,6 +249,7 @@ class GroupListActivity : BaseActivity() {
 
             ll_group_list.removeAllViews()
             getGroupListTitle(index).forEachIndexed { i, s ->
+                // 添加group
                 val newGroupItem = DocGroupItem(this, s)
                 newGroupItem.onClick {
                     startActivity<DocListActivity>("saveType" to getSaveType(index),

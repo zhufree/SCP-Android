@@ -76,6 +76,15 @@ class HomePageFragment : BaseFragment() {
         ei_scp_story?.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.STORY_DOC)
         }
+        ei_scp_goi?.setOnClickListener {
+            goToGroupPage(SCPConstants.Entry.GOI_DOC)
+        }
+        ei_scp_art?.setOnClickListener {
+            goToGroupPage(SCPConstants.Entry.ART_DOC)
+        }
+        ei_scp_wander?.setOnClickListener {
+            goToGroupPage(SCPConstants.Entry.WANDER_DOC)
+        }
 
         btn_more_recent?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
         btn_more_recent_translate?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))

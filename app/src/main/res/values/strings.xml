@@ -10,6 +10,9 @@
     <string name="entry_scp_series">SCP系列</string>
     <string name="entry_scp_cn_series">SCP-CN系列</string>
     <string name="entry_scp_story">故事与设定</string>
+    <string name="entry_goi">GIO格式</string>
+    <string name="entry_art">艺术作品</string>
+    <string name="entry_wander">放逐者图书馆</string>
     <string name="entry_scp_library">图书馆</string>
     <string name="entry_scp_international">SCP国际版</string>
     <string name="entry_scp_information">背景资料与指导</string>

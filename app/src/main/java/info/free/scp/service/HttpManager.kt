@@ -90,10 +90,6 @@ class HttpManager {
         return feedApiService.getLatestIndex()
     }
 
-    val collectionTypeList = arrayOf(SAVE_CANON, SAVE_CANON_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
-            SAVE_STORY_SERIES_CN, SAVE_STORY_SERIES)
-
-
     suspend fun getDetail(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
         return feedApiService.getDetail(link)
     }
@@ -104,12 +100,6 @@ class HttpManager {
 
     suspend fun getRandom(typeRange: String): ApiBean.ApiListResponse<ScpItemModel> {
         return feedApiService.getRandom(typeRange)
-    }
-
-    suspend fun getSibling(scpType: Int = SERIES, index: Int = 1, direct: String = "next")
-            : ApiBean.ApiListResponse<out ScpModel> {
-        return if (scpType in collectionTypeList) feedApiService.getSiblingCollection(direct,
-                index, scpType) else feedApiService.getSiblingScp(direct, index, scpType)
     }
 
     suspend fun getDirect(scpType: Int = SERIES, numberString: String = "-001")

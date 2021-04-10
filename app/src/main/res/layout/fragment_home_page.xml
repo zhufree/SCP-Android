@@ -123,30 +123,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_first"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/tv_recent_header"-->
-            <!--                app:rank="评分：10" />-->
-
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_second"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/ali_recent_first"-->
-            <!--                app:rank="评分：10" />-->
-
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_third"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/ali_recent_second"-->
-            <!--                app:rank="评分：10" />-->
-
             <Button
                 android:id="@+id/btn_more_recent"
                 android:layout_width="0dp"
@@ -188,29 +164,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_translate_first"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/tv_recent_translate_header"-->
-            <!--                app:rank="评分：10" />-->
-
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_translate_second"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/ali_recent_translate_first"-->
-            <!--                app:rank="评分：10" />-->
-
-            <!--            <info.free.scp.view.widget.FeedArticleListItem-->
-            <!--                android:id="@+id/ali_recent_translate_third"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                app:articleTitle="无尽走廊"-->
-            <!--                app:layout_constraintTop_toBottomOf="@id/ali_recent_translate_second"-->
-            <!--                app:rank="评分：10" />-->
 
             <Button
                 android:id="@+id/btn_more_recent_translate"

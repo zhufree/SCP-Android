@@ -23,29 +23,14 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE link = :link ORDER BY _id LIMIT 1")
     fun getLiveScpByLink(link: String): LiveData<ScpItemModel>?
 
-    @Query("SELECT * FROM scp_collection WHERE link = :link ORDER BY _index LIMIT 1")
-    fun getCollectionByLink(link: String): ScpCollectionModel?
-
-    @Query("SELECT * FROM scp_collection WHERE link = :link ORDER BY _index LIMIT 1")
-    fun getLiveCollectionByLink(link: String): LiveData<ScpCollectionModel>?
-
     @Query("SELECT * FROM scps WHERE `_index` = :index+1 AND scp_type = :scpType LIMIT 1")
     fun getNextScp(index: Int, scpType: Int): ScpItemModel?
 
     @Query("SELECT * FROM scps WHERE `_index` = :index-1 AND scp_type = :scpType LIMIT 1")
     fun getPreviewScp(index: Int, scpType: Int): ScpItemModel?
 
-    @Query("SELECT * FROM scp_collection WHERE `_index` = :index+1 AND scp_type = :scpType LIMIT 1")
-    fun getNextCollection(index: Int, scpType: Int): ScpCollectionModel?
-
-    @Query("SELECT * FROM scp_collection WHERE `_index` = :index-1 AND scp_type = :scpType LIMIT 1")
-    fun getPreviewCollection(index: Int, scpType: Int): ScpCollectionModel?
-
     @Query("SELECT * FROM scps WHERE `scp_type` = :type ORDER BY _index")
     fun getAllScpListByType(type: Int): List<ScpItemModel>
-
-    @Query("SELECT * FROM scp_collection WHERE `scp_type` = :type ORDER BY _index")
-    fun getAllCollectionByType(type: Int): List<ScpCollectionModel>
 
     @Query("SELECT * FROM scps WHERE `scp_type` = :type AND `sub_scp_type` = :letterOrMonth ")
     fun getTalesByTypeAndSubType(type: Int, letterOrMonth: String): List<ScpItemModel>

@@ -47,18 +47,6 @@ interface ApiService {
     @GET("/get_random/{typeRange}")
     suspend fun getRandom(@Path("typeRange") typeRange: String): ApiBean.ApiListResponse<ScpItemModel>
 
-    @GET("/get_sibling_scp/{direct}/{index}/{scpType}")
-    suspend fun getSiblingScp(@Path("direct") direct: String,
-                              @Path("index") index: Int,
-                              @Path("scpType") scpType: Int
-    ): ApiBean.ApiListResponse<ScpItemModel>
-
-    @GET("/get_sibling_collection/{direct}/{index}/{scpType}")
-    suspend fun getSiblingCollection(@Path("direct") direct: String,
-                                     @Path("index") index: Int,
-                                     @Path("scpType") scpType: Int
-    ): ApiBean.ApiListResponse<ScpCollectionModel>
-
     @GET("/get_direct/{scpType}/{numberString}")
     suspend fun getDirect(@Path("scpType") scpType: Int,
                           @Path("numberString") numberString: String)

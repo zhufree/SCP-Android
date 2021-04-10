@@ -54,13 +54,13 @@ import java.io.IOException
 
 class DetailActivity : BaseActivity() {
 
+    private val scpDao = ScpDatabase.getInstance().scpDao()
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
     //    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private var randomLinkList = emptyList<String>()
     private var randomTitleList = emptyList<String>()
-    private var itemType = 0 //
     private var url = ""
         set(value) {
             field = value
@@ -140,7 +140,6 @@ class DetailActivity : BaseActivity() {
             randomLinkList = intent?.getStringArrayListExtra("random_link_list") ?: emptyList()
             randomTitleList = intent?.getStringArrayListExtra("random_title_list") ?: emptyList()
         }
-        itemType = intent.getIntExtra("item_type", 0)
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
@@ -150,55 +149,25 @@ class DetailActivity : BaseActivity() {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else if (!forceOnline) {
-            viewModel.setScp(url, title) // 设置scp
+            viewModel.setScp(url) // 设置scp
         } else {
             pbLoading.visibility = VISIBLE
             webView.loadUrl(fullUrl)
         }
 
-        viewModel.getScp()?.observe(this, Observer {
+        viewModel.getScp().observe(this, Observer {
             // 数据库取到
             if (it != null) {
                 scp = it as ScpModel
                 scp?.let { s ->
                     setData(s)
+                } ?: run {
+                    // 数据库没有，加载链接
+                    webView.loadUrl(fullUrl)
+                    nsv_web_wrapper?.scrollTo(0, 0)
                 }
             }
-        }) ?: run {
-            // 数据库没有，加载链接
-            webView.loadUrl(fullUrl)
-            nsv_web_wrapper?.scrollTo(0, 0)
-        }
-
-        viewModel.getOfflineScp()?.observe(this, Observer {
-            // 数据库取到
-            if (it != null) {
-                scp = it
-                scp?.let { s ->
-                    setData(s)
-                }
-            }
-        }) ?: run {
-            // 数据库没有，加载链接
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
-            nsv_web_wrapper?.scrollTo(0, 0)
-        }
-
-        viewModel.getOfflineCollection()?.observe(this, Observer {
-            // 数据库取到
-            if (it != null) {
-                scp = it as ScpModel
-                scp?.let { s ->
-                    setData(s)
-                }
-            }
-        }) ?: run {
-            // 数据库没有，加载链接
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
-            nsv_web_wrapper?.scrollTo(0, 0)
-        }
+        })
 
         webView?.requestFocus()
 
@@ -620,18 +589,10 @@ class DetailActivity : BaseActivity() {
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                if (PreferenceUtil.getAppMode() == OFFLINE) {
-                    scp = if (itemType == 0) {
-                        ScpDatabase.getInstance()?.scpDao()?.getNextScp(index, scpType)
-                    } else {
-                        ScpDatabase.getInstance()?.scpDao()?.getNextCollection(index, scpType)
-                    }
-                    scp?.let {
-                        viewModel.setScp(it.link, it.title)
-                    } ?: toast("已经是最后一篇了")
-                } else {
-                    viewModel.loadSibling(scpType, index, "next")
-                }
+                scp = scpDao.getNextScp(index, scpType)
+                scp?.let {
+                    viewModel.setScp(it.link)
+                } ?: toast("已经是最后一篇了")
             }
             1 -> {// 随机模式
                 // 下一篇
@@ -639,7 +600,7 @@ class DetailActivity : BaseActivity() {
                     randomIndex += 1
                     val nextLink = randomLinkList[randomIndex]
                     val nextTitle = randomTitleList[randomIndex]
-                    viewModel.setScp(nextLink, nextTitle) // TODO
+                    viewModel.setScp(nextLink) // TODO
                 } else {
                     toast("已经是最后一篇了")
                 }
@@ -659,17 +620,9 @@ class DetailActivity : BaseActivity() {
                 when (index) {
                     0 -> toast("已经是第一篇了")
                     else -> {
-                        if (PreferenceUtil.getAppMode() == OFFLINE) {
-                            scp = if (itemType == 0) {
-                                ScpDatabase.getInstance()?.scpDao()?.getPreviewScp(index, scpType)
-                            } else {
-                                ScpDatabase.getInstance()?.scpDao()?.getPreviewCollection(index, scpType)
-                            }
-                            scp?.let {
-                                setData(it)
-                            }
-                        } else {
-                            viewModel.loadSibling(scpType, index, "prev")
+                        scp = scpDao.getPreviewScp(index, scpType)
+                        scp?.let {
+                            setData(it)
                         }
                     }
                 }
@@ -679,7 +632,7 @@ class DetailActivity : BaseActivity() {
                     randomIndex -= 1
                     val prevLink = randomLinkList[randomIndex]
                     val prevTitle = randomTitleList[randomIndex]
-                    viewModel.setScp(prevLink, prevTitle) // TODO
+                    viewModel.setScp(prevLink) // TODO
                 } else {
                     toast("已经是第一篇了")
                 }

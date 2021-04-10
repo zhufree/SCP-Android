@@ -1,26 +1,25 @@
 package info.free.scp.view.home
 
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.AppMode.OFFLINE
-import info.free.scp.SCPConstants.AppMode.ONLINE
-import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.GroupListActivity
 import info.free.scp.view.feed.FeedActivity
+import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
+import info.free.scp.view.widget.FeedArticleListItem
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
-import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
 import toast
@@ -32,6 +31,11 @@ import toast
  *
  */
 class HomePageFragment : BaseFragment() {
+    private val feedVm by lazy {
+        ViewModelProvider(this)
+                .get(FeedListViewModel::class.java)
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -92,6 +96,18 @@ class HomePageFragment : BaseFragment() {
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()
         }
+
+        feedVm.getFeedIndex().observe(this.viewLifecycleOwner, Observer { fi ->
+            fi.latestCreate.forEach {
+                val newFeedItem = FeedArticleListItem(context!!, it)
+                ll_latest_cn.addView(newFeedItem)
+            }
+            fi.latestTranslate.forEach {
+                val newFeedItem = FeedArticleListItem(context!!, it)
+                ll_latest_translate.addView(newFeedItem)
+            }
+        })
+        feedVm.loadFeedIndex()
     }
 
     private fun goToGroupPage(entry_type: Int) {

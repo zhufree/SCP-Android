@@ -4,8 +4,11 @@ import android.content.Context
 import android.util.AttributeSet
 import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.R
+import info.free.scp.bean.FeedModel
 import info.free.scp.util.ThemeUtil
+import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.layout_article_item.view.*
+import org.jetbrains.anko.startActivity
 
 class FeedArticleListItem : ConstraintLayout {
     var title = ""
@@ -20,27 +23,37 @@ class FeedArticleListItem : ConstraintLayout {
         attrs?.let { retrieveAttributes(attrs) }
     }
 
+    constructor(context: Context, feed: FeedModel) : this(context, null) {
+        initView(context)
+        tv_feed_item_title.text = feed.title
+        tv_feed_item_time.text = feed.createdTime
+        tv_feed_item_rank.text = feed.rank
+        setOnClickListener {
+            context.startActivity<DetailActivity>(
+                    "link" to feed.link,
+                    "forceOnline" to true
+            )
+        }
+    }
+
     private fun initView(context: Context) {
         inflate(context, R.layout.layout_article_item, this)
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.FeedArticleListItem)
+//        val ta = context.obtainStyledAttributes(attrs, R.styleable.FeedArticleListItem)
+//
+//        // 赋值给属性变量
+//        title = ta.getString(R.styleable.FeedArticleListItem_articleTitle) ?: ""
+//        rank = ta.getString(R.styleable.FeedArticleListItem_rank) ?: ""
+//        ta.recycle()
 
-        // 赋值给属性变量
-        title = ta.getString(R.styleable.FeedArticleListItem_articleTitle) ?: ""
-        rank = ta.getString(R.styleable.FeedArticleListItem_rank) ?: ""
-        ta.recycle()
-
-        tv_article_item_title.text = title
-        tv_article_item_rank.text = rank
-        cl_read_later.setOnClickListener {
-            onLaterClick()
-        }
+        tv_feed_item_title.text = title
+        tv_feed_item_time.text = rank
         setOnClickListener { onItemClick() }
     }
 
     fun refreshTheme() {
-        tv_article_item_title.setTextColor(ThemeUtil.darkText)
+        tv_feed_item_title.setTextColor(ThemeUtil.darkText)
     }
 }

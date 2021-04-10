@@ -3,6 +3,7 @@ package info.free.scp.service
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATEST_CREATED
+import info.free.scp.SCPConstants.LATEST_INDEX
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
 import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
@@ -83,6 +84,10 @@ class HttpManager {
                 feedApiService.getLatestCn(pageIndex)
             }
         }
+    }
+
+    suspend fun getLatestIndex(): FeedIndexModel {
+        return feedApiService.getLatestIndex()
     }
 
     val collectionTypeList = arrayOf(SAVE_CANON, SAVE_CANON_CN, SAVE_CONTEST, SAVE_CONTEST_CN,

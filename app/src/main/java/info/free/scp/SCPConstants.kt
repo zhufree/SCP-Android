@@ -127,8 +127,9 @@ object SCPConstants {
     const val HISTORY_TYPE = 0
     const val LATER_TYPE = 1
 
-    const val LATEST_CREATED = -1
-    const val LATEST_TRANSLATED = -2
+    const val LATEST_INDEX = -1
+    const val LATEST_CREATED = -2
+    const val LATEST_TRANSLATED = -3
     const val TOP_RATED_ALL = 0
     const val TOP_RATED_SCP = 1
     const val TOP_RATED_TALES = 2

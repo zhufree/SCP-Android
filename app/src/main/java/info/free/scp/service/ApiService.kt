@@ -14,6 +14,9 @@ import retrofit2.http.*
 
 interface ApiService {
 
+    @GET("/latest_index/")
+    suspend fun getLatestIndex(): FeedIndexModel
+
     @GET("/latest_cn/{pageIndex}")
     suspend fun getLatestCn(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
 

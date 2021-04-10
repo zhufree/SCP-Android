@@ -25,7 +25,7 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
             field = value
             setSupportActionBar(value)
             value?.setNavigationOnClickListener { finish() }
-            value?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            value?.setNavigationIcon(R.drawable.baseline_arrow_back_white_24dp)
         }
 
     private var themeReceiver = object : BroadcastReceiver() {

@@ -23,7 +23,7 @@ import org.jetbrains.anko.yesButton
 class RecordListFragment : BaseFragment() {
 
     var recordType = LATER_TYPE
-    var orderType = ASC
+    var orderType = DESC
 
     companion object {
         fun newInstance(recordType: Int): RecordListFragment {
@@ -60,7 +60,6 @@ class RecordListFragment : BaseFragment() {
 
     private fun subscribeUi(adapter: RecordListAdapter) {
         recordType = arguments?.getInt("record_type") ?: LATER_TYPE
-        orderType = if (recordType == LATER_TYPE) ASC else DESC
         adapter.submitList(viewModel.getRecordList(recordType, orderType))
         adapter.onLongClick = { record ->
             alert("是否确认删除？") {
@@ -87,5 +86,6 @@ class RecordListFragment : BaseFragment() {
     override fun refreshTheme() {
         super.refreshTheme()
         laterAdapter.refreshTheme()
+        refreshList()
     }
 }

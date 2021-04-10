@@ -11,7 +11,7 @@
         android:layout_height="24dp"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/app_name"
-        android:src="@drawable/ic_arrow_back_white_24dp"
+        android:src="@drawable/baseline_arrow_back_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

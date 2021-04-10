@@ -15,7 +15,7 @@ class SearchActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-        initToolbar()
+        baseToolbar = search_toolbar
         val keyword = intent?.getStringExtra("keyword") ?: ""
         supportActionBar?.title = "搜索“$keyword”"
         fragmentList = arrayListOf(SearchResultFragment.newInstance(TITLE, keyword),
@@ -26,9 +26,4 @@ class SearchActivity : BaseActivity() {
         tab_search_result?.setupWithViewPager(vp_search_result)
     }
 
-    private fun initToolbar() {
-        setSupportActionBar(search_toolbar)
-        search_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        search_toolbar?.setNavigationOnClickListener { finish() }
-    }
 }

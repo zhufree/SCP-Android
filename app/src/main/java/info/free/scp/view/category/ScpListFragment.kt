@@ -81,6 +81,8 @@ class ScpListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         refreshTheme()
+        val docList = getDocList(saveType, groupIndex, extraType)
+        docAdapter.submitList(docList)
     }
 
     fun reverseScpList(orderType: Int) {

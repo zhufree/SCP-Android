@@ -27,11 +27,8 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        setSupportActionBar(settings_toolbar)
+        baseToolbar = settings_toolbar
         settings_toolbar?.setTitle(R.string.app_name)
-        settings_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-
-        settings_toolbar?.setNavigationOnClickListener { finish() }
 
         supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
                 ReadSettingsFragment()).commit()

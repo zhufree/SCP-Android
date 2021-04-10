@@ -12,10 +12,8 @@ class GameListActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_list)
         EventUtil.onEvent(this, EventUtil.clickGameList)
-        setSupportActionBar(game_list_toolbar)
-        game_list_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-        game_list_toolbar?.title = "游戏列表"
-        game_list_toolbar?.setNavigationOnClickListener { finish() }
+        baseToolbar = game_list_toolbar
+        supportActionBar?.title = "游戏列表"
         vpGame?.adapter = GamePagerAdapter(this)
         tabGame?.setupWithViewPager(vpGame)
     }

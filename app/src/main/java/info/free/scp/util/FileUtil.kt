@@ -5,9 +5,9 @@ import android.content.res.AssetManager
 import android.os.Environment
 import android.util.Log
 import info
+import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.SCPConstants.SCP_DB_NAME
-import info.free.scp.ScpApplication
 import info.free.scp.ScpApplication.Companion.context
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
@@ -17,13 +17,13 @@ import java.io.*
 
 /**
  * Created by zhufree on 2018/11/22.
- * 备份工具类
- * 下载的数据库scp_data.db,用户数据scp_info.db和level.xml放在documents文件夹
- * 数据库直接下到documents然后复制到私有文件夹
- * scp_info.db和level.xml在每次备份时复制到documents
+ * 数据文件操作工具类
+ * scp_category_v2.db 目录文件，内置在asset中，第一次启动时从asset复制到app数据文件夹使用
+ * scp_detail_v2.db 正文文档离线，下载后放在Documents/scp_download文件夹，检测并复制到app数据文件夹使用
+ * 用户数据scp_info.db和level.xml也备份到documents/scp_download文件夹
  */
 
-class FileUtil(val mContext: Context) {
+class FileUtil(private val mContext: Context) {
 
     companion object {
         private var fileUtil: FileUtil? = null
@@ -31,7 +31,7 @@ class FileUtil(val mContext: Context) {
         var infoDBFilename = "scp_info.db"
         val appFolderName = "scp_download"
         val absPath = Environment.getDataDirectory().absolutePath
-        val pkgName = ScpApplication.context.packageName
+        val pkgName = context.packageName
         val sp = File.separator
         val privatePrefDirPath = "$absPath${sp}data$sp$pkgName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
         val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
@@ -45,6 +45,7 @@ class FileUtil(val mContext: Context) {
         }
     }
 
+
     /**
      * Copies your database from your local assets-folder to the just created
      * empty database in the system folder, from where it can be accessed and
@@ -54,37 +55,25 @@ class FileUtil(val mContext: Context) {
     fun copyCategoryDb() {
         val dbReady = checkDataReady(SCP_DB_NAME)
         if (dbReady) return
-        info("copy db from asset to $privateDbDirPath")
         val am: AssetManager = context.assets
-        // Open your local db as the input stream
-        val myInput: InputStream = am.open(SCP_DB_NAME)
-
-        // Path to the just created empty db
-        //不存在先创建文件夹
-        //不存在先创建文件夹
+        val inp: InputStream = am.open(SCP_DB_NAME)
         val dirPath = File(privateDbDirPath)
-        if (dirPath.mkdir()) {
-            info("创建成功")
-        } else {
-            info("创建失败")
-        }
-        val outFileName: String = privateDbDirPath + SCP_DB_NAME
-        val path = File(outFileName)
-
+        dirPath.mkdir()
+        val outFileName = privateDbDirPath + SCP_DB_NAME
         // Open the empty db as the output stream
-        val myOutput: OutputStream = FileOutputStream(outFileName)
+        val oup = FileOutputStream(outFileName)
+        inp.copyTo(oup)
+        oup.close()
+        inp.close()
+    }
 
-        // transfer bytes from the input file to the output file
-        val buffer = ByteArray(1024)
-        var length: Int
-        while (myInput.read(buffer).also { length = it } > 0) {
-            myOutput.write(buffer, 0, length)
+    fun checkDetailDb() {
+        val dbReady = checkDataReady(DETAIL_DB_NAME)
+        info("dbReady: $dbReady")
+        if (dbReady) {
+            PreferenceUtil.setAppMode(OFFLINE)
+            return
         }
-
-        // Close the streams
-        myOutput.flush()
-        myOutput.close()
-        myInput.close()
     }
 
     /**
@@ -115,19 +104,13 @@ class FileUtil(val mContext: Context) {
         return backUpFile.exists()
     }
 
-    fun checkBackupDataExist(): Boolean {
-        val backUpFile = File(getBackUpFilePath(DETAIL_DB_NAME))
-        return backUpFile.exists() &&
-                backUpFile.lastModified() > PreferenceUtil.getServerLastUpdateTime()
-                && backUpFile.length() > 100 * 1000 * 1000
-    }
 
     /**
      * 检查scp_info.db或pref文件有无备份在Documents/scp_download文件夹
      */
-    fun checkBackUpFileExist(fileName: String): Boolean {
-        val backUpFile = File(getBackUpFilePath(fileName))
-        return backUpFile.exists()
+    private fun checkBackupFileExist(fileName: String): Boolean {
+        val file = File(getBackUpFilePath(fileName))
+        return file.exists()
     }
 
     /**
@@ -150,8 +133,7 @@ class FileUtil(val mContext: Context) {
      * 恢复数据的Dialog
      */
     fun showRestore() {
-        val backUpFile = File(getBackUpFilePath(infoDBFilename))
-        if (backUpFile.exists()) {
+        if (checkBackupFileExist(infoDBFilename)) {
             mContext.alert("检测到本设备有之前保存的用户数据，是否恢复", "恢复") {
                 yesButton {
                     mContext.toast("开始恢复")

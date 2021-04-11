@@ -17,10 +17,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import info.free.scp.SCPConstants
+import info
+import info.free.scp.SCPConstants.PUBLIC_DIR_NAME
 import info.free.scp.ScpApplication
 import kotlinx.io.ByteArrayOutputStream
 import kotlinx.io.IOException
@@ -91,11 +93,47 @@ object Utils {
     }
 
     fun formatDate(time: Long): String {
-        val format =  SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
+        val format = SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
         return format.format(time)
     }
 
     fun formatNow() = formatDate(System.currentTimeMillis())
+
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    fun copyPrivateFileToPublic(context: Context, orgFilePath: String, displayName: String, mimeType: String) {
+        val values = ContentValues()
+        values.put(MediaStore.Files.FileColumns.DISPLAY_NAME, displayName)
+        values.put(MediaStore.Files.FileColumns.TITLE, displayName)
+        values.put(MediaStore.Files.FileColumns.MIME_TYPE, mimeType)
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/" + PUBLIC_DIR_NAME)
+        val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val resolver = context.contentResolver
+        val insertUri = resolver.insert(external, values)
+        var ist: InputStream? = null
+        var ost: OutputStream? = null
+        try {
+            ist = FileInputStream(File(orgFilePath))
+            if (insertUri != null) {
+                ost = resolver.openOutputStream(insertUri)
+            }
+            if (ost != null) {
+                val buffer = ByteArray(4096)
+                var byteCount = 0
+                while (ist.read(buffer).also { byteCount = it } != -1) {
+                    ost.write(buffer, 0, byteCount)
+                }
+            }
+        } catch (e: IOException) {
+        } finally {
+            try {
+                ist?.close()
+                ost?.close()
+            } catch (e: IOException) {
+            }
+        }
+    }
+
 
     /**
      * bitmap保存为一个文件

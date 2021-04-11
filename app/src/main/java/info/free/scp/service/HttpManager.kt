@@ -3,16 +3,7 @@ package info.free.scp.service
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATEST_CREATED
-import info.free.scp.SCPConstants.LATEST_INDEX
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_CANON
-import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP

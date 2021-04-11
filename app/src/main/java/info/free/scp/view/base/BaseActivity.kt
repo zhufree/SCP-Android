@@ -63,6 +63,15 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onDestroy()
     }
 
+    fun requestReadFileTree() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.setType("*/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        startActivityForResult(intent, SCPConstants.RequestCode.REQUEST_PUBLIC_FILE)
+    }
+
     override fun onActivityResult(reqCode: Int, resCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resCode, data)
     }

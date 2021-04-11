@@ -54,7 +54,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                 }
                 currentFragment = homeFragment
             }
-            R.id.navigation_feed -> {
+            R.id.navigation_later -> {
                 if (!laterFragment.isAdded && null == supportFragmentManager
                                 .findFragmentByTag(laterFragment.javaClass.name)) {
                     transaction.add(R.id.flMainContainer, laterFragment, laterFragment.javaClass.name)
@@ -91,15 +91,16 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             if (it.isAdded) {
                 transaction.show(it)
             } else {
-                transaction.add(R.id.flMainContainer, it)
+                transaction.add(R.id.flMainContainer, it, it.javaClass.name)
             }
         } ?: run {
-            transaction.add(R.id.flMainContainer, homeFragment, "home")
+            transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
             currentFragment = homeFragment
         }
         transaction.commit()
         UpdateManager.getInstance(this).checkAppData()
         FileUtil.getInstance(this).copyCategoryDb()
+        FileUtil.getInstance(this).checkDetailDb()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()
@@ -134,6 +135,5 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
         info { "onPermissionsGranted" }
-
     }
 }

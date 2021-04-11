@@ -43,7 +43,7 @@ class ScpDataHelper {
                     // 已读过，重新随机
                     removeIndexes.add(index)
                 } else {
-                    val detailHtml = ScpDatabase.getInstance()?.detailDao()?.getDetail(link)
+                    val detailHtml = DetailDatabase.getInstance().detailDao().getDetail(link)
                     detailHtml?.let {
                         if (it.contains("null") || it.isEmpty()) {
                             removeIndexes.add(index)
@@ -57,7 +57,7 @@ class ScpDataHelper {
                 randomList.removeAt(i)
             }
             val leftCount = 10 - randomList.size
-            val addList = if (typeRange.isEmpty()) scpDao?.getRandomScp(leftCount)
+            val addList = if (typeRange.isEmpty()) scpDao.getRandomScp(leftCount)
             else scpDao?.getRandomScpByType(args[0], args[1], leftCount)
             addList?.let {
                 randomList.addAll(addList)

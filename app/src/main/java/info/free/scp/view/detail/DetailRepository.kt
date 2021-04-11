@@ -9,6 +9,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.bean.*
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
@@ -53,7 +54,7 @@ class DetailRepository {
     }
 
     fun loadOfflineDetail(link: String) {
-        offlineDetail = ScpDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
                 ?: MutableLiveData()
     }
 

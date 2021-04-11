@@ -10,10 +10,11 @@ object SCPConstants {
     const val SCP_DB_NAME = "scp_category_v2.db"
     const val DETAIL_DB_NAME = "scp_detail_v2.db"
     const val INFO_DB_NAME = "scp_info.db"
+    const val PUBLIC_DIR_NAME = "scp_reader"
 
     object AppMode {
-        const val ONLINE = 1
-        const val OFFLINE = 0
+        const val ONLINE = 0
+        const val OFFLINE = 1
     }
 
     object OrderType {
@@ -58,17 +59,6 @@ object SCPConstants {
         const val CONTEST_CN = 111
         const val WANDER = 10
         const val WANDER_CN = 11
-
-        const val JOKE_CN = 22
-        const val SCP_ARCHIVES = 17
-        const val SCP_ABNORMAL = 20
-        const val ABOUT_INFO = 5
-        const val ABOUT_INTRO = 16
-
-
-        const val EVENT = 14
-
-        const val SCP_INTERNATIONAL = 24
     }
 
     object ScpType {
@@ -122,12 +112,12 @@ object SCPConstants {
         const val CATEGORY_TO_DETAIL = 0
         const val REQUEST_FILE_PERMISSION = 1
         const val REQUEST_PICTURE_DIR = 2
+        const val REQUEST_PUBLIC_FILE = 42
     }
 
     const val HISTORY_TYPE = 0
     const val LATER_TYPE = 1
 
-    const val LATEST_INDEX = -1
     const val LATEST_CREATED = -2
     const val LATEST_TRANSLATED = -3
     const val TOP_RATED_ALL = 0

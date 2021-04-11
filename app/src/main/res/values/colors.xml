@@ -16,10 +16,7 @@
     <color name="disabledBgNight">#555</color>
     <color name="toolbarBgNight">#191919</color>
     <color name="itemBgNight">#202020</color>
-    <!--浅色底深色字-->
-    <!--<item name="darkTextNight">#999</item>-->
-    <!--深色底浅色字-->
-    <!--<item name="lightTextNight">#333</item>-->
+
     <color name="unClickBtnNight">#2e317c</color>
     <color name="clickedBtnNight">#1c2938</color>
 

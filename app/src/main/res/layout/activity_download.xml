@@ -36,26 +36,39 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="40dp"
-            android:text="文档离线后支持在无网络情况下看文档（不包括最近更新，最高评分页面）"
+            android:text="文档离线后支持在无网络情况下看文档（不包括最近更新，最高评分页面），全部文档数据多大200M，请在确实需要的情况下再下载"
             android:textColor="?attr/darkText"
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
+        <TextView
             android:id="@+id/tv_go_download"
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="64dp"
-            android:lineSpacingMultiplier="1.2"
-            android:text="点击此处去下载文档，重启app生效"
-            android:textColor="@color/white"
+            android:text="确定要下载？点击此处去下载文档，然后点击下面的按钮选择已下好的数据库文件（scp_detail_v2.db）使用"
+            android:textColor="?attr/darkText"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_offline_notice" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_select_file"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginTop="32dp"
+            android:lineSpacingMultiplier="1.2"
+            android:text="选择数据库文件"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_go_download" />
 
 
         <androidx.appcompat.widget.AppCompatButton
@@ -70,30 +83,6 @@
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_go_download" />
-
-        <!--        <TextView-->
-        <!--            android:id="@+id/tv_mode_notice"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_marginTop="20dp"-->
-        <!--            android:layout_marginEnd="20dp"-->
-        <!--            android:text="全局在线模式"-->
-        <!--            app:layout_constraintEnd_toStartOf="@+id/sw_app_mode"-->
-        <!--            app:layout_constraintHorizontal_chainStyle="packed"-->
-        <!--            app:layout_constraintStart_toStartOf="parent"-->
-        <!--            app:layout_constraintTop_toBottomOf="@id/btn_backup" />-->
-
-        <!--        <Switch-->
-        <!--            android:id="@+id/sw_app_mode"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:checked="false"-->
-        <!--            app:layout_constraintBottom_toBottomOf="@id/tv_mode_notice"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            app:layout_constraintStart_toEndOf="@id/tv_mode_notice"-->
-        <!--            app:layout_constraintTop_toTopOf="@id/tv_mode_notice" />-->
+            app:layout_constraintTop_toBottomOf="@id/btn_select_file" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 </androidx.appcompat.widget.LinearLayoutCompat>

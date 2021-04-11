@@ -7,7 +7,7 @@
         android:title="@string/tab_home" />
 
     <item
-        android:id="@+id/navigation_feed"
+        android:id="@+id/navigation_later"
         android:icon="@drawable/baseline_menu_book_black_24dp"
         android:title="@string/later" />
 

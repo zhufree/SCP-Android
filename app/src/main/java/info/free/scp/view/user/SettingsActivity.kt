@@ -52,11 +52,11 @@ class SettingsActivity : BaseActivity() {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 false
             }
-            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { preference, newValue ->
-                info(newValue.toString())
-                EventUtil.onEvent(context, EventUtil.setListItemCount, newValue.toString())
-                true
-            }
+//            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { preference, newValue ->
+//                info(newValue.toString())
+//                EventUtil.onEvent(context, EventUtil.setListItemCount, newValue.toString())
+//                true
+//            }
         }
     }
 }

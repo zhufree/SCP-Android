@@ -136,7 +136,7 @@
             android:name=".view.draft.DraftListActivity"
             android:screenOrientation="nosensor" />
         <activity
-            android:name=".view.download.DownloadActivity"
+            android:name=".view.user.DownloadActivity"
             android:screenOrientation="nosensor" />
 
         <meta-data

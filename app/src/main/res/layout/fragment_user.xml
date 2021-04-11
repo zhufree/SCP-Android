@@ -120,7 +120,6 @@
                 android:id="@+id/gl_setting_item"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="8dp"
                 android:layout_marginTop="40dp"
                 android:background="@drawable/bg_entry_box"
                 android:columnCount="4"
@@ -133,36 +132,43 @@
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_draft"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="草稿箱" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_game"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="游戏列表" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_meal"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="恰饭屋" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_portal"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="传送门" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_read"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="阅读设置" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_data"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="文档缓存" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_use"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="app使用说明" />
 
@@ -172,6 +178,7 @@
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_query"
+                    android:layout_width="match_parent"
                     app:count="4"
                     app:entryTitle="用户问卷" />
             </GridLayout>

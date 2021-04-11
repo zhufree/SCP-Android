@@ -44,20 +44,18 @@
     <string name="title_scp_int">SCP国际</string>
 
     <!--app info-->
-    <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
+    <string name="contact_qq_group">qq群：805194504</string>
+    <string name="scp_wiki_site">SCP中分官网</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
-        想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.2.0更新内容\n
-1.正文增加查看评论功能（因中分官网限制未登录状态下不能看评论，此功能暂时不可使用）\n
-2.在线模式下可以使用直达，随机等功能\n
-3.公告等部分细节优化\n
-4.繁简设置转移到【我的】-【阅读设置】中\n
-5.修复部分vivo手机点击正文闪退的bug（如果仍然闪退，建议换手机（划掉））\n
-6.修复部分手机首页不显示入口的bug\n
-7.修复点击我的闪退的bug\n
+        想要详细了解scp基金会请访问官网。\n\n
+        v0.2.5更新内容\n
+1.大范围UI优化\n
+2.增加GOI格式，艺术作品，放逐者图书馆部分数据\n
+3.内置目录数据，简化数据离线流程\n
+4.修复一些bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
         以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
-    <string name="data_notice">"从0.3.0版本开始，目录数据由app内置，随app升级更新，正文默认在线阅读，如网络不便需要离线" +
+    <string name="data_notice">"从0.2.5版本开始，目录数据由app内置，随app升级更新，正文默认在线阅读，如网络不便需要离线" +
                     "请在【我的-文档离线】中下载.\n注意：1.在线阅读模式的数据仍和数据库相同，并非和官网完全同步，具体同步日期可在离线页面查看。" +
                     "2.如需直接访问官网，请使用正文页面菜单中的“在线模式”或“在浏览器中打开”，强制访问网页"</string>
 
@@ -120,7 +118,7 @@
     <string name="dark_mode">夜间模式</string>
     <string name="day_mode">日间模式</string>
     <string name="read_settings">阅读设置</string>
-    <string name="download_settings">数据下载及备份</string>
+    <string name="download_settings">文档缓存</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="about">关于</string>
     <string name="instructions">app使用说明</string>

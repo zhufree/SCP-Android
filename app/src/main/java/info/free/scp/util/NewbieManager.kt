@@ -1,11 +1,8 @@
 package info.free.scp.util
 
-import info.free.scp.ScpApplication
 import info.free.scp.view.base.BaseActivity
-import info.free.scp.view.download.DownloadActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector
-import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.yesButton
 
 /**

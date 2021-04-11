@@ -18,13 +18,10 @@ import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -33,9 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
-import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
-import info.free.scp.ScpApplication
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -45,7 +40,6 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
-import info.free.scp.view.download.DownloadActivity
 import info.free.scp.view.draft.DraftListActivity
 import info.free.scp.view.eatroom.MealListActivity
 import info.free.scp.view.game.GameListActivity

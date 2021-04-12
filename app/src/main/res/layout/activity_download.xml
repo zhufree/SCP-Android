@@ -46,9 +46,9 @@
         <TextView
             android:id="@+id/tv_go_download"
             android:layout_width="0dp"
-            android:layout_height="48dp"
+            android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:text="确定要下载？点击此处去下载文档，然后点击下面的按钮选择已下好的数据库文件（scp_detail_v2.db）使用"
             android:textColor="?attr/darkText"
             android:textSize="16sp"
@@ -78,11 +78,25 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
-            android:text="备份用户数据（历史记录，收藏等）"
+            android:text="选择文件夹备份数据（历史记录，收藏等）"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_select_file" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_restore"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="从文件恢复"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_backup" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

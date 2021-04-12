@@ -85,14 +85,6 @@ object PreferenceUtil {
         return getBooleanValue(APP_SP, "show_meal")
     }
 
-    fun setShowWh(show: Boolean) {
-        setBooleanValue(APP_SP, "show_wh", show)
-    }
-
-    fun getShowWh(): Boolean {
-        return getBooleanValue(APP_SP, "show_wh")
-    }
-
     // 设置全局在线模式or离线模式
     fun setAppMode(mode: Int) {
         setIntValue(APP_SP, "app_mode", mode)
@@ -116,35 +108,6 @@ object PreferenceUtil {
 
     fun getOldMealCount(): Int {
         return getIntValue(APP_SP, "old_meal_count")
-    }
-
-    /**
-     * 分库数据文件下载链接
-     * db_link_0/1/2/3/4/all
-     */
-
-    // 新版本，只下一个数据库
-    fun setDownloadLink(link: String) {
-        setStringValue(DOWNLOAD_SP, "db_link", link)
-    }
-
-    fun getDownloadLink(): String {
-        return getStringValue(DOWNLOAD_SP, "db_link", "http://cdn.zhufree.fun/scp_data.db")
-    }
-
-    /**
-     * 数据更新时间相关
-     */
-    fun getDetailLastLoadTime(): Long {
-        return getLongValue(DOWNLOAD_SP, "load_db_time")
-    }
-
-    fun setDetailLastLoadTime(time: Long) {
-        setLongValue(DOWNLOAD_SP, "load_db_time", time)
-    }
-
-    fun clearDownloadPref() {
-        getPrivateSharedPreference(DOWNLOAD_SP)?.edit()?.clear()?.apply()
     }
 
 

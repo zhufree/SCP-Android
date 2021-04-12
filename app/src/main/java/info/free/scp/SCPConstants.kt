@@ -10,6 +10,7 @@ object SCPConstants {
     const val SCP_DB_NAME = "scp_category_v2.db"
     const val DETAIL_DB_NAME = "scp_detail_v2.db"
     const val INFO_DB_NAME = "scp_info.db"
+    const val PREF_NAME = "level.xml"
     const val PUBLIC_DIR_NAME = "scp_reader"
 
     object AppMode {
@@ -112,7 +113,9 @@ object SCPConstants {
         const val CATEGORY_TO_DETAIL = 0
         const val REQUEST_FILE_PERMISSION = 1
         const val REQUEST_PICTURE_DIR = 2
-        const val REQUEST_PUBLIC_FILE = 42
+        const val REQUEST_PUBLIC_FILE = 3
+        const val REQUEST_BACKUP_DIR = 4
+        const val REQUEST_RESTORE_DIR = 5
     }
 
     const val HISTORY_TYPE = 0

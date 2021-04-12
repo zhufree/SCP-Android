@@ -24,6 +24,13 @@ fun getPublicFileUri(context: Context, dirName: String, fileName: String, mimeTy
     info(insertUri.toString())
 }
 
+
+fun privatePictureDir(context: Context, fileName: String): File {
+    val dir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val file = File("${dir?.path}${File.separator}$fileName")
+    return file
+}
+
 @Throws(IOException::class)
 fun copyFileFromUri(context: Context, fileUri: Uri, outputFile: File): Boolean {
     val resolver = context.contentResolver
@@ -32,6 +39,19 @@ fun copyFileFromUri(context: Context, fileUri: Uri, outputFile: File): Boolean {
     inputStream?.copyTo(outputStream)
     inputStream?.close()
     outputStream.close()
+    return true
+}
+
+@Throws(IOException::class)
+fun copyFileToUri(context: Context, inputFile: File, outputUri: Uri): Boolean {
+    val resolver = context.contentResolver
+    val inputStream = inputFile.inputStream()
+    val outputStream = resolver.openOutputStream(outputUri)
+    outputStream?.let {
+        inputStream.copyTo(outputStream)
+    }
+    inputStream.close()
+    outputStream?.close()
     return true
 }
 

@@ -4,10 +4,7 @@ package info.free.scp.view.user
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment.DIRECTORY_PICTURES
-import android.os.storage.StorageManager
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,7 +13,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -27,12 +23,9 @@ import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
 import info.free.scp.ScpApplication
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
+import info.free.scp.util.*
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
-import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
@@ -42,13 +35,11 @@ import info.free.scp.view.later.LaterViewModel
 import info.free.scp.view.portal.PortalActivity
 import info.free.scp.view.widget.HistoryListItem
 import kotlinx.android.synthetic.main.fragment_user.*
-import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.selector
 import org.jetbrains.anko.support.v4.startActivity
-import java.io.FileInputStream
 import java.util.*
 
 
@@ -114,16 +105,8 @@ class UserFragment : BaseFragment() {
         tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
                 "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
-        iv_user_head.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            /* 开启Pictures画面Type设定为image */
-            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-            /* 使用Intent.ACTION_GET_CONTENT这个Action */
-            /* 取得相片后返回本画面 */
-            startActivityForResult(intent, 1)
-        }
+
         tv_nickname.setOnClickListener { checkUserInfo() }
-        getHeadImg()
         if (PreferenceUtil.getShowMeal()) {
             st_meal.visibility = VISIBLE
         }
@@ -147,6 +130,15 @@ class UserFragment : BaseFragment() {
         Glide.with(this).load(R.drawable.author_head)
                 .apply(RequestOptions.bitmapTransform(RoundedCorners(dip(25))))
                 .into(iv_author_head)
+
+        setHeadImg()
+
+        iv_user_head.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
+            startActivityForResult(intent, REQUEST_PICTURE_DIR)
+        }
+
     }
 
     private fun setSettingEvent() {
@@ -190,17 +182,21 @@ class UserFragment : BaseFragment() {
     }
 
 
-    private fun getHeadImg() {
-        if (Build.VERSION.SDK_INT > 23) {
-            val sm = context?.getSystemService(StorageManager::class.java)
-            val volume = sm?.primaryStorageVolume
-            volume?.createAccessIntent(DIRECTORY_PICTURES)?.also {
-                startActivityForResult(it, REQUEST_PICTURE_DIR)
-            }
-        } else {
-            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
-                    + "/scp_user_head.jpg"))
+    private fun setHeadImg() {
+        val imgFile = privatePictureDir(this.context!!, "user_head.jpg")
+        if (imgFile.exists()) {
+            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
         }
+//        if (Build.VERSION.SDK_INT > 23) {
+//            val sm = context?.getSystemService(StorageManager::class.java)
+//            val volume = sm?.primaryStorageVolume
+//            volume?.createAccessIntent(DIRECTORY_PICTURES)?.also {
+//                startActivityForResult(it, REQUEST_PICTURE_DIR)
+//            }
+//        } else {
+//            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
+//                    + "/scp_user_head.jpg"))
+//        }
     }
 
     private fun checkUserInfo() {
@@ -270,37 +266,42 @@ class UserFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        data?.let {
-            val uri = data.data
-            uri?.let {
-                if (requestCode == REQUEST_PICTURE_DIR) {
-                    context?.contentResolver?.takePersistableUriPermission(uri,
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION
-                                    or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                    val df = DocumentFile.fromTreeUri(context!!, uri)
-                    val scpDir = df?.findFile("SCP")
-                    val picPath = scpDir?.findFile("scp_user_head.jpg")
-                    picPath?.let {
-                        val pfd = context?.contentResolver?.openFileDescriptor(picPath.uri, "r")
-                        pfd?.let {
-                            val fileInputStream = FileInputStream(pfd.fileDescriptor)
-                            iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
-                            fileInputStream.close()
-                        }
-                    }
+        if (requestCode == REQUEST_PICTURE_DIR) {
+            data?.let {
+                val uri = data.data
+                uri?.let {
+                    val imgFile = privatePictureDir(this.context!!, "user_head.jpg")
+                    copyFileFromUri(this.context!!, uri, imgFile)
+                    setHeadImg()
 
-                } else {
-                    try {
-                        val file = Utils.getFileByUri(uri, context!!)
-                        file?.let { f ->
-                            Utils.save(f, "scp_user_head")
-                            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
-                        }
-                    } catch (e: Exception) {
-                        Log.e("Exception", e.message, e)
-                    }
+//                    val df = DocumentFile.fromTreeUri(context!!, uri)
+//                    val scpDir = df?.findFile("SCP")
+//                    val picPath = scpDir?.findFile("scp_user_head.jpg")
+//                    picPath?.let {
+//                        val pfd = context?.contentResolver?.openFileDescriptor(picPath.uri, "r")
+//                        pfd?.let {
+//                            val fileInputStream = FileInputStream(pfd.fileDescriptor)
+//                            iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
+//                            fileInputStream.close()
+//                        }
+//                    }
                 }
             }
+        } else {
+//            data?.let {
+//                val uri = data.data
+//                uri?.let {
+//                    try {
+//                        val file = Utils.getFileByUri(uri, context!!)
+//                        file?.let { f ->
+//                            Utils.save(f, "scp_user_head")
+//                            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
+//                        }
+//                    } catch (e: Exception) {
+//                        Log.e("Exception", e.message, e)
+//                    }
+//                }
+//            }
         }
         super.onActivityResult(requestCode, resultCode, data)
         Log.i("user", "requestCode = $requestCode")
@@ -308,14 +309,6 @@ class UserFragment : BaseFragment() {
 
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
         fun newInstance(): UserFragment {
             return UserFragment()
         }

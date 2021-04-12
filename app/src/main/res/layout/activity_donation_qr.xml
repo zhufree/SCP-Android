@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="30dp"
-        android:text="@string/introduction"
+        android:text="@string/donation_introduction"
         android:textColor="#B9B9B9"
         android:textSize="14sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_donate"

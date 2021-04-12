@@ -31,6 +31,7 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
+import info.free.scp.ScpApplication
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -157,9 +158,7 @@ class UserFragment : BaseFragment() {
 //            ib_theme.background = (if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
         }
 
-//        if (ScpApplication.channelName == "GooglePlay") {
-//            cl_donation.visibility = GONE
-//        }
+
         st_draft.onClick = {
             startActivity<DraftListActivity>()
         }
@@ -179,11 +178,12 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
-//        st_copyright.onClick = {
-//            showCopyright()
-//        } TODO
         btn_donation.setOnClickListener {
-            startActivity<DonationQrActivity>()
+            if (ScpApplication.channelName == "GooglePlay") {
+                startActivity<DonationActivity>()
+            } else {
+                startActivity<DonationQrActivity>()
+            }
         }
         st_query.onClick = {
             val updateIntent = Intent()

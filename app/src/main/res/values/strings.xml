@@ -166,12 +166,14 @@
     <string name="wechat_qr">微信</string>
     <string name="alipay_qr">支付宝</string>
     <string name="go_afdian">爱发电</string>
+    <string name="go_mianbaoduo">面包多</string>
     <string name="show_ad">看广告支持开发者</string>
     <string name="donation_notice">保存二维码到相册，扫码打赏</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
     <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>
     <string name="alipay">支付宝</string>
-    <string name="introduction">SCP基金会是我独立开发的作品。目前服务器的费用是我自掏腰包在支撑，有闲钱的朋友们可以转账支持下。我会做得更好，谢谢！</string>
+    <string name="donation_introduction">SCP基金会是我独立开发的作品。这两年的数据托管和服务器的费用是我自掏腰包在支撑，
+        有闲钱的朋友们可以支持下，也可以打钱催更或者新功能，捐赠时留名我会在感谢页上加上你的名字！</string>
 
     <!--草稿-->
     <string name="empty_draft">还没有草稿，本地草稿仅供记录，正式编写scp请上沙盒站</string>

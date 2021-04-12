@@ -35,7 +35,7 @@ class FileUtil(private val mContext: Context) {
         val sp = File.separator
         val privatePrefDirPath = "$absPath${sp}data$sp$pkgName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
         val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
-        val documentDirPath = "${
+        val oldDocumentDirPath = "${
             Environment.getExternalStoragePublicDirectory(
                     Environment.DIRECTORY_DOCUMENTS)
         }$sp$appFolderName$sp"
@@ -83,14 +83,14 @@ class FileUtil(private val mContext: Context) {
      */
     private fun getBackUpFilePath(fileName: String): String {
         checkBackupDir()
-        return "$documentDirPath$fileName"
+        return "$oldDocumentDirPath$fileName"
     }
 
     /**
      * 检查备份文件是否存在，如果没有就创建
      */
     private fun checkBackupDir() {
-        val documentDir = File(documentDirPath)
+        val documentDir = File(oldDocumentDirPath)
         if (!documentDir.exists()) {
             documentDir.mkdirs()
         }

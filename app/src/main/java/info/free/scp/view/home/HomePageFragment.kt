@@ -18,7 +18,6 @@ import info.free.scp.view.feed.FeedActivity
 import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
 import info.free.scp.view.widget.FeedArticleListItem
-import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
@@ -35,6 +34,7 @@ class HomePageFragment : BaseFragment() {
         ViewModelProvider(this)
                 .get(FeedListViewModel::class.java)
     }
+    private val feedItemList = mutableListOf<FeedArticleListItem>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -101,10 +101,12 @@ class HomePageFragment : BaseFragment() {
             fi.latestCreate.forEach {
                 val newFeedItem = FeedArticleListItem(context!!, it)
                 ll_latest_cn.addView(newFeedItem)
+                feedItemList.add(newFeedItem)
             }
             fi.latestTranslate.forEach {
                 val newFeedItem = FeedArticleListItem(context!!, it)
                 ll_latest_translate.addView(newFeedItem)
+                feedItemList.add(newFeedItem)
             }
         })
         feedVm.loadFeedIndex()
@@ -117,8 +119,14 @@ class HomePageFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-//        cd_notice_container?.setBackgroundColor(ThemeUtil.containerBg)
-//        tv_home_notice?.setTextColor(ThemeUtil.darkText)
+        cl_home_page_container?.setBackgroundColor(ThemeUtil.containerBg)
+        arrayOf(gl_entry, cl_recent_list, cl_recent_translate_list).forEach {
+            it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
+        }
+        arrayOf(ei_scp, ei_scp_cn, ei_scp_story, ei_scp_wander).forEach { it.refreshTheme() }
+        feedItemList.forEach { it.refreshTheme() }
+        cv_notice?.setBackgroundColor(ThemeUtil.itemBg)
+        tv_notice?.setTextColor(ThemeUtil.darkText)
         ei_scp?.refreshTheme()
     }
 

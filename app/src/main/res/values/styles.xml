@@ -27,7 +27,8 @@
         <!--页面容器背景色（白）-->
         <item name="containerBg">@color/containerBg</item>
         <!--条目背景色（浅蓝）-->
-        <item name="itemBg">@color/itemBgWhite</item>
+        <item name="itemBoxBg">@color/white</item>
+        <item name="accentColor">@color/colorAccent</item>
         <!--浅色底深色字-->
         <item name="darkText">@color/darkText</item>
         <!--深色底浅色字-->
@@ -44,13 +45,14 @@
     <style name="NightTheme" parent="AppTheme">
         <item name="toolbarBg">@color/colorPrimaryDark</item>
         <item name="containerBg">@color/containerBgNight</item>
-        <item name="itemBg">@color/itemBgNight</item>
+        <item name="itemBoxBg">@color/itemBgNight</item>
+        <item name="accentColor">@color/colorAccent</item>
         <item name="darkText">@color/darkTextNight</item>
         <item name="mediumText">@color/mediumText</item>
         <item name="lightText">@color/lightTextGray</item>
         <item name="disabledBg">@color/disabledBgNight</item>
         <item name="linkBlue">@color/linkBlue</item>
         <item name="todoYellow">@color/todoYellow</item>
-        <item name="dividerGray">@color/dividerGray</item>
+        <item name="dividerGray">@color/dividerGrayNight</item>
     </style>
 </resources>

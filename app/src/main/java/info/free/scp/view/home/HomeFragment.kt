@@ -1,6 +1,7 @@
 package info.free.scp.view.home
 
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,11 +9,14 @@ import android.view.ViewGroup
 import com.google.android.material.tabs.TabLayout
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryFragment
 import info.free.scp.view.category.ScpListFragment
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_home.*
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundDrawable
 
 
 /**
@@ -50,7 +54,10 @@ class HomeFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-
+        tab_home?.background = ColorDrawable(ThemeUtil.itemBg)
+        tab_home?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+        tab_home?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+        fragmentList.forEach { it.refreshTheme() }
     }
 
 

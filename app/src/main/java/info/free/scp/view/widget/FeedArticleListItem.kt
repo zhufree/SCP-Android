@@ -7,7 +7,8 @@ import info.free.scp.R
 import info.free.scp.bean.FeedModel
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.layout_article_item.view.*
+import kotlinx.android.synthetic.main.layout_feed_article_item.view.*
+import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.startActivity
 
 class FeedArticleListItem : ConstraintLayout {
@@ -32,11 +33,14 @@ class FeedArticleListItem : ConstraintLayout {
     }
 
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_article_item, this)
+        inflate(context, R.layout.layout_feed_article_item, this)
     }
 
-
     fun refreshTheme() {
+        backgroundColor = ThemeUtil.itemBg
         tv_feed_item_title.setTextColor(ThemeUtil.darkText)
+        tv_feed_item_time.setTextColor(ThemeUtil.mediumText)
+        tv_feed_item_rank.setTextColor(ThemeUtil.mediumText)
+        v_feed_divider.backgroundColor = ThemeUtil.dividerGray
     }
 }

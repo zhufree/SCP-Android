@@ -16,7 +16,7 @@
             android:id="@+id/app_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?android:attr/actionBarSize"
-            android:background="@color/colorPrimaryDark"
+            android:background="?attr/toolbarBg"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:title="@string/instructions" />
@@ -44,7 +44,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/contact_qq_group"
-                android:textColor="?attr/lightText"
+                android:textColor="?attr/itemBoxBg"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/btn_go_site"
                 app:layout_constraintStart_toStartOf="parent"
@@ -53,11 +53,11 @@
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_go_site"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="@string/scp_wiki_site"
-                android:textColor="?attr/lightText"
+                android:textColor="?attr/itemBoxBg"
                 app:layout_constraintBottom_toBottomOf="@id/btn_qq_group"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/btn_qq_group"
@@ -89,39 +89,29 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_user_notice" />
 
-            <TextView
-                android:id="@+id/tv_version"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:textColor="?attr/darkText"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_show_copyright"
+                android:layout_width="150dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="32dp"
+                android:text="@string/copyright"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_app_notice" />
 
             <TextView
-                android:id="@+id/tv_data_update_time"
-                android:layout_width="0dp"
+                android:id="@+id/tv_version"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:gravity="center"
-                android:textColor="?attr/darkText"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_version" />
-
-            <TextView
-                android:id="@+id/tv_server_data_latest_time"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp"
-                android:gravity="center"
+                android:layout_marginTop="36dp"
+                android:layout_marginBottom="32dp"
                 android:textColor="?attr/darkText"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_data_update_time" />
+                app:layout_constraintTop_toBottomOf="@id/btn_show_copyright" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

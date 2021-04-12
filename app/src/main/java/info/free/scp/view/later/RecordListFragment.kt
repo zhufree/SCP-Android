@@ -86,6 +86,6 @@ class RecordListFragment : BaseFragment() {
     override fun refreshTheme() {
         super.refreshTheme()
         laterAdapter.refreshTheme()
-        refreshList()
+//        refreshList()
     }
 }

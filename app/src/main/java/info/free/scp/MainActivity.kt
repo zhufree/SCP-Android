@@ -117,6 +117,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
 
     override fun refreshTheme() {
+        super.refreshTheme()
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()

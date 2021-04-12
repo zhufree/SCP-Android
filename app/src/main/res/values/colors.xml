@@ -8,7 +8,7 @@
     <color name="containerBgNight">#222</color>
     <!--浅色底深色字-->
     <color name="darkText">#4A4A4A</color>
-    <color name="darkTextNight">#777</color>
+    <color name="darkTextNight">#777777</color>
     <!--深色底浅色字-->
     <color name="mediumText">#666666</color>
     <color name="lightTextGray">#B9B9B9</color>
@@ -23,8 +23,9 @@
     <color name="linkBlue">#4A90E2</color>
     <color name="todoYellow">#F99933</color>
     <color name="dividerGray">#EDEDED</color>
+    <color name="dividerGrayNight">#ABABAB</color>
 
-    <color name="itemBgWhite">#fff</color>
-    <color name="white">#fff</color>
-    <color name="textColor">#333</color>
+    <color name="itemBgWhite">#ffffff</color>
+    <color name="white">#ffffff</color>
+    <color name="textColor">#333333</color>
 </resources>

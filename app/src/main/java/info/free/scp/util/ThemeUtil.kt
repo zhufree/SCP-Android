@@ -23,6 +23,7 @@ object ThemeUtil {
     var toolbarBg: Int = -1
     var containerBg: Int = -1
     var itemBg: Int = -1
+    var accentColor: Int = -1
     var darkText: Int = -1
     var mediumText: Int = -1
     var lightText: Int = -1
@@ -72,7 +73,8 @@ object ThemeUtil {
         val allColor = context.obtainStyledAttributes(intArrayOf(
                 R.attr.toolbarBg,
                 R.attr.containerBg,
-                R.attr.itemBg,
+                R.attr.accentColor,
+                R.attr.itemBoxBg,
                 R.attr.darkText,
                 R.attr.mediumText,
                 R.attr.lightText,
@@ -83,14 +85,15 @@ object ThemeUtil {
         ))
         toolbarBg = allColor.getColor(0, Color.WHITE)
         containerBg = allColor.getColor(1, Color.WHITE)
-        itemBg = allColor.getColor(2, Color.WHITE)
-        darkText = allColor.getColor(3, Color.WHITE)
-        mediumText = allColor.getColor(4, Color.WHITE)
-        lightText = allColor.getColor(5, Color.WHITE)
-        disabledBg = allColor.getColor(6, Color.WHITE)
-        linkBlue = allColor.getColor(7, Color.WHITE)
-        todoYellow = allColor.getColor(8, Color.WHITE)
-        dividerGray = allColor.getColor(9, Color.WHITE)
+        accentColor = allColor.getColor(2, Color.WHITE)
+        itemBg = allColor.getColor(3, Color.WHITE)
+        darkText = allColor.getColor(4, Color.WHITE)
+        mediumText = allColor.getColor(5, Color.WHITE)
+        lightText = allColor.getColor(6, Color.WHITE)
+        disabledBg = allColor.getColor(7, Color.WHITE)
+        linkBlue = allColor.getColor(8, Color.WHITE)
+        todoYellow = allColor.getColor(9, Color.WHITE)
+        dividerGray = allColor.getColor(10, Color.WHITE)
         allColor.recycle()
     }
 

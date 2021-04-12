@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:textColor="?attr/lightText"
+        android:textColor="?attr/mediumText"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@id/tv_feed_item_title"
         app:layout_constraintTop_toBottomOf="@id/tv_feed_item_title" />
@@ -33,6 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:textColor="?attr/mediumText"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -44,6 +45,7 @@
     <!--        android:text="编号：SCP-CN-1794 等级：Eclid"/>-->
 
     <View
+        android:id="@+id/v_feed_divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginStart="16dp"

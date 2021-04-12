@@ -155,9 +155,7 @@ class UserFragment : BaseFragment() {
     private fun setSettingEvent() {
         ib_theme.setOnClickListener {
             ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
-//            ib_theme.background = (if (ThemeUtil.currentTheme == 1) "日间模式" else "夜间模式")
         }
-
 
         st_draft.onClick = {
             startActivity<DraftListActivity>()
@@ -194,48 +192,6 @@ class UserFragment : BaseFragment() {
         }
     }
 
-    private fun showCopyright() {
-        val copyrightView = LayoutInflater.from(activity).inflate(R.layout.layout_dialog_copyright, null)
-        val copySpan1 = SpannableString(getString(R.string.copyright_notice_1))
-        val copySpan2 = SpannableString(getString(R.string.copyright_notice_2))
-        val copySpan3 = SpannableString(getString(R.string.copyright_notice_3))
-        val startIndex1 = copySpan1.indexOf("http")
-        val startIndex2 = copySpan2.indexOf("http")
-        val startIndex3 = copySpan3.indexOf("http")
-        copySpan1.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/", activity), startIndex1,
-                copySpan1.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        copySpan2.setSpan(CopySpan("https://creativecommons.org/licenses/by-sa/3.0/deed.zh", activity), startIndex2,
-                copySpan2.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        copySpan3.setSpan(CopySpan("http://scp-wiki-cn.wikidot.com/licensing-guide", activity), startIndex3,
-                copySpan3.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        copyrightView.tv_copyright_1.text = copySpan1
-        copyrightView.tv_copyright_2.text = copySpan2
-        copyrightView.tv_copyright_3.text = copySpan3
-        copyrightView.tv_copyright_1.movementMethod = LinkMovementMethod.getInstance()
-        copyrightView.tv_copyright_2.movementMethod = LinkMovementMethod.getInstance()
-        copyrightView.tv_copyright_3.movementMethod = LinkMovementMethod.getInstance()
-        val copyrightDialog = AlertDialog.Builder(activity)
-                .setTitle("版权说明")
-                .setView(copyrightView) // 设置显示的view
-                .setPositiveButton("OK") { _, _ -> }
-                .create()
-// 因为后面要通过dialog获取button，此时要单独获取dialog对象，然后手动show()
-        copyrightDialog.show()
-// 获取button并设置点击事件
-        copyrightDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            copyrightDialog.dismiss()
-        }
-    }
-
-    class CopySpan(val url: String, val activity: androidx.fragment.app.FragmentActivity?) : ClickableSpan() {
-        override fun onClick(widget: View) {
-            val copyrightIntent = Intent()
-            copyrightIntent.action = "android.intent.action.VIEW"
-            val updateUrl = Uri.parse(url)
-            copyrightIntent.data = updateUrl
-            activity?.startActivity(copyrightIntent)
-        }
-    }
 
     private fun getHeadImg() {
         if (Build.VERSION.SDK_INT > 23) {
@@ -247,7 +203,6 @@ class UserFragment : BaseFragment() {
         } else {
             iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
                     + "/scp_user_head.jpg"))
-
         }
     }
 

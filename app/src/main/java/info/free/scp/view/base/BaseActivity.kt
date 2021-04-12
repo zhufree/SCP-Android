@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -37,8 +38,9 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         ThemeUtil.setTheme(this)
         registerBroadCastReceivers()
-        window.navigationBarColor = ThemeUtil.toolbarBg
+        window.statusBarColor = ThemeUtil.toolbarBg
     }
+
 
     public override fun onResume() {
         MobclickAgent.onResume(this)
@@ -87,9 +89,10 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(SCPConstants.BroadCastAction.ACTION_CHANGE_THEME))
     }
 
-    open fun refreshTheme(){
+    open fun refreshTheme() {
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
-        window.navigationBarColor = ThemeUtil.toolbarBg
+        window.statusBarColor = ThemeUtil.toolbarBg
+        window.navigationBarColor = ThemeUtil.containerBg
     }
 
 

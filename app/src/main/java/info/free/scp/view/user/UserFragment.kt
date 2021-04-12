@@ -1,8 +1,6 @@
 package info.free.scp.view.user
 
 
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -11,10 +9,6 @@ import android.os.Bundle
 import android.os.Environment.DIRECTORY_PICTURES
 import android.os.storage.StorageManager
 import android.provider.MediaStore
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -106,6 +100,8 @@ class UserFragment : BaseFragment() {
                 .get(LaterViewModel::class.java)
     }
 
+    private val historyItemList = mutableListOf<HistoryListItem>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
@@ -143,6 +139,7 @@ class UserFragment : BaseFragment() {
                     startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
                 }
                 ll_history_container.addView(newItem)
+                historyItemList.add(newItem)
             }
         }
         setSettingEvent()
@@ -259,11 +256,17 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        tv_nickname?.setTextColor(ThemeUtil.darkText)
-        tv_data_desc?.setTextColor(resources.getColor(R.color.colorAccent))
-        arrayOf(st_draft, st_game, st_meal, st_portal, st_read, st_data, st_use,
-//                st_copyright,
-                st_query).forEach { it?.refreshTheme() }
+        arrayOf(tv_history_list_head, tv_nickname).forEach {
+            it?.setTextColor(ThemeUtil.darkText)
+        }
+        tv_job?.setTextColor(ThemeUtil.mediumText)
+        arrayOf(ll_history_container, gl_setting_item).forEach {
+            it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
+        }
+        arrayOf(st_draft, st_data, st_game, st_meal, st_portal, st_query, st_read, st_use).forEach {
+            it?.refreshTheme()
+        }
+        historyItemList.forEach { it.refreshTheme() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

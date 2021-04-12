@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import info.free.scp.R
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.databinding.ItemLikeBinding
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
 
 class LikeListAdapter : ListAdapter<ScpLikeModel, LikeListAdapter.LikeHolder>(LaterDiffCallback()) {
@@ -63,9 +65,9 @@ class LikeListAdapter : ListAdapter<ScpLikeModel, LikeListAdapter.LikeHolder>(La
         }
 
         fun refreshTheme() {
-            //TODO
-//            binding.clFeedContainer.backgroundColor = ThemeUtil.itemBg
-//            binding.tvFeedTitle.setTextColor(ThemeUtil.darkText)
+            binding.clLikeContainer.background =
+                    ThemeUtil.getDrawable(binding.clLikeContainer.context, R.drawable.bg_entry_box)
+            binding.tvLikeItemTitle.setTextColor(ThemeUtil.darkText)
         }
     }
 

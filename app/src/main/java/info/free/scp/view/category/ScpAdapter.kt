@@ -32,14 +32,15 @@ import org.jetbrains.anko.*
  */
 
 class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()) {
-    var currentScrollPosition = -1
-    val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    val recordDao = AppInfoDatabase.getInstance().readRecordDao()
-
+    private var currentScrollPosition = -1
+    private val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val holderList = mutableListOf<ScpHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {
-        return ScpHolder(ItemDocBinding.inflate(
+        val newHolder = ScpHolder(ItemDocBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
+        holderList.add(newHolder)
+        return newHolder
     }
 
 
@@ -50,6 +51,10 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
             itemView.tag = scp
             refreshTheme()
         }
+    }
+
+    fun refreshTheme() {
+        holderList.forEach { it.refreshTheme() }
     }
 
     private fun createOnClickListener(scp: ScpModel, position: Int): View.OnClickListener {
@@ -153,6 +158,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
 
         fun refreshTheme() {
             binding.tvDocTitle.setTextColor(ThemeUtil.darkText)
+            binding.clDocItem.background = ThemeUtil.getDrawable(binding.clDocItem.context, R.drawable.bg_entry_box)
         }
     }
 

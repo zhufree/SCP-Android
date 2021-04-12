@@ -77,10 +77,13 @@ class ScpListFragment : BaseFragment() {
         docAdapter.submitList(docList)
     }
 
+    override fun refreshTheme() {
+        super.refreshTheme()
+        docAdapter.refreshTheme()
+    }
 
     override fun onResume() {
         super.onResume()
-        refreshTheme()
         val docList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(docList)
     }

@@ -22,6 +22,7 @@ import kotlinx.android.synthetic.main.fragment_category.*
  */
 class CategoryFragment : BaseFragment() {
     private var entryType = -1
+    private var categoryAdapter: CategoryAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_category, container, false)
@@ -55,12 +56,17 @@ class CategoryFragment : BaseFragment() {
                 listOf("")
             }
         }
-        val categoryAdapter = CategoryAdapter(getSaveType())
+        categoryAdapter = CategoryAdapter(getSaveType())
         rv_category_list.adapter = categoryAdapter
-        categoryAdapter.submitList(titleList)
+        categoryAdapter?.submitList(titleList)
 
     }
 
+    override fun refreshTheme() {
+        super.refreshTheme()
+        categoryAdapter?.refreshTheme()
+
+    }
 
     override fun onResume() {
         super.onResume()

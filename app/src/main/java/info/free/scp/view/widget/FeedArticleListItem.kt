@@ -41,6 +41,6 @@ class FeedArticleListItem : ConstraintLayout {
         tv_feed_item_title.setTextColor(ThemeUtil.darkText)
         tv_feed_item_time.setTextColor(ThemeUtil.mediumText)
         tv_feed_item_rank.setTextColor(ThemeUtil.mediumText)
-        v_feed_divider.backgroundColor = ThemeUtil.dividerGray
+        v_feed_divider.setBackgroundColor(ThemeUtil.dividerGray)
     }
 }

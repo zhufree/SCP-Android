@@ -123,7 +123,10 @@ class HomePageFragment : BaseFragment() {
         arrayOf(gl_entry, cl_recent_list, cl_recent_translate_list).forEach {
             it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
         }
-        arrayOf(ei_scp, ei_scp_cn, ei_scp_story, ei_scp_wander).forEach { it.refreshTheme() }
+        arrayOf(tv_recent_header, tv_recent_translate_header).forEach {
+            it?.setTextColor(ThemeUtil.darkText)
+        }
+        arrayOf(ei_scp, ei_scp_cn, ei_scp_story, ei_scp_wander).forEach { it?.refreshTheme() }
         feedItemList.forEach { it.refreshTheme() }
         cv_notice?.setBackgroundColor(ThemeUtil.itemBg)
         tv_notice?.setTextColor(ThemeUtil.darkText)

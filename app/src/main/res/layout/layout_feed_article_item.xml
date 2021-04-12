@@ -23,6 +23,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:textColor="?attr/mediumText"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@id/tv_feed_item_title"

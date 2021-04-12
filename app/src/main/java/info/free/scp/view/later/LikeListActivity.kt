@@ -65,7 +65,7 @@ class LikeListActivity : BaseActivity() {
         likeList.addAll(orderedList)
 
         rv_like?.adapter = adapter
-        adapter.submitList(orderedList)
+        adapter.submitList(likeList)
 
         adapter.onLongClick = { pos, item ->
             val selectOption = listOf("删除这条", "转移到其他收藏夹", "我手滑了")

@@ -23,20 +23,14 @@ import java.io.*
  * 用户数据scp_info.db和level.xml也备份到documents/scp_download文件夹
  */
 
-class FileUtil(private val mContext: Context) {
+object FileUtil {
 
-    companion object {
-        private var fileUtil: FileUtil? = null
-        val absPath = Environment.getDataDirectory().absolutePath
-        val pkgName = context.packageName
-        val sp = File.separator
-        val privatePrefDirPath = "$absPath${sp}data$sp$pkgName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
-        val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
-
-        fun getInstance(context: Context): FileUtil {
-            return fileUtil ?: FileUtil(context)
-        }
-    }
+    private var fileUtil: FileUtil? = null
+    val absPath = Environment.getDataDirectory().absolutePath
+    val pkgName = context.packageName
+    val sp = File.separator
+    val privatePrefDirPath = "$absPath${sp}data$sp$pkgName${sp}shared_prefs$sp" // 'data/data/info.free.scp/shared_prefs/'
+    val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
 
 
     /**

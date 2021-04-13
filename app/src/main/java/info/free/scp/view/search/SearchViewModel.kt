@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.bean.*
+import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
     private val scpDao = ScpDatabase.getInstance().scpDao()
+    private val detailDao = DetailDatabase.getInstance().detailDao()
     var titleResult = emptyList<ScpModel>()
     var contentResult: MutableLiveData<List<ScpModel>> = MutableLiveData()
 
@@ -21,13 +23,17 @@ class SearchViewModel : ViewModel() {
                 contentResult.postValue(searchDetail(keyword))
             }
         }
-//        scpDao?.let {
-//        } ?: run {
-//            return emptyList()
-//        }
     }
 
     suspend fun searchDetail(keyword: String): List<ScpModel> {
-        return scpDao.searchScpByDetail(keyword)
+        val linkList = detailDao.searchScpByDetail(keyword)
+        val scpList = mutableListOf<ScpModel>()
+        linkList.forEach {
+            val scp = scpDao.getScpByLink(it)
+            scp?.let { s ->
+                scpList.add(s)
+            }
+        }
+        return scpList
     }
 }

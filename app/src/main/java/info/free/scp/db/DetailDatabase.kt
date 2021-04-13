@@ -25,7 +25,7 @@ abstract class DetailDatabase : RoomDatabase() {
 
         fun getInstance(): DetailDatabase {
             try {
-                if (INSTANCE == null && FileUtil.getInstance(ScpApplication.context).checkDataReady(DETAIL_DB_NAME)) {
+                if (INSTANCE == null && FileUtil.checkDataReady(DETAIL_DB_NAME)) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, DetailDatabase::class.java,
                             DETAIL_DB_NAME)
                             .allowMainThreadQueries()

@@ -71,6 +71,7 @@ class DownloadActivity : BaseActivity() {
                     doAsync {
                         if (copyFileFromUri(this@DownloadActivity, uri, destFile)) {
                             DetailDatabase.getInstance()
+                            FileUtil.checkDetailDb()
                             uiThread {
                                 toast("数据库已加载")
                             }

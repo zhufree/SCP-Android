@@ -100,8 +100,8 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         transaction.commit()
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
-        FileUtil.getInstance(this).copyCategoryDb()
-        FileUtil.getInstance(this).checkDetailDb()
+        FileUtil.copyCategoryDb()
+        FileUtil.checkDetailDb()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()

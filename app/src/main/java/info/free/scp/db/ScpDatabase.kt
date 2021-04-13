@@ -23,7 +23,7 @@ abstract class ScpDatabase : RoomDatabase() {
 
         fun getInstance(): ScpDatabase {
             try {
-                if (INSTANCE == null && FileUtil.getInstance(ScpApplication.context).checkDataReady(SCP_DB_NAME)) {
+                if (INSTANCE == null && FileUtil.checkDataReady(SCP_DB_NAME)) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()
@@ -38,7 +38,7 @@ abstract class ScpDatabase : RoomDatabase() {
         fun getNewInstance() {
             INSTANCE?.close()
             try {
-                if (FileUtil.getInstance(ScpApplication.context).checkDataReady(SCP_DB_NAME)) {
+                if (FileUtil.checkDataReady(SCP_DB_NAME)) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                             .allowMainThreadQueries()

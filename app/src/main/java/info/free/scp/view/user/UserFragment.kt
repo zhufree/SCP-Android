@@ -1,6 +1,7 @@
 package info.free.scp.view.user
 
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -114,17 +115,7 @@ class UserFragment : BaseFragment() {
 //            st_meal.setRight("NEW") TODO
         }
 
-        val historyList = viewModel.getRecordList(HISTORY_TYPE, SCPConstants.OrderType.DESC)
-        historyList.forEachIndexed { index, scp ->
-            if (index < 5) {
-                val newItem = HistoryListItem(this.context!!, scp.title, scp.showTime())
-                newItem.onItemClick = {
-                    startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
-                }
-                ll_history_container.addView(newItem)
-                historyItemList.add(newItem)
-            }
-        }
+        refreshHistoryList()
         setSettingEvent()
 
         Glide.with(this).load(R.drawable.author_head)
@@ -138,7 +129,21 @@ class UserFragment : BaseFragment() {
             intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
             startActivityForResult(intent, REQUEST_PICTURE_DIR)
         }
+    }
 
+    private fun refreshHistoryList() {
+        historyItemList.clear()
+        val historyList = viewModel.getRecordList(HISTORY_TYPE, SCPConstants.OrderType.DESC)
+        historyList.forEachIndexed { index, scp ->
+            if (index < 5) {
+                val newItem = HistoryListItem(this.context!!, scp.title, scp.showTime())
+                newItem.onItemClick = {
+                    startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
+                }
+                ll_history_container.addView(newItem)
+                historyItemList.add(newItem)
+            }
+        }
     }
 
     private fun setSettingEvent() {
@@ -250,6 +255,11 @@ class UserFragment : BaseFragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        refreshHistoryList()
+    }
+
     override fun refreshTheme() {
         super.refreshTheme()
         arrayOf(tv_history_list_head, tv_nickname).forEach {
@@ -266,42 +276,15 @@ class UserFragment : BaseFragment() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_PICTURE_DIR) {
+        if (requestCode == REQUEST_PICTURE_DIR && resultCode == Activity.RESULT_OK) {
             data?.let {
                 val uri = data.data
                 uri?.let {
                     val imgFile = privatePictureDir(this.context!!, "user_head.jpg")
                     copyFileFromUri(this.context!!, uri, imgFile)
                     setHeadImg()
-
-//                    val df = DocumentFile.fromTreeUri(context!!, uri)
-//                    val scpDir = df?.findFile("SCP")
-//                    val picPath = scpDir?.findFile("scp_user_head.jpg")
-//                    picPath?.let {
-//                        val pfd = context?.contentResolver?.openFileDescriptor(picPath.uri, "r")
-//                        pfd?.let {
-//                            val fileInputStream = FileInputStream(pfd.fileDescriptor)
-//                            iv_user_head?.setImageBitmap(BitmapFactory.decodeStream(fileInputStream))
-//                            fileInputStream.close()
-//                        }
-//                    }
                 }
             }
-        } else {
-//            data?.let {
-//                val uri = data.data
-//                uri?.let {
-//                    try {
-//                        val file = Utils.getFileByUri(uri, context!!)
-//                        file?.let { f ->
-//                            Utils.save(f, "scp_user_head")
-//                            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(f.path))
-//                        }
-//                    } catch (e: Exception) {
-//                        Log.e("Exception", e.message, e)
-//                    }
-//                }
-//            }
         }
         super.onActivityResult(requestCode, resultCode, data)
         Log.i("user", "requestCode = $requestCode")

@@ -41,8 +41,6 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")
     fun searchScpByTitle(keyword: String): List<ScpItemModel>
 
-    @Query("SELECT * FROM scps as scp left join scp_detail as detail on scp.link = detail.link WHERE detail.detail LIKE :keyword;")
-    suspend fun searchScpByDetail(keyword: String): List<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE scp_type = :type1 OR scp_type = :type2 ORDER BY random() LIMIT :count;")
     fun getRandomScpByType(type1: String, type2: String, count: Int): Array<ScpItemModel>

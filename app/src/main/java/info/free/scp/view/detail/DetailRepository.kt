@@ -35,7 +35,6 @@ class DetailRepository {
 
     fun setScpReadInfo() {
         scp.value?.let {
-            it as ScpModel
             ScpDataHelper.getInstance().insertViewListItem(it.link, it.title, SCPConstants.HISTORY_TYPE)
             AppInfoDatabase.getInstance().readRecordDao().delete(it.link, SCPConstants.LATER_TYPE)
             scpLikeInfo = likeDao.getLiveInfoByLink(it.link)
@@ -44,7 +43,6 @@ class DetailRepository {
 
     fun setScpLikeInfo() {
         scp.value?.let {
-            it as ScpModel
             if (scpLikeInfo?.value == null) {
                 val likeInfo = ScpLikeModel(it.link, it.title, false, hasRead = false, boxId = 0)
                 info("save new like info:${likeInfo}")
@@ -54,7 +52,7 @@ class DetailRepository {
     }
 
     fun loadOfflineDetail(link: String) {
-        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+        offlineDetail = DetailDatabase.getInstance().detailDao().getLiveDetail(link)
                 ?: MutableLiveData()
     }
 

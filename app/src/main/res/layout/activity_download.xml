@@ -78,6 +78,8 @@
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
             android:text="选择文件夹备份数据（历史记录，收藏等）"
             android:textColor="@color/white"
             android:textSize="16sp"

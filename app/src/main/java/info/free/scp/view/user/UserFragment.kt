@@ -97,17 +97,20 @@ class UserFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 //        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
-        tv_nickname?.text = "代号" // TODO
+        tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+            "代号：${PreferenceUtil.getNickname()}" else "代号：点击设置"
         tv_job?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                    "职务：${getRank(PreferenceUtil.getPoint())}   代号：${PreferenceUtil.getNickname()}"
+                    "职务：${getRank(PreferenceUtil.getPoint())}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                "职务：点击设置   代号：点击设置"
+                "职务：点击设置"
         tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
                 "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
-
         tv_nickname.setOnClickListener { checkUserInfo() }
+        tv_job.setOnClickListener {
+            checkJob()
+        }
         if (PreferenceUtil.getShowMeal()) {
             st_meal.visibility = VISIBLE
         }
@@ -192,16 +195,6 @@ class UserFragment : BaseFragment() {
         if (imgFile.exists()) {
             iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
         }
-//        if (Build.VERSION.SDK_INT > 23) {
-//            val sm = context?.getSystemService(StorageManager::class.java)
-//            val volume = sm?.primaryStorageVolume
-//            volume?.createAccessIntent(DIRECTORY_PICTURES)?.also {
-//                startActivityForResult(it, REQUEST_PICTURE_DIR)
-//            }
-//        } else {
-//            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(Utils.getAlbumStorageDir("SCP").path
-//                    + "/scp_user_head.jpg"))
-//        }
     }
 
     private fun checkUserInfo() {
@@ -224,8 +217,8 @@ class UserFragment : BaseFragment() {
             }
             positiveButton("确定") {
                 PreferenceUtil.saveNickname(input?.text.toString())
-                tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                        "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+                    "代号：${PreferenceUtil.getNickname()}" else "代号：点击设置"
                 checkJob()
             }
             negativeButton("取消") {}
@@ -247,8 +240,11 @@ class UserFragment : BaseFragment() {
                     field?.set(out, true)
                     out.dismiss()
                     PreferenceUtil.setJob(jobList[i])
-                    tv_nickname?.text = "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                            "职务：${getRank(PreferenceUtil.getPoint())}\n代号：${PreferenceUtil.getNickname()}"
+                    tv_job?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+                        "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                                "职务：${getRank(PreferenceUtil.getPoint())}"
+                    else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                            "职务：点击设置"
                 }
                 negativeButton("我手滑了") { }
             }.show()

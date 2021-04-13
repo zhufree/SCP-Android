@@ -41,10 +41,8 @@ class AboutAppActivity : BaseActivity() {
 //        tv_server_data_latest_time?.text = "云端最新数据更新时间：${PreferenceUtil.getServerLastUpdateTime()}"
 
         btn_qq_group?.setOnClickListener {
-            val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-            val clipData = ClipData.newPlainText("qqGroup", "805194504")
-            clipboardManager?.setPrimaryClip(clipData)
-            toast("已复制到剪贴板")
+            val intent = Utils.getUrlIntent("https://jgchat.net/i/iYdGkhGw")
+            startActivity(intent)
         }
         btn_go_site?.setOnClickListener {
             val intent = Utils.getUrlIntent("http://scp-wiki-cn.wikidot.com/")

@@ -43,7 +43,7 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="@string/contact_qq_group"
+                android:text="@string/contact_jg_group"
                 android:textColor="?attr/itemBoxBg"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toStartOf="@id/btn_go_site"

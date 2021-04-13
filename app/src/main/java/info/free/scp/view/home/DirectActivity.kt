@@ -1,31 +1,24 @@
 package info.free.scp.view.home
 
 import android.os.Bundle
-import android.view.Menu
-import android.widget.ArrayAdapter
 import androidx.core.view.children
 import apiCall
 import executeResponse
 import info.free.scp.R
-import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.bean.ScpItemModel
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.android.synthetic.main.activity_direct.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
@@ -157,10 +150,6 @@ class DirectActivity : BaseActivity() {
         supportActionBar?.setTitle(R.string.title_direct)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.direct_menu, menu)
-        return true
-    }
 
     private fun updateExpress() {
         tv_direct_title.text = "SCP-$cnString$numberString$jString"

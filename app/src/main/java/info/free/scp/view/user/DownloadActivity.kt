@@ -12,6 +12,8 @@ import info.free.scp.SCPConstants.PREF_NAME
 import info.free.scp.SCPConstants.RequestCode.REQUEST_BACKUP_DIR
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PUBLIC_FILE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_RESTORE_DIR
+import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.DetailDatabase
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -68,6 +70,7 @@ class DownloadActivity : BaseActivity() {
                 uri?.let {
                     doAsync {
                         if (copyFileFromUri(this@DownloadActivity, uri, destFile)) {
+                            DetailDatabase.getInstance()
                             uiThread {
                                 toast("数据库已加载")
                             }
@@ -129,6 +132,7 @@ class DownloadActivity : BaseActivity() {
                                 copyFileFromUri(this@DownloadActivity, prefFile.uri, rawPrefFile)
                             }
                         }
+                        AppInfoDatabase.getNewInstance()
                         uiThread {
                             toast("恢复完成")
                         }

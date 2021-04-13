@@ -98,6 +98,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             currentFragment = homeFragment
         }
         transaction.commit()
+        navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
         FileUtil.getInstance(this).copyCategoryDb()
         FileUtil.getInstance(this).checkDetailDb()

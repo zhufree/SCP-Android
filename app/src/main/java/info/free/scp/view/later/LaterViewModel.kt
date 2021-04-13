@@ -19,13 +19,6 @@ class LaterViewModel : ViewModel() {
         return resultList
     }
 
-    fun getLaterList(): List<ScpRecordModel> {
-        return getRecordList(LATER_TYPE, ASC)
-    }
-
-    fun getHistoryList(): List<ScpRecordModel> {
-        return getRecordList(HISTORY_TYPE, ASC)
-    }
 
     fun deleteRecord(record: ScpRecordModel) {
         recordDao.delete(record)

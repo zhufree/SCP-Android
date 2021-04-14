@@ -18,7 +18,7 @@
         android:layout_marginHorizontal="7dp"
         android:layout_marginVertical="5dp"
         android:onClick="@{clickListener}"
-        android:background="?attr/itemBoxBg">
+        android:background="@drawable/bg_entry_box">
 
         <ImageView
             android:id="@+id/iv_random_icon"
@@ -46,6 +46,5 @@
             android:singleLine="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-        <!--评分暂无-->
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

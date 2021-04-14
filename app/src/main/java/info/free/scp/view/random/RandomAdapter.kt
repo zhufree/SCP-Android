@@ -30,7 +30,6 @@ class RandomAdapter : ListAdapter<ScpModel, RandomAdapter.RandomHolder>(RandomDi
     private fun createOnClickListener(scp: ScpModel, pos: Int): View.OnClickListener {
         return View.OnClickListener { v ->
             val intent = Intent()
-            // TODO
             intent.putExtra("link", scp.link)
             intent.putExtra("title", scp.title)
             intent.putExtra("read_type", 1)

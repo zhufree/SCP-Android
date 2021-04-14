@@ -25,8 +25,8 @@ class RandomActivity : BaseActivity() {
     private val randomRange: String
         get() = when (randomType) {
             1 -> "1,2"
-            2 -> "3,4"
-            3 -> "5,6"
+            2 -> "7,8"
+            3 -> "3,4"
             else -> ""
         }
 
@@ -41,10 +41,10 @@ class RandomActivity : BaseActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == SCROLL_STATE_SETTLING) {
-                    btn_refresh_random.animate().alpha(1f).setDuration(500).start()
+                    btn_refresh_random.visibility = VISIBLE
                 }
                 if (newState == SCROLL_STATE_DRAGGING) {
-                    btn_refresh_random.animate().alpha(0f).setDuration(500).start()
+                    btn_refresh_random.visibility = GONE
                 }
             }
         })

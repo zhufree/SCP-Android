@@ -16,8 +16,8 @@ class ScpRemoteView(packageName: String) : RemoteViews(packageName, R.layout.lay
         setTextViewText(R.id.tv_widget_date, "${getWeekDayString(today.get(DAY_OF_WEEK))} " +
                 "${today.get(Calendar.YEAR)}.${today.get(Calendar.MONTH) + 1}." +
                 "${today.get(Calendar.DAY_OF_MONTH)}")
-        val todayScp = ScpDataHelper.getInstance().getRandomScpList()?.get(0)
-        todayScp?.let {
+        val todayScp = ScpDataHelper.getInstance().getRandomScpList().get(0)
+        todayScp.let {
             setTextViewText(R.id.tv_widget_scp_title, it.title)
             val intent = Intent(ScpApplication.context, DetailActivity::class.java)
             intent.putExtra("link", todayScp.link)

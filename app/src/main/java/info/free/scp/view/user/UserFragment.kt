@@ -135,7 +135,7 @@ class UserFragment : BaseFragment() {
     }
 
     private fun refreshHistoryList() {
-        ll_history_container.removeAllViews()
+        ll_history_list.removeAllViews()
         historyItemList.clear()
         val historyList = viewModel.getRecordList(HISTORY_TYPE, SCPConstants.OrderType.DESC)
         historyList.forEachIndexed { index, scp ->
@@ -144,7 +144,7 @@ class UserFragment : BaseFragment() {
                 newItem.onItemClick = {
                     startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
                 }
-                ll_history_container.addView(newItem)
+                ll_history_list.addView(newItem)
                 historyItemList.add(newItem)
             }
         }
@@ -162,7 +162,7 @@ class UserFragment : BaseFragment() {
         st_meal.onClick = { startActivity<MealListActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
 
-        iv_more_history.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
+        iv_more_history?.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
 
         st_read.onClick = {
             EventUtil.onEvent(activity, EventUtil.clickReadSetting)

@@ -16,9 +16,9 @@ import info.free.scp.util.PreferenceUtil
 class ScpDataHelper {
     private var randomCount = 0
     private var hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
+    val scpDao = ScpDatabase.getInstance().scpDao()
 
-
-    fun getRandomScpList(typeRange: String = ""): List<ScpItemModel>? {
+    fun getRandomScpList(typeRange: String = ""): List<ScpItemModel> {
         val randomList: MutableList<ScpItemModel> = emptyList<ScpItemModel>().toMutableList()
         randomCount++
         if (randomCount > 20) {
@@ -27,11 +27,10 @@ class ScpDataHelper {
         }
         hasReadList = AppInfoDatabase.getInstance().likeAndReadDao().getHasReadList()
         val args = typeRange.split(",")
-        // 先取10个 TODO 无collection
-        val scpDao = ScpDatabase.getInstance()?.scpDao()
-        val rawList = if (typeRange.isEmpty()) scpDao?.getRandomScp(10)
-        else scpDao?.getRandomScpByType(args[0], args[1], 10)
-        rawList?.let {
+        // 先取10个
+        val rawList = if (typeRange.isEmpty()) scpDao.getRandomScp(10)
+        else scpDao.getRandomScpByType(args[0], args[1], 10)
+        rawList.let {
             randomList.addAll(it)
         }
 
@@ -58,8 +57,8 @@ class ScpDataHelper {
             }
             val leftCount = 10 - randomList.size
             val addList = if (typeRange.isEmpty()) scpDao.getRandomScp(leftCount)
-            else scpDao?.getRandomScpByType(args[0], args[1], leftCount)
-            addList?.let {
+            else scpDao.getRandomScpByType(args[0], args[1], leftCount)
+            addList.let {
                 randomList.addAll(addList)
             }
         } while (randomList.size < 10)

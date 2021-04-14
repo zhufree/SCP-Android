@@ -135,6 +135,7 @@ class UserFragment : BaseFragment() {
     }
 
     private fun refreshHistoryList() {
+        ll_history_container.removeAllViews()
         historyItemList.clear()
         val historyList = viewModel.getRecordList(HISTORY_TYPE, SCPConstants.OrderType.DESC)
         historyList.forEachIndexed { index, scp ->

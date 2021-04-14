@@ -11,7 +11,7 @@
             android:id="@+id/rv_search_result"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/containerBg"
+            android:background="?attr/containerBg"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toTopOf="parent"
             tools:listitem="@layout/item_later" />

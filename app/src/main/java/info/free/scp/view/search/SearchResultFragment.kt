@@ -79,9 +79,4 @@ class SearchResultFragment : BaseFragment() {
             })
         }
     }
-
-    override fun refreshTheme() {
-        super.refreshTheme()
-        searchAdapter.refreshTheme()
-    }
 }

@@ -23,9 +23,6 @@ class SearchResultAdapter : ListAdapter<ScpModel, SearchResultAdapter.SearchHold
         return newHolder
     }
 
-    fun refreshTheme() {
-        holderList.forEach { it.refreshTheme() }
-    }
 
     override fun onBindViewHolder(holder: SearchHolder, position: Int) {
         val search = getItem(position)
@@ -53,12 +50,6 @@ class SearchResultAdapter : ListAdapter<ScpModel, SearchResultAdapter.SearchHold
                 search = item
                 executePendingBindings()
             }
-        }
-
-        fun refreshTheme() {
-            //TODO
-//            binding.clFeedContainer.backgroundColor = ThemeUtil.itemBg
-//            binding.tvFeedTitle.setTextColor(ThemeUtil.darkText)
         }
     }
 

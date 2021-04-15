@@ -6,12 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.SCPConstants.OrderType.DESC
 import info.free.scp.databinding.FragmentLaterListBinding
-
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_later_list.*
 import org.jetbrains.anko.noButton
 import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.yesButton

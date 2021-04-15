@@ -69,6 +69,18 @@ class LaterFragment : BaseFragment() {
         }
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {//可见时
+            onVisible()
+        }
+    }
+
+    private fun onVisible() {
+        if (recordListFragment.isAdded) {
+            recordListFragment.refreshList()
+        }
+    }
 
     override fun refreshTheme() {
         super.refreshTheme()

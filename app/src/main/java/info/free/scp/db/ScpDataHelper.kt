@@ -35,25 +35,23 @@ class ScpDataHelper {
         }
 
         do {
-            val removeIndexes = emptyList<Int>().toMutableList()
-            randomList.forEachIndexed { index, scp ->
+            val iter = randomList.iterator()
+            while (iter.hasNext()) {
+                val scp = iter.next()
                 val link = scp.link
                 if (PreferenceUtil.getHideFinished() && link in (hasReadList.map { it.link })) {
                     // 已读过，重新随机
-                    removeIndexes.add(index)
+                    iter.remove()
                 } else {
                     val detailHtml = DetailDatabase.getInstance().detailDao().getDetail(link)
                     detailHtml?.let {
-                        if (it.contains("null") || it.isEmpty()) {
-                            removeIndexes.add(index)
+                        if (it == "null" || it.isEmpty()) {
+                            iter.remove()
                         }
                     } ?: run {
-                        removeIndexes.add(index)
+                        iter.remove()
                     }
                 }
-            }
-            for (i in removeIndexes) {
-                randomList.removeAt(i)
             }
             val leftCount = 10 - randomList.size
             val addList = if (typeRange.isEmpty()) scpDao.getRandomScp(leftCount)

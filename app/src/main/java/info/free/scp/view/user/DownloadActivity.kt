@@ -84,6 +84,7 @@ class DownloadActivity : BaseActivity() {
                 }
             }
         } else if (reqCode == REQUEST_BACKUP_DIR && resCode == Activity.RESULT_OK) {
+            // 备份
             data?.data?.let { uriTree ->
                 // 创建所选目录的DocumentFile，可以使用它进行文件操作
                 val root = DocumentFile.fromTreeUri(this, uriTree)
@@ -114,14 +115,19 @@ class DownloadActivity : BaseActivity() {
                 }
             }
         } else if (reqCode == REQUEST_RESTORE_DIR && resCode == Activity.RESULT_OK) {
+            // 恢复
             data?.data?.let { uriTree ->
-                // 创建所选目录的DocumentFile，可以使用它进行文件操作
                 val root = DocumentFile.fromTreeUri(this, uriTree)
                 root?.let {
                     doAsync {
+                        AppInfoDatabase.getInstance().close()
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
                         val rawPrefFile = File("${FileUtil.privatePrefDirPath}${PREF_NAME}")
                         if (root.findFile(INFO_DB_NAME) != null) {
+                            AppInfoDatabase.getInstance()
+                            rawDbFile.delete()
+                            File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}-shm").delete()
+                            File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}-wal").delete()
                             val dbFile = root.findFile(INFO_DB_NAME)
                             dbFile?.let {
                                 copyFileFromUri(this@DownloadActivity, dbFile.uri, rawDbFile)

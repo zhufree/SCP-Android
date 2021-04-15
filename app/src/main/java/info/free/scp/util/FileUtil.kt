@@ -25,7 +25,6 @@ import java.io.*
 
 object FileUtil {
 
-    private var fileUtil: FileUtil? = null
     val absPath = Environment.getDataDirectory().absolutePath
     val pkgName = context.packageName
     val sp = File.separator
@@ -56,7 +55,6 @@ object FileUtil {
 
     fun checkDetailDb() {
         val dbReady = checkDataReady(DETAIL_DB_NAME)
-        info("dbReady: $dbReady")
         if (dbReady) {
             PreferenceUtil.setAppMode(OFFLINE)
             return

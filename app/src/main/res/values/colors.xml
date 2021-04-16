@@ -14,11 +14,7 @@
     <color name="lightTextGray">#B9B9B9</color>
 
     <color name="disabledBgNight">#555</color>
-    <color name="toolbarBgNight">#191919</color>
     <color name="itemBgNight">#202020</color>
-
-    <color name="unClickBtnNight">#2e317c</color>
-    <color name="clickedBtnNight">#1c2938</color>
 
     <color name="linkBlue">#4A90E2</color>
     <color name="todoYellow">#F99933</color>
@@ -27,5 +23,4 @@
 
     <color name="itemBgWhite">#ffffff</color>
     <color name="white">#ffffff</color>
-    <color name="textColor">#333333</color>
 </resources>

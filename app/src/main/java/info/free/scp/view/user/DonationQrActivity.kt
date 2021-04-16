@@ -1,5 +1,6 @@
 package info.free.scp.view.user
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.BitmapDrawable
 import info.free.scp.R
 import info.free.scp.util.Utils
@@ -51,6 +52,7 @@ class DonationQrActivity : BaseActivity() {
     }
 
 
+    @SuppressLint("WrongConstant")
     private fun startWechatScan(c: Context) {
         val intent = Intent()
         intent.component = ComponentName("com.tencent.mm", "com.tencent.mm.ui.LauncherUI")

@@ -15,7 +15,6 @@
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
@@ -80,15 +79,6 @@
         <activity
             android:name=".view.search.SearchActivity"
             android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.like.LikeBoxActivity"
-            android:screenOrientation="nosensor">
-            <intent-filter>
-                <action android:name="info.free.scp.view.like.LikeBoxActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity
             android:name=".view.later.LikeListActivity"
             android:screenOrientation="nosensor" />

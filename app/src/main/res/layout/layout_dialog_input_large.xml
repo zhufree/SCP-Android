@@ -10,5 +10,7 @@
         android:maxHeight="200dp"
         android:minLines="1"
         android:layout_margin="16dp"
-        android:inputType="textMultiLine"/>
+        android:autofillHints="@string/app_name"
+        android:hint="@string/app_name"
+        android:inputType="textMultiLine" />
 </LinearLayout>

@@ -9,7 +9,6 @@
     tools:context="info.free.scp.view.user.DownloadActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/abl_download_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">

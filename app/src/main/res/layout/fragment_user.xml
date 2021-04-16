@@ -33,6 +33,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginEnd="30dp"
                 android:background="@drawable/bg_theme_btn"
+                android:contentDescription="@string/app_name"
                 android:padding="7dp"
                 android:scaleType="fitXY"
                 android:src="@drawable/baseline_nights_stay_white_24dp"
@@ -95,7 +96,6 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_job" />
 
             <TextView
-                android:id="@+id/iv_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="60dp"
@@ -198,6 +198,7 @@
                     android:id="@+id/iv_donate_bg"
                     android:layout_width="match_parent"
                     android:layout_height="140dp"
+                    android:contentDescription="@string/app_name"
                     android:scaleType="centerCrop"
                     android:src="@drawable/bg_donation"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -209,6 +210,7 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="14dp"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/author_head"
                     app:layout_constraintEnd_toEndOf="@id/iv_donate_bg"
                     app:layout_constraintStart_toStartOf="@id/iv_donate_bg"
@@ -262,6 +264,7 @@
                         android:id="@+id/iv_more_history"
                         android:layout_width="46dp"
                         android:layout_height="46dp"
+                        android:contentDescription="@string/app_name"
                         android:padding="8dp"
                         android:src="@drawable/baseline_keyboard_arrow_right_black_24dp"
                         app:layout_constraintBottom_toBottomOf="@id/tv_history_list_head"

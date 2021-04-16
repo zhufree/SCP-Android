@@ -14,7 +14,7 @@ import info.free.scp.SCPConstants.ScpType.SAVE_GOI
 import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.activity_category_list.*
+import kotlinx.android.synthetic.main.activity_group_list.*
 import kotlinx.android.synthetic.main.fragment_category.*
 
 /**

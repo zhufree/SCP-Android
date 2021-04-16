@@ -10,6 +10,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="32dp"
         android:layout_marginTop="25dp"
+        android:contentDescription="@string/app_name"
         android:src="@drawable/outline_note_black_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,8 +25,8 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/iv_history_icon"
-        app:layout_constraintStart_toEndOf="@id/iv_history_icon"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_history_icon"
         app:layout_constraintTop_toTopOf="@id/iv_history_icon" />
 
     <TextView

@@ -23,8 +23,6 @@ import info.free.scp.SCPConstants.Category.TALES_BY_TIME
 import info.free.scp.SCPConstants.Category.TALES_CN
 import info.free.scp.SCPConstants.Category.WANDER
 import info.free.scp.SCPConstants.Category.WANDER_CN
-import info.free.scp.SCPConstants.Entry.ART_DOC
-import info.free.scp.SCPConstants.Entry.GOI_DOC
 import info.free.scp.SCPConstants.Entry.SCP_CN_DOC
 import info.free.scp.SCPConstants.Entry.SCP_DOC
 import info.free.scp.SCPConstants.Entry.STORY_DOC
@@ -50,7 +48,7 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.widget.DocGroupItem
-import kotlinx.android.synthetic.main.activity_category_list.*
+import kotlinx.android.synthetic.main.activity_group_list.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 
@@ -63,7 +61,7 @@ class GroupListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category_list)
+        setContentView(R.layout.activity_group_list)
         baseToolbar = category_toolbar
         initData()
     }
@@ -217,8 +215,7 @@ class GroupListActivity : BaseActivity() {
     }
 
     private fun getGroupListTitle(index: Int): List<String> {
-        var groupList = listOf<String>()
-        groupList = when (index) {
+        return when (index) {
             TALES, TALES_CN, WANDER, WANDER_CN -> {
                 listOf("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
                         "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0-9")
@@ -230,7 +227,6 @@ class GroupListActivity : BaseActivity() {
                 (0 until (1000 / categoryCount)).map { "${getTitlePrefix()}${(it + (index - 1) * 10) * categoryCount}+" }
             }
         }
-        return groupList
     }
 
     private val categoryCount = PreferenceUtil.getCategoryCount()

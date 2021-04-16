@@ -1,5 +1,6 @@
 package info.free.scp.view.category
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -93,6 +94,7 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun createOnMoreClickListener(scp: ScpModel, context: Context): View.OnClickListener {
         return View.OnClickListener {
             val mBottomSheetDialog = BottomSheetDialog(context)

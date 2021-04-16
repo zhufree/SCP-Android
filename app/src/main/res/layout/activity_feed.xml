@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/toolbarBg"
-            app:popupTheme="@style/ToolbarPopupTheme"></androidx.appcompat.widget.Toolbar>
+            app:popupTheme="@style/ToolbarPopupTheme" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout

@@ -32,8 +32,9 @@
             android:layout_height="30dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
-            app:layout_constraintStart_toStartOf="parent"
+            android:contentDescription="@string/app_name"
             android:src="@drawable/outline_note_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -41,12 +42,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
             android:text="@{record.title}"
             android:textColor="?attr/darkText"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:ellipsize="marquee"
-            android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="@id/iv_history_icon"
             app:layout_constraintStart_toEndOf="@id/iv_history_icon"
             app:layout_constraintTop_toTopOf="@id/iv_history_icon" />

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="84dp"
+    android:background="@color/colorPrimaryDark"
     android:focusable="true"
-    android:focusableInTouchMode="true"
-    android:background="@color/colorPrimaryDark">
+    android:focusableInTouchMode="true">
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_search"
@@ -28,7 +28,8 @@
         android:layout_height="34dp"
         android:layout_marginStart="20dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_direct_24dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/baseline_dialpad_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btn_random"
         app:layout_constraintStart_toEndOf="@id/et_search"
@@ -41,7 +42,8 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="16dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/ic_random_24dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/baseline_shuffle_white_24dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/btn_direct"

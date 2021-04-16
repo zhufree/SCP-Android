@@ -1,5 +1,6 @@
 package info.free.scp.util
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
@@ -69,6 +70,7 @@ object ThemeUtil {
         LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
     }
 
+    @SuppressLint("ResourceType")
     private fun initColor(context: Context) {
         val allColor = context.obtainStyledAttributes(intArrayOf(
                 R.attr.toolbarBg,

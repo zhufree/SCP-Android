@@ -49,7 +49,6 @@
         app:layout_constraintTop_toBottomOf="@id/tv_comment_username" />
 
     <View
-        android:id="@+id/v_comment_sign"
         android:layout_width="2dp"
         android:layout_height="0dp"
         android:layout_marginEnd="2dp"

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?attr/containerBg"
     tools:context=".view.category.GroupListActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -39,7 +40,6 @@
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/containerBg"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/sv_side_bar"
@@ -67,14 +67,14 @@
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp"
-                android:textColor="@color/lightTextGray"
+                android:textColor="?attr/lightText"
                 android:textSize="16sp" />
 
             <LinearLayout
                 android:id="@+id/ll_group_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"></LinearLayout>
+                android:orientation="vertical" />
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

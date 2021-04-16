@@ -18,8 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="10dp"
-        android:onClick="@{clickListener}"
-        android:background="@drawable/bg_entry_box">
+        android:background="@drawable/bg_entry_box"
+        android:onClick="@{clickListener}">
 
         <ImageView
             android:id="@+id/iv_search_icon"
@@ -27,6 +27,7 @@
             android:layout_height="30dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
+            android:contentDescription="@string/app_name"
             android:src="@drawable/outline_note_black_24dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

@@ -42,6 +42,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:padding="8dp"
+                    android:contentDescription="@string/app_name"
                     android:src="@drawable/baseline_cancel_grey_700_24dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

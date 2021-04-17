@@ -23,7 +23,7 @@ abstract class DetailDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: DetailDatabase? = null
 
-        fun getInstance(): DetailDatabase {
+        fun getInstance(): DetailDatabase? {
             try {
                 if (INSTANCE == null && FileUtil.checkDataReady(DETAIL_DB_NAME)) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, DetailDatabase::class.java,
@@ -35,7 +35,7 @@ abstract class DetailDatabase : RoomDatabase() {
             } catch (e: SQLiteDatabaseCorruptException) {
                 ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
             }
-            return INSTANCE!!
+            return INSTANCE
         }
     }
 }

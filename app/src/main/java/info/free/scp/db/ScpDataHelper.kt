@@ -45,13 +45,16 @@ class ScpDataHelper {
                     // 已读过，重新随机
                     iter.remove()
                 } else {
-                    val detailHtml = DetailDatabase.getInstance().detailDao().getDetail(link)
-                    detailHtml?.let {
-                        if (it == "null" || it.isEmpty()) {
+                    val detailDao = DetailDatabase.getInstance()?.detailDao()
+                    detailDao?.let {
+                        val detailHtml = detailDao.getDetail(link)
+                        detailHtml?.let {
+                            if (it == "null" || it.isEmpty()) {
+                                iter.remove()
+                            }
+                        } ?: run {
                             iter.remove()
                         }
-                    } ?: run {
-                        iter.remove()
                     }
                 }
             }

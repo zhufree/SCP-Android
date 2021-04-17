@@ -54,7 +54,7 @@ class DetailRepository {
     }
 
     fun loadOfflineDetail(link: String) {
-        offlineDetail = DetailDatabase.getInstance().detailDao().getLiveDetail(link)
+        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
                 ?: MutableLiveData()
     }
 

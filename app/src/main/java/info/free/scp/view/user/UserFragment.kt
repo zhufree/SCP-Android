@@ -231,24 +231,12 @@ class UserFragment : BaseFragment() {
         val jobList = listOf("收容专家", "研究员", "安全人员", "战术反应人员", "外勤特工", "机动特遣队作业员")
         selector("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业",
                 jobList) { out, i ->
-            val field = out.javaClass.superclass?.getDeclaredField(
-                    "mShowing")
-            field?.isAccessible = true
-            //   将mShowing变量设为false，表示对话框已关闭
-            field?.set(out, false)
-            alert(getString(PreferenceUtil.getDescForJob(jobList[i])), jobList[i]) {
-                positiveButton("确定选择") {
-                    field?.set(out, true)
-                    out.dismiss()
-                    PreferenceUtil.setJob(jobList[i])
-                    tv_job?.text = if (PreferenceUtil.getNickname().isNotEmpty())
-                        "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                                "职务：${getRank(PreferenceUtil.getPoint())}"
-                    else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
-                            "职务：点击设置"
-                }
-                negativeButton("我手滑了") { }
-            }.show()
+            PreferenceUtil.setJob(jobList[i])
+            tv_job?.text = if (PreferenceUtil.getJob().isNotEmpty())
+                "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                        "职务：${getRank(PreferenceUtil.getPoint())}"
+            else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
+                    "职务：点击设置"
         }
     }
 

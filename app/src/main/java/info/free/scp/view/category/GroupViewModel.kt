@@ -17,21 +17,6 @@ class GroupViewModel : ViewModel() {
     private val scpDao = ScpDatabase.getInstance()?.scpDao()
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private var hasReadList = readDao.getHasReadList()
-    private val abnormalPageList = arrayOf(
-            "/log-of-extranormal-events",
-            "/log-of-extranormal-events-cn",
-            "/log-of-anomalous-items",
-            "/log-of-anomalous-items-cn")
-    private val introPageList = arrayOf(
-            "/faq",
-            "/guide-for-newbies",
-            "/how-to-write-an-scp")
-    private val infoPageList = arrayOf(
-            "/secure-facilities-locations",
-            "/secure-facilities-locations-cn",
-            "/object-classes",
-            "/security-clearance-levels",
-            "/task-forces")
 
     fun getDocList(saveType: Int, groupIndex: Int = -1, extraType: String = ""): List<ScpModel> {
         if (scpDao == null) return emptyList()

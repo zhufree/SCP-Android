@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
     private val scpDao = ScpDatabase.getInstance()?.scpDao()
-    private val detailDao = DetailDatabase.getInstance().detailDao()
+    private val detailDao = DetailDatabase.getInstance()?.detailDao()
     var titleResult = emptyList<ScpModel>()
     var contentResult: MutableLiveData<List<ScpModel>> = MutableLiveData()
 
@@ -27,7 +27,7 @@ class SearchViewModel : ViewModel() {
     }
 
     suspend fun searchDetail(keyword: String): List<ScpModel> {
-        if (scpDao == null) return emptyList()
+        if (scpDao == null || detailDao == null) return emptyList()
         val linkList = detailDao.searchScpByDetail(keyword)
         val scpList = mutableListOf<ScpModel>()
         linkList.forEach {

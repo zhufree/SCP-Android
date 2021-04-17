@@ -25,5 +25,4 @@ class SearchActivity : BaseActivity() {
         vp_search_result?.adapter = laterPagerAdapter
         tab_search_result?.setupWithViewPager(vp_search_result)
     }
-
 }

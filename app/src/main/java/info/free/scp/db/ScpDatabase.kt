@@ -21,7 +21,7 @@ abstract class ScpDatabase : RoomDatabase() {
     companion object {
         private var INSTANCE: ScpDatabase? = null
 
-        fun getInstance(): ScpDatabase {
+        fun getInstance(): ScpDatabase? {
             try {
                 if (INSTANCE == null && FileUtil.checkDataReady(SCP_DB_NAME)) {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
@@ -32,7 +32,11 @@ abstract class ScpDatabase : RoomDatabase() {
             } catch (e: SQLiteDatabaseCorruptException) {
                 ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
             }
-            return INSTANCE!!
+            return INSTANCE
+        }
+
+        fun close() {
+            INSTANCE?.close()
         }
 
         fun getNewInstance() {

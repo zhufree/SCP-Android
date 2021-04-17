@@ -26,11 +26,13 @@ class DetailRepository {
     var offlineDetail: LiveData<String> = MutableLiveData()
 
 
-    private var scpDao = ScpDatabase.getInstance().scpDao()
+    private var scpDao = ScpDatabase.getInstance()?.scpDao()
     private var likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
 
     fun setScp(link: String) {
-        scp.postValue(scpDao.getScpByLink(link))
+        scpDao?.let {
+            scp.postValue(it.getScpByLink(link))
+        }
     }
 
     fun setScpReadInfo() {

@@ -14,7 +14,7 @@ import toast
 
 class GroupViewModel : ViewModel() {
     private val readDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    private val scpDao = ScpDatabase.getInstance().scpDao()
+    private val scpDao = ScpDatabase.getInstance()?.scpDao()
     private val categoryCount = PreferenceUtil.getCategoryCount()
     private var hasReadList = readDao.getHasReadList()
     private val abnormalPageList = arrayOf(
@@ -34,6 +34,7 @@ class GroupViewModel : ViewModel() {
             "/task-forces")
 
     fun getDocList(saveType: Int, groupIndex: Int = -1, extraType: String = ""): List<ScpModel> {
+        if (scpDao == null) return emptyList()
         var docList = when (saveType) {
             SCPConstants.ScpType.SAVE_SERIES, SCPConstants.ScpType.SAVE_SERIES_CN, SCPConstants.ScpType.SAVE_JOKE, SCPConstants.ScpType.SAVE_JOKE_CN, SCPConstants.ScpType.SAVE_EX, SCPConstants.ScpType.SAVE_EX_CN -> {
                 scpDao.getAllScpListByType(saveType)
@@ -50,7 +51,9 @@ class GroupViewModel : ViewModel() {
             }
             // 图书馆
             SCPConstants.Entry.LIBRARY_DOC -> {
-                scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_LIBRARY_PAGE)
+                scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_LIBRARY_PAGE) +
+                        scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_SHORT_STORY) +
+                        scpDao.getAllScpListByType(SCPConstants.ScpType.SAVE_ANOMALOUS_CN)
             }
             // 背景资料
             SCPConstants.Entry.INFORMATION_DOC -> {

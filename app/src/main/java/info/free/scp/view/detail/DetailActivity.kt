@@ -54,7 +54,7 @@ import java.io.IOException
 
 class DetailActivity : BaseActivity() {
 
-    private val scpDao = ScpDatabase.getInstance().scpDao()
+    private val scpDao = ScpDatabase.getInstance()?.scpDao()
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
@@ -197,7 +197,7 @@ class DetailActivity : BaseActivity() {
                         url = requestUrl
                     }
                     info(url)
-                    val tmpScp = ScpDatabase.getInstance()?.scpDao()?.getScpByLink(url)
+                    val tmpScp = scpDao?.getScpByLink(url)
                     tmpScp?.let {
                         scp = tmpScp
                         setData(tmpScp)
@@ -584,6 +584,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun toNextArticle() {
+        if (scpDao == null) return
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
@@ -612,6 +613,7 @@ class DetailActivity : BaseActivity() {
 
 
     private fun toPreviewArticle() {
+        if (scpDao == null) return
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)

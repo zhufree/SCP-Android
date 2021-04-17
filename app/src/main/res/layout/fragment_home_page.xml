@@ -41,8 +41,8 @@
                     android:id="@+id/iv_remove_notice"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:padding="8dp"
                     android:contentDescription="@string/app_name"
+                    android:padding="8dp"
                     android:src="@drawable/baseline_cancel_grey_700_24dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -74,13 +74,15 @@
                 android:layout_width="match_parent"
                 app:count="4"
                 app:entryTitle="@string/entry_scp_series"
-                app:imgSrc="@drawable/img_logo_cn" />
+                app:imgPadding="5dp"
+                app:imgSrc="@drawable/scp_logo" />
 
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp_cn"
                 android:layout_width="match_parent"
                 app:count="4"
                 app:entryTitle="@string/entry_scp_cn_series"
+                app:imgPadding="5dp"
                 app:imgSrc="@drawable/img_logo_cn" />
 
             <info.free.scp.view.widget.EntryItem
@@ -88,14 +90,17 @@
                 android:layout_width="match_parent"
                 app:count="4"
                 app:entryTitle="@string/entry_scp_story"
-                app:imgSrc="@drawable/img_logo_cn" />
+                app:imgPadding="5dp"
+                app:imgSrc="@drawable/img_break_logo" />
 
             <info.free.scp.view.widget.EntryItem
                 android:id="@+id/ei_scp_wander"
                 android:layout_width="match_parent"
                 app:count="4"
                 app:entryTitle="@string/entry_wander"
-                app:imgSrc="@drawable/img_logo_cn" />
+                app:imgBg="#1D682F"
+                app:imgPadding="5dp"
+                app:imgSrc="@drawable/wander_logo" />
         </GridLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -121,10 +126,10 @@
 
             <LinearLayout
                 android:id="@+id/ll_latest_cn"
-                app:layout_constraintTop_toBottomOf="@id/tv_recent_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/tv_recent_header" />
 
             <Button
                 android:id="@+id/btn_more_recent"
@@ -163,10 +168,10 @@
 
             <LinearLayout
                 android:id="@+id/ll_latest_translate"
-                app:layout_constraintTop_toBottomOf="@id/tv_recent_translate_header"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/tv_recent_translate_header" />
 
             <Button
                 android:id="@+id/btn_more_recent_translate"

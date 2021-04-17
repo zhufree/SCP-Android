@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.UpdateManager
@@ -102,6 +103,8 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         UpdateManager.getInstance(this).checkAppData()
         FileUtil.copyCategoryDb()
         FileUtil.checkDetailDb()
+        ScpDatabase.getNewInstance()
+        AppInfoDatabase.getNewInstance()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()

@@ -18,7 +18,9 @@
     <declare-styleable name="EntryItem">
         <attr name="entryTitle" format="string" />
         <attr name="imgSrc" format="reference" />
+        <attr name="imgBg" format="color" />
         <attr name="count" format="integer" />
+        <attr name="imgPadding" format="dimension" />
     </declare-styleable>
     <declare-styleable name="FeedArticleListItem">
         <attr name="articleTitle" format="string" />

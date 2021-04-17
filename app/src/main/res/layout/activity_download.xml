@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="32dp"
             android:layout_marginTop="48dp"
-            android:text="确定要下载？点击此处去下载文档，然后点击下面的按钮选择已下好的数据库文件（scp_detail_v2.db）使用"
+            android:text="确定要下载？点击此文本下载文档，然后点击下面的按钮选择已下好的数据库文件（scp_detail_v2.db）使用"
             android:textColor="?attr/darkText"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"

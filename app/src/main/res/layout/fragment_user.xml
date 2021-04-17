@@ -132,43 +132,64 @@
                     android:id="@+id/st_draft"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="草稿箱" />
+                    app:entryTitle="草稿箱"
+                    app:imgBg="#F26BD9"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_border_color_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_game"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="游戏列表" />
+                    app:entryTitle="游戏列表"
+                    app:imgBg="#10BED6"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_videogame_asset_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_meal"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="恰饭屋" />
+                    app:entryTitle="恰饭屋"
+                    app:imgBg="#2296F3"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_food_bank_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_portal"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="传送门" />
+                    app:entryTitle="传送门"
+                    app:imgBg="#F44336"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_sensor_door_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_read"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="阅读设置" />
+                    app:entryTitle="阅读设置"
+                    app:imgBg="#eba0b3"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_settings_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_data"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="文档缓存" />
+                    app:entryTitle="文档缓存"
+                    app:imgBg="#8076a3"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_download_for_offline_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_use"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="app使用说明" />
+                    app:entryTitle="app使用说明"
+                    app:imgBg="#346c9c"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_info_white_24dp" />
 
                 <!--                <info.free.scp.view.widget.EntryItem-->
                 <!--                    android:id="@+id/st_copyright"-->
@@ -178,7 +199,10 @@
                     android:id="@+id/st_query"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="用户问卷" />
+                    app:entryTitle="用户问卷"
+                    app:imgBg="#346c9c"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_receipt_long_white_24dp" />
             </GridLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

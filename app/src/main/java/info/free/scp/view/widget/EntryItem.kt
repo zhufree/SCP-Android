@@ -9,10 +9,13 @@ import info.free.scp.util.Utils
 import kotlinx.android.synthetic.main.layout_entry_item.view.*
 import kotlinx.android.synthetic.main.layout_setting_item.view.*
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.padding
 
 class EntryItem : ConstraintLayout {
     var title = ""
     var logo = 0
+    var bgColor = 0
+    var imgPadding = 0f
     var onClick: () -> Unit = {}
 
     constructor(context: Context) : this(context, null)
@@ -33,13 +36,16 @@ class EntryItem : ConstraintLayout {
         // 赋值给属性变量
         title = ta.getString(R.styleable.EntryItem_entryTitle) ?: ""
         logo = ta.getResourceId(R.styleable.EntryItem_imgSrc, R.drawable.img_logo_cn)
+        bgColor = ta.getColor(R.styleable.EntryItem_imgBg, ThemeUtil.itemBg)
+        imgPadding = ta.getDimension(R.styleable.EntryItem_imgPadding, 5f)
         val count = ta.getInteger(R.styleable.EntryItem_count, 3)
         ta.recycle()
         maxWidth = (screenWidth - dip(16)) / count
 
         tv_entry_title.text = title
+        iv_entry_logo.padding = imgPadding.toInt()
+        iv_entry_logo.background = ThemeUtil.customShape(bgColor, 0, 0, dip(25))
         iv_entry_logo.setImageResource(logo)
-        iv_entry_logo.background?.alpha = 50
         setOnClickListener {
             onClick()
         }

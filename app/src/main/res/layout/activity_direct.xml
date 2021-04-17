@@ -94,7 +94,7 @@
                     android:layout_height="80dp"
                     android:background="@drawable/bg_direct_btn_top"
                     android:gravity="center"
-                    android:text="C"
+                    android:text="←"
                     android:textColor="@color/lightTextGray"
                     android:textSize="34sp" />
 

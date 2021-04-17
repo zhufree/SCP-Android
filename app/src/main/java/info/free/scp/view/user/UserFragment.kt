@@ -184,7 +184,7 @@ class UserFragment : BaseFragment() {
         st_query.onClick = {
             val updateIntent = Intent()
             updateIntent.action = "android.intent.action.VIEW"
-            val updateUrl = Uri.parse("http://freeescp.mikecrm.com/zelnB9R")
+            val updateUrl = Uri.parse(PreferenceUtil.getQueryLink())
             updateIntent.data = updateUrl
             startActivity(updateIntent)
         }

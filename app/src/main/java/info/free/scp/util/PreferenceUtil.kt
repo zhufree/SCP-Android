@@ -3,11 +3,9 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
-import java.util.*
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -40,24 +38,20 @@ object PreferenceUtil {
     }
 
 
-    /**
-     * 服务器数据更新时间，last_update_time_0/1/2/3/4
-     * key是字段名
-     */
-    fun setServerLastUpdateTime(time: Long) {
-        setLongValue(DOWNLOAD_SP, "last_update_time", time)
-    }
-
-    fun getServerLastUpdateTime(): Long {
-        return getLongValue(DOWNLOAD_SP, "last_update_time")
-    }
-
     fun setNotice(notice: String) {
         setStringValue(APP_SP, "notice", notice)
     }
 
     fun getNotice(): String {
         return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）")
+    }
+
+    fun setQueryLink(link: String) {
+        setStringValue(APP_SP, "query_link", link)
+    }
+
+    fun getQueryLink(): String {
+        return getStringValue(APP_SP, "query_link", "http://freeescp.mikecrm.com/zelnB9R")
     }
 
     fun getShowNotice(): Boolean {

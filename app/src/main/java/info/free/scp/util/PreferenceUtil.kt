@@ -104,6 +104,23 @@ object PreferenceUtil {
         return getIntValue(APP_SP, "old_meal_count")
     }
 
+    // 设置cookie
+    fun setCookie(cookie: String) {
+        setStringValue(APP_SP, "cookie", cookie)
+    }
+
+    fun getCookie(): String {
+        return getStringValue(APP_SP, "cookie", "")
+    }
+
+    // 设置agent
+    fun setAgent(agent: String) {
+        setStringValue(APP_SP, "agent", agent)
+    }
+
+    fun getAgent(): String {
+        return getStringValue(APP_SP, "agent", "")
+    }
 
     /**
      * 检测当前版本是不是第一次启动

@@ -5,7 +5,6 @@ import android.content.*
 import android.content.DialogInterface.BUTTON_POSITIVE
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.Gravity.CENTER
@@ -24,7 +23,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
@@ -46,7 +44,7 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import kotlinx.android.synthetic.main.layout_dialog_cookie.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
@@ -252,7 +250,6 @@ class DetailActivity : BaseActivity() {
         sb_detail?.onSeekBarChangeListener {
             onProgressChanged { _, i, b ->
                 if (b) {
-                    info(i)
                     nsv_web_wrapper?.scrollTo(0, ((webView.height - screenHeight) * (i / 100f)).toInt())
                 }
             }
@@ -261,7 +258,6 @@ class DetailActivity : BaseActivity() {
         }
         nsv_web_wrapper?.onScrollChange { _, _, scrollY, _, _ ->
             if (!isMoving) {
-                info(scrollY)
                 sb_detail?.progress = ((scrollY.toFloat() / (webView.height - screenHeight) * 100)).toInt()
             }
         }
@@ -397,11 +393,7 @@ class DetailActivity : BaseActivity() {
                     R.id.open_in_browser -> {
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
                         PreferenceUtil.addPoints(1)
-                        val openIntent = Intent()
-                        openIntent.action = "android.intent.action.VIEW"
-                        val openUrl = Uri.parse(fullUrl)
-                        openIntent.data = openUrl
-                        startActivity(openIntent)
+                        startActivity(Utils.getUrlIntent(fullUrl))
                     }
                     R.id.copy_link -> {
                         EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
@@ -465,8 +457,30 @@ class DetailActivity : BaseActivity() {
                     R.id.translate -> {
                         hanz = if (hanz == SIMPLE) TRADITIONAL else SIMPLE
                         translate(hanz)
+                        PreferenceUtil.setHanzType(hanz)
                     }
-
+                    R.id.set_cookie -> {
+                        val cookieView = LayoutInflater.from(this@DetailActivity)
+                                .inflate(R.layout.layout_dialog_cookie, null)
+                        val cookieDialog = AlertDialog.Builder(this@DetailActivity)
+                                .setTitle("设置Cookie")
+                                .setView(cookieView)
+                                .setNeutralButton("如何获取cookie和agent") { _, _ ->
+                                    startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
+                                }
+                                .setPositiveButton("OK") { _, _ -> }
+                                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                                .create()
+                        cookieDialog.show()
+                        cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
+                            val cookie = cookieView.et_cookie.text.toString()
+                            val agent = cookieView.et_agent.text.toString()
+                            PreferenceUtil.setCookie(cookie)
+                            PreferenceUtil.setAgent(agent)
+                            toast("设置完成")
+                            cookieDialog.dismiss()
+                        }
+                    }
                     else -> {
                     }
                 }

@@ -13,6 +13,8 @@ import info.free.scp.bean.*
 import info.free.scp.util.PreferenceUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -86,7 +88,9 @@ class HttpManager {
     }
 
     suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
-        return feedApiService.getComment(link)
+        val postStr = "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
+        val postBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), postStr)
+        return feedApiService.getComment(link, postBody)
     }
 
     suspend fun getRandom(typeRange: String): ApiBean.ApiListResponse<ScpItemModel> {

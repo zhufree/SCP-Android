@@ -7,8 +7,9 @@ import android.os.Bundle
 import androidx.documentfile.provider.DocumentFile
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.APP_PREF_NAME
 import info.free.scp.SCPConstants.INFO_DB_NAME
-import info.free.scp.SCPConstants.PREF_NAME
+import info.free.scp.SCPConstants.LEVEL_PREF_NAME
 import info.free.scp.SCPConstants.RequestCode.REQUEST_BACKUP_DIR
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PUBLIC_FILE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_RESTORE_DIR
@@ -95,18 +96,27 @@ class DownloadActivity : BaseActivity() {
                         } else {
                             root.createFile("*/*", INFO_DB_NAME)
                         }
-                        val prefFile = if (root.findFile(PREF_NAME) != null) {
-                            root.findFile(PREF_NAME)
+                        val levelPrefFile = if (root.findFile(LEVEL_PREF_NAME) != null) {
+                            root.findFile(LEVEL_PREF_NAME)
                         } else {
-                            root.createFile("application/xml", PREF_NAME)
+                            root.createFile("application/xml", LEVEL_PREF_NAME)
+                        }
+                        val appPrefFile = if (root.findFile(APP_PREF_NAME) != null) {
+                            root.findFile(APP_PREF_NAME)
+                        } else {
+                            root.createFile("application/xml", APP_PREF_NAME)
                         }
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawPrefFile = File("${FileUtil.privatePrefDirPath}${PREF_NAME}")
+                        val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
+                        val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
                         dbFile?.let {
                             copyFileToUri(this@DownloadActivity, rawDbFile, dbFile.uri)
                         }
-                        prefFile?.let {
-                            copyFileToUri(this@DownloadActivity, rawPrefFile, prefFile.uri)
+                        levelPrefFile?.let {
+                            copyFileToUri(this@DownloadActivity, rawLevelPrefFile, levelPrefFile.uri)
+                        }
+                        appPrefFile?.let {
+                            copyFileToUri(this@DownloadActivity, rawAppPrefFile, appPrefFile.uri)
                         }
                         uiThread {
                             toast("备份完成")
@@ -122,7 +132,8 @@ class DownloadActivity : BaseActivity() {
                     doAsync {
                         AppInfoDatabase.getInstance().close()
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawPrefFile = File("${FileUtil.privatePrefDirPath}${PREF_NAME}")
+                        val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
+                        val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
                         if (root.findFile(INFO_DB_NAME) != null) {
                             AppInfoDatabase.getInstance()
                             rawDbFile.delete()
@@ -133,10 +144,16 @@ class DownloadActivity : BaseActivity() {
                                 copyFileFromUri(this@DownloadActivity, dbFile.uri, rawDbFile)
                             }
                         }
-                        if (root.findFile(PREF_NAME) != null) {
-                            val prefFile = root.findFile(PREF_NAME)
+                        if (root.findFile(LEVEL_PREF_NAME) != null) {
+                            val prefFile = root.findFile(LEVEL_PREF_NAME)
                             prefFile?.let {
-                                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawPrefFile)
+                                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
+                            }
+                        }
+                        if (root.findFile(APP_PREF_NAME) != null) {
+                            val prefFile = root.findFile(APP_PREF_NAME)
+                            prefFile?.let {
+                                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawAppPrefFile)
                             }
                         }
                         AppInfoDatabase.getNewInstance()

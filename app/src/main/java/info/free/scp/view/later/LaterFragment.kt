@@ -21,7 +21,7 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
 import kotlinx.android.synthetic.main.fragment_later.*
-import kotlinx.android.synthetic.main.layout_dialog_report.view.*
+import kotlinx.android.synthetic.main.layout_dialog_input_large.view.*
 import org.jetbrains.anko.support.v4.alert
 import toast
 
@@ -108,7 +108,7 @@ class LaterFragment : BaseFragment() {
                 .create()
         inputDialog.show()
         inputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            val inputString = inputView.et_report.text.toString()
+            val inputString = inputView.et_import.text.toString()
             splitReadList(inputString)
             inputDialog.dismiss()
             EventUtil.onEvent(context, EventUtil.importReadList)

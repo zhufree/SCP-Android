@@ -40,4 +40,8 @@
         android:id="@+id/translate"
         android:title="@string/translate"
         app:showAsAction="collapseActionView" />
+    <item
+        android:id="@+id/set_cookie"
+        android:title="@string/set_cookie"
+        app:showAsAction="collapseActionView" />
 </menu>

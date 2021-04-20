@@ -10,7 +10,8 @@ object SCPConstants {
     const val SCP_DB_NAME = "scp_category_v2.db"
     const val DETAIL_DB_NAME = "scp_detail_v2.db"
     const val INFO_DB_NAME = "scp_info.db"
-    const val PREF_NAME = "level.xml"
+    const val LEVEL_PREF_NAME = "level.xml"
+    const val APP_PREF_NAME = "app.xml"
     const val PUBLIC_DIR_NAME = "scp_reader"
 
     object AppMode {

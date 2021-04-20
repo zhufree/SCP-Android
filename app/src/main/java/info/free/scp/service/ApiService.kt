@@ -37,12 +37,12 @@ interface ApiService {
 
     @GET("/top_rated_wanderers/{pageIndex}")
     suspend fun getTopRatedWander(@Path("pageIndex") pageIndex: Int): ApiBean.ApiListResponse<FeedModel>
-    
+
     @GET("/get_detail/{link}") // 不带/
     suspend fun getDetail(@Path("link") link: String): ApiBean.ApiListResponse<String>
 
-    @GET("/get_comment/{link}") // 不带/
-    suspend fun getComment(@Path("link") link: String): ApiBean.ApiListResponse<CommentModel>
+    @POST("/get_comment/{link}") // 不带/
+    suspend fun getComment(@Path("link") link: String, @Body body: RequestBody): ApiBean.ApiListResponse<CommentModel>
 
     @GET("/get_random/{typeRange}")
     suspend fun getRandom(@Path("typeRange") typeRange: String): ApiBean.ApiListResponse<ScpItemModel>

@@ -21,12 +21,4 @@ object ApiManager {
             .client(httpClientBuilder.build())
             .build()
     val portalApi: FreeApi = retrofit.create(FreeApi::class.java)
-//    val pictureApi: PictureApi = retrofit.create(PictureApi::class.java)
-//    val userApi: UserApi = retrofit.create(UserApi::class.java)
-//    val commentApi: CommentApi = retrofit.create(CommentApi::class.java)
-//    val collectionApi: CollectionApi = retrofit.create(CollectionApi::class.java)
-//    val likeApi: LikeApi = retrofit.create(LikeApi::class.java)
-//    val notifyApi: NotifyApi = retrofit.create(NotifyApi::class.java)
-//    val draftApi: DraftApi = retrofit.create(DraftApi::class.java)
-//    val configApi: ConfigApi = retrofit.create(ConfigApi::class.java)
 }

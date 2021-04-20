@@ -29,6 +29,8 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
+import info.free.scp.SCPConstants.SIMPLE
+import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -87,6 +89,8 @@ class DetailActivity : BaseActivity() {
             dayTextStyle = "<style>p {font-size:$currentTextSize}" +
                     ";}* {color:#000;}</style>"
         }
+
+    private var hanz = PreferenceUtil.getHanzType()
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
             "$currentTextSize;}* {color:#aaa;}</style>"
     private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
@@ -100,7 +104,6 @@ class DetailActivity : BaseActivity() {
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
 
-    //    private val randomList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
     private var randomIndex = 0
     private var historyIndex = 0
     private var fullUrl = ""
@@ -391,22 +394,6 @@ class DetailActivity : BaseActivity() {
                                     "text/html", "utf-8", null)
                         }
                     }
-                    R.id.report -> {
-                        val reportView = LayoutInflater.from(this@DetailActivity)
-                                .inflate(R.layout.layout_dialog_report, null)
-                        val reportDialog = AlertDialog.Builder(this@DetailActivity)
-                                .setTitle("反馈问题")
-                                .setView(reportView)
-                                .setPositiveButton("OK") { _, _ -> }
-                                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                                .create()
-                        reportDialog.show()
-                        reportDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-                            val reportString = reportView.et_report.text.toString()
-                            MobclickAgent.reportError(this@DetailActivity, "url: $url, detail: $reportString")
-                            reportDialog.dismiss()
-                        }
-                    }
                     R.id.open_in_browser -> {
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
                         PreferenceUtil.addPoints(1)
@@ -475,12 +462,11 @@ class DetailActivity : BaseActivity() {
                         }
                         return@let
                     }
-                    R.id.translate_to_simple -> {
-                        translate(simple)
+                    R.id.translate -> {
+                        hanz = if (hanz == SIMPLE) TRADITIONAL else SIMPLE
+                        translate(hanz)
                     }
-                    R.id.translate_to_traditional -> {
-                        translate(traditional)
-                    }
+
                     else -> {
                     }
                 }
@@ -493,8 +479,6 @@ class DetailActivity : BaseActivity() {
         ThemeUtil.changeTheme(this, mode)
     }
 
-    private val simple = 0
-    private val traditional = 1
 
     /**
      * 繁简转换
@@ -502,7 +486,7 @@ class DetailActivity : BaseActivity() {
     private fun translate(translateType: Int) {
         try {
             val converter = JChineseConvertor.getInstance()
-            detailHtml = if (translateType == simple) converter.t2s(detailHtml) else converter.s2t(detailHtml)
+            detailHtml = if (translateType == SIMPLE) converter.t2s(detailHtml) else converter.s2t(detailHtml)
             webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
                     + detailHtml + jsScript,
                     "text/html", "utf-8", null)

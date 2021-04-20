@@ -128,8 +128,6 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
     }
 
     class ScpHolder(private val binding: ItemDocBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val categoryHeight = PreferenceUtil.getCategoryHeight()
-        private val categoryInterval = PreferenceUtil.getCategoryInterval()
         val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
         fun bind(listener: View.OnClickListener, longListener: View.OnClickListener, item: ScpModel) {
             binding.apply {

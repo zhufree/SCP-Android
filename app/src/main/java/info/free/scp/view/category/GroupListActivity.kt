@@ -229,7 +229,7 @@ class GroupListActivity : BaseActivity() {
         }
     }
 
-    private val categoryCount = PreferenceUtil.getCategoryCount()
+    private val categoryCount = 100
 
     private fun switchSeries(index: Int) {
         tv_group_desc.visibility = GONE

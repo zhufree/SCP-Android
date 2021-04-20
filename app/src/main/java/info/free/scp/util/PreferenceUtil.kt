@@ -273,33 +273,21 @@ object PreferenceUtil {
         return getBooleanValue("read_settings", "hide_finished_article")
     }
 
-    fun getCategoryCount(): Int {
-        val count = getStringValue("read_settings", "category_count")
-        return if (count.isNotEmpty()) count.toInt() else 100
-    }
-
-    fun getCategoryHeight(): Int {
-        val height = getStringValue("read_settings", "category_height")
-        return if (height.isNotEmpty()) height.toInt() else 50
-    }
-
-    fun getCategoryInterval(): Int {
-        val interval = getStringValue("read_settings", "category_interval")
-        return if (interval.isNotEmpty()) interval.toInt() else 4
-    }
-
     fun getDetailTextSize(): String {
         val textSize = getStringValue("read_settings", "detail_text_size")
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
 
-    fun getTraditionalText(): Int {
-        val textSize = getStringValue("read_settings", "detail_text_traditional")
-        return if (textSize.isNotEmpty()) textSize.toInt() else 0
-    }
-
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)
+    }
+
+    fun setHanzType(type: Int) {
+        setIntValue("read_settings", "hanz_type", type)
+    }
+
+    fun getHanzType(): Int {
+        return getIntValue("read_settings", "hanz_type")
     }
 
     /**
@@ -322,28 +310,6 @@ object PreferenceUtil {
         return getStringValue("level", "draft_title")
     }
 
-    /**
-     * 广告
-     */
-    fun setShowAdNotice() {
-        setBooleanValue(APP_SP, "show_ad_notice", true)
-    }
-
-    fun getShowAdNotice() = getBooleanValue(APP_SP, "show_ad_notice")
-
-    fun addAdPoints(point: Int) {
-        setIntValue("level", "ad_point", getAdPoint() + point)
-    }
-
-    fun getAdPoint(): Int {
-        return getIntValue("level", "ad_point")
-    }
-
-    fun setLastShowAdTime(time: Long) {
-        setLongValue(APP_SP, "last_show_ad_time", time)
-    }
-
-    fun getLastShowAdTime() = getLongValue(APP_SP, "last_show_ad_time")
 
     /**
      * 工具方法

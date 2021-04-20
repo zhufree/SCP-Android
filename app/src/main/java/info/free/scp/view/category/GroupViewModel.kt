@@ -15,7 +15,7 @@ import toast
 class GroupViewModel : ViewModel() {
     private val readDao = AppInfoDatabase.getInstance().likeAndReadDao()
     private val scpDao = ScpDatabase.getInstance()?.scpDao()
-    private val categoryCount = PreferenceUtil.getCategoryCount()
+    private val categoryCount = 100
     private var hasReadList = readDao.getHasReadList()
 
     fun getDocList(saveType: Int, groupIndex: Int = -1, extraType: String = ""): List<ScpModel> {

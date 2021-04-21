@@ -27,11 +27,8 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-        setSupportActionBar(settings_toolbar)
+        baseToolbar = settings_toolbar
         settings_toolbar?.setTitle(R.string.app_name)
-        settings_toolbar?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
-
-        settings_toolbar?.setNavigationOnClickListener { finish() }
 
         supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
                 ReadSettingsFragment()).commit()
@@ -55,11 +52,11 @@ class SettingsActivity : BaseActivity() {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 false
             }
-            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { preference, newValue ->
-                info(newValue.toString())
-                EventUtil.onEvent(context, EventUtil.setListItemCount, newValue.toString())
-                true
-            }
+//            findPreference<DialogPreference>("category_count")?.setOnPreferenceChangeListener { preference, newValue ->
+//                info(newValue.toString())
+//                EventUtil.onEvent(context, EventUtil.setListItemCount, newValue.toString())
+//                true
+//            }
         }
     }
 }

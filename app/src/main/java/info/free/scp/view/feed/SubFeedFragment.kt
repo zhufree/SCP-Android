@@ -56,7 +56,7 @@ class SubFeedFragment : BaseFragment() {
     private fun subscribeUi(adapter: FeedAdapter) {
         feedType = arguments?.getInt("feedType") ?: LATEST_CREATED
         Log.i("feed", "type = $feedType")
-        viewModel.getFeed()?.observe(viewLifecycleOwner, Observer { result ->
+        viewModel.getFeed().observe(viewLifecycleOwner, Observer { result ->
             binding.slFeed.isRefreshing = false
             if (result != null && result.isNotEmpty())
                 adapter.submitList(result)

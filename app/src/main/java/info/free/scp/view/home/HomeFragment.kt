@@ -1,43 +1,32 @@
 package info.free.scp.view.home
 
 
-import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
+import com.google.android.material.tabs.TabLayout
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.AppMode.OFFLINE
-import info.free.scp.SCPConstants.AppMode.ONLINE
-import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.ScpApplication
-import info.free.scp.db.ScpDatabase
-import info.free.scp.util.FileUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.UpdateManager
-import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.category.SeriesDocActivity
-import info.free.scp.view.download.DownloadActivity
-import info.free.scp.view.search.SearchActivity
-import info.free.scp.view.user.LaterAndHistoryActivity
+import info.free.scp.view.category.CategoryFragment
+import info.free.scp.view.category.ScpListFragment
+import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_home.*
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.selector
-import org.jetbrains.anko.support.v4.startActivity
-import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.backgroundColor
+import org.jetbrains.anko.backgroundDrawable
 
 
 /**
+ * UI新版本
  * Use the [HomeFragment.newInstance] factory method to
  * create an instance of this fragment.
  *
  */
 class HomeFragment : BaseFragment() {
+    var fragmentList = arrayListOf<BaseFragment>()
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -46,86 +35,29 @@ class HomeFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        home_toolbar?.setTitle(R.string.title_scp_documents)
-        home_toolbar?.inflateMenu(R.menu.home_fragment_menu) //设置右上角的填充菜单
-        home_toolbar?.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.search -> {
-                    activity?.startActivity(Intent(activity, SearchActivity::class.java))
-                }
-            }
-            true
-        }
-        tv_home_notice?.text = PreferenceUtil.getNotice()
-        tv_series_doc?.background?.alpha = 50
-        tv_story_doc?.background?.alpha = 50
-        tv_about_doc?.background?.alpha = 50
-        tv_read_later?.background?.alpha = 50
-        tv_joke_doc?.background?.alpha = 50
-        tv_direct?.background?.alpha = 50
+        fragmentList = arrayListOf(
+                HomePageFragment.newInstance(),
+                ScpListFragment.newInstance(SCPConstants.Entry.LIBRARY_DOC, 0, ""),
+                CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
+                CategoryFragment.newInstance(SCPConstants.Entry.GOI_DOC, 0),
+                CategoryFragment.newInstance(SCPConstants.Entry.ART_DOC, 0),
+                ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, "")
+        )
 
-        if (!PreferenceUtil.getShowNotice()) {
-            cd_notice_container.visibility = GONE
-        }
-        iv_remove_notice?.setOnClickListener {
-            PreferenceUtil.setShowNotice(false)
-            cd_notice_container.visibility = GONE
-            toast("公告已隐藏，可在app使用说明中查看")
-        }
-        tv_series_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.SCP_DOC)
-        }
-        tv_story_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.STORY_DOC)
-        }
-        tv_about_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.ABOUT_SCP_DOC)
-        }
-        tv_read_later?.setOnClickListener {
-            startActivity<LaterAndHistoryActivity>("view_type" to LATER_TYPE)
-        }
-        tv_joke_doc?.setOnClickListener {
-            goToDocPage(SCPConstants.Entry.JOKE_DOC)
-        }
-        tv_direct?.setOnClickListener {
-            PreferenceUtil.addPoints(2)
-            startActivity<DirectActivity>()
-        }
+        val titleList = arrayListOf("首页", "图书馆", "SCP国际版", "GOI格式", "艺术作品", "背景资料与指导") // 单页放滑动分页
+        val homePagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
+        vp_home?.adapter = homePagerAdapter
+        tab_home?.setupWithViewPager(vp_home)
+        tab_home?.tabMode = TabLayout.MODE_SCROLLABLE
     }
 
-    private fun goToDocPage(entry_type: Int) {
-        if (!PreferenceUtil.getShownModeNotice()) {
-            alert("为了方便用户尽快开始阅读，0.1.5版本添加了全局在线阅读模式，如果需要下载数据库并使用离线模式，" +
-                    "请在【我的-数据下载及配置】中设置.\n注意：1.之前已离线的用户仍将使用离线模式，新用户默认使用在线模式" +
-                    "\n2.在线阅读模式的数据仍和数据库相同，并非和官网完全同步，具体同步日期可在离线页面查看。\n" +
-                    "3.正文页面菜单中的在线模式是强制访问网页，和全局阅读模式不同") {
-                positiveButton("我知道了") {
-                    ScpDatabase.getInstance()?.let {
-                        PreferenceUtil.setAppMode(OFFLINE)
-                    } ?: run {
-                        PreferenceUtil.setAppMode(ONLINE)
-                    }
-                    startActivity<SeriesDocActivity>("entry_type" to entry_type)
-                }
-            }.show()
-            PreferenceUtil.setShownModeNotice()
-        } else {
-            startActivity<SeriesDocActivity>("entry_type" to entry_type)
-        }
-    }
 
     override fun refreshTheme() {
         super.refreshTheme()
-        home_toolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
-        cd_notice_container?.setBackgroundColor(ThemeUtil.containerBg)
-        tv_home_notice?.setTextColor(ThemeUtil.darkText)
-        tv_series_doc?.setTextColor(ThemeUtil.darkText)
-        tv_story_doc?.setTextColor(ThemeUtil.darkText)
-
-        tv_about_doc?.setTextColor(ThemeUtil.darkText)
-        tv_read_later?.setTextColor(ThemeUtil.darkText)
-        tv_joke_doc?.setTextColor(ThemeUtil.darkText)
-        tv_direct?.setTextColor(ThemeUtil.darkText)
+        tab_home?.background = ColorDrawable(ThemeUtil.itemBg)
+        tab_home?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+        tab_home?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+        fragmentList.forEach { it.refreshTheme() }
     }
 
 

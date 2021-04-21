@@ -48,8 +48,8 @@ class CommentLayout : ConstraintLayout {
     fun refreshTheme() {
         tv_comment_title.setTextColor(ThemeUtil.darkText)
         tv_comment_content.setTextColor(ThemeUtil.darkText)
-        tv_comment_username.setTextColor(ThemeUtil.lightText)
-        tv_comment_time.setTextColor(ThemeUtil.lightText)
+        tv_comment_username.setTextColor(ThemeUtil.mediumText)
+        tv_comment_time.setTextColor(ThemeUtil.mediumText)
         replyList.forEach { it.refreshTheme() }
     }
 }

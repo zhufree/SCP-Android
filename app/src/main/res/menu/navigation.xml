@@ -7,13 +7,13 @@
         android:title="@string/tab_home" />
 
     <item
-        android:id="@+id/navigation_feed"
-        android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="@string/tab_latest" />
+        android:id="@+id/navigation_later"
+        android:icon="@drawable/baseline_menu_book_black_24dp"
+        android:title="@string/later" />
 
     <item
         android:id="@+id/navigation_about"
-        android:icon="@drawable/ic_face_black_24dp"
+        android:icon="@drawable/baseline_face_black_24dp"
         android:title="@string/tab_mine" />
 
 </menu>

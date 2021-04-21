@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_ALL_DOWNLOADS" />
 
@@ -18,9 +19,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".view.user.WuhanActivity"
-            android:screenOrientation="nosensor" />
+        <activity android:name=".view.feed.FeedActivity" />
+        <activity android:name=".view.category.DocListActivity" />
+        <activity android:name=".view.category.GroupListActivity" />
+        <activity android:name=".view.feed.TopRatedActivity" />
+        <activity android:name=".view.random.RandomActivity" />
         <activity
             android:name=".view.eatroom.MealListActivity"
             android:screenOrientation="nosensor" />
@@ -49,9 +52,7 @@
         <activity
             android:name=".view.category.ScpListActivity"
             android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.detail.DetailActivity"
-            android:screenOrientation="nosensor" />
+        <activity android:name=".view.detail.DetailActivity" />
         <activity
             android:name=".view.base.BaseActivity"
             android:screenOrientation="nosensor" />
@@ -79,16 +80,7 @@
             android:name=".view.search.SearchActivity"
             android:screenOrientation="nosensor" />
         <activity
-            android:name=".view.like.LikeBoxActivity"
-            android:screenOrientation="nosensor">
-            <intent-filter>
-                <action android:name="info.free.scp.view.like.LikeBoxActivity" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.like.LikeActivity"
+            android:name=".view.later.LikeListActivity"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".view.user.LaterAndHistoryActivity"
@@ -119,9 +111,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.category.SeriesDocActivity"
-            android:screenOrientation="nosensor" />
-        <activity
             android:name=".view.home.DirectActivity"
             android:screenOrientation="nosensor" />
         <activity
@@ -137,7 +126,7 @@
             android:name=".view.draft.DraftListActivity"
             android:screenOrientation="nosensor" />
         <activity
-            android:name=".view.download.DownloadActivity"
+            android:name=".view.user.DownloadActivity"
             android:screenOrientation="nosensor" />
 
         <meta-data

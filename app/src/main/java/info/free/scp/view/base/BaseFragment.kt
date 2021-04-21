@@ -2,13 +2,10 @@ package info.free.scp.view.base
 
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.View
 import info.free.scp.util.ThemeUtil
-import info.free.scp.view.category.SeriesDocActivity
-import org.jetbrains.anko.support.v4.startActivity
 
 
 /**

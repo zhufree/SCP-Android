@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="longClickListener"
+            type="android.view.View.OnLongClickListener" />
+
+        <variable
+            name="record"
+            type="info.free.scp.bean.ScpRecordModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_entry_box"
+        android:onClick="@{clickListener}"
+        android:onLongClick="@{longClickListener}">
+
+        <ImageView
+            android:id="@+id/iv_history_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/outline_note_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_history_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="@{record.title}"
+            android:textColor="?attr/darkText"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/iv_history_icon"
+            app:layout_constraintStart_toEndOf="@id/iv_history_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_history_icon" />
+
+        <TextView
+            android:id="@+id/tv_history_item_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            android:text="@{record.showTime()}"
+            android:textColor="#B9B9B9"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/iv_history_icon"
+            app:layout_constraintTop_toBottomOf="@id/tv_history_item_title" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

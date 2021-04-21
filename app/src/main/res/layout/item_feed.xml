@@ -17,39 +17,48 @@
         android:id="@+id/cl_feed_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="5dp"
-        android:background="?attr/itemBg"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/bg_entry_box"
         android:onClick="@{clickListener}"
         android:minHeight="50dp">
+
+        <ImageView
+            android:id="@+id/iv_feed_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/baseline_article_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tv_feed_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:gravity="center"
             android:maxLines="2"
             android:singleLine="false"
             android:textColor="?attr/darkText"
             android:textSize="18sp"
             android:text="@{feed.title}"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="8dp"
             app:layout_constraintEnd_toStartOf="@+id/tv_feed_rank"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/iv_feed_icon"
+            app:layout_constraintStart_toEndOf="@id/iv_feed_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_feed_icon" />
 
         <TextView
             android:id="@+id/tv_feed_rank"
-            android:layout_width="40dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="16sp"
             android:text="@{feed.rank}"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -60,9 +69,10 @@
             android:layout_height="wrap_content"
             android:textSize="12sp"
             android:text="@{feed.createdTime}"
-            app:layout_constraintEnd_toEndOf="@id/tv_feed_rank"
-            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="4dp"/>
+            app:layout_constraintStart_toStartOf="@id/iv_feed_icon"
+            app:layout_constraintTop_toBottomOf="@id/iv_feed_icon" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -47,8 +47,6 @@ class UpdateManager(private var activity: BaseActivity) {
             // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
-            PreferenceUtil.clearDownloadPref()
-            FileUtil.getInstance(activity).restoreDB() // 第一次安装app时检测
             return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
@@ -84,14 +82,6 @@ class UpdateManager(private var activity: BaseActivity) {
                     if (config.key == "update_link") {
                         updateLink = config.value
                     }
-                    // 上次数据更新时间，分几个库
-                    if (config.key == "last_update_time_all") {
-                        PreferenceUtil.setServerLastUpdateTime(config.value.toLong())
-                    }
-                    // 数据下载链接
-                    if (config.key == "db_link_all") {
-                        PreferenceUtil.setDownloadLink(config.value)
-                    }
                     if (config.key == "notice") {
                         PreferenceUtil.setNotice(config.value)
                     }
@@ -104,8 +94,8 @@ class UpdateManager(private var activity: BaseActivity) {
                     if (config.key == "meal_count") {
                         PreferenceUtil.setNewMealCount(config.value.toInt())
                     }
-                    if (config.key == "show_wh") {
-                        PreferenceUtil.setShowWh(config.value == "yes")
+                    if (config.key == "query_link") {
+                        PreferenceUtil.setQueryLink(config.value)
                     }
                 }
                 if (currentVersionCode < newVersionCode && !activity.isFinishing) {

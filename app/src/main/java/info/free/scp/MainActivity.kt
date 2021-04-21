@@ -5,14 +5,17 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDatabase
+import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
-import info.free.scp.view.feed.FeedFragment
 import info.free.scp.view.home.HomeFragment
+import info.free.scp.view.later.LaterFragment
 import info.free.scp.view.user.UserFragment
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.info
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 
@@ -20,13 +23,13 @@ import pub.devrel.easypermissions.EasyPermissions
 class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private var currentFragment: BaseFragment? = null
     private val homeFragment = HomeFragment.newInstance()
-    private val feedFragment = FeedFragment.newInstance()
+    private val laterFragment = LaterFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
 
 
     @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
     private fun requireFilePermission() {
-        val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val perms = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE)
         if (EasyPermissions.hasPermissions(this, *perms)) {
             // Already have permission, do the thing
             // ...
@@ -47,21 +50,21 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                     transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
                 } else {
                     transaction.show(homeFragment)
-                    transaction.hide(feedFragment)
+                    transaction.hide(laterFragment)
                     transaction.hide(userFragment)
                 }
                 currentFragment = homeFragment
             }
-            R.id.navigation_feed -> {
-                if (!feedFragment.isAdded && null == supportFragmentManager
-                                .findFragmentByTag(feedFragment.javaClass.name)) {
-                    transaction.add(R.id.flMainContainer, feedFragment, feedFragment.javaClass.name)
+            R.id.navigation_later -> {
+                if (!laterFragment.isAdded && null == supportFragmentManager
+                                .findFragmentByTag(laterFragment.javaClass.name)) {
+                    transaction.add(R.id.flMainContainer, laterFragment, laterFragment.javaClass.name)
                 } else {
-                    transaction.show(feedFragment)
+                    transaction.show(laterFragment)
                     transaction.hide(homeFragment)
                     transaction.hide(userFragment)
                 }
-                currentFragment = feedFragment
+                currentFragment = laterFragment
             }
             R.id.navigation_about -> {
                 if (!userFragment.isAdded && null == supportFragmentManager
@@ -69,7 +72,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
                     transaction.add(R.id.flMainContainer, userFragment, userFragment.javaClass.name)
                 } else {
                     transaction.show(userFragment)
-                    transaction.hide(feedFragment)
+                    transaction.hide(laterFragment)
                     transaction.hide(homeFragment)
                 }
                 currentFragment = userFragment
@@ -89,14 +92,19 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             if (it.isAdded) {
                 transaction.show(it)
             } else {
-                transaction.add(R.id.flMainContainer, it)
+                transaction.add(R.id.flMainContainer, it, it.javaClass.name)
             }
         } ?: run {
-            transaction.add(R.id.flMainContainer, homeFragment, "home")
+            transaction.add(R.id.flMainContainer, homeFragment, homeFragment.javaClass.name)
             currentFragment = homeFragment
         }
         transaction.commit()
+        navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
+        FileUtil.copyCategoryDb()
+        FileUtil.checkDetailDb()
+        ScpDatabase.getNewInstance()
+        AppInfoDatabase.getNewInstance()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()
@@ -113,10 +121,11 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
 
     override fun refreshTheme() {
+        super.refreshTheme()
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
-        feedFragment.refreshTheme()
+        laterFragment.refreshTheme()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -126,8 +135,10 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        info { "onPermissionsDenied" }
     }
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
+        info { "onPermissionsGranted" }
     }
 }

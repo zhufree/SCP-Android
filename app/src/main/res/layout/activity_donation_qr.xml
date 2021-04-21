@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/containerBg"
+    tools:context="info.free.scp.view.user.DonationQrActivity">
+
+    <ImageView
+        android:id="@+id/iv_qr"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/img_donation_wechat"
+        app:layout_constraintBottom_toTopOf="@id/tv_donation_wechat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/abl_about_me"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+
+    <TextView
+        android:id="@+id/tv_donation_alipay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/alipay_qr"
+        android:padding="8dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_donation_wechat"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_donation_wechat"
+        app:layout_constraintTop_toTopOf="@id/tv_donation_wechat" />
+
+
+    <TextView
+        android:id="@+id/tv_donation_wechat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:text="@string/wechat_qr"
+        android:padding="8dp"
+        android:textColor="#666666"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/btn_donate"
+        app:layout_constraintEnd_toStartOf="@+id/tv_donation_alipay"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_qr"
+        app:layout_constraintVertical_chainStyle="spread_inside" />
+
+    <TextView
+        android:id="@+id/tv_app_introduction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/donation_introduction"
+        android:textColor="#B9B9B9"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_donate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_donation_wechat" />
+
+    <Button
+        android:id="@+id/btn_donate"
+        android:layout_width="0dp"
+        android:layout_height="54dp"
+        android:layout_marginHorizontal="27dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/bg_donate_btn"
+        android:text="@string/donation_notice"
+        android:textColor="@color/itemBgWhite"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_app_introduction" />
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_about_me"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/about_me_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?attr/toolbarBg"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/donation" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_feed_item_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:textColor="?attr/darkText"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_feed_item_rank"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--要用spannableText-->
+    <TextView
+        android:id="@+id/tv_feed_item_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="?attr/mediumText"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@id/tv_feed_item_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_feed_item_title" />
+
+    <TextView
+        android:id="@+id/tv_feed_item_rank"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:textColor="?attr/mediumText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--    目前没有相关数据-->
+    <!--    <TextView-->
+    <!--        android:id="@+id/tv_article_item_desc"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:text="编号：SCP-CN-1794 等级：Eclid"/>-->
+
+    <View
+        android:id="@+id/v_feed_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/dividerGray"
+        app:layout_constraintTop_toBottomOf="@id/tv_feed_item_time" />
+</androidx.constraintlayout.widget.ConstraintLayout>

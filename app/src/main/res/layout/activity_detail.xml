@@ -203,7 +203,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="@color/colorPrimary"
             android:elevation="10dp"
-            android:src="@drawable/ic_comment_white_24dp"
+            android:src="@drawable/baseline_textsms_white_24dp"
             app:fabSize="normal"
             app:layout_constraintBottom_toTopOf="@id/tv_bottom_next"
             app:layout_constraintEnd_toEndOf="parent"

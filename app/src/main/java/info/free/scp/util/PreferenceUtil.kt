@@ -3,11 +3,9 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
-import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
-import java.util.*
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -40,24 +38,20 @@ object PreferenceUtil {
     }
 
 
-    /**
-     * 服务器数据更新时间，last_update_time_0/1/2/3/4
-     * key是字段名
-     */
-    fun setServerLastUpdateTime(time: Long) {
-        setLongValue(DOWNLOAD_SP, "last_update_time", time)
-    }
-
-    fun getServerLastUpdateTime(): Long {
-        return getLongValue(DOWNLOAD_SP, "last_update_time")
-    }
-
     fun setNotice(notice: String) {
         setStringValue(APP_SP, "notice", notice)
     }
 
     fun getNotice(): String {
         return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）")
+    }
+
+    fun setQueryLink(link: String) {
+        setStringValue(APP_SP, "query_link", link)
+    }
+
+    fun getQueryLink(): String {
+        return getStringValue(APP_SP, "query_link", "http://freeescp.mikecrm.com/zelnB9R")
     }
 
     fun getShowNotice(): Boolean {
@@ -85,14 +79,6 @@ object PreferenceUtil {
         return getBooleanValue(APP_SP, "show_meal")
     }
 
-    fun setShowWh(show: Boolean) {
-        setBooleanValue(APP_SP, "show_wh", show)
-    }
-
-    fun getShowWh(): Boolean {
-        return getBooleanValue(APP_SP, "show_wh")
-    }
-
     // 设置全局在线模式or离线模式
     fun setAppMode(mode: Int) {
         setIntValue(APP_SP, "app_mode", mode)
@@ -118,35 +104,23 @@ object PreferenceUtil {
         return getIntValue(APP_SP, "old_meal_count")
     }
 
-    /**
-     * 分库数据文件下载链接
-     * db_link_0/1/2/3/4/all
-     */
-
-    // 新版本，只下一个数据库
-    fun setDownloadLink(link: String) {
-        setStringValue(DOWNLOAD_SP, "db_link", link)
+    // 设置cookie
+    fun setCookie(cookie: String) {
+        setStringValue(APP_SP, "cookie", cookie)
     }
 
-    fun getDownloadLink(): String {
-        return getStringValue(DOWNLOAD_SP, "db_link", "http://cdn.zhufree.fun/scp_data.db")
+    fun getCookie(): String {
+        return getStringValue(APP_SP, "cookie", "")
     }
 
-    /**
-     * 数据更新时间相关
-     */
-    fun getDetailLastLoadTime(): Long {
-        return getLongValue(DOWNLOAD_SP, "load_db_time")
+    // 设置agent
+    fun setAgent(agent: String) {
+        setStringValue(APP_SP, "agent", agent)
     }
 
-    fun setDetailLastLoadTime(time: Long) {
-        setLongValue(DOWNLOAD_SP, "load_db_time", time)
+    fun getAgent(): String {
+        return getStringValue(APP_SP, "agent", "")
     }
-
-    fun clearDownloadPref() {
-        getPrivateSharedPreference(DOWNLOAD_SP)?.edit()?.clear()?.apply()
-    }
-
 
     /**
      * 检测当前版本是不是第一次启动
@@ -316,33 +290,21 @@ object PreferenceUtil {
         return getBooleanValue("read_settings", "hide_finished_article")
     }
 
-    fun getCategoryCount(): Int {
-        val count = getStringValue("read_settings", "category_count")
-        return if (count.isNotEmpty()) count.toInt() else 100
-    }
-
-    fun getCategoryHeight(): Int {
-        val height = getStringValue("read_settings", "category_height")
-        return if (height.isNotEmpty()) height.toInt() else 50
-    }
-
-    fun getCategoryInterval(): Int {
-        val interval = getStringValue("read_settings", "category_interval")
-        return if (interval.isNotEmpty()) interval.toInt() else 4
-    }
-
     fun getDetailTextSize(): String {
         val textSize = getStringValue("read_settings", "detail_text_size")
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
 
-    fun getTraditionalText(): Int {
-        val textSize = getStringValue("read_settings", "detail_text_traditional")
-        return if (textSize.isNotEmpty()) textSize.toInt() else 0
-    }
-
     fun setDetailTextSize(size: String) {
         setStringValue("read_settings", "detail_text_size", size)
+    }
+
+    fun setHanzType(type: Int) {
+        setIntValue("read_settings", "hanz_type", type)
+    }
+
+    fun getHanzType(): Int {
+        return getIntValue("read_settings", "hanz_type")
     }
 
     /**
@@ -365,28 +327,6 @@ object PreferenceUtil {
         return getStringValue("level", "draft_title")
     }
 
-    /**
-     * 广告
-     */
-    fun setShowAdNotice() {
-        setBooleanValue(APP_SP, "show_ad_notice", true)
-    }
-
-    fun getShowAdNotice() = getBooleanValue(APP_SP, "show_ad_notice")
-
-    fun addAdPoints(point: Int) {
-        setIntValue("level", "ad_point", getAdPoint() + point)
-    }
-
-    fun getAdPoint(): Int {
-        return getIntValue("level", "ad_point")
-    }
-
-    fun setLastShowAdTime(time: Long) {
-        setLongValue(APP_SP, "last_show_ad_time", time)
-    }
-
-    fun getLastShowAdTime() = getLongValue(APP_SP, "last_show_ad_time")
 
     /**
      * 工具方法

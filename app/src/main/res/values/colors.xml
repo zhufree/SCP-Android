@@ -2,31 +2,25 @@
 <resources>
     <color name="colorPrimary">#5e7987</color>
     <color name="colorPrimaryDark">#134857</color>
-    <color name="colorAccent">#500</color>
+    <color name="colorAccent">#DF2424</color>
 
-    <color name="itemBg">#b0d5df</color>
-    <color name="textColor">#333</color>
-    <color name="containerBg">#f5f5f5</color>
+    <color name="containerBg">#F5F5F5</color>
     <color name="containerBgNight">#222</color>
     <!--浅色底深色字-->
-    <color name="darkText">#333</color>
-    <color name="darkTextNight">#777</color>
+    <color name="darkText">#4A4A4A</color>
+    <color name="darkTextNight">#777777</color>
     <!--深色底浅色字-->
-    <color name="lightText">#999</color>
-    <color name="disabledBg">#dcdcdc</color>
-    <color name="disabledBgNight">#555</color>
-    <color name="toolbarBgNight">#191919</color>
-    <color name="itemBgNight">#202020</color>
-    <!--浅色底深色字-->
-    <!--<item name="darkTextNight">#999</item>-->
-    <!--深色底浅色字-->
-    <!--<item name="lightTextNight">#333</item>-->
-    <color name="unClickBtn">#8abcd1</color>
-    <color name="clickedBtn">#2775b6</color>
-    <color name="unClickBtnNight">#2e317c</color>
-    <color name="clickedBtnNight">#1c2938</color>
-    <color name="settingItemBg">#fff</color>
-    <color name="settingItemBgNight">#2f2f2f</color>
+    <color name="mediumText">#666666</color>
+    <color name="lightTextGray">#B9B9B9</color>
 
-    <color name="white">#fff</color>
+    <color name="disabledBgNight">#555</color>
+    <color name="itemBgNight">#202020</color>
+
+    <color name="linkBlue">#4A90E2</color>
+    <color name="todoYellow">#F99933</color>
+    <color name="dividerGray">#EDEDED</color>
+    <color name="dividerGrayNight">#ABABAB</color>
+
+    <color name="itemBgWhite">#ffffff</color>
+    <color name="white">#ffffff</color>
 </resources>

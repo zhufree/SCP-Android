@@ -9,6 +9,8 @@ import androidx.multidex.MultiDexApplication
 import com.umeng.analytics.AnalyticsConfig
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import info.free.scp.db.AppInfoDatabase
+import info.free.scp.db.ScpDatabase
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
@@ -71,6 +73,7 @@ class ScpApplication : MultiDexApplication() {
     }
 
     override fun onTerminate() {
+        AppInfoDatabase.getInstance().close()
         super.onTerminate()
     }
 

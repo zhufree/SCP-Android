@@ -4,11 +4,13 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/et_report"
+        android:id="@+id/et_import"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:maxHeight="200dp"
         android:minLines="1"
         android:layout_margin="16dp"
-        android:inputType="textMultiLine"/>
+        android:autofillHints="@string/app_name"
+        android:hint="@string/app_name"
+        android:inputType="textMultiLine" />
 </LinearLayout>

@@ -5,8 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.AppMode.ONLINE
-import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -17,16 +15,8 @@ import kotlinx.coroutines.launch
 class DetailViewModel : ViewModel() {
     var repo = DetailRepository()
 
-    fun getScp(): MutableLiveData<in ScpModel>? {
+    fun getScp(): MutableLiveData<ScpItemModel?> {
         return repo.scp
-    }
-
-    fun getOfflineScp(): LiveData<ScpItemModel>? {
-        return repo.offlineScp
-    }
-
-    fun getOfflineCollection(): LiveData<ScpCollectionModel>? {
-        return repo.offlineCollection
     }
 
     fun getScpLikeInfo(): LiveData<ScpLikeModel>? {
@@ -48,8 +38,8 @@ class DetailViewModel : ViewModel() {
     /**
      * 变更scp时就顺带更新其他信息
      */
-    fun setScp(link: String, title: String) {
-        repo.setScp(link, title)
+    fun setScp(link: String) {
+        repo.setScp(link)
     }
 
     fun setScpReadInfo() {
@@ -73,22 +63,6 @@ class DetailViewModel : ViewModel() {
     fun loadComment(link: String) {
         viewModelScope.launch {
             repo.loadComment(link)
-        }
-    }
-
-    fun loadRandom(typeRange: String) {
-        viewModelScope.launch {
-            if (typeRange.isEmpty()) {
-                repo.getRandom("0")
-            } else {
-                repo.getRandom(typeRange)
-            }
-        }
-    }
-
-    fun loadSibling(scpType: Int, index: Int, direct: String = "next") {
-        viewModelScope.launch {
-            repo.getSibling(scpType, index, direct)
         }
     }
 }

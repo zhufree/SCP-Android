@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="?attr/containerBg"
+    android:orientation="vertical"
     tools:context=".view.user.DonationActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -25,63 +25,45 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_afdian"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="64dp"
+        android:background="#8A62DC"
+        android:text="@string/go_afdian"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/abl_donation" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_mianbaoduo"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:layout_marginHorizontal="64dp"
+        android:layout_marginTop="32dp"
+        android:background="#FED04D"
+        android:text="@string/go_mianbaoduo"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_afdian" />
 
-            <ImageView
-                android:id="@+id/iv_donation_list"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="32dp"
-                android:src="@drawable/img_donation_list"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_afdian"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:text="@string/go_afdian"
-                android:background="#8A62DC"
-                android:textColor="?attr/darkText"
-                app:layout_constraintEnd_toStartOf="@+id/btn_chongya"
-                app:layout_constraintHorizontal_chainStyle="spread"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_donation_list" />
-
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_chongya"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:text="@string/go_chongya"
-                android:background="#FFCF00"
-                android:textColor="?attr/darkText"
-                app:layout_constraintBottom_toBottomOf="@id/btn_afdian"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/btn_afdian"
-                app:layout_constraintTop_toTopOf="@id/btn_afdian" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
-
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_app_introduction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/donation_introduction"
+        android:textColor="#B9B9B9"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_mianbaoduo" />
+</androidx.constraintlayout.widget.ConstraintLayout>

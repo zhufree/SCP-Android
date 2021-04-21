@@ -1,34 +1,31 @@
 package info.free.scp.view.category
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import info
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.ScpApplication
 import info.free.scp.bean.*
-import info.free.scp.databinding.ItemCategoryBinding
+import info.free.scp.databinding.ItemDocBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.item_category.view.*
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.toast
+import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
+import org.jetbrains.anko.*
+
 
 /**
  * Created by zhufree on 2018/8/22.
@@ -36,22 +33,29 @@ import org.jetbrains.anko.toast
  */
 
 class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()) {
-    var currentScrollPosition = -1
-
+    private var currentScrollPosition = -1
+    private val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val holderList = mutableListOf<ScpHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScpHolder {
-        return ScpHolder(ItemCategoryBinding.inflate(
+        val newHolder = ScpHolder(ItemDocBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
+        holderList.add(newHolder)
+        return newHolder
     }
 
 
     override fun onBindViewHolder(holder: ScpHolder, position: Int) {
         val scp = getItem(position)
         holder.apply {
-            bind(createOnClickListener(scp, position), scp)
+            bind(createOnClickListener(scp, position), createOnMoreClickListener(scp, holder.itemView.context), scp)
             itemView.tag = scp
             refreshTheme()
         }
+    }
+
+    fun refreshTheme() {
+        holderList.forEach { it.refreshTheme() }
     }
 
     private fun createOnClickListener(scp: ScpModel, position: Int): View.OnClickListener {
@@ -64,78 +68,97 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
             intent.putExtra("title", scp.title)
             intent.putExtra("index", scp.index)
             intent.putExtra("scp_type", scp.scpType)
-            intent.putExtra("item_type", if (scp is ScpCollectionModel) 1 else 0)
             intent.setClass(it.context, DetailActivity::class.java)
             (it.context as Activity).startActivityForResult(intent, SCPConstants.RequestCode.CATEGORY_TO_DETAIL)
-
         }
     }
 
-    class ScpHolder(private val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val categoryHeight = PreferenceUtil.getCategoryHeight()
-        private val categoryInterval = PreferenceUtil.getCategoryInterval()
-        private var laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
+    private var laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
 
-        fun bind(listener: View.OnClickListener, item: ScpModel) {
+    private fun refreshOperationStatus(scp: ScpModel, sheetView: View) {
+        if (likeReadDao.getHasReadByLink(scp.link) == true) {
+            sheetView.tv_add_read.text = "取消已读"
+            sheetView.iv_add_read_icon.imageResource = R.drawable.baseline_article_black_24dp
+        } else {
+            sheetView.tv_add_read.text = "标记已读"
+            sheetView.iv_add_read_icon.imageResource = R.drawable.baseline_fact_check_black_24dp
+        }
+        laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
+        val isInLaterViewList = scp.link in laterViewList.map { it.link }
+        if (isInLaterViewList) {
+            sheetView.tv_add_later.text = "取消待读"
+            sheetView.iv_add_later_icon.imageResource = R.drawable.baseline_task_alt_blue_300_24dp
+        } else {
+            sheetView.tv_add_later.text = "添加待读"
+            sheetView.iv_add_later_icon.imageResource = R.drawable.baseline_add_task_blue_300_24dp
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun createOnMoreClickListener(scp: ScpModel, context: Context): View.OnClickListener {
+        return View.OnClickListener {
+            val mBottomSheetDialog = BottomSheetDialog(context)
+            val sheetView = context.layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
+            mBottomSheetDialog.setContentView(sheetView)
+            mBottomSheetDialog.show()
+            refreshOperationStatus(scp, sheetView)
+
+            sheetView.iv_add_read_icon.setOnClickListener {
+                var scpInfo = likeReadDao.getInfoByLink(scp.link)
+                if (scpInfo == null) {
+                    scpInfo = ScpLikeModel(scp.link, scp.title, like = false, hasRead = false, boxId = 0)
+                }
+                scpInfo.hasRead = !scpInfo.hasRead
+                likeReadDao.save(scpInfo)
+                refreshOperationStatus(scp, sheetView)
+            }
+            var isInLaterViewList = scp.link in laterViewList.map { it.link }
+            sheetView.iv_add_later_icon.setOnClickListener {
+                if (isInLaterViewList) {
+                    AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, LATER_TYPE)
+                    isInLaterViewList = false
+                } else {
+                    ScpDataHelper.getInstance().insertViewListItem(scp.link, scp.title, LATER_TYPE)
+                    EventUtil.onEvent(context, EventUtil.addLater)
+                    isInLaterViewList = true
+                }
+                refreshOperationStatus(scp, sheetView)
+            }
+        }
+    }
+
+    class ScpHolder(private val binding: ItemDocBinding) : RecyclerView.ViewHolder(binding.root) {
+        val likeReadDao = AppInfoDatabase.getInstance().likeAndReadDao()
+        fun bind(listener: View.OnClickListener, longListener: View.OnClickListener, item: ScpModel) {
             binding.apply {
                 clickListener = listener
+                moreClickListener = longListener
                 scp = item
                 executePendingBindings()
-                val rlLp = clCategoryItem.layoutParams as FrameLayout.LayoutParams
-                rlLp.height = Utils.dp2px(categoryHeight)
-                val lp = cvCategoryItem.layoutParams as RecyclerView.LayoutParams
-                lp.topMargin = Utils.dp2px(categoryInterval)
-                lp.bottomMargin = Utils.dp2px(categoryInterval / 2)
-                itemView.btn_read_later?.visibility = View.VISIBLE
-                setReadData(this, item, laterViewList)
+                setReadData(this, item)
             }
         }
 
-        private fun setReadData(binding: ItemCategoryBinding, model: ScpModel?, laterViewList: MutableList<ScpRecordModel>) {
+        private fun setReadData(binding: ItemDocBinding, model: ScpModel?) {
             if (model == null) return
-            binding.ivLikeStar.visibility = if (AppInfoDatabase.getInstance().likeAndReadDao()
-                            .getLikeByLink(model.link) == true) View.VISIBLE else View.GONE
-            binding.ivReadLabel.visibility = if (AppInfoDatabase.getInstance().likeAndReadDao()
-                            .getHasReadByLink(model.link) == true) View.VISIBLE else View.GONE
-            binding.ivReadLabel.setOnClickListener {
-                itemView.context.alert("是否确定取消已读这篇文档？", "取消已读") {
-                    positiveButton("确定") {
-                        EventUtil.onEvent(itemView.context, EventUtil.cancelRead, model.link)
-                        var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(model.link)
-                        if (scpInfo == null) {
-                            scpInfo = ScpLikeModel(model.link, model.title, like = false, hasRead = false, boxId = 0)
-                        }
-                        scpInfo.hasRead = !scpInfo.hasRead
-                        AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                        itemView.iv_read_label?.visibility = if (scpInfo.hasRead) View.VISIBLE else View.GONE
-                    }
-                    negativeButton("我手滑了") {}
-                }.show()
-            }
-            var isInLaterViewList = model.link in laterViewList.map { it.link }
-            if (isInLaterViewList) {
-                binding.btnReadLater.setBackgroundColor(ThemeUtil.clickedBtn)
+
+            if (likeReadDao.getLikeByLink(model.link) == true) {
+                binding.ivDocIcon.imageResource = R.drawable.ic_star_yellow_900_24dp
             } else {
-                binding.btnReadLater.setBackgroundColor(ThemeUtil.unClickBtn)
-            }
-            binding.btnReadLater.setOnClickListener {
-                if (isInLaterViewList) {
-                    AppInfoDatabase.getInstance().readRecordDao().delete(model.link, LATER_TYPE)
-                    isInLaterViewList = false
-                    it.setBackgroundColor(ThemeUtil.unClickBtn)
+                if (likeReadDao.getHasReadByLink(model.link) == true) {
+                    // add read icon
+                    binding.ivDocIcon.imageResource = R.drawable.baseline_fact_check_black_24dp
+                    binding.tvDocTitle.setTextColor(ThemeUtil.mediumText)
                 } else {
-                    ScpDataHelper.getInstance().insertViewListItem(model.link, model.title, LATER_TYPE)
-                    ScpApplication.currentActivity?.toast("已加入待读列表")
-                    EventUtil.onEvent(itemView.context, EventUtil.addLater)
-                    isInLaterViewList = true
-                    it.setBackgroundColor(ThemeUtil.clickedBtn)
+                    binding.ivDocIcon.imageResource = R.drawable.baseline_article_black_24dp
+                    binding.tvDocTitle.setTextColor(ThemeUtil.darkText)
                 }
             }
         }
 
         fun refreshTheme() {
-            binding.clCategoryItem.backgroundColor = ThemeUtil.itemBg
-            binding.tvScpTitle.setTextColor(ThemeUtil.darkText)
+            binding.tvDocTitle.setTextColor(ThemeUtil.darkText)
+            binding.clDocItem.background = ThemeUtil.getDrawable(binding.clDocItem.context, R.drawable.bg_entry_box)
         }
     }
 

@@ -1,44 +1,43 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory
-        android:title="@string/category_settings">
+    <PreferenceCategory android:title="@string/category_settings">
         <SwitchPreference
             android:defaultValue="false"
             android:key="hide_finished_article"
             android:textColor="?attr/darkText"
             android:title="@string/hide_finished_article" />
 
-        <DropDownPreference
-            android:key="category_count"
-            android:title="@string/category_count"
-            android:entries="@array/category_count_key"
-            android:defaultValue="100"
-            android:entryValues="@array/category_count_value" />
-        <DropDownPreference
-            android:key="category_height"
-            android:title="@string/category_height"
-            android:defaultValue="50"
-            android:entries="@array/category_height_key"
-            android:entryValues="@array/category_height_value" />
-        <DropDownPreference
-            android:key="category_interval"
-            android:title="@string/category_interval"
-            android:defaultValue="4"
-            android:entries="@array/category_interval_key"
-            android:entryValues="@array/category_interval_value" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="阅读设置">
-
-        <DropDownPreference
-            android:defaultValue="16px"
-            android:entries="@array/detail_text_size_key"
-            android:entryValues="@array/detail_text_size_value"
-            android:key="detail_text_size"
-            android:title="@string/font_size_setting" />
         <!--        <DropDownPreference-->
-        <!--            android:defaultValue="1"-->
-        <!--            android:entries="@array/detail_traditional_key"-->
-        <!--            android:entryValues="@array/detail_traditional_value"-->
-        <!--            android:key="detail_text_traditional"-->
-        <!--            android:title="@string/traditional_setting" />-->
+        <!--            android:key="category_count"-->
+        <!--            android:title="@string/category_count"-->
+        <!--            android:entries="@array/category_count_key"-->
+        <!--            android:defaultValue="100"-->
+        <!--            android:entryValues="@array/category_count_value" />-->
+        <!--        <DropDownPreference-->
+        <!--            android:key="category_height"-->
+        <!--            android:title="@string/category_height"-->
+        <!--            android:defaultValue="50"-->
+        <!--            android:entries="@array/category_height_key"-->
+        <!--            android:entryValues="@array/category_height_value" />-->
+        <!--        <DropDownPreference-->
+        <!--            android:key="category_interval"-->
+        <!--            android:title="@string/category_interval"-->
+        <!--            android:defaultValue="4"-->
+        <!--            android:entries="@array/category_interval_key"-->
+        <!--            android:entryValues="@array/category_interval_value" />-->
     </PreferenceCategory>
+    <!--    <PreferenceCategory android:title="阅读设置">-->
+
+    <!--        <DropDownPreference-->
+    <!--            android:defaultValue="16px"-->
+    <!--            android:entries="@array/detail_text_size_key"-->
+    <!--            android:entryValues="@array/detail_text_size_value"-->
+    <!--            android:key="detail_text_size"-->
+    <!--            android:title="@string/font_size_setting" />-->
+    <!--        <DropDownPreference-->
+    <!--            android:defaultValue="1"-->
+    <!--            android:entries="@array/detail_traditional_key"-->
+    <!--            android:entryValues="@array/detail_traditional_value"-->
+    <!--            android:key="detail_text_traditional"-->
+    <!--            android:title="@string/traditional_setting" />-->
+    <!--    </PreferenceCategory>-->
 </PreferenceScreen>

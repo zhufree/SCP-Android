@@ -1,47 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:minHeight="50dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="5dp"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:background="?attr/itemBg">
-    <TextView
-        android:id="@+id/tv_search_title"
-        android:layout_width="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_search_read_later"
-        android:textSize="18sp"
-        android:textColor="?attr/darkText"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:layout_height="wrap_content" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/tv_view_time"
-        android:layout_width="wrap_content"
+    <data>
+
+        <variable
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
+
+        <variable
+            name="search"
+            type="info.free.scp.bean.ScpModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btn_search_read_later"
-        android:textSize="12sp"/>
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_entry_box"
+        android:onClick="@{clickListener}">
 
-    <ImageButton
-        android:id="@+id/btn_search_read_later"
-        android:layout_width="60dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/ic_watch_later_white_24dp"
-        android:background="?attr/unClickBtn"
-        android:visibility="gone"
-        android:contentDescription="@string/later_list"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@+id/iv_search_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="15dp"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/outline_note_black_24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_search_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@{search.title}"
+            android:textColor="?attr/darkText"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/iv_search_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
 

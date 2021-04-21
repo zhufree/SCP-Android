@@ -4,14 +4,6 @@ import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.Category.SERIES
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST
-import info.free.scp.SCPConstants.ScpType.SAVE_CONTEST_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
-import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS
-import info.free.scp.SCPConstants.ScpType.SAVE_SETTINGS_CN
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES
-import info.free.scp.SCPConstants.ScpType.SAVE_STORY_SERIES_CN
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
@@ -21,6 +13,8 @@ import info.free.scp.bean.*
 import info.free.scp.util.PreferenceUtil
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -85,15 +79,8 @@ class HttpManager {
         }
     }
 
-    val collectionTypeList = arrayOf(SAVE_SETTINGS, SAVE_SETTINGS_CN, SAVE_CONTEST, SAVE_CONTEST_CN,
-            SAVE_STORY_SERIES_CN, SAVE_STORY_SERIES)
-
-    suspend fun getCategory(scpType: Int = SERIES, subScpType: String = "0", limit: Int = 100,
-                            rangeStart: Int = 0): ApiBean.ApiListResponse<out ScpModel> {
-
-        return if (scpType in collectionTypeList) feedApiService.getCollectionCategory(scpType) else
-            if (scpType in arrayOf(SAVE_SERIES, SAVE_SERIES_CN)) feedApiService.getScpCategory(scpType, subScpType, limit, rangeStart)
-            else feedApiService.getScpCategory(scpType, subScpType)
+    suspend fun getLatestIndex(): FeedIndexModel {
+        return feedApiService.getLatestIndex()
     }
 
     suspend fun getDetail(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
@@ -101,17 +88,13 @@ class HttpManager {
     }
 
     suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
-        return feedApiService.getComment(link)
+        val postStr = "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
+        val postBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), postStr)
+        return feedApiService.getComment(link, postBody)
     }
 
     suspend fun getRandom(typeRange: String): ApiBean.ApiListResponse<ScpItemModel> {
         return feedApiService.getRandom(typeRange)
-    }
-
-    suspend fun getSibling(scpType: Int = SERIES, index: Int = 1, direct: String = "next")
-            : ApiBean.ApiListResponse<out ScpModel> {
-        return if (scpType in collectionTypeList) feedApiService.getSiblingCollection(direct,
-                index, scpType) else feedApiService.getSiblingScp(direct, index, scpType)
     }
 
     suspend fun getDirect(scpType: Int = SERIES, numberString: String = "-001")

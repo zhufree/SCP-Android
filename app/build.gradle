@@ -11,9 +11,9 @@ android {
     defaultConfig {
         applicationId "info.free.scp"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 22
-        versionName "0.2.1"
+        versionName "0.2.5"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -107,6 +107,7 @@ dependencies {
     // 升级之后字段必须标注是否可为null
     implementation "androidx.room:room-runtime:2.1.0"
     kapt "androidx.room:room-compiler:2.1.0"
+    implementation "androidx.room:room-ktx:2.1.0"
 
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0-rc03'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
@@ -117,6 +118,7 @@ dependencies {
 
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
+    implementation 'com.youth.banner:banner:2.1.0'
 
 //    implementation files('libs/TGSDK.1.8.4.aar')
 }

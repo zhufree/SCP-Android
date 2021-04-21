@@ -31,29 +31,29 @@ class SearchHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     fun setData(link: String, title: String, viewTime: String?, laterViewList: MutableList<ScpRecordModel>?) {
         itemView.tv_search_title?.text = title
-        viewTime?.let {
-            itemView.tv_view_time?.text = viewTime
-        }
-        laterViewList?.let {l->
-            itemView.btn_search_read_later.visibility = VISIBLE
-            var isInLaterViewList = link in l.map { it.link }
-            if (isInLaterViewList) {
-                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.clickedBtn)
-            } else {
-                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.unClickBtn)
-            }
-            itemView.btn_search_read_later.setOnClickListener {
-                if (isInLaterViewList) {
-                    AppInfoDatabase.getInstance().readRecordDao().delete(link, LATER_TYPE)
-                    isInLaterViewList = false
-                    it.setBackgroundColor(ThemeUtil.unClickBtn)
-                } else {
-                    ScpDataHelper.getInstance().insertViewListItem(link, title, LATER_TYPE)
-                    ScpApplication.currentActivity?.toast("已加入待读列表")
-                    isInLaterViewList = true
-                    it.setBackgroundColor(ThemeUtil.clickedBtn)
-                }
-            }
-        }
+//        viewTime?.let {
+//            itemView.tv_view_time?.text = viewTime
+//        }
+//        laterViewList?.let {l->
+//            itemView.btn_search_read_later.visibility = VISIBLE
+//            var isInLaterViewList = link in l.map { it.link }
+//            if (isInLaterViewList) {
+//                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.clickedBtn)
+//            } else {
+//                itemView.btn_search_read_later.setBackgroundColor(ThemeUtil.unClickBtn)
+//            }
+//            itemView.btn_search_read_later.setOnClickListener {
+//                if (isInLaterViewList) {
+//                    AppInfoDatabase.getInstance().readRecordDao().delete(link, LATER_TYPE)
+//                    isInLaterViewList = false
+//                    it.setBackgroundColor(ThemeUtil.unClickBtn)
+//                } else {
+//                    ScpDataHelper.getInstance().insertViewListItem(link, title, LATER_TYPE)
+//                    ScpApplication.currentActivity?.toast("已加入待读列表")
+//                    isInLaterViewList = true
+//                    it.setBackgroundColor(ThemeUtil.clickedBtn)
+//                }
+//            }
+//        }
     }
 }

@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -25,7 +26,7 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
             field = value
             setSupportActionBar(value)
             value?.setNavigationOnClickListener { finish() }
-            value?.setNavigationIcon(R.drawable.ic_arrow_back_white_24dp)
+            value?.setNavigationIcon(R.drawable.baseline_arrow_back_white_24dp)
         }
 
     private var themeReceiver = object : BroadcastReceiver() {
@@ -37,8 +38,9 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onCreate(savedInstanceState)
         ThemeUtil.setTheme(this)
         registerBroadCastReceivers()
-        window.navigationBarColor = ThemeUtil.toolbarBg
+        window.statusBarColor = ThemeUtil.toolbarBg
     }
+
 
     public override fun onResume() {
         MobclickAgent.onResume(this)
@@ -63,6 +65,15 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onDestroy()
     }
 
+    fun requestReadFileTree() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.setType("*/*");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        startActivityForResult(intent, SCPConstants.RequestCode.REQUEST_PUBLIC_FILE)
+    }
+
     override fun onActivityResult(reqCode: Int, resCode: Int, data: Intent?) {
         super.onActivityResult(reqCode, resCode, data)
     }
@@ -78,9 +89,10 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(SCPConstants.BroadCastAction.ACTION_CHANGE_THEME))
     }
 
-    open fun refreshTheme(){
+    open fun refreshTheme() {
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
-        window.navigationBarColor = ThemeUtil.toolbarBg
+        window.statusBarColor = ThemeUtil.toolbarBg
+        window.navigationBarColor = ThemeUtil.containerBg
     }
 
 

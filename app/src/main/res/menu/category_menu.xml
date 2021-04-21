@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/reverse"
-        android:icon="@drawable/ic_swap_vert_white_24dp"
+        android:icon="@drawable/baseline_swap_vertical_circle_white_24dp"
         android:title="@string/menu_reverse"
         app:showAsAction="always" />
 </menu>

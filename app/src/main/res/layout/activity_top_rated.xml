@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/containerBg"
+    tools:context=".view.feed.TopRatedActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_top_rated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/top_rated_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?attr/toolbarBg"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/top_rated_all" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/abl_top_rated">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="40dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_top_rated_all"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#BA6502"
+                    android:gravity="center"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/top_rated_all"
+                    android:textColor="?attr/lightText"
+                    android:textSize="30sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_top_rated_scp"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_top_rated_all">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#0780B7"
+                    android:gravity="center"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/top_rated_scp"
+                    android:textColor="?attr/lightText"
+                    android:textSize="30sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_top_rated_tales"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_top_rated_scp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#80562F"
+                    android:gravity="center"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/top_rated_tale"
+                    android:textColor="?attr/lightText"
+                    android:textSize="30sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_top_rated_goi"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_top_rated_tales">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#322E2E"
+                    android:gravity="center"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/top_rated_goi"
+                    android:textColor="?attr/lightText"
+                    android:textSize="30sp" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_top_rated_wanderer"
+                android:layout_width="0dp"
+                android:layout_height="140dp"
+                android:layout_marginHorizontal="7dp"
+                android:layout_marginTop="20dp"
+                app:cardCornerRadius="6dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cv_top_rated_goi">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#136899"
+                    android:gravity="center"
+                    android:paddingHorizontal="30dp"
+                    android:text="@string/top_rated_wanderer"
+                    android:textColor="?attr/lightText"
+                    android:textSize="30sp" />
+            </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

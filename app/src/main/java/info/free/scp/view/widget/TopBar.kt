@@ -38,10 +38,10 @@ class TopBar : ConstraintLayout {
         // 赋值给属性变量
         leftVisible = ta.getBoolean(R.styleable.TopBar_leftVisible, true)
         rightVisible = ta.getBoolean(R.styleable.TopBar_rightVisible, false)
-        title = ta.getString(R.styleable.TopBar_title) ?: ""
+        title = ta.getString(R.styleable.TopBar_topbarTitle) ?: ""
         titleTextSize = ta.getDimension(R.styleable.TopBar_titleTextSize, 16f)
         titleTextColor = ta.getColor(R.styleable.TopBar_titleTextColor, context.resources.getColor(R.color.colorPrimaryDark))
-        rightIcon = ta.getResourceId(R.styleable.TopBar_rightIcon, R.drawable.ic_autorenew_white_24dp)
+        rightIcon = ta.getResourceId(R.styleable.TopBar_rightIcon, R.drawable.baseline_add_white_24dp)
 
         ta.recycle()
 

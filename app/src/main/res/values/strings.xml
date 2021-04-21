@@ -3,53 +3,35 @@
 
     <!--底部tab-->
     <string name="tab_home">首页</string>
-    <string name="tab_latest">最近更新</string>
     <string name="tab_mine">我的</string>
 
     <!--主页入口-->
-    <string name="title_scp_documents">SCP文档</string>
-    <string name="title_other_documents">其他文档</string>
-    <string name="title_more_about">更多相关</string>
-    <string name="title_direct">编号直达/随机</string>
-    <string name="title_series_about">相关信息</string>
+    <string name="entry_scp_series">SCP系列</string>
+    <string name="entry_scp_cn_series">SCP-CN系列</string>
+    <string name="entry_scp_story">故事与设定</string>
+    <string name="entry_wander">放逐者图书馆</string>
+
+    <string name="title_direct">编号直达</string>
 
     <!--目录tab-->
-    <string name="title_scp_story">故事外围</string>
-    <string name="title_about_scp">关于基金会</string>
-    <string name="title_joke_scp">搞笑作品</string>
-    <string name="title_settings">基金会设定</string>
-    <string name="title_scp_settings">设定中心</string>
-    <string name="title_scp_settings_cn">设定中心(CN)</string>
-    <string name="title_scp_story_series">故事系列</string>
-    <string name="title_scp_story_series_cn">故事系列(CN)</string>
-    <string name="title_scp_essay">征文竞赛</string>
-    <string name="title_scp_essay_cn">征文竞赛(CN)</string>
-    <string name="title_scp_event">事故记录</string>
-    <string name="title_scp_story_by_time">按时间排序(CN)</string>
-    <string name="later_list">待读列表</string>
-
-    <string name="title_more_function">更多功能开发中</string>
+    <!--待读-->
+    <string name="later">待读</string>
 
     <!--还没开发的部分-->
-    <string name="title_exiled_library">放逐者图书馆</string>
-    <string name="title_scp_int">SCP国际</string>
 
     <!--app info-->
-    <string name="contact_qq_group">用户交流群：805194504（长按可复制），欢迎反馈问题和提想要的新功能（如果可行的话）</string>
+    <string name="contact_jg_group">交流群</string>
+    <string name="scp_wiki_site">SCP中分官网</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
-        想要详细了解scp基金会请访问官网（可从版权说明跳转）。\n\n
-        v0.2.0更新内容\n
-1.正文增加查看评论功能（因中分官网限制未登录状态下不能看评论，此功能暂时不可使用）\n
-2.在线模式下可以使用直达，随机等功能\n
-3.公告等部分细节优化\n
-4.繁简设置转移到【我的】-【阅读设置】中\n
-5.修复部分vivo手机点击正文闪退的bug（如果仍然闪退，建议换手机（划掉））\n
-6.修复部分手机首页不显示入口的bug\n
-7.修复点击我的闪退的bug\n
+        想要详细了解scp基金会请访问官网。\n\n
+        v0.2.5更新内容\n
+1.大范围UI优化\n
+2.增加GOI格式，艺术作品，放逐者图书馆部分数据\n
+3.内置目录数据，简化数据离线流程\n
+4.修复一些bug\n
         感谢在开发过程给予帮助的：@62ECN，@MCV，@OTAKU牧师，感谢@breaddddd设计的“待读列表”和“直达/随机”logo，
         以及在群里勤奋测shui试qun的群友们（欢迎加群玩耍）\n</string>
 
-    <string name="download_detail_service">离线正文</string>
     <!--正文下拉菜单-->
     <string name="offline_mode">切换离线模式</string>
     <string name="online_mode">切换网页模式</string>
@@ -59,8 +41,8 @@
     <string name="menu_open_in_browser">在浏览器中打开</string>
     <string name="menu_copy_link">复制链接</string>
     <string name="share_with_picture">图片分享</string>
-    <string name="translate_to_simple">转换简体</string>
-    <string name="translate_to_traditional">转换繁体</string>
+    <string name="translate">繁简转换</string>
+    <string name="set_cookie">设置cookie</string>
     <string name="menu_like">收藏</string>
     <string name="menu_add_read_later">加入待读列表</string>
 
@@ -74,11 +56,6 @@
     <string name="menu_reverse">逆序</string>
     <string name="menu_import_read_list">导入待读列表</string>
     <string name="menu_clear_read_history">清除阅读历史</string>
-
-    <string name="menu_search">搜索</string>
-    <string name="menu_random">▼|随机</string>
-
-    <string name="menu_download_help">下载页说明</string>
 
     <!--职业说明文案-->
     <string name="job_desc_1">收容专家在基金会设施有两个主要职责。首先，收容小组会响应呼叫并对异常项目，
@@ -97,76 +74,42 @@
     <string name="job_desc_6">机动特遣队是专业单位，由从基金会中抽调的老练外勤人员组成。这些特遣队被派遣处理特定性质的威胁，
         不但有各种领域的外勤研究专家来处理特定性质的异常，而且也有重武装战斗单位来确保某一性质的敌对异常个体。详情参阅机动特遣队文件。</string>
 
-    <!--设置-->
-    <string name="user_info">员工档案</string>
-    <string name="about_view_content">浏览相关</string>
+    <!--我的-->
     <string name="draft_list">草稿箱</string>
-    <string name="like_list">收藏列表</string>
-    <string name="history_list">历史记录</string>
-    <string name="game_list">游戏列表</string>
-    <string name="settings">设置</string>
     <string name="dark_mode">夜间模式</string>
     <string name="day_mode">日间模式</string>
-    <string name="read_settings">阅读设置</string>
-    <string name="download_settings">数据下载及备份</string>
+    <string name="download_settings">文档缓存</string>
     <string name="hide_finished_article">隐藏已读文档</string>
-    <string name="about">关于</string>
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
-    <string name="about_developer">支持开发者</string>
-    <string name="query_enter">用户调查问卷</string>
-    <string name="other_setting">其他</string>
-    <string name="init_data">初始化数据</string>
-    <string name="sync_data">强制重新同步云端数据</string>
-    <string name="backup_data">备份本地数据库</string>
-    <string name="restore_data">恢复本地数据库</string>
     <string name="title_activity_settings">设置</string>
     <string name="category_settings">目录设置</string>
-    <string name="category_count">目录条目数量</string>
-    <string name="category_height">目录条目高度</string>
-    <string name="category_interval">目录条目间距</string>
-    <string name="font_size_setting">字体设置</string>
-    <string name="traditional_setting">繁简字设置</string>
     <string name="copyright_notice_1">APP内容来源自SCP基金会：http://scp-wiki-cn.wikidot.com/</string>
     <string name="copyright_notice_2">除非特别注明，文章内容采用CC-BY-SA 3.0协议：https://creativecommons.org/licenses/by-sa/3.0/deed.zh</string>
     <string name="copyright_notice_3">欲了解更多信息，查看授权指南：http://scp-wiki-cn.wikidot.com/licensing-guide</string>
 
-    <string name="download_scp_title">SCP系列</string>
-    <string name="download_scp_cn_title">SCP-CN系列</string>
-    <string name="download_tale_title">基金会故事</string>
-    <string name="download_other_title">其他文档和offset部分</string>
-    <string name="download_collection">故事系列，设定中心等</string>
-    <string name="sync_category_title">更新目录</string>
+    <string name="slogan">控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护 控制 收容 保护</string>
 
     <!--新的离线逻辑-->
-    <string name="file_notice">0.1.4版本开始本APP下载的数据文件及备份文件放在Documents文件夹的scp_download子文件夹中：\n
-        ① scp_data.db——scp文档数据库，用于阅读文档，内容包括SCP系列1-5000，CN系列1-2000，其他SCP，征文竞赛设定等，不定期更新，可以加群催更；\n
-        ② scp_info.db——用户信息数据库，保存收藏读过等信息，在更新文档数据库时不受影响\n
-        ③ level.xml——存用户等级职业等信息\n
-        下载完成后请切换页面最下方的全局开关，开启时是离线模式即使用数据库</string>
-    <string name="allow_auto_download">允许wifi下自动离线总数据库</string>
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
-    <string name="download_notice">检测并使用scp_download文件夹中的数据库，没有就自动下载，也可以加群下载数据库文件手动复制到该文件夹使用；</string>
-    <string name="backup_notice">备份APP数据到scp_download文件夹中</string>
 
     <!--捐赠-->
-    <string name="donation">捐赠</string>
+    <string name="donation">支持开发者</string>
     <string name="wechat">微信</string>
-    <string name="wechat_qr">微信二维码</string>
-    <string name="alipay_qr">支付宝二维码</string>
+    <string name="wechat_qr">微信</string>
+    <string name="alipay_qr">支付宝</string>
     <string name="go_afdian">爱发电</string>
-    <string name="go_chongya">冲呀</string>
-    <string name="show_ad">看广告支持开发者</string>
-    <string name="donation_notice">长按二维码保存到相册</string>
+    <string name="go_mianbaoduo">面包多</string>
+    <string name="donation_notice">保存二维码到相册，扫码打赏</string>
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
     <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>
     <string name="alipay">支付宝</string>
+    <string name="donation_introduction">SCP基金会是我独立开发的作品。这两年的数据托管和服务器的费用是我自掏腰包在支撑，
+        有闲钱的朋友们可以支持下，也可以打钱催更或者新功能，捐赠时留名我会在感谢页上加上你的名字！</string>
 
     <!--草稿-->
-    <string name="empty_draft">还没有草稿</string>
+    <string name="empty_draft">还没有草稿，本地草稿仅供记录，正式编写scp请上沙盒站</string>
     <string name="add_draft">添加草稿</string>
-    <string name="draft_help">如何撰写一篇SCP文档</string>
-    <string name="save_draft">保存草稿</string>
 
     <!--最受欢迎页面-->
     <string name="top_rated_all">最高评分页面</string>

@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
@@ -16,13 +17,19 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.DisplayMetrics
 import android.util.Log
-import info.free.scp.SCPConstants
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
+import androidx.core.net.toUri
+import info
+import info.free.scp.SCPConstants.PUBLIC_DIR_NAME
 import info.free.scp.ScpApplication
 import kotlinx.io.ByteArrayOutputStream
 import kotlinx.io.IOException
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.windowManager
 import java.io.*
 import java.text.DateFormat.LONG
 import java.text.DateFormat.SHORT
@@ -40,7 +47,7 @@ object Utils {
         return metric.heightPixels
     }
 
-    fun getScreenWidth(context: Activity): Int {
+    fun getScreenWidth(context: Context): Int {
         val metric = DisplayMetrics()
         context.windowManager.defaultDisplay.getMetrics(metric)
         return metric.widthPixels
@@ -86,11 +93,47 @@ object Utils {
     }
 
     fun formatDate(time: Long): String {
-        val format =  SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
+        val format = SimpleDateFormat.getDateTimeInstance(SHORT, LONG)
         return format.format(time)
     }
 
     fun formatNow() = formatDate(System.currentTimeMillis())
+
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    fun copyPrivateFileToPublic(context: Context, orgFilePath: String, displayName: String, mimeType: String) {
+        val values = ContentValues()
+        values.put(MediaStore.Files.FileColumns.DISPLAY_NAME, displayName)
+        values.put(MediaStore.Files.FileColumns.TITLE, displayName)
+        values.put(MediaStore.Files.FileColumns.MIME_TYPE, mimeType)
+        values.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/" + PUBLIC_DIR_NAME)
+        val external = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+        val resolver = context.contentResolver
+        val insertUri = resolver.insert(external, values)
+        var ist: InputStream? = null
+        var ost: OutputStream? = null
+        try {
+            ist = FileInputStream(File(orgFilePath))
+            if (insertUri != null) {
+                ost = resolver.openOutputStream(insertUri)
+            }
+            if (ost != null) {
+                val buffer = ByteArray(4096)
+                var byteCount = 0
+                while (ist.read(buffer).also { byteCount = it } != -1) {
+                    ost.write(buffer, 0, byteCount)
+                }
+            }
+        } catch (e: IOException) {
+        } finally {
+            try {
+                ist?.close()
+                ost?.close()
+            } catch (e: IOException) {
+            }
+        }
+    }
+
 
     /**
      * bitmap保存为一个文件
@@ -187,76 +230,25 @@ object Utils {
 
     }
 
-    /**
-     * 通过Uri获取文件
-     */
-    fun getFileByUri(uri: Uri, context: Context): File? {
-        var path: String? = MiPictureHelper.getPath(context, uri)
-        return File(path)
-//        if (!TextUtils.isEmpty(uri.authority)) {
-//            val cursor = context?.contentResolver?.query(uri,
-//                    arrayOf(MediaStore.Images.Media.DATA),null, null, null);
-//            if (null == cursor) {
-//                Toaster.show("图片未找到")
-//                return null
-//            }
-//            cursor.moveToFirst()
-//            path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
-//            cursor.close()
-//            return File(path)
-//        } else {
-//            path = uri.path
-//        }
-//        when (uri.scheme) {
-//            "file" -> {
-//                path = uri.encodedPath
-//                if (path != null) {
-//                    path = Uri.decode(path)
-//                    val contentResolver = context.contentResolver
-//                    val builder = StringBuilder()
-//                    builder.append("(").append(MediaStore.Images.ImageColumns.DATA).append("=")
-//                            .append("'").append(path).append("'").append(")")
-//                    val cur = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-//                            arrayOf(MediaStore.Images.ImageColumns._ID, MediaStore.Images.ImageColumns.DATA),
-//                            builder.toString(), null, null)
-//                    cur?.moveToFirst()
-//                    while (!cur.isAfterLast) {
-//                        path = cur.getString(cur.getColumnIndex(MediaStore.Images.ImageColumns.DATA))
-//                        cur.moveToNext()
-//                    }
-//                    cur.close()
-//                }
-//                return File(path)
-//            }
-//            "content" -> {
-//                // 4.2.2以后
-//                val projection = arrayOf(MediaStore.Images.Media.DATA)
-//                val cursor = context.contentResolver.query(uri, projection, null, null, null)
-//                if (cursor != null && cursor.moveToFirst()) {
-//                    val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-//                    path = cursor.getString(columnIndex)
-//                    cursor.close()
-//                }
-//                return File(path)
-//            }
-//        }
-//        return null
+
+    fun getUrlIntent(url: String): Intent {
+        val updateIntent = Intent()
+        updateIntent.action = "android.intent.action.VIEW"
+        val updateUrl = Uri.parse(url)
+        updateIntent.data = updateUrl
+        return updateIntent
     }
 
-    /**
-     * 把[file]转换成二进制流传输，别的方法都上传失败
-     */
-    fun fileToByteBody(file: File): RequestBody {
-        val fis = FileInputStream(file)
-        val bos = ByteArrayOutputStream()
-        val b = ByteArray(1024)
-        var n = fis.read(b)
-        while (n != -1) {
-            bos.write(b, 0, n)
-            n = fis.read(b)
+    fun share(file: File, activity: AppCompatActivity) {
+        val shareIntent = Intent(Intent.ACTION_SEND)
+        shareIntent.type = "image/*"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            shareIntent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(activity,
+                    activity.applicationContext.packageName + ".provider", file)
+            )
+        } else {
+            shareIntent.putExtra(Intent.EXTRA_STREAM, file.toUri())
         }
-        fis.close()
-        bos.close()
-        return RequestBody.create(MediaType.parse("application/octet-stream"), bos.toByteArray())
+        activity.startActivity(Intent.createChooser(shareIntent, "分享到"))
     }
 }

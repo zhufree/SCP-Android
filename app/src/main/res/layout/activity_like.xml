@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="info.free.scp.view.like.LikeActivity"
+    tools:context="info.free.scp.view.later.LikeListActivity"
     android:background="?attr/containerBg">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,10 +21,13 @@
             app:popupTheme="@style/ToolbarPopupTheme">
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_like"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_scrollFlags = "scroll|enterAlways"
+        app:layout_scrollFlags="scroll|enterAlways"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_like" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -729,10 +729,14 @@ class DetailActivity : BaseActivity() {
             }
         })
         btn_comment?.setOnClickListener {
-            ll_comment_container.visibility = VISIBLE
-            nsv_web_wrapper?.scrollTo(0, (webView.height - screenHeight) + 100)
-            btn_comment?.hide()
-            viewModel.loadComment(url)
+            if (PreferenceUtil.getCookie().isEmpty()) {
+                toast("先点击右上角菜单设置cookie才能加载评论")
+            } else {
+                ll_comment_container.visibility = VISIBLE
+                nsv_web_wrapper?.scrollTo(0, (webView.height - screenHeight) + 100)
+                btn_comment?.hide()
+                viewModel.loadComment(url)
+            }
         }
     }
 

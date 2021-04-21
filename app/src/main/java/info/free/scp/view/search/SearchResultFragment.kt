@@ -8,9 +8,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.SearchType.CONTENT
 import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.databinding.FragmentSearchTabBinding
+import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
 import kotlinx.android.synthetic.main.fragment_search_tab.*
 import org.jetbrains.anko.design.snackbar
@@ -63,8 +65,12 @@ class SearchResultFragment : BaseFragment() {
     override fun onStart() {
         super.onStart()
         if (searchType == CONTENT) {
-            pb_loading.visibility = VISIBLE
-            viewModel.searchScp(searchType, "%$keyword%")
+            if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
+                pb_loading.visibility = VISIBLE
+                viewModel.searchScp(searchType, "%$keyword%")
+            } else {
+                tv_search_notice.visibility = VISIBLE
+            }
         }
     }
 

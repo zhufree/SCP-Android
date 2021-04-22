@@ -4,6 +4,7 @@ package info.free.scp.view.later
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -18,6 +19,7 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
 import kotlinx.android.synthetic.main.fragment_later.*
@@ -35,8 +37,8 @@ import toast
 class LaterFragment : BaseFragment() {
 
     var fragmentList = arrayListOf<BaseFragment>()
-    val recordListFragment = RecordListFragment.newInstance(LATER_TYPE)
-    val likeListFragment = LikeBoxListFragment.newInstance()
+    private val recordListFragment = RecordListFragment.newInstance(LATER_TYPE)
+    private val likeListFragment = LikeBoxListFragment.newInstance()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -84,13 +86,15 @@ class LaterFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
+        tab_later?.background = ColorDrawable(ThemeUtil.itemBg)
+        tab_later?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+        tab_later?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
         fragmentList.forEach { it.refreshTheme() }
     }
 
     companion object {
         fun newInstance(): LaterFragment {
-            val fragment = LaterFragment()
-            return fragment
+            return LaterFragment()
         }
     }
 

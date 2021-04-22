@@ -33,7 +33,7 @@ class LikeListAdapter : ListAdapter<ScpLikeModel, LikeListAdapter.LikeHolder>(La
     override fun onBindViewHolder(holder: LikeHolder, position: Int) {
         val like = getItem(position)
         holder.apply {
-            bind(createOnClickListener(like), like)
+            bind(createOnClickListener(like), createOnLongClickListener(position, like), like)
             itemView.tag = like
         }
     }
@@ -56,9 +56,10 @@ class LikeListAdapter : ListAdapter<ScpLikeModel, LikeListAdapter.LikeHolder>(La
     }
 
     class LikeHolder(private val binding: ItemLikeBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(listener: View.OnClickListener, item: ScpLikeModel) {
+        fun bind(listener: View.OnClickListener, longListener: View.OnLongClickListener, item: ScpLikeModel) {
             binding.apply {
                 clickListener = listener
+                longClickListener = longListener
                 like = item
                 executePendingBindings()
             }

@@ -51,8 +51,19 @@ class LikeBoxListFragment : BaseFragment() {
         adapter.submitList(viewModel.getLikeBoxList())
     }
 
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {//可见时
+            onVisible()
+        }
+    }
+
+    private fun onVisible() {
+        boxAdapter.submitList(viewModel.getLikeBoxList())
+    }
+
     override fun refreshTheme() {
         super.refreshTheme()
-//        boxAdapter.refreshTheme() TODO
+        boxAdapter.refreshTheme()
     }
 }

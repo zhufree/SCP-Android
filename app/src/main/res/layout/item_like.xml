@@ -23,6 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="10dp"
+        android:onClick="@{clickListener}"
+        android:onLongClick="@{longClickListener}"
         android:background="@drawable/bg_entry_box">
 
         <ImageView

@@ -18,13 +18,13 @@
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         app:cardCornerRadius="6dp"
-        app:cardElevation="4dp">
+        app:cardElevation="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_like_box_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?attr/containerBg"
+            android:background="?attr/itemBoxBg"
             android:minHeight="24dp"
             android:onClick="@{clickListener}"
             android:padding="8dp">

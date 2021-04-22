@@ -11,6 +11,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.databinding.ItemLikeBoxBinding
@@ -21,10 +22,13 @@ import java.lang.reflect.Field
 
 class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(LikeBoxDiffCallback()) {
     val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val holderList = mutableListOf<LikeBoxHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LikeBoxHolder {
-        return LikeBoxHolder(ItemLikeBoxBinding.inflate(
+        val newHolder = LikeBoxHolder(ItemLikeBoxBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false))
+        holderList.add(newHolder)
+        return newHolder
     }
 
     override fun onBindViewHolder(holder: LikeBoxHolder, position: Int) {
@@ -32,6 +36,12 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
         holder.apply {
             bind(createOnClickListener(likeBox), createOnLongClickListener(likeBox), likeBox)
             itemView.tag = likeBox
+        }
+    }
+
+    fun refreshTheme() {
+        holderList.forEach {
+            it.refreshTheme()
         }
     }
 
@@ -162,6 +172,11 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
                 executePendingBindings()
                 clLikeBoxContainer.setOnLongClickListener(onLongClickListener)
             }
+        }
+
+        fun refreshTheme() {
+            binding.clLikeBoxContainer.backgroundColor = ThemeUtil.itemBg
+            binding.tvBoxTitle.textColor = ThemeUtil.darkText
         }
     }
 

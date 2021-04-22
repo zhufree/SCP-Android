@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import info.free.scp.R
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.databinding.ItemLaterBinding
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
 
 class RecordListAdapter : ListAdapter<ScpRecordModel, RecordListAdapter.RecordHolder>(LaterDiffCallback()) {
@@ -63,9 +65,10 @@ class RecordListAdapter : ListAdapter<ScpRecordModel, RecordListAdapter.RecordHo
         }
 
         fun refreshTheme() {
-            //TODO
-//            binding.clFeedContainer.backgroundColor = ThemeUtil.itemBg
-//            binding.tvFeedTitle.setTextColor(ThemeUtil.darkText)
+            binding.clLaterContainer.background = ThemeUtil.getDrawable(binding.clLaterContainer.context,
+                    R.drawable.bg_entry_box)
+            binding.tvHistoryItemTitle.setTextColor(ThemeUtil.darkText)
+            binding.tvHistoryItemTime.setTextColor(ThemeUtil.mediumText)
         }
     }
 

@@ -18,6 +18,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_later_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
@@ -59,7 +60,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="20dp"
             android:text="@{record.showTime()}"
-            android:textColor="#B9B9B9"
+            android:textColor="?attr/mediumText"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/iv_history_icon"

@@ -53,5 +53,6 @@ class EntryItem : ConstraintLayout {
 
     fun refreshTheme() {
         tv_entry_title.setTextColor(ThemeUtil.darkText)
+        iv_entry_logo.background = ThemeUtil.customShape(bgColor, 0, 0, dip(25))
     }
 }

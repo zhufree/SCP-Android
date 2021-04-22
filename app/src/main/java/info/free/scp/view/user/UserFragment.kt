@@ -37,10 +37,7 @@ import info.free.scp.view.portal.PortalActivity
 import info.free.scp.view.widget.HistoryListItem
 import kotlinx.android.synthetic.main.fragment_user.*
 import org.jetbrains.anko.*
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.support.v4.dip
-import org.jetbrains.anko.support.v4.selector
-import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.*
 import java.util.*
 
 

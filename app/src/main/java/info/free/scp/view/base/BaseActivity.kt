@@ -111,8 +111,8 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
      *
      * @return
      */
-    fun Activity.enabledNetwork(): Boolean {
-        val cManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
-    }
+//    fun Activity.enabledNetwork(): Boolean {
+//        val cManager = applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+//        return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
+//    }
 }

@@ -6,7 +6,7 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "info.free.scp"
@@ -74,11 +74,18 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    repositories {
+        maven { url 'https://jitpack.io' }
+        flatDir {
+            dirs 'libs'
+        }
+    }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation fileTree(include: ['*.aar'], dir: 'libs')
+//    implementation fileTree(include: ['*.aar'], dir: 'libs')
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.11.0'
@@ -118,9 +125,11 @@ dependencies {
 
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
-    implementation 'com.youth.banner:banner:2.1.0'
+//    implementation 'com.youth.banner:banner:2.1.0'
 
-//    implementation files('libs/TGSDK.1.8.4.aar')
+    implementation (name:'le_mall_2_1_4', ext:'aar')
+    implementation (name:'le_base_2_1_4', ext:'aar')
+    implementation (name:'miit_mdid_1.0.10', ext:'aar')
 }
 
 

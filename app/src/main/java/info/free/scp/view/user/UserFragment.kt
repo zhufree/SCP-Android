@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.zh.pocket.mall.page.MallActivity
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
@@ -156,7 +157,7 @@ class UserFragment : BaseFragment() {
             startActivity<DraftListActivity>()
         }
         st_game.onClick = { startActivity<GameListActivity>() }
-        st_meal.onClick = { startActivity<MealListActivity>() }
+        st_meal.onClick = { startActivity<MallActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
 
         iv_more_history?.setOnClickListener { startActivity<LaterAndHistoryActivity>() }

@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.net.wifi.WifiManager
 import android.os.Build
@@ -21,13 +22,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import info
 import info.free.scp.SCPConstants.PUBLIC_DIR_NAME
 import info.free.scp.ScpApplication
-import kotlinx.io.ByteArrayOutputStream
 import kotlinx.io.IOException
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.windowManager
 import java.io.*
@@ -85,8 +82,22 @@ object Utils {
      * @return
      */
     fun enabledNetwork(context: Context): Boolean {
-        val cManager = context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        return cManager?.activeNetworkInfo != null && cManager.activeNetworkInfo.isAvailable
+        val mConnectivityManager = context
+                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            val mNetworkInfo = mConnectivityManager.activeNetworkInfo
+            if (mNetworkInfo != null) {
+                return mNetworkInfo.isAvailable
+            }
+        } else {
+            val network = mConnectivityManager.activeNetwork ?: return false
+            val status = mConnectivityManager.getNetworkCapabilities(network)
+                    ?: return false
+            if (status.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
+                return true
+            }
+        }
+        return false
     }
     fun onlyEnabled4G(context: Context): Boolean {
         return enabledNetwork(context) && !enabledWifi(context)
@@ -174,11 +185,12 @@ object Utils {
                 imageOut?.use {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut)
                 }
+                val id = ContentUris.parseId(url)
+                MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND,
+                        null)
             }
 
-            val id = ContentUris.parseId(url)
-            MediaStore.Images.Thumbnails.getThumbnail(contentResolver, id, MediaStore.Images.Thumbnails.MINI_KIND,
-                    null)//获取缩略图
+            //获取缩略图
 
         } catch (e: Exception) {
             if (url != null) {

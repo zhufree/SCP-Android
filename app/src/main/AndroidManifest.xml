@@ -128,6 +128,9 @@
         <activity
             android:name=".view.user.DownloadActivity"
             android:screenOrientation="nosensor" />
+        <activity
+            android:name="com.zh.pocket.mall.page.MallActivity"
+            android:configChanges="orientation|screenSize" />
 
         <meta-data
             android:name="UMENG_CHANNEL"

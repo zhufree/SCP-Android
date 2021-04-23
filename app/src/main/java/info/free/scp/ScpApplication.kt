@@ -9,6 +9,11 @@ import androidx.multidex.MultiDexApplication
 import com.umeng.analytics.AnalyticsConfig
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
+import com.zh.pocket.base.LESdk
+import com.zh.pocket.base.common.config.LEConfig
+import com.zh.pocket.base.imageloader.GlideImageLoader
+import com.zh.pocket.base.log.LogConfig
+import com.zh.pocket.base.log.LogManager
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.ThemeUtil
@@ -32,33 +37,39 @@ class ScpApplication : MultiDexApplication() {
         // FIXME
         MobclickAgent.setCatchUncaughtExceptions(!isDebug)
 
-
+//        LogManager.init(LogConfig.Builder)
+        // 设置 false 可以关闭 SDK 日志
+        LEConfig.setEnableLogger(false);
+        // 参数1为channel：标识渠道（可随意填写），不要出现特殊字符即可；参数2为APPID(在开发者后台获取，也可联系客服获取)
+        LESdk.initSDK("kuan", "10225");
+        // 图片加载器设置，实现 ImageLoader，详情参考 Demo
+        LESdk.setImageLoader(GlideImageLoader());
         context = applicationContext
 
         ThemeUtil.setTheme(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
-            override fun onActivityPaused(activity: Activity?) {
+            override fun onActivityPaused(activity: Activity) {
             }
 
-            override fun onActivityResumed(activity: Activity?) {
+            override fun onActivityResumed(activity: Activity) {
             }
 
-            override fun onActivityStarted(activity: Activity?) {
+            override fun onActivityStarted(activity: Activity) {
                 if (activity is BaseActivity) {
                     currentActivity = activity
                 }
             }
 
-            override fun onActivityDestroyed(activity: Activity?) {
+            override fun onActivityDestroyed(activity: Activity) {
             }
 
-            override fun onActivitySaveInstanceState(activity: Activity?, outState: Bundle?) {
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
             }
 
-            override fun onActivityStopped(activity: Activity?) {
+            override fun onActivityStopped(activity: Activity) {
             }
 
-            override fun onActivityCreated(activity: Activity?, savedInstanceState: Bundle?) {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             }
         })
     }

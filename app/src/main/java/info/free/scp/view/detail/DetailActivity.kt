@@ -374,7 +374,7 @@ class DetailActivity : BaseActivity() {
                     R.id.switch_read_mode -> {
                         PreferenceUtil.addPoints(1)
                         if (onlineMode == 0) {
-                            if (enabledNetwork()) {
+                            if (Utils.enabledNetwork(this)) {
                                 pbLoading.visibility = VISIBLE
                                 onlineMode = 1
                                 it.setTitle(R.string.offline_mode)

@@ -9,13 +9,7 @@ import androidx.multidex.MultiDexApplication
 import com.umeng.analytics.AnalyticsConfig
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
-import com.zh.pocket.base.LESdk
-import com.zh.pocket.base.common.config.LEConfig
-import com.zh.pocket.base.imageloader.GlideImageLoader
-import com.zh.pocket.base.log.LogConfig
-import com.zh.pocket.base.log.LogManager
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDatabase
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
@@ -30,20 +24,24 @@ class ScpApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
-
+        // remove this if don't need analyze user data
         UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
         UMConfigure.setLogEnabled(true)
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
         // FIXME
         MobclickAgent.setCatchUncaughtExceptions(!isDebug)
+        // ============================================
 
+        // remove this if don't need ad
 //        LogManager.init(LogConfig.Builder)
         // 设置 false 可以关闭 SDK 日志
-        LEConfig.setEnableLogger(false);
+//        LEConfig.setEnableLogger(false);
         // 参数1为channel：标识渠道（可随意填写），不要出现特殊字符即可；参数2为APPID(在开发者后台获取，也可联系客服获取)
-        LESdk.initSDK("kuan", "10225");
+//        LESdk.initSDK("kuan", "10225");
         // 图片加载器设置，实现 ImageLoader，详情参考 Demo
-        LESdk.setImageLoader(GlideImageLoader());
+//        LESdk.setImageLoader(GlideImageLoader());
+        // ============================================
+
         context = applicationContext
 
         ThemeUtil.setTheme(this)

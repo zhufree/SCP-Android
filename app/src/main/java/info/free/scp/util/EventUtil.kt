@@ -77,9 +77,9 @@ object EventUtil {
     const val clickDonateWuhan = "click_donate_wuhan"
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
-        MobclickAgent.onEvent(context, event)
+        MobclickAgent.onEvent(context, event) // remove this if don't need analyze user data
     }
     fun onEvent(context: Context? = ScpApplication.context, event: String, arg: String) {
-        MobclickAgent.onEvent(context, event, arg)
+        MobclickAgent.onEvent(context, event, arg) // remove this if don't need analyze user data
     }
 }

@@ -43,12 +43,12 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
 
 
     public override fun onResume() {
-        MobclickAgent.onResume(this)
+        MobclickAgent.onResume(this) // remove this if don't need analyze user data
         super.onResume()
     }
 
     public override fun onPause() {
-        MobclickAgent.onPause(this)
+        MobclickAgent.onPause(this) // remove this if don't need analyze user data
         super.onPause()
     }
 

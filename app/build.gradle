@@ -12,7 +12,7 @@ android {
         applicationId "info.free.scp"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 25
+        versionCode 26
         versionName "0.2.5"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

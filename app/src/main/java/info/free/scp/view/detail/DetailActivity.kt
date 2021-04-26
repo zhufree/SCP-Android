@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.SCPConstants.FREE_TIME
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
@@ -50,6 +51,7 @@ import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
 import taobe.tec.jcc.JChineseConvertor
 import java.io.IOException
+import java.util.*
 
 
 class DetailActivity : BaseActivity() {
@@ -466,7 +468,11 @@ class DetailActivity : BaseActivity() {
                                 .setTitle("设置Cookie")
                                 .setView(cookieView)
                                 .setNeutralButton("如何获取cookie和agent") { _, _ ->
-                                    startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
+                                    if (Date().before(Date(FREE_TIME))) {
+                                        startActivity(Utils.getUrlIntent("https://shimo.im/docs/qvPVj3cVKPJx6RCV/"))
+                                    } else {
+                                        startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
+                                    }
                                 }
                                 .setPositiveButton("OK") { _, _ -> }
                                 .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }

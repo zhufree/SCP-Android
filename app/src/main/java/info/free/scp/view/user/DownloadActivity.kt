@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_download.*
 import org.jetbrains.anko.*
 import java.io.File
+import java.util.*
 
 
 class DownloadActivity : BaseActivity() {
@@ -33,8 +34,14 @@ class DownloadActivity : BaseActivity() {
         baseToolbar = download_toolbar
 
         tv_go_download.setOnClickListener {
-            val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
-            startActivity(intent)
+            if (Date().before(Date(SCPConstants.FREE_TIME))) { // 4.28之前，跳转百度网盘
+                val panCode = "链接: https://pan.baidu.com/s/1c3Y2ZNhVzvUycB8uaXTV_g 提取码: icu5 复制这段内容后打开百度网盘手机App，操作更方便哦"
+                Utils.copy(this, panCode)
+                toast("已复制百度网盘链接")
+            } else {
+                val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
+                startActivity(intent)
+            }
         }
 
         arrayOf(btn_select_file, btn_backup, btn_restore).forEach {

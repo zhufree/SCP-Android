@@ -173,7 +173,11 @@ class UserFragment : BaseFragment() {
         }
         btn_donation.setOnClickListener {
             if (ScpApplication.channelName == "GooglePlay") {
-                startActivity<DonationActivity>()
+                if (Date().before(Date(SCPConstants.FREE_TIME))) {
+                    toast("Google Play商店禁止应用内引导其他方式付款，谢谢你的支持")
+                } else {
+                    startActivity<DonationActivity>()
+                }
             } else {
                 startActivity<DonationQrActivity>()
             }

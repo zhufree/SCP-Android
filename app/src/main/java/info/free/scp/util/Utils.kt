@@ -3,10 +3,7 @@
 package info.free.scp.util
 
 import android.app.Activity
-import android.content.ContentUris
-import android.content.ContentValues
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
@@ -27,6 +24,7 @@ import info.free.scp.ScpApplication
 import kotlinx.io.IOException
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.windowManager
+import toast
 import java.io.*
 import java.text.DateFormat.LONG
 import java.text.DateFormat.SHORT
@@ -249,6 +247,12 @@ object Utils {
         val updateUrl = Uri.parse(url)
         updateIntent.data = updateUrl
         return updateIntent
+    }
+
+    fun copy(context: Context, text: String) {
+        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+        val clipData = ClipData.newPlainText("label", text)
+        clipboardManager?.setPrimaryClip(clipData)
     }
 
     fun share(file: File, activity: AppCompatActivity) {

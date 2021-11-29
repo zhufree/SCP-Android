@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
+import androidx.room.RoomWarnings
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
 
@@ -23,8 +24,9 @@ interface DetailDao {
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
     fun getLiveDetail(link: String): LiveData<String>?
 
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT link FROM scp_detail WHERE detail LIKE :keyword;")
-    suspend fun searchScpByDetail(keyword: String): List<String>
+    fun searchScpByDetail(keyword: String): List<String>
     // AND last_update >= :timeout
 }
 

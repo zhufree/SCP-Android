@@ -24,7 +24,6 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import info.free.scp.SCPConstants.PUBLIC_DIR_NAME
 import info.free.scp.ScpApplication
-import kotlinx.io.IOException
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.windowManager
 import java.io.*

@@ -13,7 +13,7 @@ import info.free.scp.util.FileUtil
 import org.jetbrains.anko.toast
 
 
-@Database(entities = [ScpItemModel::class, ScpDetail::class, ScpCollectionModel::class], version = 1)
+@Database(entities = [ScpItemModel::class, ScpDetail::class, ScpCollectionModel::class], version = 5)
 abstract class ScpDatabase : RoomDatabase() {
     abstract fun scpDao(): ScpDao
     abstract fun detailDao(): DetailDao

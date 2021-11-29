@@ -11,7 +11,7 @@
 
     <application
         android:name=".ScpApplication"
-        android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -41,6 +41,7 @@
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name"
             android:screenOrientation="nosensor"
+            android:exported="true"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -58,6 +59,7 @@
             android:screenOrientation="nosensor" />
         <activity
             android:name=".view.user.AboutAppActivity"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutAppActivity" />
@@ -67,6 +69,7 @@
         </activity>
         <activity
             android:name=".view.user.DonationQrActivity"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutMeActivity" />
@@ -84,6 +87,7 @@
             android:screenOrientation="nosensor" />
         <activity
             android:name=".view.user.LaterAndHistoryActivity"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />
@@ -93,6 +97,7 @@
         </activity>
         <activity
             android:name=".view.game.GameListActivity"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.game.GameListActivity" />
@@ -103,6 +108,7 @@
         <activity
             android:name=".view.user.SettingsActivity"
             android:label="@string/title_activity_settings"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.SettingsActivity" />
@@ -112,9 +118,11 @@
         </activity>
         <activity
             android:name=".view.home.DirectActivity"
+            android:exported="true"
             android:screenOrientation="nosensor" />
         <activity
             android:name=".view.draft.DraftEditActivity"
+            android:exported="true"
             android:screenOrientation="nosensor">
             <intent-filter>
                 <action android:name="info.free.scp.view.draft.DraftEditActivity" />
@@ -128,9 +136,6 @@
         <activity
             android:name=".view.user.DownloadActivity"
             android:screenOrientation="nosensor" />
-        <activity
-            android:name="com.zh.pocket.mall.page.MallActivity"
-            android:configChanges="orientation|screenSize" />
 
         <meta-data
             android:name="UMENG_CHANNEL"
@@ -148,7 +153,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/gdt_file_path" />
         </provider> <!-- ad -->
-        <receiver android:name=".ScpWidgetProvider">
+        <receiver
+            android:name=".ScpWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.seewo.homewidgets.action.CLICK" />

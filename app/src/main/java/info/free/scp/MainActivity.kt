@@ -101,7 +101,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         transaction.commit()
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
-        FileUtil.copyCategoryDb()
+        FileUtil.copyCategoryDb(false)
         FileUtil.checkDetailDb()
         ScpDatabase.getNewInstance()
         AppInfoDatabase.getNewInstance()

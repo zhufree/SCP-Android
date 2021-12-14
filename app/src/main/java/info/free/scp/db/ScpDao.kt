@@ -5,7 +5,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import info.free.scp.bean.ScpCollectionModel
 import info.free.scp.bean.ScpItemModel
 
 

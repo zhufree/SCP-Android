@@ -77,7 +77,7 @@ class ScpApplication : MultiDexApplication() {
 
     companion object {
         lateinit var context: Context
-        var isDebug = false
+        var isDebug = true
         var currentActivity: BaseActivity? = null
         val downloadManager by lazy {
             context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager

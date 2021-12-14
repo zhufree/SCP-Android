@@ -9,5 +9,7 @@ import kotlinx.serialization.SerialName
  * for detail
  */
 @Entity(tableName = "scp_detail")
-data class ScpDetail(@PrimaryKey @ColumnInfo var link: String, var detail: String,
-                     @SerialName("not_found") @ColumnInfo(name = "not_found") var notFound: Int = -1)
+data class ScpDetail(@PrimaryKey @ColumnInfo var link: String, var detail: String?,
+                     @SerialName("not_found") @ColumnInfo(name = "not_found") var notFound: Int? = -1,
+                     var tags: String? = ""
+                     )

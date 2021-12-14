@@ -16,7 +16,7 @@ import info.free.scp.util.PreferenceUtil
 import org.jetbrains.anko.toast
 
 
-@Database(entities = [ScpDetail::class], version = 1)
+@Database(entities = [ScpDetail::class], version = 2)
 abstract class DetailDatabase : RoomDatabase() {
     abstract fun detailDao(): DetailDao
 

@@ -23,81 +23,125 @@
             app:title="@string/download_settings" />
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="32dp">
-
-        <TextView
-            android:id="@+id/tv_offline_notice"
-            android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="40dp"
-            android:text="文档离线后支持在无网络情况下看文档（不包括最近更新，最高评分页面），全部文档数据多大200M，请在确实需要的情况下再下载"
-            android:textColor="?attr/darkText"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:paddingBottom="32dp">
 
-        <TextView
-            android:id="@+id/tv_go_download"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="48dp"
-            android:text="确定要下载？点击此文本下载文档，然后点击下面的按钮选择已下好的数据库文件（scp_detail_v2.db）使用"
-            android:textColor="?attr/darkText"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_offline_notice" />
+            <TextView
+                android:id="@+id/tv_download_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:text="离线文档"
+                android:layout_marginTop="15dp"
+                android:textColor="?attr/darkText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_select_file"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="32dp"
-            android:layout_marginTop="32dp"
-            android:lineSpacingMultiplier="1.2"
-            android:text="选择数据库文件"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_go_download" />
+            <TextView
+                android:id="@+id/tv_download_notice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/download_notice"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_download_title" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_go_download"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="6dp"
+                android:layout_marginTop="12dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="前往网页下载数据库"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/btn_select_file"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_download_notice" />
 
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_backup"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
-            android:ellipsize="marquee"
-            android:singleLine="true"
-            android:text="选择文件夹备份数据（历史记录，收藏等）"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_select_file" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_select_file"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="6dp"
+                android:lineSpacingMultiplier="1.2"
+                android:text="选择数据库文件"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_go_download"
+                app:layout_constraintTop_toTopOf="@id/btn_go_download" />
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_restore"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="32dp"
-            android:text="从文件恢复"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_backup" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/tv_backup_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="24dp"
+                android:text="备份个性化数据"
+                android:textColor="?attr/darkText"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/btn_select_file" />
+
+            <TextView
+                android:id="@+id/tv_backup_notice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="32dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/backup_notice"
+                android:textColor="?attr/darkText"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_backup_title" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_backup"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="6dp"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:text="创建备份数据"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toStartOf="@id/btn_restore"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_backup_notice" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_restore"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginEnd="12dp"
+                android:text="读取备份数据"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/btn_backup"
+                app:layout_constraintTop_toTopOf="@id/btn_backup" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
 </androidx.appcompat.widget.LinearLayoutCompat>

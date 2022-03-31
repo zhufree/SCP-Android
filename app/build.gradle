@@ -6,13 +6,13 @@ apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 32
     buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "info.free.scp"
         minSdkVersion 21
-        targetSdkVersion 31
-        versionCode 26
+        targetSdkVersion 32
+        versionCode 27
         versionName "0.2.6"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

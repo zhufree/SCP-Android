@@ -111,9 +111,6 @@ class UserFragment : BaseFragment() {
         if (PreferenceUtil.getShowMeal()) {
             st_meal.visibility = VISIBLE
         }
-        if (PreferenceUtil.getNewMealCount() > PreferenceUtil.getOldMealCount()) {
-//            st_meal.setRight("NEW") TODO
-        }
 
         refreshHistoryList()
         setSettingEvent()

@@ -32,12 +32,12 @@ class DownloadActivity : BaseActivity() {
 
         baseToolbar = download_toolbar
 
-        tv_go_download.setOnClickListener {
+        btn_go_download.setOnClickListener {
             val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
             startActivity(intent)
         }
 
-        arrayOf(btn_select_file, btn_backup, btn_restore).forEach {
+        arrayOf(btn_go_download, btn_select_file, btn_backup, btn_restore).forEach {
             it?.background = ThemeUtil.customShape(ThemeUtil.linkBlue,
                     0, 0, dip(24))
         }

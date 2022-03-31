@@ -159,7 +159,7 @@ class DetailActivity : BaseActivity() {
         viewModel.getScp().observe(this, Observer {
             // 数据库取到
             if (it != null) {
-                scp = it as ScpModel
+                scp = it
                 scp?.let { s ->
                     setData(s)
                 } ?: run {
@@ -370,120 +370,127 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.title = null
         detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
         detail_toolbar?.setOnMenuItemClickListener {
-            scp?.let { s ->
-                when (it.itemId) {
-                    R.id.switch_read_mode -> {
-                        PreferenceUtil.addPoints(1)
-                        if (onlineMode == 0) {
-                            if (Utils.enabledNetwork(this)) {
-                                pbLoading.visibility = VISIBLE
-                                onlineMode = 1
-                                it.setTitle(R.string.offline_mode)
-                                webView?.loadUrl(fullUrl)
-                            } else {
-                                toast("请先开启网络")
-                            }
+            when (it.itemId) {
+                R.id.switch_read_mode -> {
+                    PreferenceUtil.addPoints(1)
+                    if (onlineMode == 0) {
+                        if (Utils.enabledNetwork(this)) {
+                            pbLoading.visibility = VISIBLE
+                            onlineMode = 1
+                            it.setTitle(R.string.offline_mode)
+                            webView?.loadUrl(fullUrl)
                         } else {
-                            onlineMode = 0
-                            it.setTitle(R.string.online_mode)
-                            webView?.loadDataWithBaseURL("file:///android_asset/",
-                                    currentTextStyle + detailHtml + jsScript,
-                                    "text/html", "utf-8", null)
+                            toast("请先开启网络")
                         }
+                    } else {
+                        onlineMode = 0
+                        it.setTitle(R.string.online_mode)
+                        webView?.loadDataWithBaseURL("file:///android_asset/",
+                                currentTextStyle + detailHtml + jsScript,
+                                "text/html", "utf-8", null)
                     }
-                    R.id.open_in_browser -> {
+                }
+                R.id.open_in_browser -> {
+                    scp?.let { s->
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
-                        PreferenceUtil.addPoints(1)
-                        startActivity(Utils.getUrlIntent(fullUrl))
                     }
-                    R.id.copy_link -> {
+                    PreferenceUtil.addPoints(1)
+                    startActivity(Utils.getUrlIntent(fullUrl))
+                }
+                R.id.copy_link -> {
+                    scp?.let {s->
                         EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
-                        val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                        val clipData = ClipData.newPlainText("scp_link", fullUrl)
-                        clipboardManager?.setPrimaryClip(clipData)
-                        toast("已复制到剪贴板")
                     }
-                    R.id.like -> {
-                        likeScp()
-                    }
-                    R.id.change_theme -> {
-                        it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
-                        changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
-                    }
-                    R.id.add_read_later -> {
+                    val clipboardManager =
+                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                    val clipData = ClipData.newPlainText("scp_link", fullUrl)
+                    clipboardManager?.setPrimaryClip(clipData)
+                    toast("已复制到剪贴板")
+                }
+                R.id.like -> {
+                    likeScp()
+                }
+                R.id.change_theme -> {
+                    it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
+                    changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
+                }
+                R.id.add_read_later -> {
+                    scp?.let { s->
                         ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
-                                SCPConstants.LATER_TYPE)
+                            SCPConstants.LATER_TYPE)
                         toast("已加入待读列表")
+                    }?:run {
+                        toast("本文只可在线浏览，不可加入待读")
                     }
-                    R.id.share_picture -> {
-                        // 截屏分享
+                }
+                R.id.share_picture -> {
+                    // 截屏分享
+                    scp?.let { s->
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
-                        toast("生成图片中...")
-                        gp_share_content?.visibility = VISIBLE
-                        cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
-                                ViewTreeObserver.OnGlobalLayoutListener {
-                            override fun onGlobalLayout() {
-                                cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                                val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
-                                        Bitmap.Config.RGB_565)
-                                //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
-                                val canvas = Canvas(bitmap)
-                                cl_detail_container.draw(canvas)
-                                doAsync {
-                                    // Runs in background
-                                    Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
-                                    // This code is executed on the UI thread
-                                    uiThread {
-                                        toast("图片已保存")
-                                        gp_share_content?.visibility = GONE
-                                    }
+                    }
+                    toast("生成图片中...")
+                    gp_share_content?.visibility = VISIBLE
+                    cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                        ViewTreeObserver.OnGlobalLayoutListener {
+                        override fun onGlobalLayout() {
+                            cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
+                            val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
+                                Bitmap.Config.RGB_565)
+                            //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
+                            val canvas = Canvas(bitmap)
+                            cl_detail_container.draw(canvas)
+                            doAsync {
+                                // Runs in background
+                                Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
+                                // This code is executed on the UI thread
+                                uiThread {
+                                    toast("图片已保存")
+                                    gp_share_content?.visibility = GONE
                                 }
                             }
-                        })
-                    }
-                    R.id.big_text -> {
-                        if (currentTextSizeIndex < 4) {
-                            currentTextSizeIndex++
-                            refreshStyle()
                         }
-                        return@let
+                    })
+                }
+                R.id.big_text -> {
+                    if (currentTextSizeIndex < 4) {
+                        currentTextSizeIndex++
+                        refreshStyle()
                     }
-                    R.id.small_text -> {
-                        if (currentTextSizeIndex > 0) {
-                            currentTextSizeIndex--
-                            refreshStyle()
-                        }
-                        return@let
+                }
+                R.id.small_text -> {
+                    if (currentTextSizeIndex > 0) {
+                        currentTextSizeIndex--
+                        refreshStyle()
                     }
-                    R.id.translate -> {
-                        hanz = if (hanz == SIMPLE) TRADITIONAL else SIMPLE
-                        translate(hanz)
-                        PreferenceUtil.setHanzType(hanz)
+                }
+                R.id.translate -> {
+                    hanz = if (hanz == SIMPLE) TRADITIONAL else SIMPLE
+                    translate(hanz)
+                    PreferenceUtil.setHanzType(hanz)
+                }
+                R.id.set_cookie -> {
+                    val cookieView = LayoutInflater.from(this@DetailActivity)
+                            .inflate(R.layout.layout_dialog_cookie, null)
+                    val cookieDialog = AlertDialog.Builder(this@DetailActivity)
+                            .setTitle("设置Cookie")
+                            .setView(cookieView)
+                            .setNeutralButton("如何获取cookie和agent") { _, _ ->
+                                startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
+                            }
+                            .setPositiveButton("OK") { _, _ -> }
+                            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                            .create()
+                    cookieDialog.show()
+                    cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
+                        val cookie = cookieView.et_cookie.text.toString()
+                        val agent = cookieView.et_agent.text.toString()
+                        PreferenceUtil.setCookie(cookie)
+                        PreferenceUtil.setAgent(agent)
+                        toast("设置完成")
+                        cookieDialog.dismiss()
                     }
-                    R.id.set_cookie -> {
-                        val cookieView = LayoutInflater.from(this@DetailActivity)
-                                .inflate(R.layout.layout_dialog_cookie, null)
-                        val cookieDialog = AlertDialog.Builder(this@DetailActivity)
-                                .setTitle("设置Cookie")
-                                .setView(cookieView)
-                                .setNeutralButton("如何获取cookie和agent") { _, _ ->
-                                    startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
-                                }
-                                .setPositiveButton("OK") { _, _ -> }
-                                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                                .create()
-                        cookieDialog.show()
-                        cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-                            val cookie = cookieView.et_cookie.text.toString()
-                            val agent = cookieView.et_agent.text.toString()
-                            PreferenceUtil.setCookie(cookie)
-                            PreferenceUtil.setAgent(agent)
-                            toast("设置完成")
-                            cookieDialog.dismiss()
-                        }
-                    }
-                    else -> {
-                    }
+                }
+                else -> {
                 }
             }
             true

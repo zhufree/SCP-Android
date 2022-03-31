@@ -78,7 +78,7 @@
     <string name="draft_list">草稿箱</string>
     <string name="dark_mode">夜间模式</string>
     <string name="day_mode">日间模式</string>
-    <string name="download_settings">文档缓存</string>
+    <string name="download_settings">文档缓存/本地数据</string>
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
@@ -92,7 +92,11 @@
 
     <!--新的离线逻辑-->
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
-
+    <string name="download_notice">离线文档后，无需联网即可加载文档内容，且支持全文搜索功能。\n\n
+要离线文档，首先点击左侧按钮前往面包多下载数据库文件。下载完成后，点击右侧按钮，找到并选择刚刚下载的“scp_detail_v2.db”以将数据库文件加载至APP内。\n\n
+注：数据库文件不包括最近更新页面、最高评分页面。数据库文件总大小约300MB，请在确实需要的情况下自由下载。</string>
+    <string name="backup_notice">个性化数据是APP使用过程中包括收藏夹、历史记录、选择的职位及等级积分等。备份过程中将在手机存储内创建备份文件。\n\n
+建议在每次升级APP前备份一次个性化数据。</string>
     <!--捐赠-->
     <string name="donation">支持开发者</string>
     <string name="wechat">微信</string>
@@ -104,8 +108,8 @@
     <string name="jump_notice">正在跳转到微信或支付宝扫一扫，请从相册选取赞赏二维码随意打赏</string>
     <string name="uninstall_notice">检测到未安装%1$s无法打赏，感谢支持</string>
     <string name="alipay">支付宝</string>
-    <string name="donation_introduction">SCP基金会是我独立开发的作品。这两年的数据托管和服务器的费用是我自掏腰包在支撑，
-        有闲钱的朋友们可以支持下，也可以打钱催更或者新功能，捐赠时留名我会在感谢页上加上你的名字！</string>
+    <string name="donation_introduction">SCP基金会是我独立开发的作品。
+        有闲钱的朋友们可以支持下，也可以打钱催更或者新功能！</string>
 
     <!--草稿-->
     <string name="empty_draft">还没有草稿，本地草稿仅供记录，正式编写scp请上沙盒站</string>

@@ -14,9 +14,9 @@ import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.databinding.FragmentSearchTabBinding
 import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.user.DownloadActivity
 import kotlinx.android.synthetic.main.fragment_search_tab.*
-import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * 待读和历史列表共用一个fragment
@@ -70,6 +70,10 @@ class SearchResultFragment : BaseFragment() {
                 viewModel.searchScp(searchType, "%$keyword%")
             } else {
                 tv_search_notice.visibility = VISIBLE
+                btn_go_download.visibility = VISIBLE
+                btn_go_download.setOnClickListener {
+                    startActivity<DownloadActivity>()
+                }
             }
         }
     }

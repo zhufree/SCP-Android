@@ -91,21 +91,9 @@ class DownloadActivity : BaseActivity() {
                 val root = DocumentFile.fromTreeUri(this, uriTree)
                 root?.let {
                     doAsync {
-                        val dbFile = if (root.findFile(INFO_DB_NAME) != null) {
-                            root.findFile(INFO_DB_NAME)
-                        } else {
-                            root.createFile("*/*", INFO_DB_NAME)
-                        }
-                        val levelPrefFile = if (root.findFile(LEVEL_PREF_NAME) != null) {
-                            root.findFile(LEVEL_PREF_NAME)
-                        } else {
-                            root.createFile("application/xml", LEVEL_PREF_NAME)
-                        }
-                        val appPrefFile = if (root.findFile(APP_PREF_NAME) != null) {
-                            root.findFile(APP_PREF_NAME)
-                        } else {
-                            root.createFile("application/xml", APP_PREF_NAME)
-                        }
+                        val dbFile = root.createFile("*/*", INFO_DB_NAME)
+                        val levelPrefFile = root.createFile("application/xml", LEVEL_PREF_NAME)
+                        val appPrefFile = root.createFile("application/xml", APP_PREF_NAME)
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
                         val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
                         val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
@@ -147,6 +135,7 @@ class DownloadActivity : BaseActivity() {
                         if (root.findFile(LEVEL_PREF_NAME) != null) {
                             val prefFile = root.findFile(LEVEL_PREF_NAME)
                             prefFile?.let {
+                                rawLevelPrefFile.delete()
                                 copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
                             }
                         }
@@ -158,7 +147,7 @@ class DownloadActivity : BaseActivity() {
                         }
                         AppInfoDatabase.getNewInstance()
                         uiThread {
-                            toast("恢复完成")
+                            toast("恢复完成，部分数据可能需要重启APP后生效")
                         }
                     }
                 }

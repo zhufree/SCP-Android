@@ -26,7 +26,7 @@ class SearchViewModel : ViewModel() {
         }
     }
 
-    suspend fun searchDetail(keyword: String): List<ScpModel> {
+    private fun searchDetail(keyword: String): List<ScpModel> {
         if (scpDao == null || detailDao == null) return emptyList()
         val linkList = detailDao.searchScpByDetail(keyword)
         val scpList = mutableListOf<ScpModel>()

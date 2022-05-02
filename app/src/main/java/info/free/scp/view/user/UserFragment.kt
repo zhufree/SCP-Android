@@ -169,11 +169,10 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
-//        btn_donation.visibility = GONE
-        btn_donation.setOnClickListener {
-            if (ScpApplication.channelName == "GooglePlay") {
-                startActivity<DonationActivity>()
-            } else {
+        if (ScpApplication.channelName == "GooglePlay") {
+            btn_donation.visibility = GONE
+        } else {
+            btn_donation.setOnClickListener {
                 startActivity<DonationQrActivity>()
             }
         }

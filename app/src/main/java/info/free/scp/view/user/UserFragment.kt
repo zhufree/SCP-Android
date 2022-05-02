@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
@@ -168,6 +169,7 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
+//        btn_donation.visibility = GONE
         btn_donation.setOnClickListener {
             if (ScpApplication.channelName == "GooglePlay") {
                 startActivity<DonationActivity>()

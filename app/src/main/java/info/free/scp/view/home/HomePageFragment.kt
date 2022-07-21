@@ -113,7 +113,6 @@ class HomePageFragment : BaseFragment() {
     }
 
     private fun goToGroupPage(entry_type: Int) {
-        // TODO 埋点
         startActivity<GroupListActivity>("entry_type" to entry_type)
     }
 

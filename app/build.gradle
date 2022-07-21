@@ -129,10 +129,6 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
-
-//    implementation (name:'le_mall_2_1_4', ext:'aar')
-//    implementation (name:'le_base_2_1_4', ext:'aar')
-//    implementation (name:'miit_mdid_1.0.10', ext:'aar')
 }
 
 

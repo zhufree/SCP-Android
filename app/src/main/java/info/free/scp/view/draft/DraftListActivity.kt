@@ -1,6 +1,5 @@
 package info.free.scp.view.draft
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,11 +7,9 @@ import android.view.Menu
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
 import info.free.scp.view.base.BaseActivity
-import info.free.scp.view.detail.DetailViewModel
 import info.free.scp.viewmodel.DraftListViewModel
 import kotlinx.android.synthetic.main.activity_draft_list.*
 import org.jetbrains.anko.startActivity

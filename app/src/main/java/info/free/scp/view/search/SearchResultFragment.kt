@@ -1,6 +1,7 @@
 package info.free.scp.view.search
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,6 +17,7 @@ import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.user.DownloadActivity
 import kotlinx.android.synthetic.main.fragment_search_tab.*
+import kotlinx.coroutines.delay
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.startActivity
 

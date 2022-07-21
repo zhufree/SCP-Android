@@ -84,9 +84,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 注册广播
         setContentView(R.layout.activity_main)
-        // 设置默认fragment
         val transaction = supportFragmentManager.beginTransaction()
         currentFragment?.let {
             if (it.isAdded) {
@@ -115,11 +113,6 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.onResume()
         AppInfoDatabase.getInstance()
     }
-
-    /**
-     * 注册广播：主题
-     */
-
 
     override fun refreshTheme() {
         super.refreshTheme()

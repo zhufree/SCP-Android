@@ -13,7 +13,7 @@ object SCPConstants {
     const val LEVEL_PREF_NAME = "level.xml"
     const val APP_PREF_NAME = "app.xml"
     const val PUBLIC_DIR_NAME = "scp_reader"
-    const val FREE_TIME = 1619539200000
+    const val FREE_TIME = 1619668800000
 
     object AppMode {
         const val ONLINE = 0

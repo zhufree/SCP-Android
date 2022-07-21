@@ -63,7 +63,6 @@ class SearchBar : ConstraintLayout {
                     toast("请输入正确的关键词")
                 } else {
                     context.startActivity<SearchActivity>("keyword" to keyword)
-
 //                    if (searchMode == 0) searchByTitle(keyword) else searchByDetail(keyword)
                 }
             }

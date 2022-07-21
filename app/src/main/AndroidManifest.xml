@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="info.free.scp">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -11,7 +12,7 @@
 
     <application
         android:name=".ScpApplication"
-        android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -24,24 +25,15 @@
         <activity android:name=".view.category.GroupListActivity" />
         <activity android:name=".view.feed.TopRatedActivity" />
         <activity android:name=".view.random.RandomActivity" />
-        <activity
-            android:name=".view.eatroom.MealListActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.portal.PortalActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.feed.TopRatedListActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.user.DonationActivity"
-            android:screenOrientation="nosensor" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
+            android:exported="true"
             android:label="@string/app_name"
-            android:screenOrientation="nosensor"
-            android:theme="@style/AppTheme">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -49,25 +41,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.category.ScpListActivity"
-            android:screenOrientation="nosensor" />
+        <activity android:name=".view.category.ScpListActivity" />
         <activity android:name=".view.detail.DetailActivity" />
-        <activity
-            android:name=".view.base.BaseActivity"
-            android:screenOrientation="nosensor" />
+        <activity android:name=".view.base.BaseActivity" />
         <activity
             android:name=".view.user.AboutAppActivity"
-            android:screenOrientation="nosensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutAppActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
             android:name=".view.user.DonationQrActivity"
-            android:screenOrientation="nosensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutMeActivity" />
 
@@ -76,15 +63,12 @@
         </activity> <!-- <service -->
         <!-- android:name=".service.InitDetailService" -->
         <!-- android:enabled="true" /> -->
+        <activity android:name=".view.search.SearchActivity" />
         <activity
-            android:name=".view.search.SearchActivity"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".view.later.LikeListActivity"
-            android:screenOrientation="nosensor" />
+            android:name=".view.later.LikeListActivity"/>
         <activity
             android:name=".view.user.LaterAndHistoryActivity"
-            android:screenOrientation="nosensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.LaterAndHistoryActivity" />
 
@@ -93,7 +77,7 @@
         </activity>
         <activity
             android:name=".view.game.GameListActivity"
-            android:screenOrientation="nosensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.game.GameListActivity" />
 
@@ -102,8 +86,8 @@
         </activity>
         <activity
             android:name=".view.user.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:screenOrientation="nosensor">
+            android:exported="true"
+            android:label="@string/title_activity_settings">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.SettingsActivity" />
 
@@ -112,26 +96,27 @@
         </activity>
         <activity
             android:name=".view.home.DirectActivity"
-            android:screenOrientation="nosensor" />
+            android:exported="true" />
         <activity
             android:name=".view.draft.DraftEditActivity"
-            android:screenOrientation="nosensor">
+            android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.draft.DraftEditActivity" />
-
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.draft.DraftListActivity"
-            android:screenOrientation="nosensor" />
+            android:name=".view.draft.DraftListActivity"/>
         <activity
-            android:name=".view.user.DownloadActivity"
-            android:screenOrientation="nosensor" />
+            android:name=".view.user.DownloadActivity"/>
         <activity
-            android:name="com.zh.pocket.mall.page.MallActivity"
-            android:configChanges="orientation|screenSize" />
-
+            android:name=".view.eatroom.MealListActivity" />
+        <activity
+            android:name=".view.portal.PortalActivity" />
+        <activity
+            android:name=".view.feed.TopRatedListActivity" />
+        <activity
+            android:name=".view.user.DonationActivity" />
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />
@@ -148,7 +133,9 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/gdt_file_path" />
         </provider> <!-- ad -->
-        <receiver android:name=".ScpWidgetProvider">
+        <receiver
+            android:name=".ScpWidgetProvider"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="com.seewo.homewidgets.action.CLICK" />

@@ -40,10 +40,6 @@ class AboutAppActivity : BaseActivity() {
         tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
 //        tv_server_data_latest_time?.text = "云端最新数据更新时间：${PreferenceUtil.getServerLastUpdateTime()}"
 
-        btn_qq_group?.setOnClickListener {
-            val intent = Utils.getUrlIntent("https://jgchat.net/i/iYdGkhGw")
-            startActivity(intent)
-        }
         btn_go_site?.setOnClickListener {
             val intent = Utils.getUrlIntent("http://scp-wiki-cn.wikidot.com/")
             startActivity(intent)

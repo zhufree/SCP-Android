@@ -52,6 +52,8 @@ class UpdateManager(private var activity: BaseActivity) {
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
             // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
+            // 更新category数据库
+//            FileUtil.copyCategoryDb(true)
             AppInfoDatabase.getInstance()
         }
 

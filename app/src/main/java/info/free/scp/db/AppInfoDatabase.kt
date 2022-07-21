@@ -99,8 +99,10 @@ abstract class AppInfoDatabase : RoomDatabase() {
                         .addMigrations(MIGRATION_6_7)
                         .allowMainThreadQueries()
                         .build()
-            } catch (e: SQLiteDatabaseCorruptException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试")
+            } catch (e1: SQLiteDatabaseCorruptException) {
+                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+            } catch (e2: IllegalStateException) {
+                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
             }
         }
     }

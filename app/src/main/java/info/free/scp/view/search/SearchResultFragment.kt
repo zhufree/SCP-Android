@@ -14,9 +14,10 @@ import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.databinding.FragmentSearchTabBinding
 import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.user.DownloadActivity
 import kotlinx.android.synthetic.main.fragment_search_tab.*
-import org.jetbrains.anko.design.snackbar
-import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * 待读和历史列表共用一个fragment
@@ -26,6 +27,7 @@ class SearchResultFragment : BaseFragment() {
 
     var searchType = TITLE
     var keyword = ""
+    var searched = false
 
     companion object {
         fun newInstance(searchType: Int, keyword: String): SearchResultFragment {
@@ -62,14 +64,21 @@ class SearchResultFragment : BaseFragment() {
         return binding.root
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (searchType == CONTENT) {
+    override fun onResume() {
+        super.onResume()
+        if (searchType == CONTENT && !searched) {
             if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
                 pb_loading.visibility = VISIBLE
-                viewModel.searchScp(searchType, "%$keyword%")
+                doAsync {
+                    viewModel.searchScp(searchType, "%$keyword%")
+                    searched = true
+                }
             } else {
                 tv_search_notice.visibility = VISIBLE
+                btn_go_download.visibility = VISIBLE
+                btn_go_download.setOnClickListener {
+                    startActivity<DownloadActivity>()
+                }
             }
         }
     }
@@ -77,11 +86,15 @@ class SearchResultFragment : BaseFragment() {
     private fun subscribeUi(adapter: SearchResultAdapter) {
         if (searchType == TITLE) {
             viewModel.searchScp(searchType, "%$keyword%")
-            adapter.submitList(viewModel.titleResult)
+            doAsync {
+                adapter.submitList(viewModel.titleResult)
+            }
         } else {
             viewModel.contentResult.observe(viewLifecycleOwner, Observer {
                 pb_loading.visibility = GONE
-                adapter.submitList(it)
+                doAsync {
+                    adapter.submitList(it)
+                }
             })
         }
     }

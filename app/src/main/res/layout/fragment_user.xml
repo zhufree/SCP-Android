@@ -177,7 +177,7 @@
                     android:id="@+id/st_data"
                     android:layout_width="match_parent"
                     app:count="4"
-                    app:entryTitle="文档缓存"
+                    app:entryTitle="本地数据"
                     app:imgBg="#8076a3"
                     app:imgPadding="14dp"
                     app:imgSrc="@drawable/baseline_download_for_offline_white_24dp" />

@@ -176,7 +176,7 @@ class GroupListActivity : BaseActivity() {
         supportActionBar?.title = getTitlePrefix()
         when (entryType) {
             SCP_DOC -> {
-                for (i in 1..6) {
+                for (i in 1..7) {
                     ll_side_bar.addView(createSeriesItem(i), lp)
                 }
                 ll_side_bar.addView(createSeriesItem(JOKE), lp)

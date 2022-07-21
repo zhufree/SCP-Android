@@ -38,9 +38,9 @@ object FileUtil {
      * handled. This is done by transfering bytestream.
      */
     @Throws(IOException::class)
-    fun copyCategoryDb() {
+    fun copyCategoryDb(force: Boolean) {
         val dbReady = checkDataReady(SCP_DB_NAME)
-        if (dbReady) return
+        if (dbReady && !force) return
         val am: AssetManager = context.assets
         val inp: InputStream = am.open(SCP_DB_NAME)
         val dirPath = File(privateDbDirPath)
@@ -63,7 +63,7 @@ object FileUtil {
 
 
     /**
-     * 检查私有数据库中scp_data.db是否存在
+     * 检查私有数据库中db是否存在
      */
     fun checkDataReady(dbName: String): Boolean {
         val backUpFile = File("$privateDbDirPath$dbName")

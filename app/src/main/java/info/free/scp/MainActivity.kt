@@ -101,13 +101,14 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         transaction.commit()
         navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
-        FileUtil.copyCategoryDb()
+//        FileUtil.copyCategoryDb(false)
         FileUtil.checkDetailDb()
-        ScpDatabase.getNewInstance()
-        AppInfoDatabase.getNewInstance()
 
         navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()
+
+        ScpDatabase.getNewInstance()
+        AppInfoDatabase.getNewInstance()
     }
 
     override fun onResume() {
@@ -130,6 +131,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
         // Forward results to EasyPermissions
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }

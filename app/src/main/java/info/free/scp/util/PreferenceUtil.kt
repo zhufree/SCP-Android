@@ -43,7 +43,7 @@ object PreferenceUtil {
     }
 
     fun getNotice(): String {
-        return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）")
+        return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）,升级到0.2.6版本后请务必确认数据库也更新到新版本，使用旧版本数据库会导致闪退")
     }
 
     fun setQueryLink(link: String) {

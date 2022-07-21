@@ -2,6 +2,7 @@ package info.free.scp.bean
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
@@ -13,7 +14,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 @Entity(tableName = "scps")
-open class ScpModel(
+open class ScpModel @Ignore constructor(
         @PrimaryKey @ColumnInfo(name = "_id") var id: Int = -1,
         @ColumnInfo(name = "_index")
         var index: Int = -1, // 本地数据表中的次序
@@ -21,8 +22,8 @@ open class ScpModel(
         @ColumnInfo(name = "scp_type")
         @SerializedName("scp_type")
         var scpType: Int = -1,
-        @ColumnInfo(name = "download_type")
-        var downloadType: Int = -1,
         var author: String? = "" // 部分有的
 //        @Ignore var tags: String = "", // 部分有的
-)
+) {
+        constructor() : this(-1,-1, "", "", -1,  "")
+}

@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
@@ -111,9 +112,6 @@ class UserFragment : BaseFragment() {
         if (PreferenceUtil.getShowMeal()) {
             st_meal.visibility = VISIBLE
         }
-        if (PreferenceUtil.getNewMealCount() > PreferenceUtil.getOldMealCount()) {
-//            st_meal.setRight("NEW") TODO
-        }
 
         refreshHistoryList()
         setSettingEvent()
@@ -171,14 +169,10 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
-        btn_donation.setOnClickListener {
-            if (ScpApplication.channelName == "GooglePlay") {
-                if (Date().before(Date(SCPConstants.FREE_TIME))) {
-                    toast("Google Play商店禁止应用内引导其他方式付款，谢谢你的支持")
-                } else {
-                    startActivity<DonationActivity>()
-                }
-            } else {
+        if (ScpApplication.channelName == "GooglePlay") {
+            btn_donation.visibility = GONE
+        } else {
+            btn_donation.setOnClickListener {
                 startActivity<DonationQrActivity>()
             }
         }

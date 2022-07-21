@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.activity_download.*
 import org.jetbrains.anko.*
 import java.io.File
-import java.util.*
 
 
 class DownloadActivity : BaseActivity() {
@@ -33,18 +32,12 @@ class DownloadActivity : BaseActivity() {
 
         baseToolbar = download_toolbar
 
-        tv_go_download.setOnClickListener {
-            if (Date().before(Date(SCPConstants.FREE_TIME))) { // 4.28之前，跳转百度网盘
-                val panCode = "链接: https://pan.baidu.com/s/1c3Y2ZNhVzvUycB8uaXTV_g 提取码: icu5 复制这段内容后打开百度网盘手机App，操作更方便哦"
-                Utils.copy(this, panCode)
-                toast("已复制百度网盘链接")
-            } else {
-                val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
-                startActivity(intent)
-            }
+        btn_go_download.setOnClickListener {
+            val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
+            startActivity(intent)
         }
 
-        arrayOf(btn_select_file, btn_backup, btn_restore).forEach {
+        arrayOf(btn_go_download, btn_select_file, btn_backup, btn_restore).forEach {
             it?.background = ThemeUtil.customShape(ThemeUtil.linkBlue,
                     0, 0, dip(24))
         }
@@ -98,21 +91,9 @@ class DownloadActivity : BaseActivity() {
                 val root = DocumentFile.fromTreeUri(this, uriTree)
                 root?.let {
                     doAsync {
-                        val dbFile = if (root.findFile(INFO_DB_NAME) != null) {
-                            root.findFile(INFO_DB_NAME)
-                        } else {
-                            root.createFile("*/*", INFO_DB_NAME)
-                        }
-                        val levelPrefFile = if (root.findFile(LEVEL_PREF_NAME) != null) {
-                            root.findFile(LEVEL_PREF_NAME)
-                        } else {
-                            root.createFile("application/xml", LEVEL_PREF_NAME)
-                        }
-                        val appPrefFile = if (root.findFile(APP_PREF_NAME) != null) {
-                            root.findFile(APP_PREF_NAME)
-                        } else {
-                            root.createFile("application/xml", APP_PREF_NAME)
-                        }
+                        val dbFile = root.createFile("*/*", INFO_DB_NAME)
+                        val levelPrefFile = root.createFile("application/xml", LEVEL_PREF_NAME)
+                        val appPrefFile = root.createFile("application/xml", APP_PREF_NAME)
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
                         val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
                         val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
@@ -154,6 +135,7 @@ class DownloadActivity : BaseActivity() {
                         if (root.findFile(LEVEL_PREF_NAME) != null) {
                             val prefFile = root.findFile(LEVEL_PREF_NAME)
                             prefFile?.let {
+                                rawLevelPrefFile.delete()
                                 copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
                             }
                         }
@@ -165,7 +147,7 @@ class DownloadActivity : BaseActivity() {
                         }
                         AppInfoDatabase.getNewInstance()
                         uiThread {
-                            toast("恢复完成")
+                            toast("恢复完成，部分数据可能需要重启APP后生效")
                         }
                     }
                 }

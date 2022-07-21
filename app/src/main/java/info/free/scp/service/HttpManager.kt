@@ -87,6 +87,10 @@ class HttpManager {
         return feedApiService.getDetail(link)
     }
 
+    suspend fun getTag(link: String = "scp-001"): ApiBean.ApiListResponse<String> {
+        return feedApiService.getTag(link)
+    }
+
     suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
         val postStr = "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
         val postBody = RequestBody.create(MediaType.parse("application/json;charset=UTF-8"), postStr)
@@ -101,7 +105,6 @@ class HttpManager {
             : ApiBean.ApiListResponse<ScpItemModel> {
         return feedApiService.getDirect(scpType, numberString)
     }
-
 
     companion object {
         val instance = HttpManager()

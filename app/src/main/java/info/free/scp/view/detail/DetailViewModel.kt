@@ -27,8 +27,16 @@ class DetailViewModel : ViewModel() {
         return repo.detail
     }
 
+    fun getTag(): MutableLiveData<String?> {
+        return repo.tag
+    }
+
     fun getOfflineDetail(): LiveData<String> {
         return repo.offlineDetail
+    }
+
+    fun getOfflineTag(): LiveData<String> {
+        return repo.offlineTag
     }
 
     fun likeScp(scpInfo: ScpLikeModel) {
@@ -53,9 +61,11 @@ class DetailViewModel : ViewModel() {
     fun loadDetail(link: String) {
         if (PreferenceUtil.getAppMode() == SCPConstants.AppMode.OFFLINE) {
             repo.loadOfflineDetail(link)
+            repo.loadOfflineTag(link)
         } else {
             viewModelScope.launch {
                 repo.loadDetail(link)
+                repo.loadTag(link)
             }
         }
     }

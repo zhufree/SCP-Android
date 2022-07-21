@@ -22,8 +22,10 @@ class DetailRepository {
     var scp: MutableLiveData<ScpItemModel?> = MutableLiveData()
     var scpLikeInfo: LiveData<ScpLikeModel>? = null
     var detail: MutableLiveData<String?> = MutableLiveData("")
+    var tag: MutableLiveData<String?> = MutableLiveData("")
     var commentList: MutableLiveData<List<CommentModel>> = MutableLiveData()
     var offlineDetail: LiveData<String> = MutableLiveData()
+    var offlineTag: LiveData<String> = MutableLiveData()
 
 
     private var scpDao = ScpDatabase.getInstance()?.scpDao()
@@ -58,6 +60,11 @@ class DetailRepository {
                 ?: MutableLiveData()
     }
 
+    fun loadOfflineTag(link: String) {
+        offlineTag = DetailDatabase.getInstance()?.detailDao()?.getLiveTag(link)
+                ?: MutableLiveData()
+    }
+
     suspend fun loadDetail(link: String) {
         val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
         response?.let {
@@ -66,6 +73,19 @@ class DetailRepository {
             }, {
                 if (response.results.isNotEmpty()) {
                     detail.postValue(response.results[0])
+                }
+            })
+        }
+    }
+
+    suspend fun loadTag(link: String) {
+        val response = apiCall { HttpManager.instance.getTag(link.substring(1)) }
+        response?.let {
+            executeResponse(response, {
+
+            }, {
+                if (response.results.isNotEmpty()) {
+                    tag.postValue(response.results[0])
                 }
             })
         }

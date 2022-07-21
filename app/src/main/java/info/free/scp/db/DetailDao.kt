@@ -24,6 +24,12 @@ interface DetailDao {
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
     fun getLiveDetail(link: String): LiveData<String>?
 
+    @Query("SELECT tags FROM scp_detail WHERE link = :link")
+    fun getTag(link: String): String?
+
+    @Query("SELECT tags FROM scp_detail WHERE link = :link")
+    fun getLiveTag(link: String): LiveData<String>?
+
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT link FROM scp_detail WHERE detail LIKE :keyword;")
     fun searchScpByDetail(keyword: String): List<String>

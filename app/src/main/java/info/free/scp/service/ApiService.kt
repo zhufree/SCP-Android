@@ -41,6 +41,9 @@ interface ApiService {
     @GET("/get_detail/{link}") // 不带/
     suspend fun getDetail(@Path("link") link: String): ApiBean.ApiListResponse<String>
 
+    @GET("/get_scp_tag/{link}") // 不带/
+    suspend fun getTag(@Path("link") link: String): ApiBean.ApiListResponse<String>
+
     @POST("/get_comment/{link}") // 不带/
     suspend fun getComment(@Path("link") link: String, @Body body: RequestBody): ApiBean.ApiListResponse<CommentModel>
 

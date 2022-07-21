@@ -5,7 +5,14 @@ import android.content.*
 import android.content.DialogInterface.BUTTON_POSITIVE
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.view.Gravity.CENTER
 import android.view.KeyEvent.KEYCODE_BACK
@@ -19,6 +26,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.Observer
@@ -350,20 +358,47 @@ class DetailActivity : BaseActivity() {
         refreshReadBtnStatus()
         viewModel.loadDetail(url)
         if (PreferenceUtil.getAppMode() == OFFLINE) {
-            viewModel.getOfflineDetail().observe(this, Observer { detail ->
+            viewModel.getOfflineDetail().observe(this) { detail ->
                 if (!detail.isNullOrEmpty()) {
                     setDetail(detail)
                 }
-            })
+            }
+            viewModel.getOfflineTag().observe(this) { tag ->
+                if (!tag.isNullOrEmpty()) {
+                    showTag(tag)
+                }
+            }
         } else {
-            viewModel.getDetail().observe(this, Observer { detail ->
+            viewModel.getDetail().observe(this) { detail ->
                 if (!detail.isNullOrEmpty()) {
                     setDetail(detail)
                 }
-            })
+            }
+            viewModel.getTag().observe(this) { tag ->
+                if (!tag.isNullOrEmpty()) {
+                    showTag(tag)
+                }
+            }
         }
     }
 
+    private fun showTag(tagString: String) {
+        val tags = tagString.split(",")
+        val spannableString = SpannableString(tagString)
+        tags.forEach { t ->
+            val foregroundColorSpan = ForegroundColorSpan(Color.parseColor("#FF0000"))
+            val tagIndex = tagString.indexOf(t)
+            val clickableSpan: ClickableSpan = object : ClickableSpan() {
+                override fun onClick(widget: View) {
+                    Toast.makeText(this@DetailActivity, t, Toast.LENGTH_SHORT).show()
+                }
+            }
+            spannableString.setSpan(foregroundColorSpan, tagIndex, tagIndex + t.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+            spannableString.setSpan(clickableSpan, tagIndex, tagIndex + t.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+        }
+        tv_tag_container.movementMethod = LinkMovementMethod.getInstance()
+        tv_tag_container.text = spannableString
+    }
 
     private fun initToolbar() {
         baseToolbar = detail_toolbar

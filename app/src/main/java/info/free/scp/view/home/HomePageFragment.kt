@@ -17,6 +17,7 @@ import info.free.scp.view.category.GroupListActivity
 import info.free.scp.view.feed.FeedActivity
 import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
+import info.free.scp.view.tag.TagCloudActivity
 import info.free.scp.view.widget.FeedArticleListItem
 import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.dip
@@ -31,8 +32,7 @@ import toast
  */
 class HomePageFragment : BaseFragment() {
     private val feedVm by lazy {
-        ViewModelProvider(this)
-                .get(FeedListViewModel::class.java)
+        ViewModelProvider(this)[FeedListViewModel::class.java]
     }
     private val feedItemList = mutableListOf<FeedArticleListItem>()
 
@@ -86,7 +86,8 @@ class HomePageFragment : BaseFragment() {
         }
 
         btn_more_recent?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
-        btn_more_recent_translate?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
+        btn_more_recent_translate?.background =
+            ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
 
         arrayOf(btn_more_recent, btn_more_recent_translate).forEach {
             it.setOnClickListener {
@@ -95,6 +96,9 @@ class HomePageFragment : BaseFragment() {
         }
         btn_top_page_entry?.setOnClickListener {
             startActivity<TopRatedActivity>()
+        }
+        btn_all_tags?.setOnClickListener {
+            startActivity<TagCloudActivity>()
         }
 
         feedVm.getFeedIndex().observe(this.viewLifecycleOwner, Observer { fi ->

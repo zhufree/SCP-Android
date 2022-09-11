@@ -21,6 +21,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".TagCouldActivity"
+            android:exported="false" />
+        <activity
             android:name=".TagDetailActivity"
             android:exported="false" />
         <activity android:name=".view.feed.FeedActivity" />
@@ -115,6 +118,7 @@
         <activity android:name=".view.feed.TopRatedListActivity" />
         <activity android:name=".view.user.DonationActivity" />
         <activity android:name=".view.tag.TagDetailActivity" />
+        <activity android:name=".view.tag.TagCloudActivity" />
 
         <meta-data
             android:name="UMENG_CHANNEL"

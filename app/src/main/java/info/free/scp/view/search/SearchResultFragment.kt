@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.SearchType.CONTENT
+import info.free.scp.SCPConstants.SearchType.TAG
 import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.databinding.FragmentSearchTabBinding
 import info.free.scp.util.FileUtil
@@ -43,8 +44,7 @@ class SearchResultFragment : BaseFragment() {
     }
 
     private val viewModel by lazy {
-        ViewModelProvider(this)
-                .get(SearchViewModel::class.java)
+        ViewModelProvider(this)[SearchViewModel::class.java]
     }
 
     private val searchAdapter by lazy {
@@ -68,7 +68,7 @@ class SearchResultFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if (searchType == CONTENT && !searched) {
+        if ((searchType == CONTENT || searchType == TAG) && !searched) {
             if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
                 pb_loading.visibility = VISIBLE
                 doAsync {
@@ -91,7 +91,7 @@ class SearchResultFragment : BaseFragment() {
             doAsync {
                 adapter.submitList(viewModel.titleResult)
             }
-        } else {
+        } else if (searchType == CONTENT) {
             viewModel.contentResult.observe(viewLifecycleOwner, Observer {
                 pb_loading.visibility = GONE
                 doAsync {

@@ -28,6 +28,7 @@ object SCPConstants {
     object SearchType {
         const val TITLE = 0
         const val CONTENT = 1
+        const val TAG = 2
     }
 
     // category type

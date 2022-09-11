@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication
+import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
 import org.jetbrains.anko.toast
 

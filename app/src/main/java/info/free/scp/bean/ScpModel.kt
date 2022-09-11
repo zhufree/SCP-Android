@@ -23,7 +23,6 @@ open class ScpModel @Ignore constructor(
         @SerializedName("scp_type")
         var scpType: Int = -1,
         var author: String? = "" // 部分有的
-//        @Ignore var tags: String = "", // 部分有的
 ) {
         constructor() : this(-1,-1, "", "", -1,  "")
 }

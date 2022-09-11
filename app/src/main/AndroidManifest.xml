@@ -20,12 +20,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".TagDetailActivity"
+            android:exported="false" />
         <activity android:name=".view.feed.FeedActivity" />
         <activity android:name=".view.category.DocListActivity" />
         <activity android:name=".view.category.GroupListActivity" />
         <activity android:name=".view.feed.TopRatedActivity" />
         <activity android:name=".view.random.RandomActivity" />
-
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -49,6 +51,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.user.AboutAppActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -64,8 +67,7 @@
         <!-- android:name=".service.InitDetailService" -->
         <!-- android:enabled="true" /> -->
         <activity android:name=".view.search.SearchActivity" />
-        <activity
-            android:name=".view.later.LikeListActivity"/>
+        <activity android:name=".view.later.LikeListActivity" />
         <activity
             android:name=".view.user.LaterAndHistoryActivity"
             android:exported="true">
@@ -102,21 +104,18 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.draft.DraftEditActivity" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".view.draft.DraftListActivity"/>
-        <activity
-            android:name=".view.user.DownloadActivity"/>
-        <activity
-            android:name=".view.eatroom.MealListActivity" />
-        <activity
-            android:name=".view.portal.PortalActivity" />
-        <activity
-            android:name=".view.feed.TopRatedListActivity" />
-        <activity
-            android:name=".view.user.DonationActivity" />
+        <activity android:name=".view.draft.DraftListActivity" />
+        <activity android:name=".view.user.DownloadActivity" />
+        <activity android:name=".view.eatroom.MealListActivity" />
+        <activity android:name=".view.portal.PortalActivity" />
+        <activity android:name=".view.feed.TopRatedListActivity" />
+        <activity android:name=".view.user.DonationActivity" />
+        <activity android:name=".view.tag.TagDetailActivity" />
+
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="${UMENG_CHANNEL_VALUE}" />

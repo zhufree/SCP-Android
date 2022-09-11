@@ -51,6 +51,7 @@ import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.view.tag.TagDetailActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.layout_dialog_cookie.view.*
 import org.jetbrains.anko.*
@@ -391,6 +392,7 @@ class DetailActivity : BaseActivity() {
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
                     Toast.makeText(this@DetailActivity, t, Toast.LENGTH_SHORT).show()
+                    startActivity<TagDetailActivity>("tag" to t)
                 }
             }
             spannableString.setSpan(foregroundColorSpan, tagIndex, tagIndex + t.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)

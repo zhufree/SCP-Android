@@ -40,6 +40,8 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE `title` LIKE :keyword;")
     fun searchScpByTitle(keyword: String): List<ScpItemModel>
 
+    @Query("SELECT * FROM scps WHERE link IN (:links);")
+    fun getScpListByLinks(links: List<String>): List<ScpItemModel>
 
     @Query("SELECT * FROM scps WHERE scp_type = :type1 OR scp_type = :type2 ORDER BY random() LIMIT :count;")
     fun getRandomScpByType(type1: String, type2: String, count: Int): Array<ScpItemModel>

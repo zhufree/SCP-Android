@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.RoomWarnings
 import info.free.scp.bean.ScpDetail
-import info.free.scp.bean.ScpItemModel
+import info.free.scp.bean.ScpModel
 
 
 @Dao
@@ -29,6 +29,9 @@ interface DetailDao {
 
     @Query("SELECT tags FROM scp_detail WHERE link = :link")
     fun getLiveTag(link: String): LiveData<String>?
+
+    @Query("SELECT link FROM scp_detail WHERE tags LIKE :tag")
+    fun getLinksByTag(tag: String): List<String>
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query("SELECT link FROM scp_detail WHERE detail LIKE :keyword;")

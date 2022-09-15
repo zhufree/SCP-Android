@@ -45,8 +45,11 @@ class UpdateManager(private var activity: BaseActivity) {
         activity.info("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
-            PreferenceUtil.setFirstInstallApp()
-            NewbieManager.showLevelDialog(activity)
+            if (PreferenceUtil.hasCheckPrivacy()) {
+                NewbieManager.showLevelDialog(activity)
+            } else {
+                NewbieManager.showPrivacyDialog(activity)
+            }
             return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {

@@ -2,6 +2,7 @@ package info.free.scp.util
 
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
+import info.free.scp.view.home.PrivacyActivity
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector
 import org.jetbrains.anko.startActivity
@@ -14,11 +15,25 @@ import org.jetbrains.anko.yesButton
 
 object NewbieManager {
 
+    fun showPrivacyDialog(activity: BaseActivity) {
+        activity.alert("使用本APP之前，请阅读隐私协议。") {
+            positiveButton("确定") {
+                it.dismiss()
+                showLevelDialog(activity)
+            }
+            neutralPressed("查看隐私协议") {
+                PreferenceUtil.setCheckPrivacy()
+                activity.startActivity<PrivacyActivity>()
+            }
+        }.show()
+    }
+
     fun showLevelDialog(activity: BaseActivity) {
         val levels = listOf("·对SCP了解不多或只知道衍生游戏", "·资深读者/作者（跳过简介）")
         var noticeTitle = ""
         var noticeMessage = ""
         activity.selector("请选择你对SCP基金会的了解程度", levels) { _, i ->
+            PreferenceUtil.setFirstInstallApp()
             when (i) {
                 0 -> {
                     noticeMessage = "SCP是真的吗？\n\n" +
@@ -46,24 +61,29 @@ object NewbieManager {
                     activity.alert {
                         message = noticeMessage
                         yesButton {
-                            activity.startActivity<DetailActivity>("link" to "/scp-173",
-                                "title" to "SCP-173")
+                            activity.startActivity<DetailActivity>(
+                                "link" to "/scp-173",
+                                "title" to "SCP-173"
+                            )
                         }
                     }.show()
 
                 }
                 1 -> {
-                    noticeMessage = "为了弥补网站的网络不稳定，同时添加辅助功能，我们开发了这款APP，内容来自于SCP基金会官网（http://scp-wiki-cn.wikidot.com/）。可以这说是一个小说阅读器。\n" +
-                            "\n" +
-                            "如果是首次尝试写作SCP，记得阅读[http://scp-wiki-cn.wikidot.com/how-to-write-an-scp 《如何撰写一篇SCP文档》]。写作过程中遇到的各种疑难杂症也可以在[http://scp-wiki-cn.wikidot.com/guide-hub 指导中心]找到相应的教程。\n" +
-                            "\n" +
-                            "如果对APP有任何改进建议或疑难，欢迎加入[805194504 QQ群]联系我们"
+                    noticeMessage =
+                        "为了弥补网站的网络不稳定，同时添加辅助功能，我们开发了这款APP，内容来自于SCP基金会官网（http://scp-wiki-cn.wikidot.com/）。可以这说是一个小说阅读器。\n" +
+                                "\n" +
+                                "如果是首次尝试写作SCP，记得阅读[http://scp-wiki-cn.wikidot.com/how-to-write-an-scp 《如何撰写一篇SCP文档》]。写作过程中遇到的各种疑难杂症也可以在[http://scp-wiki-cn.wikidot.com/guide-hub 指导中心]找到相应的教程。\n" +
+                                "\n" +
+                                "如果对APP有任何改进建议或疑难，欢迎加入[805194504 QQ群]联系我们"
                     activity.alert {
                         title = noticeTitle
                         message = noticeMessage
                         yesButton {
-                            activity.startActivity<DetailActivity>("link" to "/guide-hub",
-                                "title" to "指导中心")
+                            activity.startActivity<DetailActivity>(
+                                "link" to "/guide-hub",
+                                "title" to "指导中心"
+                            )
                         }
                     }.show()
                 }

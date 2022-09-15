@@ -82,6 +82,7 @@
     <string name="hide_finished_article">隐藏已读文档</string>
     <string name="instructions">app使用说明</string>
     <string name="copyright">版权说明</string>
+    <string name="privacy_agreement">隐私协议</string>
     <string name="title_activity_settings">设置</string>
     <string name="category_settings">目录设置</string>
     <string name="copyright_notice_1">APP内容来源自SCP基金会：http://scp-wiki-cn.wikidot.com/</string>

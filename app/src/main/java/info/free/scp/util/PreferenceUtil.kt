@@ -37,13 +37,25 @@ object PreferenceUtil {
         setBooleanValue(INIT_SP, "firstInstall", false)
     }
 
+    fun hasCheckPrivacy(): Boolean {
+        return getBooleanValue(INIT_SP, "checkPrivacy", false)
+    }
+
+    fun setCheckPrivacy() {
+        setBooleanValue(INIT_SP, "checkPrivacy", true)
+    }
+
 
     fun setNotice(notice: String) {
         setStringValue(APP_SP, "notice", notice)
     }
 
     fun getNotice(): String {
-        return getStringValue(APP_SP, "notice", "这里是公告（还没加载出来）,升级到0.2.6版本后请务必确认数据库也更新到新版本，使用旧版本数据库会导致闪退")
+        return getStringValue(
+            APP_SP,
+            "notice",
+            "这里是公告（还没加载出来）,升级到0.2.6版本后请务必确认数据库也更新到新版本，使用旧版本数据库会导致闪退"
+        )
     }
 
     fun setQueryLink(link: String) {

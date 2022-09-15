@@ -17,9 +17,11 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.view.home.PrivacyActivity
 import kotlinx.android.synthetic.main.activity_about_app.*
 import kotlinx.android.synthetic.main.layout_dialog_copyright.view.*
 import org.jetbrains.anko.dip
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 class AboutAppActivity : BaseActivity() {
@@ -47,6 +49,9 @@ class AboutAppActivity : BaseActivity() {
 
         btn_show_copyright?.setOnClickListener {
             showCopyright()
+        }
+        btn_show_privacy?.setOnClickListener {
+            startActivity<PrivacyActivity>()
         }
     }
 

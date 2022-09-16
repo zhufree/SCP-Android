@@ -1,15 +1,24 @@
 package info.free.scp.util
 
 import android.app.AlertDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
 import info.free.scp.BuildConfig
+import info.free.scp.bean.Config
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseActivity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
+import toast
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -45,11 +54,8 @@ class UpdateManager(private var activity: BaseActivity) {
         activity.info("start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
-            if (PreferenceUtil.hasCheckPrivacy()) {
-                NewbieManager.showLevelDialog(activity)
-            } else {
-                NewbieManager.showPrivacyDialog(activity)
-            }
+            PreferenceUtil.setFirstInstallApp()
+            NewbieManager.showLevelDialog(activity)
             return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
@@ -69,57 +75,40 @@ class UpdateManager(private var activity: BaseActivity) {
         }
     }
 
-    fun getConfig() {
-        doAsync {
+    private fun getConfig() {
+        // Write a message to the database
+        val database =
+            Firebase.database("https://scp-android-109f0-default-rtdb.asia-southeast1.firebasedatabase.app").reference
+        database.child("config").get().addOnSuccessListener {
+            Log.i("firebase", "Got value ${it.value}")
             // 检查更新信息
             var newVersionCode = 0
             var updateDesc: String? = ""
             var updateLink: String? = ""
-            HttpManager.instance.getAppConfig {
-                activity.info("getAppConfig result = $it")
-                for (config in it) {
-                    if (config.key == "version") {
-                        newVersionCode = config.value.toInt()
+            newVersionCode = it.child("app_version").getValue<Int>() ?: 0
+            updateDesc = it.child("update_desc").getValue<String>()
+            updateLink = it.child("update_link").getValue<String>()
+            PreferenceUtil.setNotice(it.child("notice").getValue<String>() ?: "")
+            PreferenceUtil.setApiUrl(it.child("api_url").getValue<String>() ?: "")
+            PreferenceUtil.setQueryLink(it.child("query_link").getValue<String>() ?: "")
+            if (currentVersionCode < newVersionCode && !activity.isFinishing) {
+                activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
+                AlertDialog.Builder(activity)
+                    .setTitle("发现新版本")
+                    .setMessage(updateDesc)
+                    .setPositiveButton("现在升级") { _, _ ->
+                        val updateIntent = Intent()
+                        updateIntent.action = "android.intent.action.VIEW"
+                        val updateUrl = Uri.parse(updateLink)
+                        updateIntent.data = updateUrl
+                        activity.startActivity(updateIntent)
                     }
-                    if (config.key == "update_desc") {
-                        updateDesc = config.value
-                    }
-                    if (config.key == "update_link") {
-                        updateLink = config.value
-                    }
-                    if (config.key == "notice") {
-                        PreferenceUtil.setNotice(config.value)
-                    }
-                    if (config.key == "api_url") {
-                        PreferenceUtil.setApiUrl(config.value)
-                    }
-                    if (config.key == "show_meal") {
-                        PreferenceUtil.setShowMeal(config.value == "yes")
-                    }
-                    if (config.key == "meal_count") {
-                        PreferenceUtil.setNewMealCount(config.value.toInt())
-                    }
-                    if (config.key == "query_link") {
-                        PreferenceUtil.setQueryLink(config.value)
-                    }
-                }
-                if (currentVersionCode < newVersionCode && !activity.isFinishing) {
-                    activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
-                    AlertDialog.Builder(activity)
-                            .setTitle("发现新版本")
-                            .setMessage(updateDesc)
-                            .setPositiveButton("现在升级") { _, _ ->
-                                val updateIntent = Intent()
-                                updateIntent.action = "android.intent.action.VIEW"
-                                val updateUrl = Uri.parse(updateLink)
-                                updateIntent.data = updateUrl
-                                activity.startActivity(updateIntent)
-                            }
-                            .setNegativeButton("暂不升级") { _, _ -> }
-                            .create().show()
-                    // 有新版本就不检查数据更新，知道更新到最新
-                }
+                    .setNegativeButton("暂不升级") { _, _ -> }
+                    .create().show()
+                // 有新版本就不检查数据更新，知道更新到最新
             }
+        }.addOnFailureListener {
+            Log.e("firebase", "Error getting data", it)
         }
     }
 }

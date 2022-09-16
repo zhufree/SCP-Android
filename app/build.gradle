@@ -1,9 +1,13 @@
-apply plugin: 'com.android.application'
-
+plugins {
+    id 'com.android.application'
+    // Add the Google services Gradle plugin
+    id 'com.google.gms.google-services'
+}
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'kotlin-kapt'
+
 
 android {
     compileSdkVersion 33
@@ -148,6 +152,9 @@ dependencies {
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
+
+    implementation platform('com.google.firebase:firebase-bom:30.4.1')
+    implementation 'com.google.firebase:firebase-database-ktx'
 }
 
 

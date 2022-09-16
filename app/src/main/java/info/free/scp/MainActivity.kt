@@ -107,6 +107,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
         ScpDatabase.getNewInstance()
         AppInfoDatabase.getNewInstance()
+
     }
 
     override fun onResume() {

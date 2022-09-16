@@ -1,5 +1,6 @@
 package info.free.scp.util
 
+import android.app.Activity
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.home.PrivacyActivity
@@ -15,11 +16,11 @@ import org.jetbrains.anko.yesButton
 
 object NewbieManager {
 
-    fun showPrivacyDialog(activity: BaseActivity) {
+    fun showPrivacyDialog(activity: Activity) {
         activity.alert("使用本APP之前，请阅读隐私协议。") {
             positiveButton("确定") {
+                PreferenceUtil.setCheckPrivacy()
                 it.dismiss()
-                showLevelDialog(activity)
             }
             neutralPressed("查看隐私协议") {
                 PreferenceUtil.setCheckPrivacy()
@@ -28,7 +29,7 @@ object NewbieManager {
         }.show()
     }
 
-    fun showLevelDialog(activity: BaseActivity) {
+    fun showLevelDialog(activity: Activity) {
         val levels = listOf("·对SCP了解不多或只知道衍生游戏", "·资深读者/作者（跳过简介）")
         var noticeTitle = ""
         var noticeMessage = ""

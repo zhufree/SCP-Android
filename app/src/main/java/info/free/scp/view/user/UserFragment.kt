@@ -94,6 +94,9 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (!PreferenceUtil.hasCheckPrivacy()) {
+            NewbieManager.showPrivacyDialog(this.activity!!)
+        }
 //        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
         tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "代号：${PreferenceUtil.getNickname()}" else "代号：点击设置"
@@ -102,8 +105,9 @@ class UserFragment : BaseFragment() {
                     "职务：${getRank(PreferenceUtil.getPoint())}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                 "职务：点击设置"
-        tv_data_desc?.text = "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
-                "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
+        tv_data_desc?.text =
+            "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
+                    "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
         tv_nickname.setOnClickListener { checkUserInfo() }
         tv_job.setOnClickListener {

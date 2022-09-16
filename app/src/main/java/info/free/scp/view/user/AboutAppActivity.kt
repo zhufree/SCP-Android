@@ -37,8 +37,9 @@ class AboutAppActivity : BaseActivity() {
             it.background = ThemeUtil.customShape(ThemeUtil.linkBlue, 0, 0, dip(24))
         }
         btn_show_copyright?.background = ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, dip(24))
+        btn_show_privacy?.background = ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, dip(24))
 
-        tv_app_notice?.text = PreferenceUtil.getNotice()
+        tv_app_notice?.text = "最新公告：${PreferenceUtil.getNotice()}"
         tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
 //        tv_server_data_latest_time?.text = "云端最新数据更新时间：${PreferenceUtil.getServerLastUpdateTime()}"
 

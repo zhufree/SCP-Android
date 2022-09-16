@@ -147,15 +147,6 @@
                     app:imgSrc="@drawable/baseline_videogame_asset_white_24dp" />
 
                 <info.free.scp.view.widget.EntryItem
-                    android:id="@+id/st_meal"
-                    android:layout_width="match_parent"
-                    app:count="4"
-                    app:entryTitle="恰饭屋"
-                    app:imgBg="#2296F3"
-                    app:imgPadding="14dp"
-                    app:imgSrc="@drawable/baseline_food_bank_white_24dp" />
-
-                <info.free.scp.view.widget.EntryItem
                     android:id="@+id/st_portal"
                     android:layout_width="match_parent"
                     app:count="4"
@@ -203,6 +194,15 @@
                     app:imgBg="#346c9c"
                     app:imgPadding="14dp"
                     app:imgSrc="@drawable/baseline_receipt_long_white_24dp" />
+
+                <info.free.scp.view.widget.EntryItem
+                    android:id="@+id/st_other_work"
+                    android:layout_width="match_parent"
+                    app:count="4"
+                    app:entryTitle="其他作品"
+                    app:imgBg="#2296F3"
+                    app:imgPadding="14dp"
+                    app:imgSrc="@drawable/baseline_food_bank_white_24dp" />
             </GridLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout

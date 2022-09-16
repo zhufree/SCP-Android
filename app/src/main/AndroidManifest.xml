@@ -108,13 +108,13 @@
         </activity>
         <activity android:name=".view.draft.DraftListActivity" />
         <activity android:name=".view.user.DownloadActivity" />
-        <activity android:name=".view.eatroom.MealListActivity" />
         <activity android:name=".view.portal.PortalActivity" />
         <activity android:name=".view.feed.TopRatedListActivity" />
         <activity android:name=".view.user.DonationActivity" />
         <activity android:name=".view.tag.TagDetailActivity" />
         <activity android:name=".view.tag.TagCloudActivity" />
         <activity android:name=".view.home.PrivacyActivity" />
+        <activity android:name=".view.user.OtherAppActivity" />
 
         <meta-data
             android:name="UMENG_CHANNEL"

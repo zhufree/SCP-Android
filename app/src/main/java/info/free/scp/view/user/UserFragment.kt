@@ -31,7 +31,6 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
-import info.free.scp.view.eatroom.MealListActivity
 import info.free.scp.view.game.GameListActivity
 import info.free.scp.view.later.LaterViewModel
 import info.free.scp.view.portal.PortalActivity
@@ -114,7 +113,7 @@ class UserFragment : BaseFragment() {
             checkJob()
         }
         if (PreferenceUtil.getShowMeal()) {
-            st_meal.visibility = VISIBLE
+            st_other_work.visibility = VISIBLE
         }
 
         refreshHistoryList()
@@ -158,7 +157,7 @@ class UserFragment : BaseFragment() {
             startActivity<DraftListActivity>()
         }
         st_game.onClick = { startActivity<GameListActivity>() }
-        st_meal.onClick = { startActivity<MealListActivity>() }
+        st_other_work.onClick = { startActivity<OtherAppActivity>() }
         st_portal.onClick = { startActivity<PortalActivity>() }
 
         iv_more_history?.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
@@ -253,7 +252,16 @@ class UserFragment : BaseFragment() {
         arrayOf(ll_history_container, gl_setting_item).forEach {
             it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
         }
-        arrayOf(st_draft, st_data, st_game, st_meal, st_portal, st_query, st_read, st_use).forEach {
+        arrayOf(
+            st_draft,
+            st_data,
+            st_game,
+            st_other_work,
+            st_portal,
+            st_query,
+            st_read,
+            st_use
+        ).forEach {
             it?.refreshTheme()
         }
         historyItemList.forEach { it.refreshTheme() }

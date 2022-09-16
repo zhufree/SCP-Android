@@ -11,7 +11,7 @@ object ApiManager {
     // 定义一个拦截器
     private val httpClientBuilder = OkHttpClient.Builder().addInterceptor { chain ->
         // 拦截器拦截的初始请求
-        Log.i("api", chain.request().url().url().toString())
+        Log.i("api", chain.request().url.toUrl().toString())
         chain.proceed(chain.request()) // 请求继续
     }
 

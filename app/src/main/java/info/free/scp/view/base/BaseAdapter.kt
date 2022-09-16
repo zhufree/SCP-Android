@@ -15,9 +15,11 @@ import android.view.View
  * // TODO 用databinding的adapter替换
  */
 
-abstract class BaseAdapter<H: RecyclerView.ViewHolder, T: Any?>(context: Context?, val dataList: MutableList<T>)
-    : RecyclerView.Adapter<H>(),
-        View.OnLongClickListener, View.OnClickListener {
+abstract class BaseAdapter<H : RecyclerView.ViewHolder, T : Any?>(
+    context: Context?,
+    val dataList: List<T>
+) : RecyclerView.Adapter<H>(),
+    View.OnLongClickListener, View.OnClickListener {
     var mOnItemClickListener: OnItemClickListener? = null
     var mOnItemLongClickListener: OnItemLongClickListener? = null
     var mInflater: LayoutInflater? = LayoutInflater.from(context)

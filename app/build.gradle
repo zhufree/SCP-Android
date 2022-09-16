@@ -153,8 +153,18 @@ dependencies {
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
 
+    // firebase
     implementation platform('com.google.firebase:firebase-bom:30.4.1')
     implementation 'com.google.firebase:firebase-database-ktx'
+
+    implementation "com.google.accompanist:accompanist-pager:0.25.0"
+
+    // Material design icons
+    implementation("androidx.compose.material:material-icons-core:1.2.1")
+    implementation("androidx.compose.material:material-icons-extended:1.2.1")
+
+    // Coil
+    implementation("io.coil-kt:coil-compose:2.1.0")
 }
 
 

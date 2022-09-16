@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.multidex.MultiDexApplication
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.umeng.analytics.AnalyticsConfig
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
@@ -25,11 +28,20 @@ class ScpApplication : MultiDexApplication() {
         super.onCreate()
         // remove this if don't need analyze user data
         UMConfigure.preInit(this, PrivateConstants.UMENG_APP_KEY, "")
-        UMConfigure.init(this, PrivateConstants.UMENG_APP_KEY, null, UMConfigure.DEVICE_TYPE_PHONE, "")
+        UMConfigure.init(
+            this,
+            PrivateConstants.UMENG_APP_KEY,
+            null,
+            UMConfigure.DEVICE_TYPE_PHONE,
+            ""
+        )
         UMConfigure.setLogEnabled(true)
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.LEGACY_AUTO)
         // FIXME
         MobclickAgent.setCatchUncaughtExceptions(!isDebug)
+
+        database =
+            Firebase.database("https://scp-android-109f0-default-rtdb.asia-southeast1.firebasedatabase.app").reference
 
         context = applicationContext
 
@@ -77,6 +89,7 @@ class ScpApplication : MultiDexApplication() {
 
     companion object {
         lateinit var context: Context
+        lateinit var database: DatabaseReference
         var isDebug = true
         var currentActivity: BaseActivity? = null
         val downloadManager by lazy {

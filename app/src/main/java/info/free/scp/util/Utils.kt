@@ -21,6 +21,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import info.free.scp.SCPConstants.PUBLIC_DIR_NAME
 import info.free.scp.ScpApplication
+import info.free.scp.ScpApplication.Companion.currentActivity
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.windowManager
 import toast
@@ -248,8 +249,16 @@ object Utils {
         return updateIntent
     }
 
+    fun openUrl(url: String) {
+        val viewIntent = Intent(Intent.ACTION_VIEW)
+        val updateUrl = Uri.parse(url)
+        viewIntent.data = updateUrl
+        currentActivity?.startActivity(Intent.createChooser(viewIntent, "用以下方式打开"))
+    }
+
     fun copy(context: Context, text: String) {
-        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+        val clipboardManager =
+            context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
         val clipData = ClipData.newPlainText("label", text)
         clipboardManager?.setPrimaryClip(clipData)
     }

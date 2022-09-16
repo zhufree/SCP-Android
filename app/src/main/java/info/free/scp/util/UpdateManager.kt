@@ -1,24 +1,17 @@
 package info.free.scp.util
 
 import android.app.AlertDialog
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import info.free.scp.BuildConfig
-import info.free.scp.bean.Config
+import info.free.scp.ScpApplication.Companion.database
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.service.HttpManager
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.info
-import toast
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -77,8 +70,6 @@ class UpdateManager(private var activity: BaseActivity) {
 
     private fun getConfig() {
         // Write a message to the database
-        val database =
-            Firebase.database("https://scp-android-109f0-default-rtdb.asia-southeast1.firebasedatabase.app").reference
         database.child("config").get().addOnSuccessListener {
             Log.i("firebase", "Got value ${it.value}")
             // 检查更新信息

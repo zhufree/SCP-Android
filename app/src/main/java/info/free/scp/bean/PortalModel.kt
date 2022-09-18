@@ -8,4 +8,4 @@ data class PortalModel(
         val title: String,
         val url: String,
         val logoUrl: String
-) : BaseModel()
+)

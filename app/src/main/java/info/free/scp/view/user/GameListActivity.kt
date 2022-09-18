@@ -1,10 +1,9 @@
-package info.free.scp.view.game
+package info.free.scp.view.user
 
 import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -33,6 +32,7 @@ import info.free.scp.ui.MainTheme
 import info.free.scp.util.EventUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.viewmodel.FireViewModel
 import kotlinx.coroutines.launch
 
 class GameListActivity : BaseActivity() {
@@ -40,7 +40,7 @@ class GameListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         EventUtil.onEvent(this, EventUtil.clickGameList)
-        val gameViewModel = GameViewModel()
+        val gameViewModel = FireViewModel()
         gameViewModel.getGames()
         setContent {
             MainTheme {
@@ -55,7 +55,7 @@ class GameListActivity : BaseActivity() {
 @OptIn(ExperimentalPagerApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun GamePage(gameViewModel: GameViewModel, finish: () -> Unit) {
+fun GamePage(gameViewModel: FireViewModel, finish: () -> Unit) {
     Scaffold(topBar = {
         CommonTopBar(title = "游戏列表") {
             finish()

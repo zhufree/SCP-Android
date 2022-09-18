@@ -76,7 +76,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.game.GameListActivity"
+            android:name=".view.user.GameListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="info.free.scp.view.game.GameListActivity" />
@@ -108,7 +108,7 @@
         </activity>
         <activity android:name=".view.draft.DraftListActivity" />
         <activity android:name=".view.user.DownloadActivity" />
-        <activity android:name=".view.portal.PortalActivity" />
+        <activity android:name=".view.user.PortalListActivity" />
         <activity android:name=".view.feed.TopRatedListActivity" />
         <activity android:name=".view.user.DonationActivity" />
         <activity android:name=".view.tag.TagDetailActivity" />

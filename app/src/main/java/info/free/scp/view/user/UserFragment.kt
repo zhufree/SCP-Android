@@ -31,9 +31,7 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
-import info.free.scp.view.game.GameListActivity
 import info.free.scp.view.later.LaterViewModel
-import info.free.scp.view.portal.PortalActivity
 import info.free.scp.view.widget.HistoryListItem
 import kotlinx.android.synthetic.main.fragment_user.*
 import org.jetbrains.anko.*
@@ -158,7 +156,7 @@ class UserFragment : BaseFragment() {
         }
         st_game.onClick = { startActivity<GameListActivity>() }
         st_other_work.onClick = { startActivity<OtherAppActivity>() }
-        st_portal.onClick = { startActivity<PortalActivity>() }
+        st_portal.onClick = { startActivity<PortalListActivity>() }
 
         iv_more_history?.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
 

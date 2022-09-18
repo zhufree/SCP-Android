@@ -20,7 +20,8 @@
     <!--还没开发的部分-->
 
     <!--app info-->
-    <string name="contact_jg_group">群:805194504</string>
+    <string name="contact_qq_group">用户交流群</string>
+    <string name="scp_channel">SCP交流qq频道</string>
     <string name="scp_wiki_site">SCP中分官网</string>
     <string name="user_notice">这里是scp基金会中分网站的移动端阅读工具，所有内容来自SCP基金会中国分部网站并遵守CC3版权协议。
         想要详细了解scp基金会请访问官网。\n\n

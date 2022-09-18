@@ -33,7 +33,7 @@ class AboutAppActivity : BaseActivity() {
 
         baseToolbar = app_toolbar
 
-        arrayOf(btn_qq_group, btn_go_site).forEach {
+        arrayOf(btn_qq_group, btn_qq_channel, btn_go_site).forEach {
             it.background = ThemeUtil.customShape(ThemeUtil.linkBlue, 0, 0, dip(24))
         }
         btn_show_copyright?.background = ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, dip(24))
@@ -41,11 +41,17 @@ class AboutAppActivity : BaseActivity() {
 
         tv_app_notice?.text = "最新公告：${PreferenceUtil.getNotice()}"
         tv_version?.text = "version: ${BuildConfig.VERSION_NAME}"
-//        tv_server_data_latest_time?.text = "云端最新数据更新时间：${PreferenceUtil.getServerLastUpdateTime()}"
 
         btn_go_site?.setOnClickListener {
-            val intent = Utils.getUrlIntent("http://scp-wiki-cn.wikidot.com/")
-            startActivity(intent)
+            Utils.openUrl("http://scp-wiki-cn.wikidot.com/")
+        }
+
+        btn_qq_group?.setOnClickListener {
+            Utils.openUrl("https://jq.qq.com/?_wv=1027&k=7wWIlcxZ")
+        }
+
+        btn_qq_channel?.setOnClickListener {
+            Utils.openUrl("https://pd.qq.com/s/4tqu31")
         }
 
         btn_show_copyright?.setOnClickListener {

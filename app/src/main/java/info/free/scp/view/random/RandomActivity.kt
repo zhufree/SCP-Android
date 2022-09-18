@@ -54,9 +54,9 @@ class RandomActivity : BaseActivity() {
         btn_refresh_random.setOnClickListener {
             vm.refreshRandomList(randomRange)
         }
-        vm.getRandomList().observe(this, Observer { list ->
+        vm.getRandomList().observe(this) { list ->
             adapter.submitList(list)
-        })
+        }
         vm.refreshRandomList(randomRange)
     }
 }

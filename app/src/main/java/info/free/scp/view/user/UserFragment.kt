@@ -178,11 +178,7 @@ class UserFragment : BaseFragment() {
             }
         }
         st_query.onClick = {
-            val updateIntent = Intent()
-            updateIntent.action = "android.intent.action.VIEW"
-            val updateUrl = Uri.parse(PreferenceUtil.getQueryLink())
-            updateIntent.data = updateUrl
-            startActivity(updateIntent)
+            Utils.openUrl(PreferenceUtil.getQueryLink())
         }
     }
 

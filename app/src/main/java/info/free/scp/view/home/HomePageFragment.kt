@@ -124,7 +124,9 @@ class HomePageFragment : BaseFragment() {
         super.refreshTheme()
         cl_home_page_container?.setBackgroundColor(ThemeUtil.containerBg)
         arrayOf(gl_entry, cl_recent_list, cl_recent_translate_list).forEach {
-            it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
+            context?.let { c ->
+                it?.background = ThemeUtil.getDrawable(c, R.drawable.bg_entry_box)
+            }
         }
         arrayOf(tv_recent_header, tv_recent_translate_header).forEach {
             it?.setTextColor(ThemeUtil.darkText)

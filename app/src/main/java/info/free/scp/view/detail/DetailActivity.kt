@@ -119,8 +119,7 @@ class DetailActivity : BaseActivity() {
     private var tvLoad: TextView? = null
 
     private val viewModel by lazy {
-        ViewModelProvider(this)
-                .get(DetailViewModel::class.java)
+        ViewModelProvider(this)[DetailViewModel::class.java]
     }
 
 
@@ -487,23 +486,6 @@ class DetailActivity : BaseActivity() {
                             }
                         }
                     })
-                }
-                R.id.big_text -> {
-                    if (currentTextSizeIndex < 4) {
-                        currentTextSizeIndex++
-                        refreshStyle()
-                    }
-                }
-                R.id.small_text -> {
-                    if (currentTextSizeIndex > 0) {
-                        currentTextSizeIndex--
-                        refreshStyle()
-                    }
-                }
-                R.id.translate -> {
-                    hanz = if (hanz == SIMPLE) TRADITIONAL else SIMPLE
-                    translate(hanz)
-                    PreferenceUtil.setHanzType(hanz)
                 }
                 R.id.set_cookie -> {
                     val cookieView = LayoutInflater.from(this@DetailActivity)

@@ -129,4 +129,8 @@
     <string name="portal">传送门</string>
     <!--qia饭页面-->
     <string name="meal">恰饭屋</string>
+
+    <!--设置页-->
+    <string name="font_size_setting">字体大小</string>
+    <string name="traditional_setting">繁体简体</string>
 </resources>

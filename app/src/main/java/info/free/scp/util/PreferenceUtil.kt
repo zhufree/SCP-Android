@@ -312,11 +312,11 @@ object PreferenceUtil {
     }
 
     fun setHanzType(type: Int) {
-        setIntValue("read_settings", "hanz_type", type)
+        setIntValue("read_settings", "detail_hanz_type", type)
     }
 
     fun getHanzType(): Int {
-        return getIntValue("read_settings", "hanz_type")
+        return getIntValue("read_settings", "detail_hanz_type")
     }
 
     /**

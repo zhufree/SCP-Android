@@ -80,7 +80,11 @@ fun OtherAppPage(finish: () -> Unit) {
                                 .align(Alignment.CenterHorizontally),
                             contentDescription = ""
                         )
-                        Text(text = "场所码捷径", fontSize = 18.sp)
+                        Text(
+                            text = "场所码捷径",
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colors.onPrimary
+                        )
                     }
                 }
             }
@@ -114,7 +118,11 @@ fun OtherAppPage(finish: () -> Unit) {
                             contentScale = ContentScale.Fit,
                             contentDescription = ""
                         )
-                        Text(text = "批量图片处理工具", fontSize = 18.sp)
+                        Text(
+                            text = "批量图片处理工具",
+                            fontSize = 18.sp,
+                            color = MaterialTheme.colors.onPrimary
+                        )
                     }
                 }
             }

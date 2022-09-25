@@ -68,7 +68,7 @@ class SearchResultFragment : BaseFragment() {
 
     override fun onResume() {
         super.onResume()
-        if ((searchType == CONTENT || searchType == TAG) && !searched) {
+        if ((searchType == CONTENT) && !searched) {
             if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
                 pb_loading.visibility = VISIBLE
                 doAsync {
@@ -92,12 +92,12 @@ class SearchResultFragment : BaseFragment() {
                 adapter.submitList(viewModel.titleResult)
             }
         } else if (searchType == CONTENT) {
-            viewModel.contentResult.observe(viewLifecycleOwner, Observer {
+            viewModel.contentResult.observe(viewLifecycleOwner) {
                 pb_loading.visibility = GONE
                 doAsync {
                     adapter.submitList(it)
                 }
-            })
+            }
         }
     }
 }

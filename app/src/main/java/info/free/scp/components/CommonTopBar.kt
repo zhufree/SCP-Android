@@ -16,7 +16,7 @@ fun CommonTopBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = title, color = MaterialTheme.colors.onBackground)
+            Text(text = title, color = MaterialTheme.colors.onSurface)
         },
         backgroundColor = Color(toolbarBg),
         navigationIcon = {
@@ -28,7 +28,7 @@ fun CommonTopBar(
                 Icon(
                     Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    tint = MaterialTheme.colors.surface
+                    tint = MaterialTheme.colors.onSurface
                 )
             }
         },

@@ -16,8 +16,8 @@ android {
         applicationId "info.free.scp"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 28
-        versionName "0.2.6"
+        versionCode 29
+        versionName "0.3.0"
         flavorDimensions "versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -27,7 +27,7 @@ android {
             }
         }
         multiDexEnabled true
-        ndk.abiFilters 'armeabi-v7a','arm64-v8a'
+        ndk.abiFilters 'armeabi-v7a', 'arm64-v8a'
     }
     buildTypes {
         debug {
@@ -155,6 +155,7 @@ dependencies {
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:30.4.1')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
 
     implementation "com.google.accompanist:accompanist-pager:0.25.0"

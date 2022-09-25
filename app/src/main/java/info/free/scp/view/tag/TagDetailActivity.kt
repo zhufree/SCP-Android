@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -32,25 +33,15 @@ fun MainApp(tag: String = "", navigateToDetail: (url: String) -> Unit, finish: (
         NavHost(navController = navController, startDestination = "tag") {
             val tagViewModel = TagViewModel()
             composable("tag") {
-                tagViewModel.getScpByTag(tag)
+                LaunchedEffect(Unit) {
+                    tagViewModel.getScpByTag(tag)
+                }
                 TagResultScreen(tagViewModel, tag, {
                     navigateToDetail(it)
                 }) {
                     finish()
                 }
             }
-//            composable("addNewCode/{location}") { backStackEntry ->
-//                AddCodeScreen(intent, imageUri, qrUrl, backStackEntry.arguments?.getString("location")?:"null"){
-//                    navController.popBackStack()
-//                }
-//            }
-//            composable("about"){
-//                AboutScreen( {
-//                    navController.popBackStack()
-//                }, {
-//                    goUrl(it)
-//                })
-//            }
         }
     }
 }

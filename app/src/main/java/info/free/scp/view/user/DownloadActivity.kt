@@ -32,14 +32,25 @@ class DownloadActivity : BaseActivity() {
 
         baseToolbar = download_toolbar
 
+        val downloadTitles = listOf("百度网盘", "飞书", "夸克", "面包多", "Google Drive")
+        val downloadLinks = listOf(
+            "https://pan.baidu.com/s/17MwfLiMmMxqq2WX_tzmGSw?pwd=t9ch",
+            "https://gj5i5wsqre.feishu.cn/drive/folder/fldcnpvwVcYN4iCrUQBCPTgF25e",
+            "https://pan.quark.cn/s/bc11451cf980",
+            "https://mianbaoduo.com/o/bread/mbd-YZiZl51u",
+            "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
+        )
         btn_go_download.setOnClickListener {
-            val intent = Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZiZl51u")
-            startActivity(intent)
+            selector("选择下载线路", downloadTitles) { _, i ->
+                Utils.openUrl(downloadLinks[i])
+            }
         }
 
         arrayOf(btn_go_download, btn_select_file, btn_backup, btn_restore).forEach {
-            it?.background = ThemeUtil.customShape(ThemeUtil.linkBlue,
-                    0, 0, dip(24))
+            it?.background = ThemeUtil.customShape(
+                ThemeUtil.linkBlue,
+                0, 0, dip(24)
+            )
         }
 
         btn_select_file?.setOnClickListener {
@@ -95,13 +106,18 @@ class DownloadActivity : BaseActivity() {
                         val levelPrefFile = root.createFile("application/xml", LEVEL_PREF_NAME)
                         val appPrefFile = root.createFile("application/xml", APP_PREF_NAME)
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
+                        val rawLevelPrefFile =
+                            File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
                         val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
                         dbFile?.let {
                             copyFileToUri(this@DownloadActivity, rawDbFile, dbFile.uri)
                         }
                         levelPrefFile?.let {
-                            copyFileToUri(this@DownloadActivity, rawLevelPrefFile, levelPrefFile.uri)
+                            copyFileToUri(
+                                this@DownloadActivity,
+                                rawLevelPrefFile,
+                                levelPrefFile.uri
+                            )
                         }
                         appPrefFile?.let {
                             copyFileToUri(this@DownloadActivity, rawAppPrefFile, appPrefFile.uri)
@@ -120,7 +136,8 @@ class DownloadActivity : BaseActivity() {
                     doAsync {
                         AppInfoDatabase.getInstance().close()
                         val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
+                        val rawLevelPrefFile =
+                            File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
                         val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
                         if (root.findFile(INFO_DB_NAME) != null) {
                             AppInfoDatabase.getInstance()
@@ -136,7 +153,11 @@ class DownloadActivity : BaseActivity() {
                             val prefFile = root.findFile(LEVEL_PREF_NAME)
                             prefFile?.let {
                                 rawLevelPrefFile.delete()
-                                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
+                                copyFileFromUri(
+                                    this@DownloadActivity,
+                                    prefFile.uri,
+                                    rawLevelPrefFile
+                                )
                             }
                         }
                         if (root.findFile(APP_PREF_NAME) != null) {

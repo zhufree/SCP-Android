@@ -25,37 +25,39 @@ class TagViewModel : ViewModel() {
     private val detailDao = DetailDatabase.getInstance()?.detailDao()
 
     fun getScpByTag(tag: String) {
-        detailDao?.let {
-            val scpLinks = detailDao.getLinksByTag("%$tag%")
-            scpDao?.let {
-                val queryCounts = scpLinks.size / 10 + 1
-                val resultScpList = emptyList<ScpModel>().toMutableList()
-                for (i in 0 until queryCounts) {
-                    Log.i("tag", i.toString())
-                    if (i < queryCounts - 1) {
-                        resultScpList.addAll(
-                            scpDao.getScpListByLinks(
-                                scpLinks.subList(
-                                    i * 10,
-                                    (i + 1) * 10
+        viewModelScope.launch {
+            detailDao?.let {
+                val scpLinks = detailDao.getLinksByTag("%$tag%")
+                scpDao?.let {
+                    val queryCounts =
+                        if (scpLinks.size % 10 == 0) (scpLinks.size / 10) else (scpLinks.size / 10 + 1) // 10个一组，最后一组不足10个
+                    val resultScpList = emptyList<ScpModel>().toMutableList()
+                    for (i in 0 until queryCounts) {
+                        Log.i("tag", i.toString())
+                        if (i < queryCounts - 1) {
+                            resultScpList.addAll(
+                                scpDao.getScpListByLinks(
+                                    scpLinks.subList(
+                                        i * 10,
+                                        (i + 1) * 10
+                                    )
                                 )
                             )
-                        )
-                    } else {
-                        resultScpList.addAll(
-                            scpDao.getScpListByLinks(
-                                scpLinks.subList(
-                                    i * 10,
-                                    scpLinks.size - 1
+                        } else {
+                            // i == queryCounts-1
+                            resultScpList.addAll(
+                                scpDao.getScpListByLinks(
+                                    scpLinks.subList(
+                                        i * 10,
+                                        scpLinks.size - 1
+                                    )
                                 )
                             )
-                        )
+                        }
                     }
+                    _tagScpList.value = resultScpList
                 }
-                _tagScpList.value = resultScpList
-            }
-        } ?: run {
-            viewModelScope.launch {
+            } ?: run {
                 val response = apiCall { HttpManager.instance.getScpByTag(tag) }
                 response?.let {
                     if (response.results.isNotEmpty()) {

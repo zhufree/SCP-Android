@@ -25,6 +25,8 @@ import eth.zhufree.baihehub.ui.hehuanHong
 import eth.zhufree.baihehub.ui.jiQing
 import eth.zhufree.baihehub.ui.lightGray
 import eth.zhufree.baihehub.ui.shizhuHong
+import info.free.scp.util.ThemeUtil
+import info.free.scp.util.ThemeUtil.NIGHT_THEME
 
 private val DarkColorPalette = darkColors(
     primary = hehuanHong,
@@ -60,7 +62,7 @@ private val LightColorPalette = lightColors(
 
 @Composable
 fun MainTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable() () -> Unit) {
-    val colors = if (darkTheme) {
+    val colors = if (darkTheme || ThemeUtil.currentTheme == NIGHT_THEME) {
         DarkColorPalette
     } else {
         LightColorPalette

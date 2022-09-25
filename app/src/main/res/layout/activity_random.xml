@@ -33,6 +33,22 @@
         app:layout_constraintTop_toBottomOf="@id/ablToolbarWrapper" />
 
     <Button
+        android:id="@+id/btn_add_more_random"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="80dp"
+        android:layout_marginEnd="80dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/linkBlue"
+        android:text="再来一组"
+        android:textColor="@color/itemBgWhite"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/btn_refresh_random"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/btn_refresh_random"
         android:layout_width="0dp"
         android:layout_height="48dp"
@@ -40,7 +56,7 @@
         android:layout_marginEnd="80dp"
         android:layout_marginBottom="32dp"
         android:background="@color/linkBlue"
-        android:text="再来一组"
+        android:text="刷新"
         android:textColor="@color/itemBgWhite"
         android:textSize="24sp"
         android:visibility="gone"

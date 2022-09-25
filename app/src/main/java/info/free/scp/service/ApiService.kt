@@ -45,21 +45,24 @@ interface ApiService {
     suspend fun getTag(@Path("link") link: String): ApiBean.ApiListResponse<String>
 
     @POST("/get_comment/{link}") // 不带/
-    suspend fun getComment(@Path("link") link: String, @Body body: RequestBody): ApiBean.ApiListResponse<CommentModel>
+    suspend fun getComment(
+        @Path("link") link: String,
+        @Body body: RequestBody
+    ): ApiBean.ApiListResponse<CommentModel>
 
     @GET("/get_random/{typeRange}")
     suspend fun getRandom(@Path("typeRange") typeRange: String): ApiBean.ApiListResponse<ScpItemModel>
 
     @GET("/get_direct/{scpType}/{numberString}")
-    suspend fun getDirect(@Path("scpType") scpType: Int,
-                          @Path("numberString") numberString: String)
+    suspend fun getDirect(
+        @Path("scpType") scpType: Int,
+        @Path("numberString") numberString: String
+    )
             : ApiBean.ApiListResponse<ScpItemModel>
 
-    @Headers(
-            PrivateConstants.APP_ID,
-            PrivateConstants.API_KEY,
-            PrivateConstants.CONTENT_TYPE_JSON
-    )
-    @GET("1/classes/Config")
-    fun getAppConfig(): Observable<ApiBean.ApiListResponse<ApiBean.ConfigResponse>>
+    @GET("/get_tag_scp/{tag}")
+    suspend fun getScpByTag(@Path("tag") tag: String): ApiBean.ApiListResponse<ScpItemModel>
+
+    @GET("/get_all_tags/")
+    suspend fun getAllTags(): ApiBean.ApiListResponse<TagModel>
 }

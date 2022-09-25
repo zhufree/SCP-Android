@@ -26,14 +26,6 @@ open class BaseService : AnkoLogger {
 
     val postGson: Gson = GsonBuilder().setExclusionStrategies(postExclusionStrategy).create()
 
-    suspend fun <T : Any?> apiCall(call: suspend () -> T): T? {
-        try {
-            return call.invoke()
-
-        } catch (e: Exception) {
-        }
-        return null
-    }
 
 
     fun serviceLog(msg: String?) {

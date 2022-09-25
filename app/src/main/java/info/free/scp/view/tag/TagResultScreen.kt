@@ -1,10 +1,7 @@
 package info.free.scp.view.tag
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -40,7 +37,12 @@ fun TagResultScreen(
         }
     }) { p ->
         scpResult?.let { scpList ->
-            LazyVerticalGrid(GridCells.Fixed(2)) {
+            LazyVerticalGrid(
+                GridCells.Fixed(2),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(scpList) {
                     TagScpCard(it) {
                         navigateToDetail(it)
@@ -57,16 +59,18 @@ fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
     val detailDao = DetailDatabase.getInstance()?.detailDao()
     Card(
         elevation = 1.dp,
-        shape = RoundedCornerShape(3.dp),
+        shape = RoundedCornerShape(6.dp),
         backgroundColor = MaterialTheme.colors.onBackground,
         onClick = {
             navigateToDetail(scp.link)
         }
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .height(100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 scp.title,
@@ -76,12 +80,14 @@ fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(
-                text = ("标签：" + detailDao?.getTag(scp.link)),
-                color = MaterialTheme.colors.onSecondary,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            if (detailDao != null) {
+                Text(
+                    text = ("标签：" + detailDao.getTag(scp.link)),
+                    color = MaterialTheme.colors.onSecondary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

@@ -16,7 +16,15 @@ import info.free.scp.SCPConstants.AppMode.OFFLINE
 class RandomRepository {
     var randomList = MutableLiveData<List<ScpItemModel>>()
 
-    fun getRandomList(range: String) {
-        randomList.postValue(ScpDataHelper.getInstance().getRandomScpList(range))
+    fun getRandomList(range: String, add: Boolean = false) {
+        if (add) {
+            randomList.postValue(
+                randomList.value?.plus(
+                    ScpDataHelper.getInstance().getRandomScpList(range)
+                )
+            )
+        } else {
+            randomList.postValue(ScpDataHelper.getInstance().getRandomScpList(range))
+        }
     }
 }

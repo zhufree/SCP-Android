@@ -33,8 +33,8 @@ private val DarkColorPalette = darkColors(
     secondaryVariant = jiQing,
     background = Color.DarkGray,
     onPrimary = Color.White, // Main Text
-    onSecondary = Color.DarkGray, // Sub Text
-    onSurface = Color.DarkGray, // Top Bar Tint
+    onSecondary = Color.LightGray, // Sub Text
+    onSurface = Color.LightGray, // Top Bar Tint
     onBackground = Color.Black // Item bg
 )
 

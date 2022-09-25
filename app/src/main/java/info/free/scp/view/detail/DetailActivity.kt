@@ -390,7 +390,6 @@ class DetailActivity : BaseActivity() {
             val tagIndex = tagString.indexOf(t)
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    Toast.makeText(this@DetailActivity, t, Toast.LENGTH_SHORT).show()
                     startActivity<TagDetailActivity>("tag" to t)
                 }
             }

@@ -82,8 +82,8 @@ class GroupViewModel : ViewModel() {
         return randRepo.randomList
     }
 
-    fun refreshRandomList(range: String) {
-        randRepo.getRandomList(range)
+    fun refreshRandomList(range: String, add: Boolean = false) {
+        randRepo.getRandomList(range, add)
     }
 
     fun moreRandomList(range: String) {

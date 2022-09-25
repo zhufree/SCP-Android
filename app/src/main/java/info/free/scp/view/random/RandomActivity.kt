@@ -37,22 +37,33 @@ class RandomActivity : BaseActivity() {
         baseToolbar = random_toolbar
         supportActionBar?.title = intent.getStringExtra("random_title") ?: "随机"
         rv_random_list.adapter = adapter
-        rv_random_list.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        rv_random_list.addOnScrollListener(object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == SCROLL_STATE_SETTLING) {
                     btn_refresh_random.visibility = VISIBLE
+                    btn_add_more_random.visibility = VISIBLE
                 }
                 if (newState == SCROLL_STATE_DRAGGING) {
                     btn_refresh_random.visibility = GONE
+                    btn_add_more_random.visibility = GONE
                 }
             }
         })
 
-        btn_refresh_random.background = ThemeUtil.customShape(Color.parseColor("#4A90E2"),
-                0, 0, dip(32))
+        btn_refresh_random.background = ThemeUtil.customShape(
+            Color.parseColor("#4A90E2"),
+            0, 0, dip(32)
+        )
+        btn_add_more_random.background = ThemeUtil.customShape(
+            Color.parseColor("#4A90E2"),
+            0, 0, dip(32)
+        )
         btn_refresh_random.setOnClickListener {
             vm.refreshRandomList(randomRange)
+        }
+        btn_add_more_random.setOnClickListener {
+            vm.refreshRandomList(randomRange, true)
         }
         vm.getRandomList().observe(this) { list ->
             adapter.submitList(list)

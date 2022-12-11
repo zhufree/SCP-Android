@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.material.tabs.TabLayoutMediator
 import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
@@ -50,16 +51,20 @@ class LaterFragment : BaseFragment() {
 
         fragmentList = arrayListOf(recordListFragment, likeListFragment)
         val titleList = arrayListOf("待读", "收藏夹")
-        val laterPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
+        val laterPagerAdapter =
+            this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
         vp_later?.adapter = laterPagerAdapter
-        tab_later?.setupWithViewPager(vp_later)
+        TabLayoutMediator(tab_later, vp_later) { tab, position ->
+            tab.text = titleList[position]
+        }.attach()
         fab_import?.setOnClickListener {
             if (!PreferenceUtil.getShownReadSuggest()) {
                 alert("要不要访问大佬们整理的待读列表（可以复制列表后点击此按钮导入）", "不知道读什么？") {
                     positiveButton("带我去！") {
                         val updateIntent = Intent()
                         updateIntent.action = "android.intent.action.VIEW"
-                        val updateUrl = Uri.parse("http://scpsandboxcn.wikidot.com/collab:to-read-list")
+                        val updateUrl =
+                            Uri.parse("http://scpsandboxcn.wikidot.com/collab:to-read-list")
                         updateIntent.data = updateUrl
                         startActivity(updateIntent)
                     }

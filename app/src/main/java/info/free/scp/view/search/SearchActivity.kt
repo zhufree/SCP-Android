@@ -3,6 +3,7 @@ package info.free.scp.view.search
 import android.os.Bundle
 import android.util.Log
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import info.free.scp.R
 import info.free.scp.SCPConstants.SearchType.CONTENT
 import info.free.scp.SCPConstants.SearchType.TAG
@@ -30,9 +31,11 @@ class SearchActivity : BaseActivity() {
         )
         val titleList = arrayListOf("标题搜索", "全文搜索", "Tag搜索")
         val laterPagerAdapter =
-            TabFragmentPager(supportFragmentManager, fragmentList, titleList)
+            TabFragmentPager(this, fragmentList, fragmentList.size)
         vp_search_result?.adapter = laterPagerAdapter
-        tab_search_result?.setupWithViewPager(vp_search_result)
+        TabLayoutMediator(tab_search_result, vp_search_result) { tab, position ->
+            tab.text = titleList[position]
+        }.attach()
         tab_search_result?.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab_search_result.selectedTabPosition == 2) {

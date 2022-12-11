@@ -18,8 +18,7 @@ class ScpListFragment : BaseFragment() {
     private lateinit var binding: FragmentScpListBinding
 
     private val vm by lazy {
-        ViewModelProvider(this)
-                .get(GroupViewModel::class.java)
+        ViewModelProvider(this)[GroupViewModel::class.java]
     }
 
     private val docAdapter by lazy {

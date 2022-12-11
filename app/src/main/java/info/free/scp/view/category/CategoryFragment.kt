@@ -68,9 +68,6 @@ class CategoryFragment : BaseFragment() {
 
     }
 
-    override fun onResume() {
-        super.onResume()
-    }
 
     companion object {
 

@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.google.android.material.tabs.TabLayoutMediator
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
@@ -34,12 +35,17 @@ class FeedFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fragmentList = arrayListOf(SubFeedFragment.newInstance(LATEST_CREATED),
-                SubFeedFragment.newInstance(LATEST_TRANSLATED))
+        fragmentList = arrayListOf(
+            SubFeedFragment.newInstance(LATEST_CREATED),
+            SubFeedFragment.newInstance(LATEST_TRANSLATED)
+        )
         val titleList = arrayListOf("最近原创", "最近翻译")
-        val feedPagerAdapter = TabFragmentPager(childFragmentManager, fragmentList, titleList)
+        val feedPagerAdapter =
+            this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
         vp_feed?.adapter = feedPagerAdapter
-        tab_feed?.setupWithViewPager(vp_feed)
+        TabLayoutMediator(tab_feed, vp_feed) { tab, position ->
+            tab.text = titleList[position]
+        }.attach()
     }
 
     override fun refreshTheme() {

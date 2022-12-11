@@ -24,7 +24,7 @@ class DonationActivity :BaseActivity() {
             startActivity(Utils.getUrlIntent("https://afdian.net/@zhufree"))
         }
         btn_mianbaoduo?.setOnClickListener {
-            startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/author-b2iUl3Bo"))
+            startActivity(Utils.getUrlIntent("https://mbd.pub/o/author-b2iUl3Bo"))
         }
     }
 }

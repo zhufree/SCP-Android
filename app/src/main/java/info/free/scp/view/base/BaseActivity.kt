@@ -5,14 +5,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.umeng.analytics.MobclickAgent
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.util.ThemeUtil
@@ -43,39 +40,24 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
 
 
     public override fun onResume() {
-        MobclickAgent.onResume(this) // remove this if don't need analyze user data
+//        MobclickAgent.onResume(this) // remove this if don't need analyze user data
         super.onResume()
     }
 
     public override fun onPause() {
-        MobclickAgent.onPause(this) // remove this if don't need analyze user data
+//        MobclickAgent.onPause(this) // remove this if don't need analyze user data
         super.onPause()
-    }
-
-    override fun onStart() {
-        super.onStart()
-    }
-
-    override fun onStop() {
-        super.onStop()
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
     }
 
     fun requestReadFileTree() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.setType("*/*");
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        intent.type = "*/*";
+        intent.addFlags(
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+        )
         startActivityForResult(intent, SCPConstants.RequestCode.REQUEST_PUBLIC_FILE)
-    }
-
-    override fun onActivityResult(reqCode: Int, resCode: Int, data: Intent?) {
-        super.onActivityResult(reqCode, resCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

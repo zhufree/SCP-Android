@@ -1,7 +1,6 @@
 package info.free.scp.util
 
 import android.content.Context
-import com.umeng.analytics.MobclickAgent
 import info.free.scp.ScpApplication
 
 /**
@@ -70,16 +69,11 @@ object EventUtil {
     const val clickDraft = "draft"
     const val addWidget = "add_widget"
 
-    // v0.1.5 添加
-    const val clickMeal = "click_meal"
-    const val clickWuhan = "click_wuhan"
-    const val clickMap = "click_map"
-    const val clickDonateWuhan = "click_donate_wuhan"
 
     fun onEvent(context: Context? = ScpApplication.context, event: String) {
-        MobclickAgent.onEvent(context, event) // remove this if don't need analyze user data
+//        MobclickAgent.onEvent(context, event) // remove this if don't need analyze user data
     }
     fun onEvent(context: Context? = ScpApplication.context, event: String, arg: String) {
-        MobclickAgent.onEvent(context, event, arg) // remove this if don't need analyze user data
+//        MobclickAgent.onEvent(context, event, arg) // remove this if don't need analyze user data
     }
 }

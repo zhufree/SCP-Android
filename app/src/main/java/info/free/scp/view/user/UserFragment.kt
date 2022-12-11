@@ -170,13 +170,10 @@ class UserFragment : BaseFragment() {
         st_use.onClick = {
             startActivity<AboutAppActivity>()
         }
-        if (ScpApplication.channelName == "GooglePlay") {
-            btn_donation.visibility = GONE
-        } else {
-            btn_donation.setOnClickListener {
-                startActivity<DonationQrActivity>()
-            }
-        }
+//        btn_donation.visibility = GONE // google play
+        btn_donation.setOnClickListener {
+            startActivity<DonationQrActivity>()
+        } // others
         st_query.onClick = {
             Utils.openUrl(PreferenceUtil.getQueryLink())
         }

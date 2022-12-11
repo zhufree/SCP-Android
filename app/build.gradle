@@ -117,9 +117,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.umeng.umsdk:common:9.4.4'
-    implementation  'com.umeng.umsdk:asms:1.4.1'// 必选
-    implementation 'com.umeng.umsdk:apm:1.2.0'//推荐，错误分析升级为U-APM产品，关注crash数据需集成
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     kapt 'com.github.bumptech.glide:compiler:4.9.0'

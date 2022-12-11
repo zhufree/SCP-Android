@@ -493,7 +493,7 @@ class DetailActivity : BaseActivity() {
                             .setTitle("设置Cookie")
                             .setView(cookieView)
                             .setNeutralButton("如何获取cookie和agent") { _, _ ->
-                                startActivity(Utils.getUrlIntent("https://mianbaoduo.com/o/bread/YZicl55u"))
+                                startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
                             }
                             .setPositiveButton("OK") { _, _ -> }
                             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }

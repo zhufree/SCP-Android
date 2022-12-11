@@ -37,7 +37,7 @@ class DownloadActivity : BaseActivity() {
             "https://pan.baidu.com/s/17MwfLiMmMxqq2WX_tzmGSw?pwd=t9ch",
             "https://gj5i5wsqre.feishu.cn/drive/folder/fldcnpvwVcYN4iCrUQBCPTgF25e",
             "https://pan.quark.cn/s/bc11451cf980",
-            "https://mianbaoduo.com/o/bread/mbd-YZiZl51u",
+            "https://mbd.pub/o/bread/mbd-YZiZl51u",
             "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
         )
         btn_go_download.setOnClickListener {

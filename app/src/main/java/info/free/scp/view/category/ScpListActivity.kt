@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
 import info.free.scp.R
+import info.free.scp.databinding.ActivityCategoryBinding
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_category.*
 
 /**
  * 二级目录，直接scp列表，套scpListFragment
@@ -14,19 +14,20 @@ class ScpListActivity : BaseActivity() {
     private var categoryType = -1
     private var clickPosition = -1
     private var mFragment: ScpListFragment? = null
-
+    private lateinit var binding: ActivityCategoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_category)
+        binding = ActivityCategoryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        baseToolbar = category_toolbar
-        category_toolbar?.title = "文档目录"
+        baseToolbar = binding.categoryToolbar
+        binding.categoryToolbar.title = "文档目录"
 
         initData()
 
-        category_toolbar?.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
-        category_toolbar?.setOnMenuItemClickListener {
+        binding.categoryToolbar.inflateMenu(R.menu.category_menu) //设置右上角的填充菜单
+        binding.categoryToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
 //                    mFragment?.reverseScpList()

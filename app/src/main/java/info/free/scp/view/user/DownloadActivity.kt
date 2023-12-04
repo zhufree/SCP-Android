@@ -13,24 +13,24 @@ import info.free.scp.SCPConstants.LEVEL_PREF_NAME
 import info.free.scp.SCPConstants.RequestCode.REQUEST_BACKUP_DIR
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PUBLIC_FILE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_RESTORE_DIR
+import info.free.scp.databinding.ActivityDownloadBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.activity_download.*
 import org.jetbrains.anko.*
 import java.io.File
 
 
 class DownloadActivity : BaseActivity() {
 
-
+    private lateinit var binding: ActivityDownloadBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_download)
+        binding = ActivityDownloadBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        baseToolbar = download_toolbar
+        baseToolbar = binding.downloadToolbar
 
         val downloadTitles = listOf("百度网盘", "飞书", "夸克", "面包多", "Google Drive")
         val downloadLinks = listOf(
@@ -40,33 +40,38 @@ class DownloadActivity : BaseActivity() {
             "https://mbd.pub/o/bread/mbd-YZiZl51u",
             "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
         )
-        btn_go_download.setOnClickListener {
+        binding.btnGoDownload.setOnClickListener {
             selector("选择下载线路", downloadTitles) { _, i ->
                 Utils.openUrl(downloadLinks[i])
             }
         }
 
-        arrayOf(btn_go_download, btn_select_file, btn_backup, btn_restore).forEach {
-            it?.background = ThemeUtil.customShape(
+        arrayOf(
+            binding.btnGoDownload,
+            binding.btnSelectFile,
+            binding.btnBackup,
+            binding.btnRestore
+        ).forEach {
+            it.background = ThemeUtil.customShape(
                 ThemeUtil.linkBlue,
                 0, 0, dip(24)
             )
         }
 
-        btn_select_file?.setOnClickListener {
+        binding.btnSelectFile.setOnClickListener {
             requestReadFileTree()
         }
 
-        btn_backup?.setOnClickListener {
+        binding.btnBackup.setOnClickListener {
             startSelectDir(REQUEST_BACKUP_DIR)
         }
 
-        btn_restore?.setOnClickListener {
+        binding.btnRestore.setOnClickListener {
             startSelectDir(REQUEST_RESTORE_DIR)
         }
     }
 
-    fun startSelectDir(requestCode: Int) {
+    private fun startSelectDir(requestCode: Int) {
         val backupIntent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
         startActivityForResult(backupIntent, requestCode)
     }

@@ -2,14 +2,14 @@ package info.free.scp.view.detail
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import info.free.scp.R
 import info.free.scp.bean.CommentModel
+import info.free.scp.databinding.LayoutCommentBinding
 import info.free.scp.util.ThemeUtil
-import kotlinx.android.synthetic.main.layout_comment.view.*
 import org.jetbrains.anko.collections.forEachWithIndex
 
 class CommentLayout : ConstraintLayout {
@@ -19,37 +19,40 @@ class CommentLayout : ConstraintLayout {
         initView(context)
     }
 
+    private lateinit var binding: LayoutCommentBinding
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_comment, this)
+        binding = LayoutCommentBinding.inflate(
+            LayoutInflater.from(context), this
+        )
     }
 
     val replyList = emptyList<CommentLayout>().toMutableList()
 
     fun setData(comment: CommentModel) {
         if (comment.title.isEmpty()) {
-            tv_comment_title.visibility = GONE
+            binding.tvCommentTitle.visibility = GONE
         } else {
-            tv_comment_title.text = comment.title
+            binding.tvCommentTitle.text = comment.title
         }
-        tv_comment_username.text = comment.username
-        tv_comment_time.text = comment.time
-        tv_comment_content.text = comment.comment
+        binding.tvCommentUsername.text = comment.username
+        binding.tvCommentTime.text = comment.time
+        binding.tvCommentContent.text = comment.comment
         val replyLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        tv_comment_content.post {
+        binding.tvCommentContent.post {
             comment.reply.forEachWithIndex { index, it ->
                 val replyLayout = CommentLayout(this.context)
                 replyLayout.setData(it)
-                ll_reply_container.addView(replyLayout, replyLp)
+                binding.llReplyContainer.addView(replyLayout, replyLp)
                 replyList.add(replyLayout)
             }
         }
     }
 
     fun refreshTheme() {
-        tv_comment_title.setTextColor(ThemeUtil.darkText)
-        tv_comment_content.setTextColor(ThemeUtil.darkText)
-        tv_comment_username.setTextColor(ThemeUtil.mediumText)
-        tv_comment_time.setTextColor(ThemeUtil.mediumText)
+        binding.tvCommentTitle.setTextColor(ThemeUtil.darkText)
+        binding.tvCommentContent.setTextColor(ThemeUtil.darkText)
+        binding.tvCommentUsername.setTextColor(ThemeUtil.mediumText)
+        binding.tvCommentTime.setTextColor(ThemeUtil.mediumText)
         replyList.forEach { it.refreshTheme() }
     }
 }

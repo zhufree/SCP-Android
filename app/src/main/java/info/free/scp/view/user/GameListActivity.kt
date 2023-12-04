@@ -34,7 +34,9 @@ import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.viewmodel.FireViewModel
 import kotlinx.coroutines.launch
-
+/**
+ * compose
+ */
 class GameListActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

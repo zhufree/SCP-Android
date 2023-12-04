@@ -44,11 +44,10 @@ import info.free.scp.SCPConstants.ScpType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
-import info.free.scp.util.PreferenceUtil
+import info.free.scp.databinding.ActivityGroupListBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.widget.DocGroupItem
-import kotlinx.android.synthetic.main.activity_group_list.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 
@@ -58,11 +57,12 @@ import org.jetbrains.anko.sdk27.coroutines.onClick
 class GroupListActivity : BaseActivity() {
     private var entryType = SCP_DOC
     private var seriesList = emptyList<TextView>().toMutableList()
-
+    private lateinit var binding: ActivityGroupListBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_group_list)
-        baseToolbar = category_toolbar
+        binding = ActivityGroupListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        baseToolbar = binding.categoryToolbar
         initData()
     }
 
@@ -177,35 +177,35 @@ class GroupListActivity : BaseActivity() {
         when (entryType) {
             SCP_DOC -> {
                 for (i in 1..8) {
-                    ll_side_bar.addView(createSeriesItem(i), lp)
+                    binding.llSideBar.addView(createSeriesItem(i), lp)
                 }
-                ll_side_bar.addView(createSeriesItem(JOKE), lp)
-                ll_side_bar.addView(createSeriesItem(SCP_EX), lp)
+                binding.llSideBar.addView(createSeriesItem(JOKE), lp)
+                binding.llSideBar.addView(createSeriesItem(SCP_EX), lp)
                 switchSeries(1)
             }
             SCP_CN_DOC -> {
                 for (i in 1..3) {
-                    ll_side_bar.addView(createSeriesItem(i), lp)
+                    binding.llSideBar.addView(createSeriesItem(i), lp)
                 }
-                ll_side_bar.addView(createSeriesItem(JOKE), lp)
-                ll_side_bar.addView(createSeriesItem(SCP_EX), lp)
+                binding.llSideBar.addView(createSeriesItem(JOKE), lp)
+                binding.llSideBar.addView(createSeriesItem(SCP_EX), lp)
                 switchSeries(1)
             }
             STORY_DOC -> {
-                ll_side_bar.addView(createSeriesItem(TALES), lp)
-                ll_side_bar.addView(createSeriesItem(TALES_CN), lp)
-                ll_side_bar.addView(createSeriesItem(TALES_BY_TIME), lp)
-                ll_side_bar.addView(createSeriesItem(SETTINGS), lp)
-                ll_side_bar.addView(createSeriesItem(SETTINGS_CN), lp)
-                ll_side_bar.addView(createSeriesItem(STORY_SERIES), lp)
-                ll_side_bar.addView(createSeriesItem(STORY_SERIES_CN), lp)
-                ll_side_bar.addView(createSeriesItem(CONTEST), lp)
-                ll_side_bar.addView(createSeriesItem(CONTEST_CN), lp)
+                binding.llSideBar.addView(createSeriesItem(TALES), lp)
+                binding.llSideBar.addView(createSeriesItem(TALES_CN), lp)
+                binding.llSideBar.addView(createSeriesItem(TALES_BY_TIME), lp)
+                binding.llSideBar.addView(createSeriesItem(SETTINGS), lp)
+                binding.llSideBar.addView(createSeriesItem(SETTINGS_CN), lp)
+                binding.llSideBar.addView(createSeriesItem(STORY_SERIES), lp)
+                binding.llSideBar.addView(createSeriesItem(STORY_SERIES_CN), lp)
+                binding.llSideBar.addView(createSeriesItem(CONTEST), lp)
+                binding.llSideBar.addView(createSeriesItem(CONTEST_CN), lp)
                 switchSeries(TALES)
             }
             WANDER_DOC -> {
-                ll_side_bar.addView(createSeriesItem(WANDER), lp)
-                ll_side_bar.addView(createSeriesItem(WANDER_CN), lp)
+                binding.llSideBar.addView(createSeriesItem(WANDER), lp)
+                binding.llSideBar.addView(createSeriesItem(WANDER_CN), lp)
                 switchSeries(WANDER)
             }
             else -> {
@@ -232,27 +232,28 @@ class GroupListActivity : BaseActivity() {
     private val categoryCount = 100
 
     private fun switchSeries(index: Int) {
-        tv_group_desc.visibility = GONE
+        binding.tvGroupDesc.visibility = GONE
 
         if (index < 100) {
-            tv_group_title.text = getSeriesTitle(index)
+            binding.tvGroupTitle.text = getSeriesTitle(index)
 
             val lp = LinearLayout.LayoutParams(MATCH_PARENT, dip(60))
             lp.topMargin = dip(10)
             lp.leftMargin = dip(10)
             lp.rightMargin = dip(10)
 
-            ll_group_list.removeAllViews()
+            binding.llGroupList.removeAllViews()
             getGroupListTitle(index).forEachIndexed { i, s ->
                 // 添加group
                 val newGroupItem = DocGroupItem(this, s)
                 newGroupItem.onClick {
-                    startActivity<DocListActivity>("saveType" to getSaveType(index),
-                            "groupIndex" to (index - 1) * 10 + i,
-                            "extraType" to s
+                    startActivity<DocListActivity>(
+                        "saveType" to getSaveType(index),
+                        "groupIndex" to (index - 1) * 10 + i,
+                        "extraType" to s
                     )
                 }
-                ll_group_list.addView(newGroupItem, lp)
+                binding.llGroupList.addView(newGroupItem, lp)
             }
         } else {
             // 直接跳列表页

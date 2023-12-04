@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
-import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
@@ -23,8 +22,8 @@ import info.free.scp.SCPConstants.ScpType.SAVE_TALES_BY_TIME
 import info.free.scp.SCPConstants.ScpType.SAVE_TALES_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
+import info.free.scp.databinding.ActivityDocListBinding
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_doc_list.*
 
 class DocListActivity : BaseActivity() {
     private val vm by lazy {
@@ -65,13 +64,15 @@ class DocListActivity : BaseActivity() {
         }
     }
 
+    private lateinit var binding: ActivityDocListBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_doc_list)
+        binding = ActivityDocListBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        baseToolbar = doc_list_toolbar
-        doc_list_toolbar?.inflateMenu(R.menu.category_menu)
-        doc_list_toolbar?.setOnMenuItemClickListener {
+        baseToolbar = binding.docListToolbar
+        binding.docListToolbar.inflateMenu(R.menu.category_menu)
+        binding.docListToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
                     orderType = -orderType

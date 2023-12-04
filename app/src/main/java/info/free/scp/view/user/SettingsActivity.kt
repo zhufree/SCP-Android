@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.preference.PreferenceActivity
 import androidx.preference.PreferenceFragmentCompat
 import android.view.View
-import androidx.preference.DialogPreference
 import androidx.preference.SwitchPreference
 import info
 import info.free.scp.R
+import info.free.scp.databinding.ActivitySettingsBinding
 import info.free.scp.util.*
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_settings.*
 
 /**
  * A [PreferenceActivity] that presents a set of application settings. On
@@ -23,15 +22,18 @@ import kotlinx.android.synthetic.main.activity_settings.*
  * for more information on developing a Settings UI.
  */
 class SettingsActivity : BaseActivity() {
-
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-        baseToolbar = settings_toolbar
-        settings_toolbar?.setTitle(R.string.app_name)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        baseToolbar = binding.settingsToolbar
+        binding.settingsToolbar.setTitle(R.string.app_name)
 
-        supportFragmentManager.beginTransaction().replace(R.id.fl_read_settings,
-                ReadSettingsFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(
+            R.id.fl_read_settings,
+            ReadSettingsFragment()
+        ).commit()
     }
 
     /**

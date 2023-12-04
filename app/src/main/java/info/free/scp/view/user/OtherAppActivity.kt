@@ -19,7 +19,9 @@ import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
-
+/**
+ * compose
+ */
 class OtherAppActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

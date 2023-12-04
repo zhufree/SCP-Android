@@ -40,6 +40,8 @@ import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.databinding.ActivityDetailBinding
+import info.free.scp.databinding.LayoutDialogCookieBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
@@ -52,8 +54,6 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.tag.TagDetailActivity
-import kotlinx.android.synthetic.main.activity_detail.*
-import kotlinx.android.synthetic.main.layout_dialog_cookie.view.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
@@ -122,10 +122,12 @@ class DetailActivity : BaseActivity() {
         ViewModelProvider(this)[DetailViewModel::class.java]
     }
 
+    private lateinit var binding: ActivityDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_detail)
+        binding = ActivityDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         tvLoad = TextView(this)
         tvLoad?.text = "评论加载中..."
         tvLoad?.gravity = CENTER
@@ -133,10 +135,10 @@ class DetailActivity : BaseActivity() {
         screenHeight = Utils.getScreenHeight(this)
 
         EventUtil.onEvent(this, EventUtil.clickReadDetail)
-        webView?.setBackgroundColor(0) // 设置背景色
-        webView?.background?.alpha = 0 // 设置填充透明度 范围：0-255
-        webView?.setBackgroundColor(ThemeUtil.containerBg)
-        webView?.settings?.javaScriptEnabled = true
+        binding.webView.setBackgroundColor(0) // 设置背景色
+        binding.webView.background?.alpha = 0 // 设置填充透明度 范围：0-255
+        binding.webView.setBackgroundColor(ThemeUtil.containerBg)
+        binding.webView?.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
         title = intent.getStringExtra("title") ?: ""
@@ -160,8 +162,8 @@ class DetailActivity : BaseActivity() {
         } else if (!forceOnline) {
             viewModel.setScp(url) // 设置scp
         } else {
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
+            binding.pbLoading.visibility = VISIBLE
+            binding.webView.loadUrl(fullUrl)
         }
 
         viewModel.getScp().observe(this, Observer {
@@ -172,16 +174,16 @@ class DetailActivity : BaseActivity() {
                     setData(s)
                 } ?: run {
                     // 数据库没有，加载链接
-                    webView.loadUrl(fullUrl)
-                    nsv_web_wrapper?.scrollTo(0, 0)
+                    binding.webView.loadUrl(fullUrl)
+                    binding.nsvWebWrapper?.scrollTo(0, 0)
                 }
             }
         })
 
-        webView?.requestFocus()
+        binding.webView.requestFocus()
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
-        webView?.webViewClient = object : WebViewClient() {
+        binding.webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
                 info { "onPageshouldOverrideUrlLoading" }
@@ -211,7 +213,7 @@ class DetailActivity : BaseActivity() {
                         scp = tmpScp
                         setData(tmpScp)
                     } ?: run {
-                        pbLoading.visibility = VISIBLE
+                        binding.pbLoading.visibility = VISIBLE
                         view.loadUrl(fullUrl)
                     }
                 }
@@ -220,18 +222,18 @@ class DetailActivity : BaseActivity() {
 
 
             override fun onPageCommitVisible(view: WebView?, url: String?) {
-                pbLoading.visibility = GONE
+                binding.pbLoading.visibility = GONE
             }
 
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
-                pbLoading.visibility = VISIBLE
+                binding.pbLoading.visibility = VISIBLE
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                pbLoading.visibility = GONE
-                info { "webView.height = ${webView.height}" }
-                info { "nsv_web_wrapper.height = ${nsv_web_wrapper.height}" }
+                binding.pbLoading.visibility = GONE
+                info { "webView.height = ${binding.webView.height}" }
+                info { "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}" }
             }
         }
     }
@@ -256,18 +258,22 @@ class DetailActivity : BaseActivity() {
         var isMoving = false
         val screenHeight = Utils.getScreenHeight(this@DetailActivity)
 
-        sb_detail?.onSeekBarChangeListener {
+        binding.sbDetail.onSeekBarChangeListener {
             onProgressChanged { _, i, b ->
                 if (b) {
-                    nsv_web_wrapper?.scrollTo(0, ((webView.height - screenHeight) * (i / 100f)).toInt())
+                    binding.nsvWebWrapper?.scrollTo(
+                        0,
+                        ((binding.webView.height - screenHeight) * (i / 100f)).toInt()
+                    )
                 }
             }
             onStartTrackingTouch { isMoving = true }
             onStopTrackingTouch { isMoving = false }
         }
-        nsv_web_wrapper?.onScrollChange { _, _, scrollY, _, _ ->
+        binding.nsvWebWrapper?.onScrollChange { _, _, scrollY, _, _ ->
             if (!isMoving) {
-                sb_detail?.progress = ((scrollY.toFloat() / (webView.height - screenHeight) * 100)).toInt()
+                binding.sbDetail?.progress =
+                    ((scrollY.toFloat() / (binding.webView.height - screenHeight) * 100)).toInt()
             }
         }
 
@@ -285,29 +291,34 @@ class DetailActivity : BaseActivity() {
         detailHtml = detailHtml.replace("html-block-iframe", "")
 
         if (detailHtml.isEmpty()) {
-            pbLoading.visibility = VISIBLE
-            webView.loadUrl(fullUrl)
+            binding.pbLoading.visibility = VISIBLE
+            binding.webView.loadUrl(fullUrl)
         } else {
-            pbLoading.visibility = GONE
-            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                    + detailHtml + jsScript,
-                    "text/html", "utf-8", null)
+            binding.pbLoading.visibility = GONE
+            binding.webView.loadDataWithBaseURL(
+                "file:///android_asset/", currentTextStyle
+                        + detailHtml + jsScript,
+                "text/html", "utf-8", null
+            )
         }
-        nsv_web_wrapper?.scrollTo(0, 0)
+        binding.nsvWebWrapper.scrollTo(0, 0)
 //        translate(PreferenceUtil.getTraditionalText())
-        btn_comment?.show()
-        ll_comment_container.removeAllViews()
-        ll_comment_container.visibility = GONE
-        ll_comment_container.addView(tvLoad, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+        binding.btnComment.show()
+        binding.llCommentContainer.removeAllViews()
+        binding.llCommentContainer.visibility = GONE
+        binding.llCommentContainer.addView(
+            tvLoad,
+            ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+        )
     }
 
     override fun refreshTheme() {
         super.refreshTheme()
-        cl_detail_container?.setBackgroundColor(ThemeUtil.containerBg)
+        binding.clDetailContainer.setBackgroundColor(ThemeUtil.containerBg)
         refreshStyle()
         refreshReadBtnStatus()
         refreshButtonStyle()
-        ll_comment_container.children.forEach {
+        binding.llCommentContainer.children.forEach {
             if (it is CommentLayout) {
                 it.refreshTheme()
             } else {
@@ -321,9 +332,11 @@ class DetailActivity : BaseActivity() {
      */
     private fun refreshStyle() {
         currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
-        webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                + detailHtml + jsScript,
-                "text/html", "utf-8", null)
+        binding.webView.loadDataWithBaseURL(
+            "file:///android_asset/", currentTextStyle
+                    + detailHtml + jsScript,
+            "text/html", "utf-8", null
+        )
     }
 
     private fun setData(s: ScpModel, back: Boolean = false) {
@@ -352,8 +365,8 @@ class DetailActivity : BaseActivity() {
 //            randomIndex++
 //            newRandom = false
 //        }
-        tv_detail_toolbar?.text = s.title
-        tv_detail_toolbar?.isSelected = true
+        binding.tvDetailToolbar.text = s.title
+        binding.tvDetailToolbar.isSelected = true
         url = s.link
         refreshReadBtnStatus()
         viewModel.loadDetail(url)
@@ -393,36 +406,48 @@ class DetailActivity : BaseActivity() {
                     startActivity<TagDetailActivity>("tag" to t)
                 }
             }
-            spannableString.setSpan(foregroundColorSpan, tagIndex, tagIndex + t.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
-            spannableString.setSpan(clickableSpan, tagIndex, tagIndex + t.length, Spanned.SPAN_INCLUSIVE_INCLUSIVE)
+            spannableString.setSpan(
+                foregroundColorSpan,
+                tagIndex,
+                tagIndex + t.length,
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            )
+            spannableString.setSpan(
+                clickableSpan,
+                tagIndex,
+                tagIndex + t.length,
+                Spanned.SPAN_INCLUSIVE_INCLUSIVE
+            )
         }
-        tv_tag_container.movementMethod = LinkMovementMethod.getInstance()
-        tv_tag_container.text = spannableString
+        binding.tvTagContainer.movementMethod = LinkMovementMethod.getInstance()
+        binding.tvTagContainer.text = spannableString
     }
 
     private fun initToolbar() {
-        baseToolbar = detail_toolbar
+        baseToolbar = binding.detailToolbar
         supportActionBar?.title = null
-        detail_toolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
-        detail_toolbar?.setOnMenuItemClickListener {
+        binding.detailToolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
+        binding.detailToolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
                     PreferenceUtil.addPoints(1)
                     if (onlineMode == 0) {
                         if (Utils.enabledNetwork(this)) {
-                            pbLoading.visibility = VISIBLE
+                            binding.pbLoading.visibility = VISIBLE
                             onlineMode = 1
                             it.setTitle(R.string.offline_mode)
-                            webView?.loadUrl(fullUrl)
+                            binding.webView.loadUrl(fullUrl)
                         } else {
                             toast("请先开启网络")
                         }
                     } else {
                         onlineMode = 0
                         it.setTitle(R.string.online_mode)
-                        webView?.loadDataWithBaseURL("file:///android_asset/",
-                                currentTextStyle + detailHtml + jsScript,
-                                "text/html", "utf-8", null)
+                        binding.webView.loadDataWithBaseURL(
+                            "file:///android_asset/",
+                            currentTextStyle + detailHtml + jsScript,
+                            "text/html", "utf-8", null
+                        )
                     }
                 }
                 R.id.open_in_browser -> {
@@ -460,48 +485,54 @@ class DetailActivity : BaseActivity() {
                 }
                 R.id.share_picture -> {
                     // 截屏分享
-                    scp?.let { s->
+                    scp?.let { s ->
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
                     }
                     toast("生成图片中...")
-                    gp_share_content?.visibility = VISIBLE
-                    cl_detail_container?.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                    binding.gpShareContent.visibility = VISIBLE
+                    binding.clDetailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
                         ViewTreeObserver.OnGlobalLayoutListener {
                         override fun onGlobalLayout() {
-                            cl_detail_container?.viewTreeObserver?.removeOnGlobalLayoutListener(this)
-                            val bitmap = Bitmap.createBitmap(webView.width, cl_detail_container.height,
-                                Bitmap.Config.RGB_565)
+                            binding.clDetailContainer.viewTreeObserver?.removeOnGlobalLayoutListener(
+                                this
+                            )
+                            val bitmap = Bitmap.createBitmap(
+                                binding.webView.width, binding.clDetailContainer.height,
+                                Bitmap.Config.RGB_565
+                            )
                             //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                             val canvas = Canvas(bitmap)
-                            cl_detail_container.draw(canvas)
+                            binding.clDetailContainer.draw(canvas)
                             doAsync {
                                 // Runs in background
                                 Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
                                 // This code is executed on the UI thread
                                 uiThread {
                                     toast("图片已保存")
-                                    gp_share_content?.visibility = GONE
+                                    binding.gpShareContent.visibility = GONE
                                 }
                             }
                         }
                     })
                 }
                 R.id.set_cookie -> {
-                    val cookieView = LayoutInflater.from(this@DetailActivity)
-                            .inflate(R.layout.layout_dialog_cookie, null)
+                    val cookieView = LayoutDialogCookieBinding.inflate(
+                        LayoutInflater.from(this@DetailActivity),
+                        null, false
+                    )
                     val cookieDialog = AlertDialog.Builder(this@DetailActivity)
-                            .setTitle("设置Cookie")
-                            .setView(cookieView)
-                            .setNeutralButton("如何获取cookie和agent") { _, _ ->
-                                startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
-                            }
-                            .setPositiveButton("OK") { _, _ -> }
-                            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                            .create()
+                        .setTitle("设置Cookie")
+                        .setView(cookieView.root)
+                        .setNeutralButton("如何获取cookie和agent") { _, _ ->
+                            startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
+                        }
+                        .setPositiveButton("OK") { _, _ -> }
+                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+                        .create()
                     cookieDialog.show()
                     cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-                        val cookie = cookieView.et_cookie.text.toString()
-                        val agent = cookieView.et_agent.text.toString()
+                        val cookie = cookieView.etCookie.text.toString()
+                        val agent = cookieView.etAgent.text.toString()
                         PreferenceUtil.setCookie(cookie)
                         PreferenceUtil.setAgent(agent)
                         toast("设置完成")
@@ -527,9 +558,11 @@ class DetailActivity : BaseActivity() {
         try {
             val converter = JChineseConvertor.getInstance()
             detailHtml = if (translateType == SIMPLE) converter.t2s(detailHtml) else converter.s2t(detailHtml)
-            webView.loadDataWithBaseURL("file:///android_asset/", currentTextStyle
-                    + detailHtml + jsScript,
-                    "text/html", "utf-8", null)
+            binding.webView.loadDataWithBaseURL(
+                "file:///android_asset/", currentTextStyle
+                        + detailHtml + jsScript,
+                "text/html", "utf-8", null
+            )
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -696,45 +729,47 @@ class DetailActivity : BaseActivity() {
     private fun refreshReadBtnStatus() {
         val scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(url)
         val hasRead = scpInfo != null && scpInfo.hasRead
-        readBtnLp = tv_bottom_set_has_read?.layoutParams as ConstraintLayout.LayoutParams?
+        readBtnLp = binding.tvBottomSetHasRead.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
-            tv_bottom_set_has_read?.setText(R.string.set_has_not_read)
-            tv_bottom_set_has_read?.setTextColor(ThemeUtil.mediumText)
-            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
-                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
+            binding.tvBottomSetHasRead.setText(R.string.set_has_not_read)
+            binding.tvBottomSetHasRead.setTextColor(ThemeUtil.mediumText)
+            binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
+                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15)
+            )
             readBtnLp?.endToEnd = -1
             readBtnLp?.startToStart = -1
             readBtnLp?.endToStart = R.id.gl_detail_center
-            tv_bottom_set_has_read?.layoutParams = readBtnLp
-            tv_bottom_like?.visibility = VISIBLE
+            binding.tvBottomSetHasRead.layoutParams = readBtnLp
+            binding.tvBottomLike.visibility = VISIBLE
         } else {
-            tv_bottom_set_has_read?.setText(R.string.set_has_read)
-            tv_bottom_set_has_read?.setTextColor(ThemeUtil.darkText)
-            tv_bottom_set_has_read?.background = ThemeUtil.customShape(
-                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+            binding.tvBottomSetHasRead.setText(R.string.set_has_read)
+            binding.tvBottomSetHasRead.setTextColor(ThemeUtil.darkText)
+            binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+            )
             readBtnLp?.endToEnd = 0
             readBtnLp?.startToStart = 0
             readBtnLp?.endToStart = -1
-            tv_bottom_set_has_read?.layoutParams = readBtnLp
-            tv_bottom_like?.visibility = GONE
+            binding.tvBottomSetHasRead.layoutParams = readBtnLp
+            binding.tvBottomLike.visibility = GONE
         }
     }
 
     private fun initSwitchBtn() {
         refreshButtonStyle()
-        tv_bottom_preview?.setOnClickListener {
+        binding.tvBottomPreview.setOnClickListener {
             toPreviewArticle()
         }
 
-        tv_bottom_next?.setOnClickListener {
+        binding.tvBottomNext.setOnClickListener {
             toNextArticle()
         }
 
-        tv_bottom_set_has_read?.setOnClickListener {
+        binding.tvBottomSetHasRead.setOnClickListener {
             setHasRead()
         }
 
-        tv_bottom_like?.setOnClickListener { likeScp() }
+        binding.tvBottomLike.setOnClickListener { likeScp() }
 
         viewModel.repo.commentList.observe(this, Observer {
             if (it.isEmpty()) {
@@ -744,38 +779,40 @@ class DetailActivity : BaseActivity() {
                     tvLoad?.text = "因中分官网要求登录才能查看评论，暂时无法获取"
                 }
             } else {
-                ll_comment_container.removeAllViews()
+                binding.llCommentContainer.removeAllViews()
                 val commentLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
                 commentLp.topMargin = Utils.dp2px(4)
                 it.forEach { c ->
                     val newComment = CommentLayout(this)
                     newComment.setData(c)
-                    ll_comment_container.addView(newComment, commentLp)
+                    binding.llCommentContainer.addView(newComment, commentLp)
                 }
             }
         })
-        btn_comment?.setOnClickListener {
+        binding.btnComment.setOnClickListener {
             if (PreferenceUtil.getCookie().isEmpty()) {
                 toast("先点击右上角菜单设置cookie才能加载评论")
             } else {
-                ll_comment_container.visibility = VISIBLE
-                nsv_web_wrapper?.scrollTo(0, (webView.height - screenHeight) + 100)
-                btn_comment?.hide()
+                binding.llCommentContainer.visibility = VISIBLE
+                binding.nsvWebWrapper.scrollTo(0, (binding.webView.height - screenHeight) + 100)
+                binding.btnComment.hide()
                 viewModel.loadComment(url)
             }
         }
     }
 
     private fun refreshButtonStyle() {
-        tv_bottom_preview?.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
-        tv_bottom_next?.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
-        tv_bottom_like?.setTextColor(ThemeUtil.darkText)
+        binding.tvBottomPreview.background = ThemeUtil.customShape(
+            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+        )
+        binding.tvBottomNext.background = ThemeUtil.customShape(
+            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+        )
+        binding.tvBottomLike.setTextColor(ThemeUtil.darkText)
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KEYCODE_BACK && webView != null && historyIndex > 0) {
+        if (keyCode == KEYCODE_BACK && historyIndex > 0) {
             scp = historyList[historyIndex - 1]
             scp?.let {
                 setData(it, true)
@@ -798,14 +835,16 @@ class DetailActivity : BaseActivity() {
         val menuItem = menu?.getItem(0)
         if (scpInfo == null || !scpInfo.like) {
             menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
-            tv_bottom_like?.text = "收藏"
-            tv_bottom_like?.background = ThemeUtil.customShape(
-                    ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15))
+            binding.tvBottomLike.text = "收藏"
+            binding.tvBottomLike.background = ThemeUtil.customShape(
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+            )
         } else {
             menuItem?.setIcon(R.drawable.ic_star_white_24dp)
-            tv_bottom_like?.text = "取消收藏"
-            tv_bottom_like?.background = ThemeUtil.customShape(
-                    ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15))
+            binding.tvBottomLike.text = "取消收藏"
+            binding.tvBottomLike.background = ThemeUtil.customShape(
+                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15)
+            )
         }
         return super.onPrepareOptionsMenu(menu)
     }

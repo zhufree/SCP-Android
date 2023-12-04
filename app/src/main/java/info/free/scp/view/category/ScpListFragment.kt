@@ -9,7 +9,6 @@ import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.databinding.FragmentScpListBinding
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_scp_list.*
 
 /**
  * 一级目录，点进去是正文
@@ -71,7 +70,7 @@ class ScpListFragment : BaseFragment() {
         groupIndex = arguments?.getInt("group_index") ?: -1
         extraType = arguments?.getString("extra_type") ?: ""
 
-        rv_doc_list.adapter = docAdapter
+        binding.rvDocList.adapter = docAdapter
         val docList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(docList)
     }
@@ -90,7 +89,7 @@ class ScpListFragment : BaseFragment() {
     fun reverseScpList(orderType: Int) {
         val ascList = getDocList(saveType, groupIndex, extraType)
         docAdapter.submitList(if (orderType == SCPConstants.OrderType.ASC) ascList else ascList.reversed()) {
-            rv_doc_list.scrollToPosition(0)
+            binding.rvDocList.scrollToPosition(0)
         }
     }
 

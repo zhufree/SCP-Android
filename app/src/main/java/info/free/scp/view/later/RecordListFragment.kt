@@ -18,7 +18,6 @@ import org.jetbrains.anko.yesButton
  * recordType区分
  */
 class RecordListFragment : BaseFragment() {
-
     var recordType = LATER_TYPE
     var orderType = DESC
 

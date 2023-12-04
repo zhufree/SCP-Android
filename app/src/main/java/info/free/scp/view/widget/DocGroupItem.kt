@@ -2,11 +2,11 @@ package info.free.scp.view.widget
 
 import android.content.Context
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.R
+import info.free.scp.databinding.LayoutGroupItemBinding
 import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
-import kotlinx.android.synthetic.main.layout_group_item.view.*
 
 class DocGroupItem : ConstraintLayout {
     var title = ""
@@ -17,12 +17,13 @@ class DocGroupItem : ConstraintLayout {
         initView(context)
     }
 
+    private lateinit var binding: LayoutGroupItemBinding
     constructor(context: Context, title: String) : this(context, null) {
-        tv_group_item_title.text = title
+        binding.tvGroupItemTitle.text = title
     }
 
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_group_item, this)
+        binding = LayoutGroupItemBinding.inflate(LayoutInflater.from(context))
         background = ThemeUtil.getDrawable(context, R.drawable.bg_entry_box)
     }
 

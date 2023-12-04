@@ -10,13 +10,13 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
+import info.free.scp.databinding.ActivityDirectBinding
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.activity_direct.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.startActivity
@@ -27,6 +27,7 @@ import org.jetbrains.anko.toast
  * 编号直达页
  */
 class DirectActivity : BaseActivity() {
+    private lateinit var binding: ActivityDirectBinding
     private var chooseType = 0 // 0 scp 1 cn 2 J 3 cn-j
         set(value) {
             field = value
@@ -49,10 +50,11 @@ class DirectActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_direct)
+        binding = ActivityDirectBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         initToolbar()
 
-        tv_direct_cn.setOnClickListener {
+        binding.tvDirectCn.setOnClickListener {
             chooseType = when (chooseType) {
                 0 -> 1
                 1 -> 0
@@ -62,7 +64,7 @@ class DirectActivity : BaseActivity() {
             }
             updateExpress()
         }
-        tv_direct_j.setOnClickListener {
+        binding.tvDirectJ.setOnClickListener {
             chooseType = when (chooseType) {
                 0 -> 2
                 1 -> 3
@@ -72,13 +74,13 @@ class DirectActivity : BaseActivity() {
             }
             updateExpress()
         }
-        tv_direct_c.setOnClickListener {
+        binding.tvDirectC.setOnClickListener {
             if (numberString.isNotEmpty()) {
                 numberString = numberString.substring(0, numberString.length - 1)
                 updateExpress()
             }
         }
-        gl_direct_btns.children.forEachIndexed { index, view ->
+        binding.glDirectBtns.children.forEachIndexed { index, view ->
             if (index > 2) {
                 view.setOnClickListener {
                     when (index - 3) {
@@ -86,6 +88,7 @@ class DirectActivity : BaseActivity() {
                             numberString += (index - 2)
                             updateExpress()
                         }
+
                         9 -> {
                             numberString += "0"
                             updateExpress()
@@ -146,12 +149,12 @@ class DirectActivity : BaseActivity() {
     }
 
     private fun initToolbar() {
-        baseToolbar = direct_toolbar
+        baseToolbar = binding.directToolbar
         supportActionBar?.setTitle(R.string.title_direct)
     }
 
 
     private fun updateExpress() {
-        tv_direct_title.text = "SCP-$cnString$numberString$jString"
+        binding.tvDirectTitle.text = "SCP-$cnString$numberString$jString"
     }
 }

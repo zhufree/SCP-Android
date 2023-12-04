@@ -4,13 +4,11 @@ package info.free.scp.view.user
 import android.app.Activity
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
@@ -23,7 +21,7 @@ import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.RequestCode.REQUEST_PICTURE_DIR
-import info.free.scp.ScpApplication
+import info.free.scp.databinding.FragmentUserBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.*
 import info.free.scp.util.ThemeUtil.DAY_THEME
@@ -33,7 +31,6 @@ import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
 import info.free.scp.view.later.LaterViewModel
 import info.free.scp.view.widget.HistoryListItem
-import kotlinx.android.synthetic.main.fragment_user.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.*
 import java.util.*
@@ -45,11 +42,14 @@ import java.util.*
  * 其他，包括写作相关，新人资讯，标签云和关于
  */
 class UserFragment : BaseFragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false)
+    private var _binding: FragmentUserBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentUserBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun getRank(point: Int): String {
@@ -95,35 +95,35 @@ class UserFragment : BaseFragment() {
             NewbieManager.showPrivacyDialog(this.activity!!)
         }
 //        childFragmentManager.beginTransaction().replace(R.id.fl_settings, SettingsFragment()).commit()
-        tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+        binding.tvNickname.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "代号：${PreferenceUtil.getNickname()}" else "代号：点击设置"
-        tv_job?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+        binding.tvJob.text = if (PreferenceUtil.getNickname().isNotEmpty())
             "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                     "职务：${getRank(PreferenceUtil.getPoint())}"
         else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                 "职务：点击设置"
-        tv_data_desc?.text =
+        binding.tvDataDesc.text =
             "已研究项目：${AppInfoDatabase.getInstance().likeAndReadDao().getReadCount()}\t" +
                     "已跟踪项目：${AppInfoDatabase.getInstance().likeAndReadDao().getLikeCount()}"
 
-        tv_nickname.setOnClickListener { checkUserInfo() }
-        tv_job.setOnClickListener {
+        binding.tvNickname.setOnClickListener { checkUserInfo() }
+        binding.tvJob.setOnClickListener {
             checkJob()
         }
         if (PreferenceUtil.getShowMeal()) {
-            st_other_work.visibility = VISIBLE
+            binding.stOtherWork.visibility = VISIBLE
         }
 
         refreshHistoryList()
         setSettingEvent()
 
         Glide.with(this).load(R.drawable.author_head)
-                .apply(RequestOptions.bitmapTransform(RoundedCorners(dip(25))))
-                .into(iv_author_head)
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(dip(25))))
+            .into(binding.ivAuthorHead)
 
         setHeadImg()
 
-        iv_user_head.setOnClickListener {
+        binding.ivUserHead.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
             startActivityForResult(intent, REQUEST_PICTURE_DIR)
@@ -131,7 +131,7 @@ class UserFragment : BaseFragment() {
     }
 
     private fun refreshHistoryList() {
-        ll_history_list.removeAllViews()
+        binding.llHistoryList.removeAllViews()
         historyItemList.clear()
         val historyList = viewModel.getRecordList(HISTORY_TYPE, SCPConstants.OrderType.DESC)
         historyList.forEachIndexed { index, scp ->
@@ -140,41 +140,44 @@ class UserFragment : BaseFragment() {
                 newItem.onItemClick = {
                     startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
                 }
-                ll_history_list.addView(newItem)
+                binding.llHistoryList.addView(newItem)
                 historyItemList.add(newItem)
             }
         }
     }
 
     private fun setSettingEvent() {
-        ib_theme.setOnClickListener {
-            ThemeUtil.changeTheme(activity, if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME)
+        binding.ibTheme.setOnClickListener {
+            ThemeUtil.changeTheme(
+                activity,
+                if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME
+            )
         }
 
-        st_draft.onClick = {
+        binding.stDraft.onClick = {
             startActivity<DraftListActivity>()
         }
-        st_game.onClick = { startActivity<GameListActivity>() }
-        st_other_work.onClick = { startActivity<OtherAppActivity>() }
-        st_portal.onClick = { startActivity<PortalListActivity>() }
+        binding.stGame.onClick = { startActivity<GameListActivity>() }
+        binding.stOtherWork.onClick = { startActivity<OtherAppActivity>() }
+        binding.stPortal.onClick = { startActivity<PortalListActivity>() }
 
-        iv_more_history?.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
+        binding.ivMoreHistory.setOnClickListener { startActivity<LaterAndHistoryActivity>() }
 
-        st_read.onClick = {
+        binding.stRead.onClick = {
             EventUtil.onEvent(activity, EventUtil.clickReadSetting)
             startActivity<SettingsActivity>()
         }
-        st_data.onClick = {
+        binding.stData.onClick = {
             startActivity<DownloadActivity>()
         }
-        st_use.onClick = {
+        binding.stUse.onClick = {
             startActivity<AboutAppActivity>()
         }
 //        btn_donation.visibility = GONE // google play
-        btn_donation.setOnClickListener {
+        binding.btnDonation.setOnClickListener {
             startActivity<DonationQrActivity>()
         } // others
-        st_query.onClick = {
+        binding.stQuery.onClick = {
             Utils.openUrl(PreferenceUtil.getQueryLink())
         }
     }
@@ -183,7 +186,7 @@ class UserFragment : BaseFragment() {
     private fun setHeadImg() {
         val imgFile = privatePictureDir(this.context!!, "user_head.jpg")
         if (imgFile.exists()) {
-            iv_user_head?.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
+            binding.ivUserHead?.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
         }
     }
 
@@ -207,7 +210,7 @@ class UserFragment : BaseFragment() {
             }
             positiveButton("确定") {
                 PreferenceUtil.saveNickname(input?.text.toString())
-                tv_nickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
+                binding.tvNickname?.text = if (PreferenceUtil.getNickname().isNotEmpty())
                     "代号：${PreferenceUtil.getNickname()}" else "代号：点击设置"
                 checkJob()
             }
@@ -221,7 +224,7 @@ class UserFragment : BaseFragment() {
         selector("欢迎来到SCP基金会，${PreferenceUtil.getNickname()}，请选择你的职业",
                 jobList) { out, i ->
             PreferenceUtil.setJob(jobList[i])
-            tv_job?.text = if (PreferenceUtil.getJob().isNotEmpty())
+            binding.tvJob?.text = if (PreferenceUtil.getJob().isNotEmpty())
                 "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
                         "职务：${getRank(PreferenceUtil.getPoint())}"
             else "编号：${Random(System.currentTimeMillis()).nextInt(600)}\n" +
@@ -236,24 +239,24 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        arrayOf(tv_history_list_head, tv_nickname).forEach {
-            it?.setTextColor(ThemeUtil.darkText)
+        arrayOf(binding.tvHistoryListHead, binding.tvNickname).forEach {
+            it.setTextColor(ThemeUtil.darkText)
         }
-        tv_job?.setTextColor(ThemeUtil.mediumText)
-        arrayOf(ll_history_container, gl_setting_item).forEach {
-            it?.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
+        binding.tvJob?.setTextColor(ThemeUtil.mediumText)
+        arrayOf(binding.llHistoryContainer, binding.glSettingItem).forEach {
+            it.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
         }
         arrayOf(
-            st_draft,
-            st_data,
-            st_game,
-            st_other_work,
-            st_portal,
-            st_query,
-            st_read,
-            st_use
+            binding.stDraft,
+            binding.stData,
+            binding.stGame,
+            binding.stOtherWork,
+            binding.stPortal,
+            binding.stQuery,
+            binding.stRead,
+            binding.stUse
         ).forEach {
-            it?.refreshTheme()
+            it.refreshTheme()
         }
         historyItemList.forEach { it.refreshTheme() }
     }

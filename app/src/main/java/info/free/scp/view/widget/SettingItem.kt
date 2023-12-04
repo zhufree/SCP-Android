@@ -3,18 +3,18 @@ package info.free.scp.view.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.R
+import info.free.scp.databinding.LayoutSettingItemBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
-import kotlinx.android.synthetic.main.layout_setting_item.view.*
-import kotlinx.android.synthetic.main.layout_top_bar.view.*
 import org.jetbrains.anko.backgroundColor
 
 
 class SettingItem : ConstraintLayout {
-
+    private lateinit var binding: LayoutSettingItemBinding
     var title = ""
     var rightVisible = false
     var rightText = ""
@@ -31,7 +31,7 @@ class SettingItem : ConstraintLayout {
 
 
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_setting_item, this)
+        binding = LayoutSettingItemBinding.inflate(LayoutInflater.from(context))
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {
@@ -47,10 +47,10 @@ class SettingItem : ConstraintLayout {
 
         ta.recycle()
 
-        tv_setting_title.text = title
-        tv_setting_right.visibility = if (rightVisible) View.VISIBLE else View.GONE
+        binding.tvSettingTitle.text = title
+        binding.tvSettingRight.visibility = if (rightVisible) View.VISIBLE else View.GONE
         if (rightVisible) {
-            tv_setting_right.text = rightText
+            binding.tvSettingRight.text = rightText
         }
 
         refreshTheme()
@@ -60,7 +60,7 @@ class SettingItem : ConstraintLayout {
     }
 
     fun refreshTheme() {
-        tv_setting_title.setTextColor(ThemeUtil.darkText)
+        binding.tvSettingTitle.setTextColor(ThemeUtil.darkText)
         val cornerRadius = Utils.dp2px(18).toFloat()
         when {
             isGroupFirst -> {
@@ -76,11 +76,11 @@ class SettingItem : ConstraintLayout {
     }
 
     fun changeTitle(title: String) {
-        tv_setting_title.text = title
+        binding.tvSettingTitle.text = title
     }
 
     fun setRight(msg: String) {
-        tv_setting_right.text = msg
-        tv_setting_right.setTextColor(Color.RED)
+        binding.tvSettingRight.text = msg
+        binding.tvSettingRight.setTextColor(Color.RED)
     }
 }

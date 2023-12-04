@@ -36,6 +36,9 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.viewmodel.FireViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * compose
+ */
 class PortalListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,26 +6,28 @@ import android.text.TextWatcher
 import android.view.Menu
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
+import info.free.scp.databinding.ActivityDraftEditBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_draft_edit.*
 import org.jetbrains.anko.toast
 
 class DraftEditActivity : BaseActivity() {
     lateinit var draft: DraftModel
     var draftDao = AppInfoDatabase.getInstance().draftDao()
+    private lateinit var binding: ActivityDraftEditBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_draft_edit)
+        binding = ActivityDraftEditBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        baseToolbar = draft_toolbar
+        baseToolbar = binding.draftToolbar
         supportActionBar?.setTitle(R.string.draft_list)
 
-        draft_toolbar?.inflateMenu(R.menu.menu_draft_edit)
-        draft_toolbar?.setOnMenuItemClickListener {
-            when(it.itemId) {
+        binding.draftToolbar?.inflateMenu(R.menu.menu_draft_edit)
+        binding.draftToolbar?.setOnMenuItemClickListener {
+            when (it.itemId) {
                 R.id.save_draft -> {
                     draft.lastModifyTime = System.currentTimeMillis()
                     draftDao.save(draft)
@@ -41,20 +43,21 @@ class DraftEditActivity : BaseActivity() {
             draftDao.getDraft(draftId)
         } else {
             DraftModel(draftDao.getDraftCount() + 1, System.currentTimeMillis(),
-                    PreferenceUtil.getDraftTitle(), PreferenceUtil.getDraftContent())
+                PreferenceUtil.getDraftTitle(), PreferenceUtil.getDraftContent()
+            )
         }
         PreferenceUtil.saveDraftContent("")
         PreferenceUtil.saveDraftTitle("")
-        draft_toolbar?.setNavigationOnClickListener {
+        binding.draftToolbar?.setNavigationOnClickListener {
             draft.lastModifyTime = System.currentTimeMillis()
             draftDao.save(draft)
             finish()
         }
 
-        et_title.editableText.append(draft.title)
-        et_content.editableText.append(draft.content)
+        binding.etTitle.editableText.append(draft.title)
+        binding.etContent.editableText.append(draft.content)
 
-        et_title.addTextChangedListener(object : TextWatcher {
+        binding.etTitle.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -62,11 +65,11 @@ class DraftEditActivity : BaseActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                draft.title = et_title.editableText.toString()
+                draft.title = binding.etTitle.editableText.toString()
             }
         })
 
-        et_content.addTextChangedListener(object : TextWatcher {
+        binding.etContent.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
             }
 
@@ -74,7 +77,7 @@ class DraftEditActivity : BaseActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                draft.content = et_content.editableText.toString()
+                draft.content = binding.etContent.editableText.toString()
             }
         })
     }

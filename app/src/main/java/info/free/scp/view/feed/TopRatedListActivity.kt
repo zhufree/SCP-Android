@@ -7,15 +7,16 @@ import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
 import info.free.scp.SCPConstants.TOP_RATED_TALES
 import info.free.scp.SCPConstants.TOP_RATED_WANDERS
+import info.free.scp.databinding.ActivityTopRatedBinding
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_top_rated_list.*
 
 class TopRatedListActivity : BaseActivity() {
-
+    private lateinit var binding: ActivityTopRatedBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_top_rated_list)
-        baseToolbar = top_rated_toolbar
+        binding = ActivityTopRatedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        baseToolbar = binding.topRatedToolbar
         val feedType = intent?.getIntExtra("feedType", 0) ?: 0
         val titleResId = when (feedType) {
             TOP_RATED_ALL -> R.string.top_rated_all

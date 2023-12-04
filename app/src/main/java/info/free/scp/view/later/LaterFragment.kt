@@ -16,6 +16,8 @@ import info
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.databinding.FragmentLaterBinding
+import info.free.scp.databinding.LayoutDialogInputLargeBinding
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.EventUtil
@@ -23,8 +25,6 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
-import kotlinx.android.synthetic.main.fragment_later.*
-import kotlinx.android.synthetic.main.layout_dialog_input_large.view.*
 import org.jetbrains.anko.support.v4.alert
 import toast
 
@@ -40,10 +40,15 @@ class LaterFragment : BaseFragment() {
     var fragmentList = arrayListOf<BaseFragment>()
     private val recordListFragment = RecordListFragment.newInstance(LATER_TYPE)
     private val likeListFragment = LikeBoxListFragment.newInstance()
+    private var _binding: FragmentLaterBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_later, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLaterBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,13 +58,16 @@ class LaterFragment : BaseFragment() {
         val titleList = arrayListOf("待读", "收藏夹")
         val laterPagerAdapter =
             this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
-        vp_later?.adapter = laterPagerAdapter
-        TabLayoutMediator(tab_later, vp_later) { tab, position ->
+        binding.vpLater.adapter = laterPagerAdapter
+        TabLayoutMediator(binding.tabLater, binding.vpLater) { tab, position ->
             tab.text = titleList[position]
         }.attach()
-        fab_import?.setOnClickListener {
+        binding.fabImport.setOnClickListener {
             if (!PreferenceUtil.getShownReadSuggest()) {
-                alert("要不要访问大佬们整理的待读列表（可以复制列表后点击此按钮导入）", "不知道读什么？") {
+                alert(
+                    "要不要访问大佬们整理的待读列表（可以复制列表后点击此按钮导入）",
+                    "不知道读什么？"
+                ) {
                     positiveButton("带我去！") {
                         val updateIntent = Intent()
                         updateIntent.action = "android.intent.action.VIEW"
@@ -91,9 +99,9 @@ class LaterFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        tab_later?.background = ColorDrawable(ThemeUtil.itemBg)
-        tab_later?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
-        tab_later?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+        binding.tabLater?.background = ColorDrawable(ThemeUtil.itemBg)
+        binding.tabLater?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+        binding.tabLater?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
         fragmentList.forEach { it.refreshTheme() }
     }
 
@@ -104,20 +112,21 @@ class LaterFragment : BaseFragment() {
     }
 
     private fun showInputListDialog() {
-        val inputView = LayoutInflater.from(context)
-                .inflate(R.layout.layout_dialog_input_large, null)
+        val binding = LayoutDialogInputLargeBinding.inflate(layoutInflater)
         val inputDialog = AlertDialog.Builder(context)
-                .setTitle(R.string.menu_import_read_list)
-                .setMessage("导入的文章标题用中英文逗号/中英文分号/换行分隔均可（但需保持统一），有数字即可识别，" +
+            .setTitle(R.string.menu_import_read_list)
+            .setMessage(
+                "导入的文章标题用中英文逗号/中英文分号/换行分隔均可（但需保持统一），有数字即可识别，" +
                         "默认为SCP文档，其他类型文档标题内需要包含cn，j等关键词作为区分（大小写均可），" +
-                        "标题格式不规则的文档建议使用搜索功能手动添加。如果导入出错请加群向开发者反馈，谢谢。")
-                .setView(inputView)
-                .setPositiveButton("OK") { _, _ -> }
-                .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                .create()
+                        "标题格式不规则的文档建议使用搜索功能手动添加。如果导入出错请加群向开发者反馈，谢谢。"
+            )
+            .setView(binding.root)
+            .setPositiveButton("OK") { _, _ -> }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
         inputDialog.show()
         inputDialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener {
-            val inputString = inputView.et_import.text.toString()
+            val inputString = binding.etImport.text.toString()
             splitReadList(inputString)
             inputDialog.dismiss()
             EventUtil.onEvent(context, EventUtil.importReadList)

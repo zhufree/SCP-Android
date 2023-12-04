@@ -5,9 +5,9 @@ import android.view.Menu
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.databinding.ActivityLikeBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_like.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.selector
 
@@ -15,6 +15,7 @@ import org.jetbrains.anko.selector
  * 一个收藏夹点开的收藏列表
  */
 class LikeListActivity : BaseActivity() {
+    private lateinit var binding: ActivityLikeBinding
     val orderedList = emptyList<ScpLikeModel>().toMutableList()
     val reverseList = emptyList<ScpLikeModel>().toMutableList()
     val likeList = emptyList<ScpLikeModel>().toMutableList()
@@ -34,21 +35,21 @@ class LikeListActivity : BaseActivity() {
             adapter.notifyDataSetChanged()
         }
     private val viewModel by lazy {
-        ViewModelProvider(this)
-                .get(LaterViewModel::class.java)
+        ViewModelProvider(this)[LaterViewModel::class.java]
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_like)
+        binding = ActivityLikeBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val boxId = intent?.getIntExtra("box_id", 0) ?: 0
         val boxName = intent?.getStringExtra("box_name") ?: "收藏列表"
 
-        baseToolbar = like_toolbar
+        baseToolbar = binding.likeToolbar
         supportActionBar?.title = boxName
-        like_toolbar?.inflateMenu(R.menu.category_menu)
-        like_toolbar?.setOnMenuItemClickListener {
+        binding.likeToolbar?.inflateMenu(R.menu.category_menu)
+        binding.likeToolbar?.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.reverse -> {
                     orderType = if (orderType == 0) 1 else 0
@@ -64,7 +65,7 @@ class LikeListActivity : BaseActivity() {
         reverseList.addAll(orderedList.sortedBy { it.title })
         likeList.addAll(orderedList)
 
-        rv_like?.adapter = adapter
+        binding.rvLike?.adapter = adapter
         adapter.submitList(likeList)
 
         adapter.onLongClick = { pos, item ->

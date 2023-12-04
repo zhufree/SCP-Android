@@ -3,14 +3,15 @@ package info.free.scp.view.widget
 import android.content.Context
 import android.graphics.Color
 import android.util.AttributeSet
+import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.R
-import kotlinx.android.synthetic.main.layout_top_bar.view.*
+import info.free.scp.databinding.LayoutTopBarBinding
 
 
 class TopBar : ConstraintLayout {
-
+    private lateinit var binding: LayoutTopBarBinding
     var title = ""
     var titleTextSize = 16f
     var titleTextColor = Color.BLACK
@@ -27,8 +28,7 @@ class TopBar : ConstraintLayout {
 
 
     private fun initView(context: Context) {
-        inflate(context, R.layout.layout_top_bar, this)
-
+        binding = LayoutTopBarBinding.inflate(LayoutInflater.from(context))
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {
@@ -40,16 +40,20 @@ class TopBar : ConstraintLayout {
         rightVisible = ta.getBoolean(R.styleable.TopBar_rightVisible, false)
         title = ta.getString(R.styleable.TopBar_topbarTitle) ?: ""
         titleTextSize = ta.getDimension(R.styleable.TopBar_titleTextSize, 16f)
-        titleTextColor = ta.getColor(R.styleable.TopBar_titleTextColor, context.resources.getColor(R.color.colorPrimaryDark))
-        rightIcon = ta.getResourceId(R.styleable.TopBar_rightIcon, R.drawable.baseline_add_white_24dp)
+        titleTextColor = ta.getColor(
+            R.styleable.TopBar_titleTextColor,
+            context.resources.getColor(R.color.colorPrimaryDark)
+        )
+        rightIcon =
+            ta.getResourceId(R.styleable.TopBar_rightIcon, R.drawable.baseline_add_white_24dp)
 
         ta.recycle()
 
-        tv_top_title.text = title
-        iv_left_icon.visibility = if (leftVisible) View.VISIBLE else View.GONE
-        iv_right_icon.visibility = if (rightVisible) View.VISIBLE else View.GONE
-        tv_top_title.textSize = titleTextSize
-        tv_top_title.setTextColor(titleTextColor)
-        iv_right_icon.setImageResource(rightIcon)
+        binding.tvTopTitle.text = title
+        binding.ivLeftIcon.visibility = if (leftVisible) View.VISIBLE else View.GONE
+        binding.ivRightIcon.visibility = if (rightVisible) View.VISIBLE else View.GONE
+        binding.tvTopTitle.textSize = titleTextSize
+        binding.tvTopTitle.setTextColor(titleTextColor)
+        binding.ivRightIcon.setImageResource(rightIcon)
     }
 }

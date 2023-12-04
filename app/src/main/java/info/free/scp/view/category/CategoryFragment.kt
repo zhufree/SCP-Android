@@ -12,10 +12,8 @@ import info.free.scp.SCPConstants.Entry.INTERNATIONAL_DOC
 import info.free.scp.SCPConstants.ScpType.SAVE_ART
 import info.free.scp.SCPConstants.ScpType.SAVE_GOI
 import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
-import info.free.scp.util.PreferenceUtil
+import info.free.scp.databinding.FragmentCategoryBinding
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.activity_group_list.*
-import kotlinx.android.synthetic.main.fragment_category.*
 
 /**
  * 二级目录，点进去还有一层目录
@@ -23,9 +21,16 @@ import kotlinx.android.synthetic.main.fragment_category.*
 class CategoryFragment : BaseFragment() {
     private var entryType = -1
     private var categoryAdapter: CategoryAdapter? = null
+    private var _binding: FragmentCategoryBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_category, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentCategoryBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun getSaveType(): Int {
@@ -57,7 +62,7 @@ class CategoryFragment : BaseFragment() {
             }
         }
         categoryAdapter = CategoryAdapter(getSaveType())
-        rv_category_list.adapter = categoryAdapter
+        binding.rvCategoryList.adapter = categoryAdapter
         categoryAdapter?.submitList(titleList)
 
     }

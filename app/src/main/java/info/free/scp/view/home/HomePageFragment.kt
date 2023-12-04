@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.databinding.FragmentHomePageBinding
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
@@ -19,7 +20,6 @@ import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
 import info.free.scp.view.tag.TagCloudActivity
 import info.free.scp.view.widget.FeedArticleListItem
-import kotlinx.android.synthetic.main.fragment_home_page.*
 import org.jetbrains.anko.support.v4.dip
 import org.jetbrains.anko.support.v4.startActivity
 import toast
@@ -35,23 +35,26 @@ class HomePageFragment : BaseFragment() {
         ViewModelProvider(this)[FeedListViewModel::class.java]
     }
     private val feedItemList = mutableListOf<FeedArticleListItem>()
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_page, container, false)
+    private var _binding: FragmentHomePageBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentHomePageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         // 下版本用banner代替
-        tv_notice?.text = PreferenceUtil.getNotice()
+        binding.tvNotice.text = PreferenceUtil.getNotice()
         if (!PreferenceUtil.getShowNotice()) {
-            cv_notice.visibility = GONE
+            binding.cvNotice.visibility = GONE
         }
-        iv_remove_notice?.setOnClickListener {
+        binding.ivRemoveNotice.setOnClickListener {
             PreferenceUtil.setShowNotice(false)
-            cv_notice.visibility = GONE
+            binding.cvNotice.visibility = GONE
             toast("公告已隐藏，可在app使用说明中查看")
         }
 
@@ -72,44 +75,45 @@ class HomePageFragment : BaseFragment() {
 //                .setIndicatorGravity(RIGHT)
 //                .setIndicatorWidth(dip(8), dip(8))
 //                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
-        ei_scp?.setOnClickListener {
+        binding.eiScp.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.SCP_DOC)
         }
-        ei_scp_cn?.setOnClickListener {
+        binding.eiScpCn.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.SCP_CN_DOC)
         }
-        ei_scp_story?.setOnClickListener {
+        binding.eiScpStory.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.STORY_DOC)
         }
-        ei_scp_wander?.setOnClickListener {
+        binding.eiScpWander.setOnClickListener {
             goToGroupPage(SCPConstants.Entry.WANDER_DOC)
         }
 
-        btn_more_recent?.background = ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
-        btn_more_recent_translate?.background =
+        binding.btnMoreRecent.background =
+            ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
+        binding.btnMoreRecentTranslate.background =
             ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
 
-        arrayOf(btn_more_recent, btn_more_recent_translate).forEach {
+        arrayOf(binding.btnMoreRecent, binding.btnMoreRecentTranslate).forEach {
             it.setOnClickListener {
                 startActivity<FeedActivity>()
             }
         }
-        btn_top_page_entry?.setOnClickListener {
+        binding.btnTopPageEntry?.setOnClickListener {
             startActivity<TopRatedActivity>()
         }
-        btn_all_tags?.setOnClickListener {
+        binding.btnAllTags?.setOnClickListener {
             startActivity<TagCloudActivity>()
         }
 
         feedVm.getFeedIndex().observe(this.viewLifecycleOwner, Observer { fi ->
             fi.latestCreate.forEach {
                 val newFeedItem = FeedArticleListItem(context!!, it)
-                ll_latest_cn.addView(newFeedItem)
+                binding.llLatestCn.addView(newFeedItem)
                 feedItemList.add(newFeedItem)
             }
             fi.latestTranslate.forEach {
                 val newFeedItem = FeedArticleListItem(context!!, it)
-                ll_latest_translate.addView(newFeedItem)
+                binding.llLatestTranslate.addView(newFeedItem)
                 feedItemList.add(newFeedItem)
             }
         })
@@ -122,20 +126,25 @@ class HomePageFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        cl_home_page_container?.setBackgroundColor(ThemeUtil.containerBg)
-        arrayOf(gl_entry, cl_recent_list, cl_recent_translate_list).forEach {
+        binding.clHomePageContainer.setBackgroundColor(ThemeUtil.containerBg)
+        arrayOf(binding.glEntry, binding.clRecentList, binding.clRecentTranslateList).forEach {
             context?.let { c ->
-                it?.background = ThemeUtil.getDrawable(c, R.drawable.bg_entry_box)
+                it.background = ThemeUtil.getDrawable(c, R.drawable.bg_entry_box)
             }
         }
-        arrayOf(tv_recent_header, tv_recent_translate_header).forEach {
-            it?.setTextColor(ThemeUtil.darkText)
+        arrayOf(binding.tvRecentHeader, binding.tvRecentTranslateHeader).forEach {
+            it.setTextColor(ThemeUtil.darkText)
         }
-        arrayOf(ei_scp, ei_scp_cn, ei_scp_story, ei_scp_wander).forEach { it?.refreshTheme() }
+        arrayOf(
+            binding.eiScp,
+            binding.eiScpCn,
+            binding.eiScpStory,
+            binding.eiScpWander
+        ).forEach { it?.refreshTheme() }
         feedItemList.forEach { it.refreshTheme() }
-        cv_notice?.setBackgroundColor(ThemeUtil.itemBg)
-        tv_notice?.setTextColor(ThemeUtil.darkText)
-        ei_scp?.refreshTheme()
+        binding.cvNotice?.setBackgroundColor(ThemeUtil.itemBg)
+        binding.tvNotice?.setTextColor(ThemeUtil.darkText)
+        binding.eiScp?.refreshTheme()
     }
 
 

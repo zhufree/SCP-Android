@@ -1,24 +1,19 @@
 package info.free.scp.view.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.SearchType.CONTENT
-import info.free.scp.SCPConstants.SearchType.TAG
 import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.databinding.FragmentSearchTabBinding
 import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.user.DownloadActivity
-import kotlinx.android.synthetic.main.fragment_search_tab.*
-import kotlinx.coroutines.delay
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.support.v4.startActivity
 
@@ -70,15 +65,15 @@ class SearchResultFragment : BaseFragment() {
         super.onResume()
         if ((searchType == CONTENT) && !searched) {
             if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
-                pb_loading.visibility = VISIBLE
+                binding.pbLoading.visibility = VISIBLE
                 doAsync {
                     viewModel.searchScp(searchType, "%$keyword%")
                     searched = true
                 }
             } else {
-                tv_search_notice.visibility = VISIBLE
-                btn_go_download.visibility = VISIBLE
-                btn_go_download.setOnClickListener {
+                binding.tvSearchNotice.visibility = VISIBLE
+                binding.btnGoDownload.visibility = VISIBLE
+                binding.btnGoDownload.setOnClickListener {
                     startActivity<DownloadActivity>()
                 }
             }
@@ -93,7 +88,7 @@ class SearchResultFragment : BaseFragment() {
             }
         } else if (searchType == CONTENT) {
             viewModel.contentResult.observe(viewLifecycleOwner) {
-                pb_loading.visibility = GONE
+                binding.pbLoading.visibility = GONE
                 doAsync {
                     adapter.submitList(it)
                 }

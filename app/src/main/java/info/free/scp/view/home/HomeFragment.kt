@@ -10,14 +10,11 @@ import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import info.free.scp.R
 import info.free.scp.SCPConstants
+import info.free.scp.databinding.FragmentHomeBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryFragment
 import info.free.scp.view.category.ScpListFragment
-import kotlinx.android.synthetic.main.fragment_feed.*
-import kotlinx.android.synthetic.main.fragment_home.*
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.backgroundDrawable
 
 
 /**
@@ -28,10 +25,14 @@ import org.jetbrains.anko.backgroundDrawable
  */
 class HomeFragment : BaseFragment() {
     var fragmentList = arrayListOf<BaseFragment>()
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    private var _binding: FragmentHomeBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,20 +53,20 @@ class HomeFragment : BaseFragment() {
         ) // 单页放滑动分页
         val homePagerAdapter =
             this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
-        vp_home?.adapter = homePagerAdapter
-        vp_home?.offscreenPageLimit = 3
-        TabLayoutMediator(tab_home, vp_home) { tab, position ->
+        binding.vpHome.adapter = homePagerAdapter
+        binding.vpHome.offscreenPageLimit = 3
+        TabLayoutMediator(binding.tabHome, binding.vpHome) { tab, position ->
             tab.text = titleList[position]
         }.attach()
-        tab_home?.tabMode = TabLayout.MODE_SCROLLABLE
+        binding.tabHome.tabMode = TabLayout.MODE_SCROLLABLE
     }
 
 
     override fun refreshTheme() {
         super.refreshTheme()
-        tab_home?.background = ColorDrawable(ThemeUtil.itemBg)
-        tab_home?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
-        tab_home?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+        binding.tabHome.background = ColorDrawable(ThemeUtil.itemBg)
+        binding.tabHome.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+        binding.tabHome.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
         fragmentList.forEach { it.refreshTheme() }
     }
 

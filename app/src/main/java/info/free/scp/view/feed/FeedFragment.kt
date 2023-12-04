@@ -10,9 +10,9 @@ import com.google.android.material.tabs.TabLayoutMediator
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATEST_CREATED
 import info.free.scp.SCPConstants.LATEST_TRANSLATED
+import info.free.scp.databinding.FragmentFeedBinding
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
-import kotlinx.android.synthetic.main.fragment_feed.*
 
 
 /**
@@ -23,14 +23,16 @@ import kotlinx.android.synthetic.main.fragment_feed.*
  */
 class FeedFragment : BaseFragment() {
 
-    //    private var mParam1: String? = null
-    //    private var mParam2: String? = null
     var fragmentList = arrayListOf<BaseFragment>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_feed, container, false)
+    private var _binding: FragmentFeedBinding? = null
+    private val binding get() = _binding!!
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,8 +44,8 @@ class FeedFragment : BaseFragment() {
         val titleList = arrayListOf("最近原创", "最近翻译")
         val feedPagerAdapter =
             this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
-        vp_feed?.adapter = feedPagerAdapter
-        TabLayoutMediator(tab_feed, vp_feed) { tab, position ->
+        binding.vpFeed.adapter = feedPagerAdapter
+        TabLayoutMediator(binding.tabFeed, binding.vpFeed) { tab, position ->
             tab.text = titleList[position]
         }.attach()
     }
@@ -54,19 +56,6 @@ class FeedFragment : BaseFragment() {
     }
 
     companion object {
-        // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-//        private val LISTENER = "listener"
-//        private val ARG_PARAM2 = "param2"
-
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-//        fun newInstance(param1: String, param2: String): HomeFragment {
         fun newInstance(): FeedFragment {
             val fragment = FeedFragment()
 //            val args = Bundle()

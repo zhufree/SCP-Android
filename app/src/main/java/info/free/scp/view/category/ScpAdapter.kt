@@ -14,16 +14,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.ScpApplication
 import info.free.scp.bean.*
 import info.free.scp.databinding.ItemDocBinding
+import info.free.scp.databinding.LayoutBottomSheetBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
 import org.jetbrains.anko.*
 
 
@@ -75,22 +74,22 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
 
     private var laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
 
-    private fun refreshOperationStatus(scp: ScpModel, sheetView: View) {
+    private fun refreshOperationStatus(scp: ScpModel, sheetView: LayoutBottomSheetBinding) {
         if (likeReadDao.getHasReadByLink(scp.link) == true) {
-            sheetView.tv_add_read.text = "取消已读"
-            sheetView.iv_add_read_icon.imageResource = R.drawable.baseline_article_black_24dp
+            sheetView.tvAddRead.text = "取消已读"
+            sheetView.ivAddReadIcon.imageResource = R.drawable.baseline_article_black_24dp
         } else {
-            sheetView.tv_add_read.text = "标记已读"
-            sheetView.iv_add_read_icon.imageResource = R.drawable.baseline_fact_check_black_24dp
+            sheetView.tvAddRead.text = "标记已读"
+            sheetView.ivAddReadIcon.imageResource = R.drawable.baseline_fact_check_black_24dp
         }
         laterViewList = ScpDataHelper.getInstance().getViewListByTypeAndOrder(LATER_TYPE, 0)
         val isInLaterViewList = scp.link in laterViewList.map { it.link }
         if (isInLaterViewList) {
-            sheetView.tv_add_later.text = "取消待读"
-            sheetView.iv_add_later_icon.imageResource = R.drawable.baseline_task_alt_blue_300_24dp
+            sheetView.tvAddLater.text = "取消待读"
+            sheetView.ivAddLaterIcon.imageResource = R.drawable.baseline_task_alt_blue_300_24dp
         } else {
-            sheetView.tv_add_later.text = "添加待读"
-            sheetView.iv_add_later_icon.imageResource = R.drawable.baseline_add_task_blue_300_24dp
+            sheetView.tvAddLater.text = "添加待读"
+            sheetView.ivAddLaterIcon.imageResource = R.drawable.baseline_add_task_blue_300_24dp
         }
     }
 
@@ -98,22 +97,23 @@ class ScpAdapter : ListAdapter<ScpModel, ScpAdapter.ScpHolder>(ScpDiffCallback()
     private fun createOnMoreClickListener(scp: ScpModel, context: Context): View.OnClickListener {
         return View.OnClickListener {
             val mBottomSheetDialog = BottomSheetDialog(context)
-            val sheetView = context.layoutInflater.inflate(R.layout.layout_bottom_sheet, null)
-            mBottomSheetDialog.setContentView(sheetView)
+            val sheetView = LayoutBottomSheetBinding.inflate(context.layoutInflater)
+            mBottomSheetDialog.setContentView(sheetView.root)
             mBottomSheetDialog.show()
             refreshOperationStatus(scp, sheetView)
 
-            sheetView.iv_add_read_icon.setOnClickListener {
+            sheetView.ivAddReadIcon.setOnClickListener {
                 var scpInfo = likeReadDao.getInfoByLink(scp.link)
                 if (scpInfo == null) {
-                    scpInfo = ScpLikeModel(scp.link, scp.title, like = false, hasRead = false, boxId = 0)
+                    scpInfo =
+                        ScpLikeModel(scp.link, scp.title, like = false, hasRead = false, boxId = 0)
                 }
                 scpInfo.hasRead = !scpInfo.hasRead
                 likeReadDao.save(scpInfo)
                 refreshOperationStatus(scp, sheetView)
             }
             var isInLaterViewList = scp.link in laterViewList.map { it.link }
-            sheetView.iv_add_later_icon.setOnClickListener {
+            sheetView.ivAddLaterIcon.setOnClickListener {
                 if (isInLaterViewList) {
                     AppInfoDatabase.getInstance().readRecordDao().delete(scp.link, LATER_TYPE)
                     isInLaterViewList = false

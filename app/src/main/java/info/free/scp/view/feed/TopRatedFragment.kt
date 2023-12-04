@@ -6,16 +6,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import info.free.scp.R
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
 import info.free.scp.SCPConstants.TOP_RATED_TALES
 import info.free.scp.SCPConstants.TOP_RATED_WANDERS
+import info.free.scp.databinding.FragmentTopRatedBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_top_rated.*
 import org.jetbrains.anko.support.v4.startActivity
 
 /**
@@ -24,61 +22,56 @@ import org.jetbrains.anko.support.v4.startActivity
  * create an instance of this fragment.
  */
 class TopRatedFragment : BaseFragment() {
-
+    private var _binding: FragmentTopRatedBinding? = null
+    private val binding get() = _binding!!
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_top_rated, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentTopRatedBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        cv_top_rated_all.setOnClickListener {
+        binding.cvTopRatedAll.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_ALL)
         }
-        cv_top_rated_scp?.setOnClickListener {
+        binding.cvTopRatedScp.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_SCP)
         }
-        cv_top_rated_tales?.setOnClickListener {
+        binding.cvTopRatedTales.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_TALES)
         }
-        cv_top_rated_goi?.setOnClickListener {
+        binding.cvTopRatedGoi.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_GOI)
         }
-        cv_top_rated_wanderer?.setOnClickListener {
+        binding.cvTopRatedWanderer.setOnClickListener {
             startActivity<TopRatedListActivity>("feedType" to TOP_RATED_WANDERS)
         }
     }
 
     override fun refreshTheme() {
         super.refreshTheme()
-        cv_top_rated_goi?.setBackgroundColor(ThemeUtil.containerBg)
-        cv_top_rated_tales?.setBackgroundColor(ThemeUtil.containerBg)
-        cv_top_rated_scp?.setBackgroundColor(ThemeUtil.containerBg)
-        cv_top_rated_all?.setBackgroundColor(ThemeUtil.containerBg)
-        cv_top_rated_wanderer?.setBackgroundColor(ThemeUtil.containerBg)
+        binding.cvTopRatedGoi.setBackgroundColor(ThemeUtil.containerBg)
+        binding.cvTopRatedTales.setBackgroundColor(ThemeUtil.containerBg)
+        binding.cvTopRatedScp.setBackgroundColor(ThemeUtil.containerBg)
+        binding.cvTopRatedAll.setBackgroundColor(ThemeUtil.containerBg)
+        binding.cvTopRatedWanderer.setBackgroundColor(ThemeUtil.containerBg)
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment TopRatedFragment.
-         */
         @JvmStatic
         fun newInstance() =
-                TopRatedFragment().apply {
-                    arguments = Bundle().apply {
-                    }
+            TopRatedFragment().apply {
+                arguments = Bundle().apply {
                 }
+            }
     }
 }

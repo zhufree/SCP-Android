@@ -4,6 +4,7 @@ import android.Manifest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import info.free.scp.databinding.ActivityMainBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.FileUtil
@@ -14,7 +15,6 @@ import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.HomeFragment
 import info.free.scp.view.later.LaterFragment
 import info.free.scp.view.user.UserFragment
-import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.info
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -25,6 +25,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
     private val homeFragment = HomeFragment.newInstance()
     private val laterFragment = LaterFragment.newInstance()
     private val userFragment = UserFragment.newInstance()
+    private lateinit var binding: ActivityMainBinding
 
 
     @AfterPermissionGranted(SCPConstants.RequestCode.REQUEST_FILE_PERMISSION)
@@ -84,7 +85,8 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         val transaction = supportFragmentManager.beginTransaction()
         currentFragment?.let {
             if (it.isAdded) {
@@ -97,12 +99,12 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
             currentFragment = homeFragment
         }
         transaction.commit()
-        navigation.setBackgroundColor(ThemeUtil.containerBg)
+        binding.navigation.setBackgroundColor(ThemeUtil.containerBg)
         UpdateManager.getInstance(this).checkAppData()
 //        FileUtil.copyCategoryDb(false)
         FileUtil.checkDetailDb()
 
-        navigation?.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        binding.navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         requireFilePermission()
 
         ScpDatabase.getNewInstance()
@@ -117,7 +119,7 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        navigation.setBackgroundColor(ThemeUtil.containerBg)
+        binding.navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
         userFragment.refreshTheme()
         laterFragment.refreshTheme()

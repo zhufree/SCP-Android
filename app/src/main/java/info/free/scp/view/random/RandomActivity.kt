@@ -2,24 +2,23 @@ package info.free.scp.view.random
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.*
 import info.free.scp.R
+import info.free.scp.databinding.ActivityRandomBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.category.GroupViewModel
-import kotlinx.android.synthetic.main.activity_random.*
 import org.jetbrains.anko.dip
 
 class RandomActivity : BaseActivity() {
+    private lateinit var binding: ActivityRandomBinding
     val adapter: RandomAdapter by lazy {
         RandomAdapter()
     }
     private val vm: GroupViewModel by lazy {
-        ViewModelProvider(this)
-                .get(GroupViewModel::class.java)
+        ViewModelProvider(this)[GroupViewModel::class.java]
     }
     private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
     private val randomRange: String
@@ -32,37 +31,38 @@ class RandomActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_random)
+        binding = ActivityRandomBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         randomType = intent.getIntExtra("random_type", 0)
-        baseToolbar = random_toolbar
+        baseToolbar = binding.randomToolbar
         supportActionBar?.title = intent.getStringExtra("random_title") ?: "随机"
-        rv_random_list.adapter = adapter
-        rv_random_list.addOnScrollListener(object : OnScrollListener() {
+        binding.rvRandomList.adapter = adapter
+        binding.rvRandomList.addOnScrollListener(object : OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (newState == SCROLL_STATE_SETTLING) {
-                    btn_refresh_random.visibility = VISIBLE
-                    btn_add_more_random.visibility = VISIBLE
+                    binding.btnRefreshRandom.visibility = VISIBLE
+                    binding.btnAddMoreRandom.visibility = VISIBLE
                 }
                 if (newState == SCROLL_STATE_DRAGGING) {
-                    btn_refresh_random.visibility = GONE
-                    btn_add_more_random.visibility = GONE
+                    binding.btnRefreshRandom.visibility = GONE
+                    binding.btnAddMoreRandom.visibility = GONE
                 }
             }
         })
 
-        btn_refresh_random.background = ThemeUtil.customShape(
+        binding.btnRefreshRandom.background = ThemeUtil.customShape(
             Color.parseColor("#4A90E2"),
             0, 0, dip(32)
         )
-        btn_add_more_random.background = ThemeUtil.customShape(
+        binding.btnAddMoreRandom.background = ThemeUtil.customShape(
             Color.parseColor("#4A90E2"),
             0, 0, dip(32)
         )
-        btn_refresh_random.setOnClickListener {
+        binding.btnRefreshRandom.setOnClickListener {
             vm.refreshRandomList(randomRange)
         }
-        btn_add_more_random.setOnClickListener {
+        binding.btnAddMoreRandom.setOnClickListener {
             vm.refreshRandomList(randomRange, true)
         }
         vm.getRandomList().observe(this) { list ->

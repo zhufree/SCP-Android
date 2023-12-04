@@ -5,7 +5,6 @@ import android.graphics.drawable.BitmapDrawable
 import info.free.scp.R
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_donation_qr.*
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -14,6 +13,7 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import info.free.scp.databinding.ActivityDonationQrBinding
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import org.jetbrains.anko.*
@@ -21,28 +21,30 @@ import org.jetbrains.anko.*
 
 class DonationQrActivity : BaseActivity() {
     private var payType = 0 // 0 wechat 1 zhi
-
+    private lateinit var binding: ActivityDonationQrBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        EventUtil.onEvent(this, EventUtil.clickAboutMe)
-        setContentView(R.layout.activity_donation_qr)
+        binding = ActivityDonationQrBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        baseToolbar = about_me_toolbar
-        tv_donation_wechat?.setOnClickListener {
+        baseToolbar = binding.aboutMeToolbar
+        binding.tvDonationWechat.setOnClickListener {
             payType = 0
-            iv_qr?.setImageResource(R.drawable.img_donation_wechat)
+            binding.ivQr.setImageResource(R.drawable.img_donation_wechat)
         }
-        tv_donation_alipay?.setOnClickListener {
+        binding.tvDonationAlipay.setOnClickListener {
             payType = 1
-            iv_qr?.setImageResource(R.drawable.img_donation_alipay)
+            binding.ivQr.setImageResource(R.drawable.img_donation_alipay)
         }
 
-        btn_donate?.setOnClickListener {
+        binding.btnDonate.setOnClickListener {
             EventUtil.onEvent(this, EventUtil.clickDonation)
             PreferenceUtil.addPoints(2)
-            Utils.saveBitmapFile((iv_qr.drawable as BitmapDrawable).bitmap, "scp_donation")
-            MediaScannerConnection.scanFile(this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
-                    null, null)
+            Utils.saveBitmapFile((binding.ivQr.drawable as BitmapDrawable).bitmap, "scp_donation")
+            MediaScannerConnection.scanFile(
+                this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
+                null, null
+            )
             longToast(R.string.jump_notice)
             Handler().postDelayed({
                 if (payType == 0) startWechatScan(this) else openAlipayScan(this)

@@ -31,6 +31,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
@@ -175,7 +176,7 @@ class DetailActivity : BaseActivity() {
                 } ?: run {
                     // 数据库没有，加载链接
                     binding.webView.loadUrl(fullUrl)
-                    binding.nsvWebWrapper?.scrollTo(0, 0)
+                    binding.nsvWebWrapper.scrollTo(0, 0)
                 }
             }
         })
@@ -186,7 +187,7 @@ class DetailActivity : BaseActivity() {
         binding.webView.webViewClient = object : WebViewClient() {
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
                 info(requestUrl)
-                info { "onPageshouldOverrideUrlLoading" }
+                info { "onPageShouldOverrideUrlLoading" }
                 if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
                     return false
                 }
@@ -195,6 +196,12 @@ class DetailActivity : BaseActivity() {
                 }
                 if (requestUrl.contains("player.bilibili.com")) {
                     return false
+                }
+                if (requestUrl == "https://www.wikidot.com/default--flow/login__LoginPopupScreen?originSiteId=530812&openerUri=https://scp-wiki-cn.wikidot.com/") {
+                    // login page is not allowed for google play
+                    if (BuildConfig.FLAVOR == "productionGooglePlay") {
+                        return false
+                    }
                 }
 
                 if (onlineMode == 1) {

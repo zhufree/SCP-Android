@@ -134,4 +134,6 @@
     <!--设置页-->
     <string name="font_size_setting">字体大小</string>
     <string name="traditional_setting">繁体简体</string>
+    <!-- tag -->
+    <string name="all_tags">全部标签</string>
 </resources>

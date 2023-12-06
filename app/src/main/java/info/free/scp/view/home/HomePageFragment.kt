@@ -98,10 +98,10 @@ class HomePageFragment : BaseFragment() {
                 startActivity<FeedActivity>()
             }
         }
-        binding.btnTopPageEntry?.setOnClickListener {
+        binding.btnTopPageEntry.setOnClickListener {
             startActivity<TopRatedActivity>()
         }
-        binding.btnAllTags?.setOnClickListener {
+        binding.btnAllTags.setOnClickListener {
             startActivity<TagCloudActivity>()
         }
 
@@ -140,11 +140,11 @@ class HomePageFragment : BaseFragment() {
             binding.eiScpCn,
             binding.eiScpStory,
             binding.eiScpWander
-        ).forEach { it?.refreshTheme() }
+        ).forEach { it.refreshTheme() }
         feedItemList.forEach { it.refreshTheme() }
-        binding.cvNotice?.setBackgroundColor(ThemeUtil.itemBg)
-        binding.tvNotice?.setTextColor(ThemeUtil.darkText)
-        binding.eiScp?.refreshTheme()
+        binding.cvNotice.setBackgroundColor(ThemeUtil.itemBg)
+        binding.tvNotice.setTextColor(ThemeUtil.darkText)
+        binding.eiScp.refreshTheme()
     }
 
 

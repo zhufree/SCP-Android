@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
@@ -17,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.HISTORY_TYPE
@@ -47,7 +49,7 @@ class UserFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentUserBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -173,7 +175,9 @@ class UserFragment : BaseFragment() {
         binding.stUse.onClick = {
             startActivity<AboutAppActivity>()
         }
-//        btn_donation.visibility = GONE // google play
+        if (BuildConfig.FLAVOR == "productionGooglePlay") {
+            binding.btnDonation.visibility = GONE
+        }
         binding.btnDonation.setOnClickListener {
             startActivity<DonationQrActivity>()
         } // others
@@ -186,7 +190,7 @@ class UserFragment : BaseFragment() {
     private fun setHeadImg() {
         val imgFile = privatePictureDir(this.context!!, "user_head.jpg")
         if (imgFile.exists()) {
-            binding.ivUserHead?.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
+            binding.ivUserHead.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
         }
     }
 
@@ -242,7 +246,7 @@ class UserFragment : BaseFragment() {
         arrayOf(binding.tvHistoryListHead, binding.tvNickname).forEach {
             it.setTextColor(ThemeUtil.darkText)
         }
-        binding.tvJob?.setTextColor(ThemeUtil.mediumText)
+        binding.tvJob.setTextColor(ThemeUtil.mediumText)
         arrayOf(binding.llHistoryContainer, binding.glSettingItem).forEach {
             it.background = ThemeUtil.getDrawable(context!!, R.drawable.bg_entry_box)
         }

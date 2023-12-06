@@ -45,12 +45,15 @@ android {
         checkReleaseBuilds false
         abortOnError false
     }
+    flavorDimensions += 'channel'
     flavorDimensions += "version"
-
     productFlavors {
-        BetaTest {
+        betaTest {
             dimension 'version'
             versionNameSuffix = "-beta"
+        }
+        Production {
+            dimension 'version'
         }
         Default {
             dimension 'channel'

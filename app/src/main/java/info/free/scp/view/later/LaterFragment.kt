@@ -46,7 +46,7 @@ class LaterFragment : BaseFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLaterBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -99,10 +99,12 @@ class LaterFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        binding.tabLater?.background = ColorDrawable(ThemeUtil.itemBg)
-        binding.tabLater?.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
-        binding.tabLater?.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
-        fragmentList.forEach { it.refreshTheme() }
+        if (_binding != null) {
+            binding.tabLater.background = ColorDrawable(ThemeUtil.itemBg)
+            binding.tabLater.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+            binding.tabLater.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+            fragmentList.forEach { it.refreshTheme() }
+        }
     }
 
     companion object {

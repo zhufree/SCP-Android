@@ -19,12 +19,16 @@ class DocGroupItem : ConstraintLayout {
 
     private lateinit var binding: LayoutGroupItemBinding
     constructor(context: Context, title: String) : this(context, null) {
-        binding.tvGroupItemTitle.text = title
+        this.title = title
+        binding.tvGroupItemTitle.text = this.title
     }
 
     private fun initView(context: Context) {
         binding = LayoutGroupItemBinding.inflate(LayoutInflater.from(context))
         background = ThemeUtil.getDrawable(context, R.drawable.bg_entry_box)
+        if (this.title.isNotEmpty()) {
+            binding.tvGroupItemTitle.text = this.title
+        }
     }
 
     fun refreshTheme() {

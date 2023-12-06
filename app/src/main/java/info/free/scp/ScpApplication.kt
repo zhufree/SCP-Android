@@ -9,6 +9,7 @@ import androidx.multidex.MultiDexApplication
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import info.free.scp.PrivateConstants.FIREBASE_URL
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
@@ -25,7 +26,7 @@ class ScpApplication : MultiDexApplication() {
         super.onCreate()
 
         database =
-            Firebase.database("https://scp-android-109f0-default-rtdb.asia-southeast1.firebasedatabase.app").reference
+            Firebase.database(FIREBASE_URL).reference
 
         context = applicationContext
 

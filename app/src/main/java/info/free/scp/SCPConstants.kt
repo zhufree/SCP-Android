@@ -100,11 +100,9 @@ object SCPConstants {
         const val SAVE_OFFSET = 100
     }
 
-    const val BMOB_API_URL = "https://api.bmob.cn/"
     const val SCP_SITE_URL = "http://scp-wiki-cn.wikidot.com"
 
     // https://portal.mcseekeri.top/http/scp-wiki-cn.wikidot.com
-    const val FEED_API_URL = "http://api.zhufree.fun"
 
     // 广播类型
     object BroadCastAction {

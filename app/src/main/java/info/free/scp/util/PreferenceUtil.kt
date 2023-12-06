@@ -3,6 +3,7 @@ package info.free.scp.util
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import info.free.scp.PrivateConstants
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
@@ -80,7 +81,7 @@ object PreferenceUtil {
 
     fun getApiUrl(): String {
         val prefUrl = getStringValue(APP_SP, "api_url")
-        return if (prefUrl.isNotEmpty()) prefUrl else SCPConstants.FEED_API_URL
+        return if (prefUrl.isNotEmpty()) prefUrl else PrivateConstants.FEED_API_URL
     }
 
     fun setShowMeal(show: Boolean) {

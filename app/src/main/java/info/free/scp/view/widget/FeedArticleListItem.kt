@@ -33,7 +33,7 @@ class FeedArticleListItem : ConstraintLayout {
     }
 
     private fun initView(context: Context) {
-        binding = LayoutFeedArticleItemBinding.inflate(LayoutInflater.from(context))
+        binding = LayoutFeedArticleItemBinding.inflate(LayoutInflater.from(context), this)
     }
 
     fun refreshTheme() {

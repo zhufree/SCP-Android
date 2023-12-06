@@ -31,7 +31,7 @@ class SettingItem : ConstraintLayout {
 
 
     private fun initView(context: Context) {
-        binding = LayoutSettingItemBinding.inflate(LayoutInflater.from(context))
+        binding = LayoutSettingItemBinding.inflate(LayoutInflater.from(context), this)
     }
 
     private fun retrieveAttributes(attrs: AttributeSet) {

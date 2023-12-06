@@ -25,11 +25,11 @@ class SearchBar : ConstraintLayout {
     }
 
     private fun initView(context: Context) {
-        binding = LayoutSearchBarBinding.inflate(LayoutInflater.from(context))
-        binding.btnDirect?.setOnClickListener {
+        binding = LayoutSearchBarBinding.inflate(LayoutInflater.from(context), this)
+        binding.btnDirect.setOnClickListener {
             context.startActivity<DirectActivity>()
         }
-        binding.btnRandom?.setOnClickListener {
+        binding.btnRandom.setOnClickListener {
             val randomTypes = listOf("随机全部", "随机SCP", "随机故事", "随机搞笑")
             context.selector("", randomTypes) { _, i ->
                 when (i) {

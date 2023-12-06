@@ -24,7 +24,7 @@ class DocGroupItem : ConstraintLayout {
     }
 
     private fun initView(context: Context) {
-        binding = LayoutGroupItemBinding.inflate(LayoutInflater.from(context))
+        binding = LayoutGroupItemBinding.inflate(LayoutInflater.from(context), this)
         background = ThemeUtil.getDrawable(context, R.drawable.bg_entry_box)
         if (this.title.isNotEmpty()) {
             binding.tvGroupItemTitle.text = this.title

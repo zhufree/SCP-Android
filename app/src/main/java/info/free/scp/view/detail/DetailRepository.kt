@@ -1,5 +1,6 @@
 package info.free.scp.view.detail
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import apiCall
@@ -95,7 +96,6 @@ class DetailRepository {
         val response = apiCall { HttpManager.instance.getComment(link.substring(1)) }
         response?.let {
             executeResponse(response, {
-
             }, {
                 info(response.results.toString())
                 commentList.postValue(response.results)

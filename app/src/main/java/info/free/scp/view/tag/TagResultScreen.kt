@@ -39,35 +39,30 @@ fun TagResultScreen(
     }) { p ->
         Column(
             modifier = Modifier
-                .padding(8.dp),
+                .padding(8.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             scpResult?.let { scpList ->
-                Column(
-                    modifier = Modifier
-                        .padding(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
+                if (scpList.isEmpty()) {
+                    Text(
+                        text = "加载中请稍候",
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colors.onPrimary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                LazyVerticalGrid(
+                    GridCells.Fixed(2),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    if (scpList.isEmpty()) {
-                        Text(
-                            text = "加载中请稍候",
-                            fontSize = 20.sp,
-                            color = MaterialTheme.colors.onPrimary,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    LazyVerticalGrid(
-                        GridCells.Fixed(2),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(scpList) {
-                            TagScpCard(it) { scp ->
-                                navigateToDetail(scp)
-                            }
+                    items(scpList) {
+                        TagScpCard(it) { scp ->
+                            navigateToDetail(scp)
                         }
                     }
                 }
@@ -80,7 +75,6 @@ fun TagResultScreen(
 @Composable
 fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
     val detailDao = DetailDatabase.getInstance()?.detailDao()
-
     Card(
         elevation = 1.dp,
         shape = RoundedCornerShape(6.dp),
@@ -89,21 +83,27 @@ fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
             navigateToDetail(scp.link)
         }
     ) {
-        Text(
-            scp.title,
-            color = MaterialTheme.colors.onPrimary,
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            maxLines = 3,
-            overflow = TextOverflow.Ellipsis
-        )
-        if (detailDao != null) {
+        Column(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        ) {
             Text(
-                text = ("标签：" + detailDao.getTag(scp.link)),
-                color = MaterialTheme.colors.onSecondary,
-                maxLines = 2,
+                scp.title,
+                color = MaterialTheme.colors.onPrimary,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
+            if (detailDao != null) {
+                Text(
+                    text = ("标签：" + detailDao.getTag(scp.link)),
+                    color = MaterialTheme.colors.onSecondary,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }

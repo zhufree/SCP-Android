@@ -243,6 +243,9 @@ class UserFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
+        if (_binding == null) {
+            return
+        }
         arrayOf(binding.tvHistoryListHead, binding.tvNickname).forEach {
             it.setTextColor(ThemeUtil.darkText)
         }

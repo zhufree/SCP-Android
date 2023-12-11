@@ -64,10 +64,12 @@ class HomeFragment : BaseFragment() {
 
     override fun refreshTheme() {
         super.refreshTheme()
-        binding.tabHome.background = ColorDrawable(ThemeUtil.itemBg)
-        binding.tabHome.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
-        binding.tabHome.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
-        fragmentList.forEach { it.refreshTheme() }
+        if (_binding == null) {
+            binding.tabHome.background = ColorDrawable(ThemeUtil.itemBg)
+            binding.tabHome.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
+            binding.tabHome.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
+            fragmentList.forEach { it.refreshTheme() }
+        }
     }
 
 

@@ -45,10 +45,14 @@ class DownloadActivity : BaseActivity() {
                 Utils.openUrl(downloadLinks[i])
             }
         }
+        binding.btnCheckSpider.setOnClickListener {
+            Utils.openUrl("https://gj5i5wsqre.feishu.cn/docx/X8BvdDE5ioFjJDx8aQKcTMIHnMd")
+        }
 
         arrayOf(
             binding.btnGoDownload,
             binding.btnSelectFile,
+            binding.btnCheckSpider,
             binding.btnBackup,
             binding.btnRestore
         ).forEach {

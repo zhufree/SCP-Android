@@ -62,7 +62,8 @@ fun MainApp(
         val tagMap by tagViewModel.tagMap.observeAsState()
         Column(
             modifier = Modifier
-                .padding(8.dp),
+                .padding(8.dp)
+                .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -73,7 +74,8 @@ fun MainApp(
                         text = "加载中请稍候",
                         fontSize = 20.sp,
                         color = MaterialTheme.colors.onPrimary,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(16.dp)
                     )
                 } else {
                     LazyVerticalGrid(columns = GridCells.Fixed(3)) {

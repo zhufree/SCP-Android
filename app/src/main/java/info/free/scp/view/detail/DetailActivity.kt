@@ -199,7 +199,7 @@ class DetailActivity : BaseActivity() {
                 }
                 if (requestUrl == "https://www.wikidot.com/default--flow/login__LoginPopupScreen?originSiteId=530812&openerUri=https://scp-wiki-cn.wikidot.com/") {
                     // login page is not allowed for google play
-                    if (BuildConfig.FLAVOR == "productionGooglePlay") {
+                    if (BuildConfig.FLAVOR == "GooglePlayProduction") {
                         return false
                     }
                 }

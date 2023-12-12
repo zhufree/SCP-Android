@@ -175,7 +175,7 @@ class UserFragment : BaseFragment() {
         binding.stUse.onClick = {
             startActivity<AboutAppActivity>()
         }
-        if (BuildConfig.FLAVOR == "productionGooglePlay") {
+        if (BuildConfig.FLAVOR == "GooglePlayProduction") {
             binding.btnDonation.visibility = GONE
         }
         binding.btnDonation.setOnClickListener {

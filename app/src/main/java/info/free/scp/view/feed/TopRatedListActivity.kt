@@ -8,13 +8,14 @@ import info.free.scp.SCPConstants.TOP_RATED_SCP
 import info.free.scp.SCPConstants.TOP_RATED_TALES
 import info.free.scp.SCPConstants.TOP_RATED_WANDERS
 import info.free.scp.databinding.ActivityTopRatedBinding
+import info.free.scp.databinding.ActivityTopRatedListBinding
 import info.free.scp.view.base.BaseActivity
 
 class TopRatedListActivity : BaseActivity() {
-    private lateinit var binding: ActivityTopRatedBinding
+    private lateinit var binding: ActivityTopRatedListBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTopRatedBinding.inflate(layoutInflater)
+        binding = ActivityTopRatedListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         baseToolbar = binding.topRatedToolbar
         val feedType = intent?.getIntExtra("feedType", 0) ?: 0

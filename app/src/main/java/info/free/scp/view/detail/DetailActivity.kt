@@ -82,12 +82,6 @@ class DetailActivity : BaseActivity() {
 
     private var scp: ScpModel? = null
     private var detailHtml = ""
-    private var textSizeList = arrayOf("12px", "14px", "16px", "18px", "20px")
-    private var currentTextSizeIndex = textSizeList.indexOf(PreferenceUtil.getDetailTextSize())
-        set(value) {
-            field = value
-            currentTextSize = textSizeList[value]
-        }
     private var currentTextSize = PreferenceUtil.getDetailTextSize()
         set(value) {
             field = value
@@ -98,7 +92,6 @@ class DetailActivity : BaseActivity() {
                     ";}* {color:#000;}</style>"
         }
 
-    private var hanz = PreferenceUtil.getHanzType()
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
             "$currentTextSize;}* {color:#aaa;}</style>"
     private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
@@ -139,7 +132,7 @@ class DetailActivity : BaseActivity() {
         binding.webView.setBackgroundColor(0) // 设置背景色
         binding.webView.background?.alpha = 0 // 设置填充透明度 范围：0-255
         binding.webView.setBackgroundColor(ThemeUtil.containerBg)
-        binding.webView?.settings?.javaScriptEnabled = true
+        binding.webView.settings?.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
         title = intent.getStringExtra("title") ?: ""
@@ -433,8 +426,8 @@ class DetailActivity : BaseActivity() {
     private fun initToolbar() {
         baseToolbar = binding.detailToolbar
         supportActionBar?.title = null
-        binding.detailToolbar?.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
-        binding.detailToolbar?.setOnMenuItemClickListener {
+        binding.detailToolbar.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
+        binding.detailToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
                     PreferenceUtil.addPoints(1)

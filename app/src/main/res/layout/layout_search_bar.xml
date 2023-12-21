@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="84dp"
+    android:layout_height="wrap_content"
     android:background="@color/colorPrimaryDark"
     android:focusable="true"
     android:focusableInTouchMode="true">
@@ -15,6 +15,7 @@
         android:background="@drawable/bg_search"
         android:imeOptions="actionSearch"
         android:paddingHorizontal="16dp"
+        android:layout_marginVertical="24dp"
         android:singleLine="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_direct"

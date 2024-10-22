@@ -47,7 +47,7 @@ class HtmlParserService {
         } else {
             val discussButtons = Jsoup.parse(htmlCode).select("a") // find <a> starting with "讨论"
             discussButtons.forEach({ element ->
-                if (element.text() == "讨论")
+                if (element.text().startsWith("讨论 "))
                     return element.attr("href")
             })
         }

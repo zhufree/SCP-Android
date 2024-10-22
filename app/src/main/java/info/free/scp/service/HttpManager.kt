@@ -97,10 +97,11 @@ class HttpManager {
     }
 
     suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
-        val postStr =
-            "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
-        val postBody = postStr.toRequestBody("application/json; charset=utf-8".toMediaType())
-        return feedApiService.getComment(link, postBody)
+//        val postStr =
+//            "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
+//        val postBody = postStr.toRequestBody("application/json; charset=utf-8".toMediaType())
+//        return feedApiService.getComment(link, postBody)
+        return HtmlParserService().getComment(link, PreferenceUtil.getCookie(), PreferenceUtil.getAgent())
     }
 
     suspend fun getRandom(typeRange: String): ApiBean.ApiListResponse<ScpItemModel> {

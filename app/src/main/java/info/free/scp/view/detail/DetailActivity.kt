@@ -46,6 +46,7 @@ import info.free.scp.databinding.LayoutDialogCookieBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
+import info.free.scp.service.HtmlParserService
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.PreferenceUtil.APP_SP
@@ -773,7 +774,7 @@ class DetailActivity : BaseActivity() {
 
         viewModel.repo.commentList.observe(this, Observer {
             if (it.isEmpty()) {
-                if (PreferenceUtil.getStringValue(APP_SP, "show_comment") == "yes") {
+                if (HtmlParserService.noComment) {
                     tvLoad?.text = "这篇文档没有评论"
                 } else {
                     tvLoad?.text = "因中分官网要求登录才能查看评论，暂时无法获取"

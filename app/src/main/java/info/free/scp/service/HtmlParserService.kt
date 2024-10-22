@@ -41,15 +41,19 @@ class HtmlParserService {
     }
 
     fun parseCommentUrl(htmlCode: String): String {
-        val discussButton = Jsoup.parse(htmlCode).select("#discuss-button").first()
-        if (discussButton != null){
-            return discussButton.attr("href")
-        } else {
+        var discussButton = Jsoup.parse(htmlCode).select("#discuss-button").first()
+        if (discussButton == null){
             val discussButtons = Jsoup.parse(htmlCode).select("a") // find <a> starting with "讨论"
             discussButtons.forEach({ element ->
                 if (element.text().startsWith("讨论 "))
-                    return element.attr("href")
+                    discussButton = element
             })
+        }
+        if (discussButton !== null) {
+            if (discussButton!!.text() == "讨论 (0)"){
+                noComment = true // use it in DetailActivity later
+            }
+            return discussButton!!.attr("href")
         }
         throw Exception("Comment link not found")
     }
@@ -59,6 +63,7 @@ class HtmlParserService {
         cookie: String,
         agent: String
     ): ApiBean.ApiListResponse<CommentModel> = suspendCoroutine { continuation ->
+        noComment = false // initialize this status every time we start
         val requestMainPage: Request = Request.Builder()
             .url(SCP_BASE + "/" + scpId)
             .addHeader("Cookie", cookie)
@@ -86,18 +91,18 @@ class HtmlParserService {
 
                         val callForComment: Call = client.newCall(requestForComment)
                         callForComment.enqueue(object: Callback {
-                            override fun onFailure(callForComment: Call, e: IOException) {
+                            override fun onFailure(call: Call, e: IOException) {
                                 throw IOException(
                                     "$e on $commentUrl"
                                 )
                             }
 
-                            override fun onResponse(callForComment: Call, responseForComment: Response) {
-                                responseForComment.use {
-                                    if (!responseForComment.isSuccessful || responseForComment.body == null) {
-                                        throw IOException("Unexpected code $responseForComment on $commentUrl")
+                            override fun onResponse(call: Call, response: Response) {
+                                response.use {
+                                    if (!response.isSuccessful || response.body == null) {
+                                        throw IOException("Unexpected code $response on $commentUrl")
                                     }
-                                    val comments = parseComments(responseForComment.body!!.string())
+                                    val comments = parseComments(response.body!!.string())
                                     continuation.resume(ApiBean.ApiListResponse<CommentModel>(comments))
                                 }
                             }
@@ -109,6 +114,10 @@ class HtmlParserService {
             }
         })
 
+    }
+
+    companion object {
+        var noComment: Boolean = false
     }
 
 }

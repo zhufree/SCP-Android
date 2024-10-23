@@ -16,8 +16,8 @@ android {
         applicationId "info.free.scp"
         minSdkVersion 21
         targetSdkVersion 34
-        versionCode 29
-        versionName "0.3.1"
+        versionCode 30
+        versionName "0.3.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         javaCompileOptions {
@@ -169,6 +169,9 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.1.0")
+
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    implementation("org.jsoup:jsoup:1.18.1")
 }
 
 

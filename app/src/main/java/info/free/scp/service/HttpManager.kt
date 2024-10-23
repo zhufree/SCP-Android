@@ -45,6 +45,7 @@ class HttpManager {
         .build()
 
     private val feedApiService = feedRetrofit.create(ApiService::class.java)
+    private val htmlParserService = HtmlParserService()
 
 
     suspend fun getLatest(feedType: Int = LATEST_CREATED, pageIndex: Int = 1): ApiBean.ApiListResponse<FeedModel> {
@@ -97,10 +98,11 @@ class HttpManager {
     }
 
     suspend fun getComment(link: String = "scp-013"): ApiBean.ApiListResponse<CommentModel> {
-        val postStr =
-            "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
-        val postBody = postStr.toRequestBody("application/json; charset=utf-8".toMediaType())
-        return feedApiService.getComment(link, postBody)
+//        val postStr =
+//            "{\"cookie\": \"${PreferenceUtil.getCookie()}\", \"agent\": \"${PreferenceUtil.getAgent()}\"}"
+//        val postBody = postStr.toRequestBody("application/json; charset=utf-8".toMediaType())
+//        return feedApiService.getComment(link, postBody)
+        return htmlParserService.getComment(link, PreferenceUtil.getCookie(), PreferenceUtil.getAgent())
     }
 
     suspend fun getRandom(typeRange: String): ApiBean.ApiListResponse<ScpItemModel> {

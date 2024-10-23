@@ -44,12 +44,6 @@ interface ApiService {
     @GET("/get_scp_tag/{link}") // 不带/
     suspend fun getTag(@Path("link") link: String): ApiBean.ApiListResponse<String>
 
-    @POST("/get_comment/{link}") // 不带/
-    suspend fun getComment(
-        @Path("link") link: String,
-        @Body body: RequestBody
-    ): ApiBean.ApiListResponse<CommentModel>
-
     @GET("/get_random/{typeRange}")
     suspend fun getRandom(@Path("typeRange") typeRange: String): ApiBean.ApiListResponse<ScpItemModel>
 

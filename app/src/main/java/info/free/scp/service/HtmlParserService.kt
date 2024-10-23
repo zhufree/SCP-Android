@@ -44,10 +44,10 @@ class HtmlParserService {
         var discussButton = Jsoup.parse(htmlCode).select("#discuss-button").first()
         if (discussButton == null){
             val discussButtons = Jsoup.parse(htmlCode).select("a") // find <a> starting with "讨论"
-            discussButtons.forEach({ element ->
+            discussButtons.forEach { element ->
                 if (element.text().startsWith("讨论 "))
                     discussButton = element
-            })
+            }
         }
         if (discussButton !== null) {
             if (discussButton!!.text() == "讨论 (0)"){
@@ -65,7 +65,7 @@ class HtmlParserService {
     ): ApiBean.ApiListResponse<CommentModel> = suspendCoroutine { continuation ->
         noComment = false // initialize this status every time we start
         val requestMainPage: Request = Request.Builder()
-            .url(SCP_BASE + "/" + scpId)
+            .url("$SCP_BASE/$scpId")
             .addHeader("Cookie", cookie)
             .addHeader("User-Agent", agent)
             .build()

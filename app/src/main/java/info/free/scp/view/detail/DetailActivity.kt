@@ -20,6 +20,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
@@ -233,6 +234,11 @@ class DetailActivity : BaseActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 binding.pbLoading.visibility = GONE
+                if ((view != null && url !== null) && (url.contains("wikidot.com"))) {
+                    val cookies = CookieManager.getInstance().getCookie(url)
+                    PreferenceUtil.setCookie(cookies)
+                    PreferenceUtil.setAgent(view.settings.userAgentString)
+                }
                 info { "webView.height = ${binding.webView.height}" }
                 info { "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}" }
             }
@@ -516,6 +522,7 @@ class DetailActivity : BaseActivity() {
                         }
                     })
                 }
+
                 R.id.set_cookie -> {
                     val cookieView = LayoutDialogCookieBinding.inflate(
                         LayoutInflater.from(this@DetailActivity),
@@ -530,7 +537,15 @@ class DetailActivity : BaseActivity() {
                         .setPositiveButton("OK") { _, _ -> }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                         .create()
+
                     cookieDialog.show()
+
+                    cookieView.btCookieLogin.setOnClickListener  {
+                        val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
+                        toast("打开了登陆页面，不工作的话可以点击“切换网页模式”手动登陆")
+                        binding.webView.loadUrl(loginURL)
+                        cookieDialog.dismiss()
+                    }
                     cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
                         val cookie = cookieView.etCookie.text.toString()
                         val agent = cookieView.etAgent.text.toString()

@@ -21,4 +21,12 @@
         android:autofillHints="@string/app_name"
         android:hint="agent"
         android:inputType="text" />
+
+    <Button
+        android:id="@+id/bt_cookie_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:text="使用网页登陆"
+        />
 </LinearLayout>

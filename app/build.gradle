@@ -171,7 +171,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.1.0")
 
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    implementation("org.jsoup:jsoup:1.18.1")
+    implementation("org.jsoup:jsoup:1.19.1")
 }
 
 

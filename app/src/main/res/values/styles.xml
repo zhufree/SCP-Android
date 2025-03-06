@@ -10,7 +10,7 @@
     <!--Toolbar样式-->
     <!--Toolbar弹出菜单样式-->
     <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat">
-        <item name="android:colorBackground">@android:color/white</item>
+        <item name="android:colorBackground">?attr/containerBg</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textAlignment">center</item>
         <item name="android:textSize">16sp</item>
@@ -36,7 +36,7 @@
         <item name="linkBlue">@color/linkBlue</item>
         <item name="todoYellow">@color/todoYellow</item>
         <item name="dividerGray">@color/dividerGray</item>
-
+        <item name="folderIcon">@drawable/baseline_folder_open_black_24dp</item>
     </style>
 
     <style name="NightTheme" parent="AppTheme">
@@ -51,5 +51,9 @@
         <item name="linkBlue">@color/linkBlue</item>
         <item name="todoYellow">@color/todoYellow</item>
         <item name="dividerGray">@color/dividerGrayNight</item>
+        <item name="folderIcon">@drawable/baseline_folder_open_gray_24dp</item>
     </style>
+
+<!--    TODO: add style for popups  -->
+
 </resources>

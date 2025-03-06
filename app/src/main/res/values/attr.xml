@@ -11,4 +11,6 @@
     <attr name="linkBlue" format="color" />
     <attr name="todoYellow" format="color" />
     <attr name="dividerGray" format="color" />
+    <attr name="folderIcon" format="reference" />
+    <attr name="CustomAlertDialogTheme" format="reference" />
 </resources>

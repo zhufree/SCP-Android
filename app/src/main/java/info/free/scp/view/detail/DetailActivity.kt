@@ -95,7 +95,7 @@ class DetailActivity : BaseActivity() {
         }
 
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;}* {color:#aaa;}</style>"
+            "$currentTextSize;}* {color:#aaa;} blockquote, .forum-category-box  .description-block, .content-panel, .scp-image-block .scp-image-caption, table.wiki-content-table th, #toc, #lock-info, .change-textarea-size a, .mobile-top-bar li ul li a, .mobile-top-bar li ul, .top-bar li ul, .description, .btn-default, div[style*=\"background:#F5F5F5;\"]{background:#333!important;} div[style*=\"background:#f2f2c2;\"]{background:#f2f2c22b!important;} div[style*=\"background:#d3d3d3;\"]{background:#d3d3d32b!important;}</style>"
     private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)

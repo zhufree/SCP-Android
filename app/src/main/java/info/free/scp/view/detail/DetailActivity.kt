@@ -20,6 +20,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
@@ -60,7 +61,9 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk27.coroutines.onScrollChange
 import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
 import taobe.tec.jcc.JChineseConvertor
+import java.io.BufferedReader
 import java.io.IOException
+import java.io.InputStreamReader
 
 
 class DetailActivity : BaseActivity() {
@@ -94,7 +97,7 @@ class DetailActivity : BaseActivity() {
         }
 
     private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;}* {color:#aaa;}</style>"
+            "$currentTextSize;}* {color:#aaa;} blockquote, .forum-category-box  .description-block, .content-panel, .scp-image-block .scp-image-caption, table.wiki-content-table th, #toc, #lock-info, .change-textarea-size a, .mobile-top-bar li ul li a, .mobile-top-bar li ul, .top-bar li ul, .description, .btn-default, div[style*=\"background:#F5F5F5;\"]{background:#333!important;} div[style*=\"background:#f2f2c2;\"]{background:#f2f2c22b!important;} div[style*=\"background:#d3d3d3;\"]{background:#d3d3d32b!important;}</style>"
     private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
     private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
     private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
@@ -102,7 +105,13 @@ class DetailActivity : BaseActivity() {
     private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
     private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
     private val wikiScript = "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
-    private val jsScript = "$jqScript$initScript$tabScript$wikiScript"
+    private val darkReaderScript = "<script type=\"text/javascript\" src=\"darkreader.min.js\"></script><script>document.addEventListener('DOMContentLoaded', ()=>{DarkReader.enable({\n" +
+            "    brightness: 100,\n" +
+            "    contrast: 90,\n" +
+            "    sepia: 10\n" +
+            "})});</script>"
+    // patched Darkreader to fix some bugs
+    private val jsScript = (if (ThemeUtil.currentTheme == NIGHT_THEME) darkReaderScript else "") + "$jqScript$initScript$tabScript$wikiScript"
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
 
@@ -225,14 +234,66 @@ class DetailActivity : BaseActivity() {
             override fun onPageCommitVisible(view: WebView?, url: String?) {
                 binding.pbLoading.visibility = GONE
             }
+            private fun readJavaScriptFromAsset(fileName: String): String {
+                val inputStream = assets.open(fileName)
+                val reader = BufferedReader(InputStreamReader(inputStream))
+                val script = StringBuilder()
+                var line: String?
 
+                while (reader.readLine().also { line = it } != null) {
+                    script.append(line).append("\n")
+                }
+
+                reader.close()
+                return script.toString()
+            }
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.pbLoading.visibility = VISIBLE
+                if (view != null && (onlineMode == 1 || (url != null && url.startsWith("http"))) && ThemeUtil.currentTheme == NIGHT_THEME) {
+                    // add dark reader to online mode
+                    val darkReaderScript = readJavaScriptFromAsset("darkreader.min.js") + ""
+                    view.evaluateJavascript(darkReaderScript, null)
+                    // make dark reader work
+                    view.evaluateJavascript("window.DarkReader.setFetchMethod((url) => {\n" +
+                            "            return new Promise((resolve, reject) => {\n" +
+                            "                const corsProxyUrl = \"https://cors-proxy.fringe.zone/\";\n" +
+                            "                const proxiedUrl = corsProxyUrl + url;\n" +
+                            "\n" +
+                            "                // Now, use the proxied URL to fetch\n" +
+                            "                window.fetch(proxiedUrl)\n" +
+                            "                    .then(response => response.text())\n" +
+                            "                    .then((responseText) => {\n" +
+                            "                        resolve(new Response(responseText, {status: 200, statusText: \"OK\"}));\n" +
+                            "                    })\n" +
+                            "                    .catch((err) => {\n" +
+                            "                        reject(err);\n" +
+                            "                    });\n" +
+                            "            });\n" +
+                            "        });" +
+                            "function runAfterDOMContentLoaded(callback) {\n" +
+                            "    if (document.readyState === \"loading\") {\n" +
+                                    "try{callback()}catch{}"+
+                                    "document.addEventListener(\"DOMContentLoaded\", callback);\n" +
+                                    "document.addEventListener(\"DOMContentLoaded\", ()=>{setTimeout(callback, 1000)});\n" +
+                            "    } else {\n" +
+                            "        callback();\n" +
+                            "    }\n" +
+                            "}\n" +
+                            "\n" +
+                            "runAfterDOMContentLoaded(() => {\n" +
+                                "window.DarkReader.enable({ brightness: 100, contrast: 90, sepia: 10 });" +
+                            "});", null)
+                }
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 binding.pbLoading.visibility = GONE
+                if ((view != null && url !== null) && (url.contains("wikidot.com"))) {
+                    val cookies = CookieManager.getInstance().getCookie(url)
+                    PreferenceUtil.setCookie(cookies)
+                    PreferenceUtil.setAgent(view.settings.userAgentString)
+                }
                 info { "webView.height = ${binding.webView.height}" }
                 info { "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}" }
             }
@@ -516,6 +577,7 @@ class DetailActivity : BaseActivity() {
                         }
                     })
                 }
+
                 R.id.set_cookie -> {
                     val cookieView = LayoutDialogCookieBinding.inflate(
                         LayoutInflater.from(this@DetailActivity),
@@ -530,7 +592,15 @@ class DetailActivity : BaseActivity() {
                         .setPositiveButton("OK") { _, _ -> }
                         .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
                         .create()
+
                     cookieDialog.show()
+
+                    cookieView.btCookieLogin.setOnClickListener  {
+                        val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
+                        toast("打开了登陆页面，不工作的话可以点击“切换网页模式”手动登陆")
+                        binding.webView.loadUrl(loginURL)
+                        cookieDialog.dismiss()
+                    }
                     cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
                         val cookie = cookieView.etCookie.text.toString()
                         val agent = cookieView.etAgent.text.toString()

@@ -53,6 +53,7 @@
 
         <TextView
             android:id="@+id/tv_feed_rank"
+            android:textColor="?attr/darkText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -65,6 +66,7 @@
 
         <TextView
             android:id="@+id/tv_feed_created_time"
+            android:textColor="?attr/darkText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="12sp"

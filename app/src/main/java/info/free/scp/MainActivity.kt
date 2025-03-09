@@ -121,8 +121,8 @@ class MainActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
         super.refreshTheme()
         binding.navigation.setBackgroundColor(ThemeUtil.containerBg)
         homeFragment.refreshTheme()
-        userFragment.refreshTheme()
         laterFragment.refreshTheme()
+        userFragment.refreshTheme()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -250,12 +250,12 @@ class DetailActivity : BaseActivity() {
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
                 binding.pbLoading.visibility = VISIBLE
-                if (view != null && onlineMode == 1 && ThemeUtil.currentTheme == NIGHT_THEME) {
+                if (view != null && (onlineMode == 1 || (url != null && url.startsWith("http"))) && ThemeUtil.currentTheme == NIGHT_THEME) {
                     // add dark reader to online mode
-                    val darkReaderScript = readJavaScriptFromAsset("darkreader.min.js") + "\nwindow.DarkReader = DarkReader;"
+                    val darkReaderScript = readJavaScriptFromAsset("darkreader.min.js") + ""
                     view.evaluateJavascript(darkReaderScript, null)
                     // make dark reader work
-                    view.evaluateJavascript("DarkReader.setFetchMethod((url) => {\n" +
+                    view.evaluateJavascript("window.DarkReader.setFetchMethod((url) => {\n" +
                             "            return new Promise((resolve, reject) => {\n" +
                             "                const corsProxyUrl = \"https://cors-proxy.fringe.zone/\";\n" +
                             "                const proxiedUrl = corsProxyUrl + url;\n" +
@@ -270,7 +270,20 @@ class DetailActivity : BaseActivity() {
                             "                        reject(err);\n" +
                             "                    });\n" +
                             "            });\n" +
-                            "        }); DarkReader.enable({ brightness: 100, contrast: 90, sepia: 10 });", null)
+                            "        });" +
+                            "function runAfterDOMContentLoaded(callback) {\n" +
+                            "    if (document.readyState === \"loading\") {\n" +
+                                    "try{callback()}catch{}"+
+                                    "document.addEventListener(\"DOMContentLoaded\", callback);\n" +
+                                    "document.addEventListener(\"DOMContentLoaded\", ()=>{setTimeout(callback, 1000)});\n" +
+                            "    } else {\n" +
+                            "        callback();\n" +
+                            "    }\n" +
+                            "}\n" +
+                            "\n" +
+                            "runAfterDOMContentLoaded(() => {\n" +
+                                "window.DarkReader.enable({ brightness: 100, contrast: 90, sepia: 10 });" +
+                            "});", null)
                 }
             }
 

@@ -12,7 +12,6 @@ import info.free.scp.bean.DraftModel
 import info.free.scp.databinding.ActivityDraftListBinding
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.viewmodel.DraftListViewModel
-import org.jetbrains.anko.startActivity
 
 class DraftListActivity : BaseActivity() {
     private lateinit var binding: ActivityDraftListBinding
@@ -31,7 +30,7 @@ class DraftListActivity : BaseActivity() {
         binding.draftListToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.add_draft -> {
-                    startActivity<DraftEditActivity>()
+                    startActivity(Intent(this, DraftEditActivity::class.java))
                 }
 
                 R.id.draft_help -> {

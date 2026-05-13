@@ -1,6 +1,7 @@
 package info.free.scp.db
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
+import android.widget.Toast
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -8,7 +9,6 @@ import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpDetail
 import info.free.scp.bean.ScpItemModel
-import org.jetbrains.anko.toast
 
 
 @Database(entities = [ScpItemModel::class], version = 2)
@@ -29,9 +29,9 @@ abstract class ScpDatabase : RoomDatabase() {
                         .build()
                 }
             } catch (e1: SQLiteDatabaseCorruptException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             } catch (e2: IllegalStateException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             }
             return INSTANCE
         }
@@ -50,9 +50,9 @@ abstract class ScpDatabase : RoomDatabase() {
                     .allowMainThreadQueries()
                     .build()
             } catch (e1: SQLiteDatabaseCorruptException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             } catch (e2: IllegalStateException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             }
         }
     }

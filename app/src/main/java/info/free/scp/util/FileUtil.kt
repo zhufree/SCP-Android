@@ -11,7 +11,6 @@ import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication.Companion.context
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDatabase
-import org.jetbrains.anko.*
 import java.io.*
 
 

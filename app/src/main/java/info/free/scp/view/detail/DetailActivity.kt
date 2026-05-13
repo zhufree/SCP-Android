@@ -13,6 +13,7 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import android.view.*
 import android.view.Gravity.CENTER
 import android.view.KeyEvent.KEYCODE_BACK
@@ -26,10 +27,12 @@ import android.webkit.WebViewClient
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
+import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.BuildConfig
@@ -57,9 +60,9 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.tag.TagDetailActivity
-import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk27.coroutines.onScrollChange
-import org.jetbrains.anko.sdk27.coroutines.onSeekBarChangeListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import taobe.tec.jcc.JChineseConvertor
 import java.io.BufferedReader
 import java.io.IOException
@@ -142,7 +145,7 @@ class DetailActivity : BaseActivity() {
         binding.webView.setBackgroundColor(0) // 设置背景色
         binding.webView.background?.alpha = 0 // 设置填充透明度 范围：0-255
         binding.webView.setBackgroundColor(ThemeUtil.containerBg)
-        binding.webView.settings?.javaScriptEnabled = true
+        binding.webView.settings.javaScriptEnabled = true
 
         url = intent.getStringExtra("link") ?: ""
         title = intent.getStringExtra("title") ?: ""
@@ -188,9 +191,10 @@ class DetailActivity : BaseActivity() {
 
         //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
         binding.webView.webViewClient = object : WebViewClient() {
+            @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
-                info(requestUrl)
-                info { "onPageShouldOverrideUrlLoading" }
+                Log.i("scp-detail", requestUrl)
+                Log.i("scp-detail", "onPageShouldOverrideUrlLoading")
                 if (requestUrl.startsWith(SCP_SITE_URL) and requestUrl.contains("/html/")) {
                     return false
                 }
@@ -217,7 +221,7 @@ class DetailActivity : BaseActivity() {
                     } else {
                         url = requestUrl
                     }
-                    info(url)
+                    Log.i("scp-detail", url)
                     val tmpScp = scpDao?.getScpByLink(url)
                     tmpScp?.let {
                         scp = tmpScp
@@ -294,8 +298,8 @@ class DetailActivity : BaseActivity() {
                     PreferenceUtil.setCookie(cookies)
                     PreferenceUtil.setAgent(view.settings.userAgentString)
                 }
-                info { "webView.height = ${binding.webView.height}" }
-                info { "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}" }
+                Log.i("scp-detail", "webView.height = ${binding.webView.height}")
+                Log.i("scp-detail", "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}")
             }
         }
     }
@@ -320,21 +324,27 @@ class DetailActivity : BaseActivity() {
         var isMoving = false
         val screenHeight = Utils.getScreenHeight(this@DetailActivity)
 
-        binding.sbDetail.onSeekBarChangeListener {
-            onProgressChanged { _, i, b ->
-                if (b) {
-                    binding.nsvWebWrapper?.scrollTo(
+        binding.sbDetail.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser) {
+                    binding.nsvWebWrapper.scrollTo(
                         0,
-                        ((binding.webView.height - screenHeight) * (i / 100f)).toInt()
+                        ((binding.webView.height - screenHeight) * (progress / 100f)).toInt()
                     )
                 }
             }
-            onStartTrackingTouch { isMoving = true }
-            onStopTrackingTouch { isMoving = false }
-        }
-        binding.nsvWebWrapper?.onScrollChange { _, _, scrollY, _, _ ->
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                isMoving = true
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                isMoving = false
+            }
+        })
+        binding.nsvWebWrapper.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             if (!isMoving) {
-                binding.sbDetail?.progress =
+                binding.sbDetail.progress =
                     ((scrollY.toFloat() / (binding.webView.height - screenHeight) * 100)).toInt()
             }
         }
@@ -465,7 +475,10 @@ class DetailActivity : BaseActivity() {
             val tagIndex = tagString.indexOf(t)
             val clickableSpan: ClickableSpan = object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    startActivity<TagDetailActivity>("tag" to t)
+                    startActivity(
+                        Intent(this@DetailActivity, TagDetailActivity::class.java)
+                            .putExtra("tag", t)
+                    )
                 }
             }
             spannableString.setSpan(
@@ -500,7 +513,7 @@ class DetailActivity : BaseActivity() {
                             it.setTitle(R.string.offline_mode)
                             binding.webView.loadUrl(fullUrl)
                         } else {
-                            toast("请先开启网络")
+                            showToast("请先开启网络")
                         }
                     } else {
                         onlineMode = 0
@@ -527,7 +540,7 @@ class DetailActivity : BaseActivity() {
                         getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
                     val clipData = ClipData.newPlainText("scp_link", fullUrl)
                     clipboardManager?.setPrimaryClip(clipData)
-                    toast("已复制到剪贴板")
+                    showToast("已复制到剪贴板")
                 }
                 R.id.like -> {
                     likeScp()
@@ -540,9 +553,9 @@ class DetailActivity : BaseActivity() {
                     scp?.let { s->
                         ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
                             SCPConstants.LATER_TYPE)
-                        toast("已加入待读列表")
+                        showToast("已加入待读列表")
                     }?:run {
-                        toast("本文只可在线浏览，不可加入待读")
+                        showToast("本文只可在线浏览，不可加入待读")
                     }
                 }
                 R.id.share_picture -> {
@@ -550,7 +563,7 @@ class DetailActivity : BaseActivity() {
                     scp?.let { s ->
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
                     }
-                    toast("生成图片中...")
+                    showToast("生成图片中...")
                     binding.gpShareContent.visibility = VISIBLE
                     binding.clDetailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
                         ViewTreeObserver.OnGlobalLayoutListener {
@@ -565,12 +578,10 @@ class DetailActivity : BaseActivity() {
                             //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                             val canvas = Canvas(bitmap)
                             binding.clDetailContainer.draw(canvas)
-                            doAsync {
-                                // Runs in background
+                            lifecycleScope.launch(Dispatchers.IO) {
                                 Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
-                                // This code is executed on the UI thread
-                                uiThread {
-                                    toast("图片已保存")
+                                withContext(Dispatchers.Main) {
+                                    showToast("图片已保存")
                                     binding.gpShareContent.visibility = GONE
                                 }
                             }
@@ -597,7 +608,7 @@ class DetailActivity : BaseActivity() {
 
                     cookieView.btCookieLogin.setOnClickListener  {
                         val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
-                        toast("打开了登陆页面，不工作的话可以点击“切换网页模式”手动登陆")
+                        showToast("打开了登陆页面，不工作的话可以点击“切换网页模式”手动登陆")
                         binding.webView.loadUrl(loginURL)
                         cookieDialog.dismiss()
                     }
@@ -606,7 +617,7 @@ class DetailActivity : BaseActivity() {
                         val agent = cookieView.etAgent.text.toString()
                         PreferenceUtil.setCookie(cookie)
                         PreferenceUtil.setAgent(agent)
-                        toast("设置完成")
+                        showToast("设置完成")
                         cookieDialog.dismiss()
                     }
                 }
@@ -661,19 +672,19 @@ class DetailActivity : BaseActivity() {
             nameList.addAll(boxList.map { it.name })
             nameList.add("新建收藏夹")
             // 显示收藏夹列表和新建收藏夹选项
-            selector("加入收藏夹", nameList) { _, i ->
-                if (i == boxList.size) {
-                    // 新建收藏夹
-                    createNewBox()
-                    return@selector
-                } else {
-                    // 选择一个收藏夹加入
-                    PreferenceUtil.addPoints(2)
-                    scpInfo.boxId = boxList[i].id
-                    scpInfo.like = true
-                    viewModel.likeScp(scpInfo)
+            AlertDialog.Builder(this)
+                .setTitle("加入收藏夹")
+                .setItems(nameList.toTypedArray()) { _, i ->
+                    if (i == boxList.size) {
+                        createNewBox()
+                    } else {
+                        PreferenceUtil.addPoints(2)
+                        scpInfo.boxId = boxList[i].id
+                        scpInfo.like = true
+                        viewModel.likeScp(scpInfo)
+                    }
                 }
-            }
+                .show()
         } else {
             scpInfo.like = false
             viewModel.likeScp(scpInfo)
@@ -681,34 +692,38 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun createNewBox() {
-        var input: EditText? = null
-        alert {
-            customView {
-                linearLayout {
-                    padding = dip(16)
-                    orientation = VERTICAL
-                    textView("输入收藏夹标题") {
-                        textColor = ThemeUtil.darkText
-                        textSize = 18f
-                    }
-                    input = editText {
-                        height = WRAP_CONTENT
-                        width = MATCH_PARENT
-                        singleLine = true
-                    }
-                }
+        val container = LinearLayout(this).apply {
+            orientation = VERTICAL
+            setPadding(
+                Utils.dp2px(16, this@DetailActivity),
+                Utils.dp2px(16, this@DetailActivity),
+                Utils.dp2px(16, this@DetailActivity),
+                Utils.dp2px(16, this@DetailActivity)
+            )
+        }
+        val titleView = TextView(this).apply {
+            text = "输入收藏夹标题"
+            setTextColor(ThemeUtil.darkText)
+            textSize = 18f
+        }
+        val input = EditText(this).apply {
+            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
+            isSingleLine = true
+        }
+        container.addView(titleView)
+        container.addView(input)
 
-            }
-            positiveButton("确定") {
-                input?.clearFocus()
-                val defaultBox = ScpLikeBox(0, input?.text?.toString() ?: "")
-                info { defaultBox }
+        AlertDialog.Builder(this)
+            .setView(container)
+            .setPositiveButton("确定") { _, _ ->
+                input.clearFocus()
+                val defaultBox = ScpLikeBox(0, input.text?.toString() ?: "")
+                Log.i("scp-detail", defaultBox.toString())
                 AppInfoDatabase.getInstance().likeAndReadDao().saveLikeBox(defaultBox)
                 likeScp()
             }
-            negativeButton("取消") {}
-
-        }.show()
+            .setNegativeButton("取消", null)
+            .show()
     }
 
     private fun toNextArticle() {
@@ -721,17 +736,16 @@ class DetailActivity : BaseActivity() {
                 scp = scpDao.getNextScp(index, scpType)
                 scp?.let {
                     viewModel.setScp(it.link)
-                } ?: toast("已经是最后一篇了")
+                } ?: showToast("已经是最后一篇了")
             }
             1 -> {// 随机模式
                 // 下一篇
                 if (randomIndex + 1 in randomLinkList.indices) {
                     randomIndex += 1
                     val nextLink = randomLinkList[randomIndex]
-                    val nextTitle = randomTitleList[randomIndex]
                     viewModel.setScp(nextLink) // TODO
                 } else {
-                    toast("已经是最后一篇了")
+                    showToast("已经是最后一篇了")
                 }
             }
             else -> {
@@ -748,7 +762,7 @@ class DetailActivity : BaseActivity() {
         when (readType) {
             0 -> {
                 when (index) {
-                    0 -> toast("已经是第一篇了")
+                    0 -> showToast("已经是第一篇了")
                     else -> {
                         scp = scpDao.getPreviewScp(index, scpType)
                         scp?.let {
@@ -761,10 +775,9 @@ class DetailActivity : BaseActivity() {
                 if (randomIndex - 1 >= 0) {
                     randomIndex -= 1
                     val prevLink = randomLinkList[randomIndex]
-                    val prevTitle = randomTitleList[randomIndex]
                     viewModel.setScp(prevLink) // TODO
                 } else {
-                    toast("已经是第一篇了")
+                    showToast("已经是第一篇了")
                 }
             }
             else -> {
@@ -805,7 +818,7 @@ class DetailActivity : BaseActivity() {
             binding.tvBottomSetHasRead.setText(R.string.set_has_not_read)
             binding.tvBottomSetHasRead.setTextColor(ThemeUtil.mediumText)
             binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
-                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15)
+                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, Utils.dp2px(15, this)
             )
             readBtnLp?.endToEnd = -1
             readBtnLp?.startToStart = -1
@@ -816,7 +829,7 @@ class DetailActivity : BaseActivity() {
             binding.tvBottomSetHasRead.setText(R.string.set_has_read)
             binding.tvBottomSetHasRead.setTextColor(ThemeUtil.darkText)
             binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
             )
             readBtnLp?.endToEnd = 0
             readBtnLp?.startToStart = 0
@@ -862,7 +875,7 @@ class DetailActivity : BaseActivity() {
         })
         binding.btnComment.setOnClickListener {
             if (PreferenceUtil.getCookie().isEmpty()) {
-                toast("先点击右上角菜单设置cookie才能加载评论")
+                showToast("先点击右上角菜单设置 cookie 才能加载评论")
             } else {
                 binding.llCommentContainer.visibility = VISIBLE
                 binding.nsvWebWrapper.scrollTo(0, (binding.webView.height - screenHeight) + 100)
@@ -874,10 +887,10 @@ class DetailActivity : BaseActivity() {
 
     private fun refreshButtonStyle() {
         binding.tvBottomPreview.background = ThemeUtil.customShape(
-            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
         )
         binding.tvBottomNext.background = ThemeUtil.customShape(
-            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
         )
         binding.tvBottomLike.setTextColor(ThemeUtil.darkText)
     }
@@ -908,15 +921,19 @@ class DetailActivity : BaseActivity() {
             menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
             binding.tvBottomLike.text = "收藏"
             binding.tvBottomLike.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, dip(15)
+                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
             )
         } else {
             menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             binding.tvBottomLike.text = "取消收藏"
             binding.tvBottomLike.background = ThemeUtil.customShape(
-                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, dip(15)
+                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, Utils.dp2px(15, this)
             )
         }
         return super.onPrepareOptionsMenu(menu)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

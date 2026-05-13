@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView.*
 import info.free.scp.R
 import info.free.scp.databinding.ActivityRandomBinding
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.category.GroupViewModel
-import org.jetbrains.anko.dip
 
 class RandomActivity : BaseActivity() {
     private lateinit var binding: ActivityRandomBinding
@@ -53,11 +53,11 @@ class RandomActivity : BaseActivity() {
 
         binding.btnRefreshRandom.background = ThemeUtil.customShape(
             Color.parseColor("#4A90E2"),
-            0, 0, dip(32)
+            0, 0, Utils.dp2px(32, this)
         )
         binding.btnAddMoreRandom.background = ThemeUtil.customShape(
             Color.parseColor("#4A90E2"),
-            0, 0, dip(32)
+            0, 0, Utils.dp2px(32, this)
         )
         binding.btnRefreshRandom.setOnClickListener {
             vm.refreshRandomList(randomRange)

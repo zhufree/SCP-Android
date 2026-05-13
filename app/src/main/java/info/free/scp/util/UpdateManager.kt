@@ -11,7 +11,6 @@ import info.free.scp.BuildConfig
 import info.free.scp.ScpApplication.Companion.database
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.info
 
 
 class UpdateManager(private var activity: BaseActivity) {
@@ -44,7 +43,7 @@ class UpdateManager(private var activity: BaseActivity) {
      * ---finish---
      */
     fun checkAppData() {
-        activity.info("start checkAppData()")
+        Log.i("scp", "start checkAppData()")
         if (PreferenceUtil.isFirstInstallApp()) {
             // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
@@ -83,7 +82,7 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setApiUrl(it.child("api_url").getValue<String>() ?: "")
             PreferenceUtil.setQueryLink(it.child("query_link").getValue<String>() ?: "")
             if (currentVersionCode < newVersionCode && !activity.isFinishing) {
-                activity.info("current = $currentVersionCode, new = $newVersionCode, 需要升级")
+                Log.i("scp", "current = $currentVersionCode, new = $newVersionCode, 需要升级")
                 AlertDialog.Builder(activity)
                     .setTitle("发现新版本")
                     .setMessage(updateDesc)

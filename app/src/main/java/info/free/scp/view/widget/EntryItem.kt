@@ -8,8 +8,6 @@ import info.free.scp.R
 import info.free.scp.databinding.LayoutEntryItemBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.padding
 
 class EntryItem : ConstraintLayout {
     var title = ""
@@ -46,11 +44,11 @@ class EntryItem : ConstraintLayout {
         imgPadding = ta.getDimension(R.styleable.EntryItem_imgPadding, 5f)
         val count = ta.getInteger(R.styleable.EntryItem_count, 3)
         ta.recycle()
-        maxWidth = (screenWidth - dip(16)) / count
+        maxWidth = (screenWidth - Utils.dp2px(16, context)) / count
 
         binding.tvEntryTitle.text = title
-        binding.ivEntryLogo.padding = imgPadding.toInt()
-        binding.ivEntryLogo.background = ThemeUtil.customShape(bgColor, 0, 0, dip(25))
+        binding.ivEntryLogo.setPadding(imgPadding.toInt(), imgPadding.toInt(), imgPadding.toInt(), imgPadding.toInt())
+        binding.ivEntryLogo.background = ThemeUtil.customShape(bgColor, 0, 0, Utils.dp2px(25, context))
         binding.ivEntryLogo.setImageResource(logo)
         setOnClickListener {
             onClick()
@@ -59,6 +57,6 @@ class EntryItem : ConstraintLayout {
 
     fun refreshTheme() {
         binding.tvEntryTitle.setTextColor(ThemeUtil.darkText)
-        binding.ivEntryLogo.background = ThemeUtil.customShape(bgColor, 0, 0, dip(25))
+        binding.ivEntryLogo.background = ThemeUtil.customShape(bgColor, 0, 0, Utils.dp2px(25, context))
     }
 }

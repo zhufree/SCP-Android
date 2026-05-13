@@ -1,6 +1,7 @@
 package info.free.scp.view.feed
 
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -14,7 +15,6 @@ import info.free.scp.SCPConstants.TOP_RATED_WANDERS
 import info.free.scp.databinding.FragmentTopRatedBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
-import org.jetbrains.anko.support.v4.startActivity
 
 /**
  * A simple [Fragment] subclass.
@@ -41,20 +41,27 @@ class TopRatedFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.cvTopRatedAll.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to TOP_RATED_ALL)
+            openTopRatedList(TOP_RATED_ALL)
         }
         binding.cvTopRatedScp.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to TOP_RATED_SCP)
+            openTopRatedList(TOP_RATED_SCP)
         }
         binding.cvTopRatedTales.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to TOP_RATED_TALES)
+            openTopRatedList(TOP_RATED_TALES)
         }
         binding.cvTopRatedGoi.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to TOP_RATED_GOI)
+            openTopRatedList(TOP_RATED_GOI)
         }
         binding.cvTopRatedWanderer.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to TOP_RATED_WANDERS)
+            openTopRatedList(TOP_RATED_WANDERS)
         }
+    }
+
+    private fun openTopRatedList(feedType: Int) {
+        startActivity(
+            Intent(requireContext(), TopRatedListActivity::class.java)
+                .putExtra("feedType", feedType)
+        )
     }
 
     override fun refreshTheme() {

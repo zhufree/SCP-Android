@@ -19,8 +19,6 @@ import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.home.PrivacyActivity
-import org.jetbrains.anko.dip
-import org.jetbrains.anko.startActivity
 
 class AboutAppActivity : BaseActivity() {
     private lateinit var binding: ActivityAboutAppBinding
@@ -32,12 +30,12 @@ class AboutAppActivity : BaseActivity() {
         baseToolbar = binding.appToolbar
 
         arrayOf(binding.btnQqGroup, binding.btnQqChannel, binding.btnGoSite).forEach {
-            it.background = ThemeUtil.customShape(ThemeUtil.linkBlue, 0, 0, dip(24))
+            it.background = ThemeUtil.customShape(ThemeUtil.linkBlue, 0, 0, Utils.dp2px(24, this))
         }
         binding.btnShowCopyright.background =
-            ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, dip(24))
+            ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, Utils.dp2px(24, this))
         binding.btnShowPrivacy.background =
-            ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, dip(24))
+            ThemeUtil.customShape(ThemeUtil.todoYellow, 0, 0, Utils.dp2px(24, this))
 
         binding.tvAppNotice.text = "最新公告：${PreferenceUtil.getNotice()}"
         binding.tvVersion.text = "version: ${BuildConfig.VERSION_NAME}"
@@ -58,7 +56,7 @@ class AboutAppActivity : BaseActivity() {
             showCopyright()
         }
         binding.btnShowPrivacy.setOnClickListener {
-            startActivity<PrivacyActivity>()
+            startActivity(Intent(this, PrivacyActivity::class.java))
         }
     }
 

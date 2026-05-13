@@ -12,7 +12,6 @@ import info.free.scp.bean.FeedModel
 import info.free.scp.databinding.ItemFeedBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
-import org.jetbrains.anko.backgroundColor
 
 class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallback()) {
 
@@ -57,7 +56,7 @@ class FeedAdapter : ListAdapter<FeedModel, FeedAdapter.FeedHolder>(FeedDiffCallb
         }
 
         fun refreshTheme() {
-            binding.clFeedContainer.backgroundColor = ThemeUtil.itemBg
+            binding.clFeedContainer.setBackgroundColor(ThemeUtil.itemBg)
             binding.tvFeedTitle.setTextColor(ThemeUtil.darkText)
         }
     }

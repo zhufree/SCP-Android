@@ -1,5 +1,6 @@
 package info.free.scp.view.category
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity.CENTER
@@ -46,10 +47,9 @@ import info.free.scp.SCPConstants.ScpType.SAVE_WANDER
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
 import info.free.scp.databinding.ActivityGroupListBinding
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.widget.DocGroupItem
-import org.jetbrains.anko.*
-import org.jetbrains.anko.sdk27.coroutines.onClick
 
 /**
  * 2-3层
@@ -140,26 +140,26 @@ class GroupListActivity : BaseActivity() {
         val newSeriesItem = TextView(this)
         newSeriesItem.text = getSeriesTitle(i)
         if (i == 1) {
-            newSeriesItem.textColor = Color.WHITE
+            newSeriesItem.setTextColor(Color.WHITE)
             newSeriesItem.background = ThemeUtil.customShape(ThemeUtil.toolbarBg,
-                    0, 0, dip(18))
+                    0, 0, Utils.dp2px(18, this))
         } else {
-            newSeriesItem.textColor = ThemeUtil.darkText
+            newSeriesItem.setTextColor(ThemeUtil.darkText)
         }
         newSeriesItem.textSize = 16f
-        newSeriesItem.padding = 8
+        newSeriesItem.setPadding(8, 8, 8, 8)
         newSeriesItem.textAlignment = View.TEXT_ALIGNMENT_CENTER
         newSeriesItem.gravity = CENTER
-        newSeriesItem.onClick {
+        newSeriesItem.setOnClickListener {
             switchSeries(i)
             seriesList.forEach {
-                it.textColor = ThemeUtil.darkText
+                it.setTextColor(ThemeUtil.darkText)
                 it.background = null
             }
             if (i < 100) {
-                newSeriesItem.textColor = Color.WHITE
+                newSeriesItem.setTextColor(Color.WHITE)
                 newSeriesItem.background = ThemeUtil.customShape(ThemeUtil.toolbarBg,
-                        0, 0, dip(18))
+                        0, 0, Utils.dp2px(18, this))
             }
         }
         seriesList.add(newSeriesItem)
@@ -169,9 +169,9 @@ class GroupListActivity : BaseActivity() {
     private fun initData() {
         entryType = intent.getIntExtra("entry_type", -1)
         // 左侧列表
-        val lp = LinearLayout.LayoutParams(dip(84), WRAP_CONTENT)
-        lp.topMargin = dip(36)
-        lp.leftMargin = dip(10)
+        val lp = LinearLayout.LayoutParams(Utils.dp2px(84, this), WRAP_CONTENT)
+        lp.topMargin = Utils.dp2px(36, this)
+        lp.leftMargin = Utils.dp2px(10, this)
         // 添加侧边栏
         supportActionBar?.title = getTitlePrefix()
         when (entryType) {
@@ -237,27 +237,31 @@ class GroupListActivity : BaseActivity() {
         if (index < 100) {
             binding.tvGroupTitle.text = getSeriesTitle(index)
 
-            val lp = LinearLayout.LayoutParams(MATCH_PARENT, dip(60))
-            lp.topMargin = dip(10)
-            lp.leftMargin = dip(10)
-            lp.rightMargin = dip(10)
+            val lp = LinearLayout.LayoutParams(MATCH_PARENT, Utils.dp2px(60, this))
+            lp.topMargin = Utils.dp2px(10, this)
+            lp.leftMargin = Utils.dp2px(10, this)
+            lp.rightMargin = Utils.dp2px(10, this)
 
             binding.llGroupList.removeAllViews()
             getGroupListTitle(index).forEachIndexed { i, s ->
                 // 添加group
                 val newGroupItem = DocGroupItem(this, s)
-                newGroupItem.onClick {
-                    startActivity<DocListActivity>(
-                        "saveType" to getSaveType(index),
-                        "groupIndex" to (index - 1) * 10 + i,
-                        "extraType" to s
+                newGroupItem.setOnClickListener {
+                    startActivity(
+                        Intent(this, DocListActivity::class.java)
+                            .putExtra("saveType", getSaveType(index))
+                            .putExtra("groupIndex", (index - 1) * 10 + i)
+                            .putExtra("extraType", s)
                     )
                 }
                 binding.llGroupList.addView(newGroupItem, lp)
             }
         } else {
             // 直接跳列表页
-            startActivity<DocListActivity>("saveType" to getSaveType(index))
+            startActivity(
+                Intent(this, DocListActivity::class.java)
+                    .putExtra("saveType", getSaveType(index))
+            )
         }
     }
 }

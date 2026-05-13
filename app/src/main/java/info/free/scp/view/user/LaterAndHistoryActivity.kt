@@ -1,5 +1,6 @@
 package info.free.scp.view.user
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.Menu
 import info.free.scp.R
@@ -9,7 +10,6 @@ import info.free.scp.databinding.ActivityHistoryBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.later.RecordListFragment
-import org.jetbrains.anko.*
 
 /**
  * 待读列表
@@ -44,13 +44,15 @@ class LaterAndHistoryActivity : BaseActivity() {
 
                 R.id.clear_read_history -> {
                     // 清除历史记录
-                    alert("你确定要清除所有的阅读记录吗", "Notice") {
-                        yesButton {
+                    AlertDialog.Builder(this)
+                        .setTitle("Notice")
+                        .setMessage("你确定要清除所有的阅读记录吗")
+                        .setPositiveButton("确定") { _, _ ->
                             AppInfoDatabase.getInstance().readRecordDao().clearHistory()
                             fragment.refreshList()
                         }
-                        noButton { }
-                    }.show()
+                        .setNegativeButton("取消", null)
+                        .show()
                 }
             }
             true

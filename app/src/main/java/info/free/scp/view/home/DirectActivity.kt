@@ -1,6 +1,8 @@
 package info.free.scp.view.home
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.view.children
 import apiCall
 import executeResponse
@@ -19,8 +21,6 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.toast
 
 
 /**
@@ -123,8 +123,8 @@ class DirectActivity : BaseActivity() {
             val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(scpType, number)
             scp?.let { s ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
-                startActivity<DetailActivity>("link" to s.link)
-            } ?: runOnUiThread { toast("没有这篇文章") }
+                startActivity(Intent(this, DetailActivity::class.java).putExtra("link", s.link))
+            } ?: runOnUiThread { Toast.makeText(this, "没有这篇文章", Toast.LENGTH_SHORT).show() }
 
         } else {
             loadDirect(scpType, number)
@@ -140,9 +140,13 @@ class DirectActivity : BaseActivity() {
                 if (!response.results.isNullOrEmpty()) {
                     val scp = response.results[0]
                     EventUtil.onEvent(this, EventUtil.clickDirect)
-                    startActivity<DetailActivity>("link" to scp.link, "title" to scp.title)
+                    startActivity(
+                        Intent(this, DetailActivity::class.java)
+                            .putExtra("link", scp.link)
+                            .putExtra("title", scp.title)
+                    )
                 } else {
-                    toast("没有这篇文章")
+                    Toast.makeText(this@DirectActivity, "没有这篇文章", Toast.LENGTH_SHORT).show()
                 }
             })
         }

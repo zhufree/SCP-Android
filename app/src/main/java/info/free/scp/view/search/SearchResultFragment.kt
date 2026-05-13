@@ -1,5 +1,6 @@
 package info.free.scp.view.search
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.SearchType.CONTENT
 import info.free.scp.SCPConstants.SearchType.TITLE
@@ -14,8 +16,9 @@ import info.free.scp.databinding.FragmentSearchTabBinding
 import info.free.scp.util.FileUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.user.DownloadActivity
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.support.v4.startActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * 待读和历史列表共用一个fragment
@@ -66,7 +69,7 @@ class SearchResultFragment : BaseFragment() {
         if ((searchType == CONTENT) && !searched) {
             if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
                 binding.pbLoading.visibility = VISIBLE
-                doAsync {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                     viewModel.searchScp(searchType, "%$keyword%")
                     searched = true
                 }
@@ -74,7 +77,7 @@ class SearchResultFragment : BaseFragment() {
                 binding.tvSearchNotice.visibility = VISIBLE
                 binding.btnGoDownload.visibility = VISIBLE
                 binding.btnGoDownload.setOnClickListener {
-                    startActivity<DownloadActivity>()
+                    startActivity(Intent(requireContext(), DownloadActivity::class.java))
                 }
             }
         }
@@ -82,16 +85,16 @@ class SearchResultFragment : BaseFragment() {
 
     private fun subscribeUi(adapter: SearchResultAdapter) {
         if (searchType == TITLE) {
-            viewModel.searchScp(searchType, "%$keyword%")
-            doAsync {
-                adapter.submitList(viewModel.titleResult)
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                viewModel.searchScp(searchType, "%$keyword%")
+                withContext(Dispatchers.Main) {
+                    adapter.submitList(viewModel.titleResult)
+                }
             }
         } else if (searchType == CONTENT) {
             viewModel.contentResult.observe(viewLifecycleOwner) {
                 binding.pbLoading.visibility = GONE
-                doAsync {
-                    adapter.submitList(it)
-                }
+                adapter.submitList(it)
             }
         }
     }

@@ -10,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import info.free.scp.bean.CommentModel
 import info.free.scp.databinding.LayoutCommentBinding
 import info.free.scp.util.ThemeUtil
-import org.jetbrains.anko.collections.forEachWithIndex
 
 class CommentLayout : ConstraintLayout {
     constructor(context: Context) : this(context, null)
@@ -39,7 +38,7 @@ class CommentLayout : ConstraintLayout {
         binding.tvCommentContent.text = comment.comment
         val replyLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
         binding.tvCommentContent.post {
-            comment.reply.forEachWithIndex { index, it ->
+            comment.reply.forEach { it ->
                 val replyLayout = CommentLayout(this.context)
                 replyLayout.setData(it)
                 binding.llReplyContainer.addView(replyLayout, replyLp)

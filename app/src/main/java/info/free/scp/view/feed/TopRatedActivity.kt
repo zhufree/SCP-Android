@@ -1,11 +1,11 @@
 package info.free.scp.view.feed
 
+import android.content.Intent
 import android.os.Bundle
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.databinding.ActivityTopRatedBinding
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.startActivity
 
 class TopRatedActivity : BaseActivity() {
     private lateinit var binding: ActivityTopRatedBinding
@@ -15,19 +15,26 @@ class TopRatedActivity : BaseActivity() {
         setContentView(binding.root)
         baseToolbar = binding.topRatedToolbar
         binding.cvTopRatedAll.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to SCPConstants.TOP_RATED_ALL)
+            openTopRatedList(SCPConstants.TOP_RATED_ALL)
         }
         binding.cvTopRatedScp.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to SCPConstants.TOP_RATED_SCP)
+            openTopRatedList(SCPConstants.TOP_RATED_SCP)
         }
         binding.cvTopRatedTales.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to SCPConstants.TOP_RATED_TALES)
+            openTopRatedList(SCPConstants.TOP_RATED_TALES)
         }
         binding.cvTopRatedGoi.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to SCPConstants.TOP_RATED_GOI)
+            openTopRatedList(SCPConstants.TOP_RATED_GOI)
         }
         binding.cvTopRatedWanderer.setOnClickListener {
-            startActivity<TopRatedListActivity>("feedType" to SCPConstants.TOP_RATED_WANDERS)
+            openTopRatedList(SCPConstants.TOP_RATED_WANDERS)
         }
+    }
+
+    private fun openTopRatedList(feedType: Int) {
+        startActivity(
+            Intent(this, TopRatedListActivity::class.java)
+                .putExtra("feedType", feedType)
+        )
     }
 }

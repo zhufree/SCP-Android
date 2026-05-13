@@ -1,16 +1,14 @@
 package info.free.scp.service
 
+import android.util.Log
+import android.widget.Toast
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import info.free.scp.ScpApplication
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.error
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
-open class BaseService : AnkoLogger {
+open class BaseService {
     private val postExclusionStrategy = object : ExclusionStrategy {
 
         override fun shouldSkipField(fa: FieldAttributes): Boolean {
@@ -30,18 +28,18 @@ open class BaseService : AnkoLogger {
 
     fun serviceLog(msg: String?) {
         if (ScpApplication.isDebug) {
-            info { msg }
+            Log.i("scp-service", msg.orEmpty())
         }
     }
 
     fun serviceError(error: String?) {
         if (ScpApplication.isDebug) {
-            error { error }
+            Log.e("scp-service", error.orEmpty())
         }
     }
 
     fun toast(msg: String) {
-        ScpApplication.context.toast(msg)
+        Toast.makeText(ScpApplication.context, msg, Toast.LENGTH_SHORT).show()
     }
 
 }

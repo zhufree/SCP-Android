@@ -15,7 +15,6 @@ import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
 import info.free.scp.util.PreferenceUtil
-import org.jetbrains.anko.toast
 import toast
 
 

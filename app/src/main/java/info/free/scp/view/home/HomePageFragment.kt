@@ -1,6 +1,5 @@
 package info.free.scp.view.home
-
-
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +12,7 @@ import info.free.scp.SCPConstants
 import info.free.scp.databinding.FragmentHomePageBinding
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.GroupListActivity
 import info.free.scp.view.feed.FeedActivity
@@ -20,8 +20,6 @@ import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
 import info.free.scp.view.tag.TagCloudActivity
 import info.free.scp.view.widget.FeedArticleListItem
-import org.jetbrains.anko.support.v4.dip
-import org.jetbrains.anko.support.v4.startActivity
 import toast
 
 
@@ -89,20 +87,20 @@ class HomePageFragment : BaseFragment() {
         }
 
         binding.btnMoreRecent.background =
-            ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
+            ThemeUtil.customShape(0, ThemeUtil.linkBlue, Utils.dp2px(1), Utils.dp2px(6))
         binding.btnMoreRecentTranslate.background =
-            ThemeUtil.customShape(0, ThemeUtil.linkBlue, dip(1), dip(6))
+            ThemeUtil.customShape(0, ThemeUtil.linkBlue, Utils.dp2px(1), Utils.dp2px(6))
 
         arrayOf(binding.btnMoreRecent, binding.btnMoreRecentTranslate).forEach {
             it.setOnClickListener {
-                startActivity<FeedActivity>()
+                startActivity(Intent(requireContext(), FeedActivity::class.java))
             }
         }
         binding.btnTopPageEntry.setOnClickListener {
-            startActivity<TopRatedActivity>()
+            startActivity(Intent(requireContext(), TopRatedActivity::class.java))
         }
         binding.btnAllTags.setOnClickListener {
-            startActivity<TagCloudActivity>()
+            startActivity(Intent(requireContext(), TagCloudActivity::class.java))
         }
 
         feedVm.getFeedIndex().observe(this.viewLifecycleOwner, Observer { fi ->
@@ -121,7 +119,10 @@ class HomePageFragment : BaseFragment() {
     }
 
     private fun goToGroupPage(entry_type: Int) {
-        startActivity<GroupListActivity>("entry_type" to entry_type)
+        startActivity(
+            Intent(requireContext(), GroupListActivity::class.java)
+                .putExtra("entry_type", entry_type)
+        )
     }
 
     override fun refreshTheme() {

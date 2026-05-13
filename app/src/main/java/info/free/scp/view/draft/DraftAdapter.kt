@@ -1,6 +1,7 @@
 package info.free.scp.view.draft
 
-import android.app.Activity
+import android.app.AlertDialog
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +12,6 @@ import info.free.scp.bean.DraftModel
 import info.free.scp.databinding.ItemDraftBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.TimeUtil
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.yesButton
 
 class DraftAdapter : ListAdapter<DraftModel, DraftAdapter.DraftHolder>(DraftDiffCallback()) {
 
@@ -35,18 +32,22 @@ class DraftAdapter : ListAdapter<DraftModel, DraftAdapter.DraftHolder>(DraftDiff
 
     private fun createOnClickListener(draft: DraftModel): View.OnClickListener {
         return View.OnClickListener {
-            (it.context as Activity).startActivity<DraftEditActivity>("draftId" to draft.draftId)
+            it.context.startActivity(
+                Intent(it.context, DraftEditActivity::class.java)
+                    .putExtra("draftId", draft.draftId)
+            )
         }
     }
 
     private fun createOnLongClickListener(draft: DraftModel): View.OnLongClickListener {
         return View.OnLongClickListener {
-            (it.context as Activity).alert("确定删除草稿吗？") {
-                yesButton {
+            AlertDialog.Builder(it.context)
+                .setMessage("确定删除草稿吗？")
+                .setPositiveButton("确定") { _, _ ->
                     AppInfoDatabase.getInstance().draftDao().delete(draft.draftId)
                 }
-                noButton {  }
-            }.show()
+                .setNegativeButton("取消", null)
+                .show()
             true
         }
     }

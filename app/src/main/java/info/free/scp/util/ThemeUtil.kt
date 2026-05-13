@@ -4,17 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import androidx.compose.material.MaterialTheme
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
-import info.free.scp.SCPConstants.BroadCastAction.ACTION_CHANGE_THEME
-import info.free.scp.ScpApplication
 
 /**
  * Created by zhufree on 2018/10/22.
@@ -34,6 +30,7 @@ object ThemeUtil {
     var todoYellow: Int = -1
     var dividerGray: Int = -1
     var currentTheme: Int = -1
+    private val themeListeners = linkedSetOf<() -> Unit>()
     const val DAY_THEME = 0
     const val NIGHT_THEME = 1
 
@@ -68,7 +65,15 @@ object ThemeUtil {
             setTheme(activity)
             initColor(activity)
         }
-        LocalBroadcastManager.getInstance(ScpApplication.context).sendBroadcast(Intent(ACTION_CHANGE_THEME))
+        themeListeners.toList().forEach { it.invoke() }
+    }
+
+    fun registerThemeListener(listener: () -> Unit) {
+        themeListeners.add(listener)
+    }
+
+    fun unregisterThemeListener(listener: () -> Unit) {
+        themeListeners.remove(listener)
     }
 
     @SuppressLint("ResourceType")

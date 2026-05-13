@@ -1,10 +1,9 @@
 import android.util.Log
+import android.widget.Toast
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ApiBean
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.info
-import org.jetbrains.anko.toast
 
 /**
  *
@@ -36,5 +35,5 @@ suspend fun <T : Any> apiCall(call: suspend () -> T): T? {
     return null
 }
 
-fun toast(msg: String) = ScpApplication.context.toast(msg)
-fun info(msg: String) = ScpApplication.currentActivity?.info { msg }
+fun toast(msg: String) = Toast.makeText(ScpApplication.context, msg, Toast.LENGTH_SHORT).show()
+fun info(msg: String) = Log.i("scp", msg)

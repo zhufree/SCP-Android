@@ -10,7 +10,6 @@ import info.free.scp.R
 import info.free.scp.databinding.LayoutSettingItemBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
-import org.jetbrains.anko.backgroundColor
 
 
 class SettingItem : ConstraintLayout {
@@ -70,7 +69,7 @@ class SettingItem : ConstraintLayout {
                 background = ThemeUtil.customShape(ThemeUtil.itemBg, 0, 0, 0f, cornerRadius, 0f, cornerRadius)
             }
             else -> {
-                backgroundColor = ThemeUtil.itemBg
+                setBackgroundColor(ThemeUtil.itemBg)
             }
         }
     }

@@ -9,14 +9,13 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.widget.Toast
 import info.free.scp.databinding.ActivityDonationQrBinding
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
-import org.jetbrains.anko.*
 
 
 class DonationQrActivity : BaseActivity() {
@@ -41,11 +40,7 @@ class DonationQrActivity : BaseActivity() {
             EventUtil.onEvent(this, EventUtil.clickDonation)
             PreferenceUtil.addPoints(2)
             Utils.saveBitmapFile((binding.ivQr.drawable as BitmapDrawable).bitmap, "scp_donation")
-            MediaScannerConnection.scanFile(
-                this, arrayOf(Utils.getAlbumStorageDir("SCP").path + "/scp_donation.jpg"),
-                null, null
-            )
-            longToast(R.string.jump_notice)
+            Toast.makeText(this, R.string.jump_notice, Toast.LENGTH_LONG).show()
             Handler().postDelayed({
                 if (payType == 0) startWechatScan(this) else openAlipayScan(this)
             }, 500)
@@ -65,7 +60,7 @@ class DonationQrActivity : BaseActivity() {
         if (isActivityAvailable(c, intent)) {
             c.startActivity(intent)
         } else {
-            toast(getString(R.string.uninstall_notice, getString(R.string.wechat)))
+            Toast.makeText(this, getString(R.string.uninstall_notice, getString(R.string.wechat)), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -76,7 +71,7 @@ class DonationQrActivity : BaseActivity() {
             if (isActivityAvailable(context, intent)) {
                 context.startActivity(intent)
             } else {
-                toast(getString(R.string.uninstall_notice, getString(R.string.alipay)))
+                Toast.makeText(this, getString(R.string.uninstall_notice, getString(R.string.alipay)), Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
         }

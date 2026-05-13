@@ -1,6 +1,5 @@
 package info.free.scp.view.category
 
-import android.app.Activity
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +12,6 @@ import info.free.scp.SCPConstants
 import info.free.scp.databinding.ItemCategoryBinding
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
-import org.jetbrains.anko.startActivity
 
 /**
  * Created by zhufree on 2018/8/22.
@@ -45,10 +43,11 @@ class CategoryAdapter(val saveType: Int) : ListAdapter<String, CategoryAdapter.C
     private fun createOnClickListener(title: String, position: Int): View.OnClickListener {
         return View.OnClickListener {
             PreferenceUtil.addPoints(2)
-            (it.context as Activity).startActivity<DocListActivity>("saveType"
-                    to saveType,
-                    "groupIndex" to position,
-                    "extraType" to title
+            it.context.startActivity(
+                Intent(it.context, DocListActivity::class.java)
+                    .putExtra("saveType", saveType)
+                    .putExtra("groupIndex", position)
+                    .putExtra("extraType", title)
             )
         }
     }

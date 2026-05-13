@@ -1,6 +1,7 @@
 package info.free.scp.view.tag
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -24,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
-import org.jetbrains.anko.startActivity
 
 class TagCloudActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class TagCloudActivity : AppCompatActivity() {
         setContent {
             MainTheme {
                 MainApp(tagViewModel, {
-                    startActivity<TagDetailActivity>("tag" to it)
+                    startActivity(Intent(this, TagDetailActivity::class.java).putExtra("tag", it))
                 }) {
                     finish()
                 }

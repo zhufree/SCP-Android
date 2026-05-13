@@ -1,6 +1,7 @@
 package info.free.scp.view.widget
 
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -8,8 +9,6 @@ import info.free.scp.bean.FeedModel
 import info.free.scp.databinding.LayoutFeedArticleItemBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.detail.DetailActivity
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.startActivity
 
 class FeedArticleListItem : ConstraintLayout {
     private lateinit var binding: LayoutFeedArticleItemBinding
@@ -25,9 +24,10 @@ class FeedArticleListItem : ConstraintLayout {
         binding.tvFeedItemTime.text = feed.createdTime
         binding.tvFeedItemRank.text = feed.rank
         setOnClickListener {
-            context.startActivity<DetailActivity>(
-                "link" to feed.link,
-                "forceOnline" to true
+            context.startActivity(
+                Intent(context, DetailActivity::class.java)
+                    .putExtra("link", feed.link)
+                    .putExtra("forceOnline", true)
             )
         }
     }
@@ -37,7 +37,7 @@ class FeedArticleListItem : ConstraintLayout {
     }
 
     fun refreshTheme() {
-        backgroundColor = ThemeUtil.itemBg
+        setBackgroundColor(ThemeUtil.itemBg)
         binding.tvFeedItemTitle.setTextColor(ThemeUtil.darkText)
         binding.tvFeedItemTime.setTextColor(ThemeUtil.mediumText)
         binding.tvFeedItemRank.setTextColor(ThemeUtil.mediumText)

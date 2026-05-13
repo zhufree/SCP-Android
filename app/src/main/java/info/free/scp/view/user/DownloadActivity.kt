@@ -1,30 +1,46 @@
 package info.free.scp.view.user
 
-import android.app.Activity
-import android.content.Intent
+import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.documentfile.provider.DocumentFile
-import info.free.scp.R
+import androidx.lifecycle.lifecycleScope
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.APP_PREF_NAME
 import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.SCPConstants.LEVEL_PREF_NAME
-import info.free.scp.SCPConstants.RequestCode.REQUEST_BACKUP_DIR
-import info.free.scp.SCPConstants.RequestCode.REQUEST_PUBLIC_FILE
-import info.free.scp.SCPConstants.RequestCode.REQUEST_RESTORE_DIR
 import info.free.scp.databinding.ActivityDownloadBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
-import info.free.scp.util.*
+import info.free.scp.util.FileUtil
+import info.free.scp.util.ThemeUtil
+import info.free.scp.util.Utils
+import info.free.scp.util.copyFileFromUri
+import info.free.scp.util.copyFileToUri
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
-
 
 class DownloadActivity : BaseActivity() {
 
     private lateinit var binding: ActivityDownloadBinding
+    private val selectDatabaseLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.let(::importDetailDatabase)
+        }
+    private val backupDirectoryLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri?.let(::backupAppData)
+        }
+    private val restoreDirectoryLauncher =
+        registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+            uri?.let(::restoreAppData)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDownloadBinding.inflate(layoutInflater)
@@ -41,9 +57,12 @@ class DownloadActivity : BaseActivity() {
             "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
         )
         binding.btnGoDownload.setOnClickListener {
-            selector("选择下载线路", downloadTitles) { _, i ->
-                Utils.openUrl(downloadLinks[i])
-            }
+            AlertDialog.Builder(this)
+                .setTitle("选择下载线路")
+                .setItems(downloadTitles.toTypedArray()) { _, index ->
+                    Utils.openUrl(downloadLinks[index])
+                }
+                .show()
         }
         binding.btnCheckSpider.setOnClickListener {
             Utils.openUrl("https://gj5i5wsqre.feishu.cn/docx/X8BvdDE5ioFjJDx8aQKcTMIHnMd")
@@ -58,130 +77,97 @@ class DownloadActivity : BaseActivity() {
         ).forEach {
             it.background = ThemeUtil.customShape(
                 ThemeUtil.linkBlue,
-                0, 0, dip(24)
+                0,
+                0,
+                Utils.dp2px(24, this)
             )
         }
 
         binding.btnSelectFile.setOnClickListener {
-            requestReadFileTree()
+            selectDatabaseLauncher.launch(arrayOf("*/*"))
         }
 
         binding.btnBackup.setOnClickListener {
-            startSelectDir(REQUEST_BACKUP_DIR)
+            backupDirectoryLauncher.launch(null)
         }
 
         binding.btnRestore.setOnClickListener {
-            startSelectDir(REQUEST_RESTORE_DIR)
+            restoreDirectoryLauncher.launch(null)
         }
     }
 
-    private fun startSelectDir(requestCode: Int) {
-        val backupIntent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-        startActivityForResult(backupIntent, requestCode)
-    }
-
-    override fun onActivityResult(reqCode: Int, resCode: Int, data: Intent?) {
-        super.onActivityResult(reqCode, resCode, data)
-        if (reqCode == REQUEST_PUBLIC_FILE && resCode == Activity.RESULT_OK) {
-            var uri: Uri? = null
-            if (data != null) {
-                uri = data.data
-                val destFilePath = FileUtil.privateDbDirPath + SCPConstants.DETAIL_DB_NAME
-                val destFile = File(destFilePath)
-                uri?.let {
-                    doAsync {
-                        if (copyFileFromUri(this@DownloadActivity, uri, destFile)) {
-                            DetailDatabase.getInstance()
-                            FileUtil.checkDetailDb()
-                            uiThread {
-                                toast("数据库已加载")
-                            }
-                        } else {
-                            uiThread {
-                                toast("数据库读取出错")
-                            }
-                        }
-                    }
-                }
+    private fun importDetailDatabase(uri: Uri) {
+        val destFile = File(FileUtil.privateDbDirPath + SCPConstants.DETAIL_DB_NAME)
+        lifecycleScope.launch(Dispatchers.IO) {
+            val success = runCatching {
+                copyFileFromUri(this@DownloadActivity, uri, destFile)
+            }.getOrDefault(false)
+            if (success) {
+                DetailDatabase.getInstance()
+                FileUtil.checkDetailDb()
             }
-        } else if (reqCode == REQUEST_BACKUP_DIR && resCode == Activity.RESULT_OK) {
-            // 备份
-            data?.data?.let { uriTree ->
-                // 创建所选目录的DocumentFile，可以使用它进行文件操作
-                val root = DocumentFile.fromTreeUri(this, uriTree)
-                root?.let {
-                    doAsync {
-                        val dbFile = root.createFile("*/*", INFO_DB_NAME)
-                        val levelPrefFile = root.createFile("application/xml", LEVEL_PREF_NAME)
-                        val appPrefFile = root.createFile("application/xml", APP_PREF_NAME)
-                        val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawLevelPrefFile =
-                            File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
-                        val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
-                        dbFile?.let {
-                            copyFileToUri(this@DownloadActivity, rawDbFile, dbFile.uri)
-                        }
-                        levelPrefFile?.let {
-                            copyFileToUri(
-                                this@DownloadActivity,
-                                rawLevelPrefFile,
-                                levelPrefFile.uri
-                            )
-                        }
-                        appPrefFile?.let {
-                            copyFileToUri(this@DownloadActivity, rawAppPrefFile, appPrefFile.uri)
-                        }
-                        uiThread {
-                            toast("备份完成")
-                        }
-                    }
-                }
-            }
-        } else if (reqCode == REQUEST_RESTORE_DIR && resCode == Activity.RESULT_OK) {
-            // 恢复
-            data?.data?.let { uriTree ->
-                val root = DocumentFile.fromTreeUri(this, uriTree)
-                root?.let {
-                    doAsync {
-                        AppInfoDatabase.getInstance().close()
-                        val rawDbFile = File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}")
-                        val rawLevelPrefFile =
-                            File("${FileUtil.privatePrefDirPath}${LEVEL_PREF_NAME}")
-                        val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}${APP_PREF_NAME}")
-                        if (root.findFile(INFO_DB_NAME) != null) {
-                            AppInfoDatabase.getInstance()
-                            rawDbFile.delete()
-                            File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}-shm").delete()
-                            File("${FileUtil.privateDbDirPath}${INFO_DB_NAME}-wal").delete()
-                            val dbFile = root.findFile(INFO_DB_NAME)
-                            dbFile?.let {
-                                copyFileFromUri(this@DownloadActivity, dbFile.uri, rawDbFile)
-                            }
-                        }
-                        if (root.findFile(LEVEL_PREF_NAME) != null) {
-                            val prefFile = root.findFile(LEVEL_PREF_NAME)
-                            prefFile?.let {
-                                rawLevelPrefFile.delete()
-                                copyFileFromUri(
-                                    this@DownloadActivity,
-                                    prefFile.uri,
-                                    rawLevelPrefFile
-                                )
-                            }
-                        }
-                        if (root.findFile(APP_PREF_NAME) != null) {
-                            val prefFile = root.findFile(APP_PREF_NAME)
-                            prefFile?.let {
-                                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawAppPrefFile)
-                            }
-                        }
-                        AppInfoDatabase.getNewInstance()
-                        uiThread {
-                            toast("恢复完成，部分数据可能需要重启APP后生效")
-                        }
-                    }
-                }
+            withContext(Dispatchers.Main) {
+                showToast(if (success) "数据库已加载" else "数据库读取失败")
             }
         }
+    }
+
+    private fun backupAppData(uriTree: Uri) {
+        val root = DocumentFile.fromTreeUri(this, uriTree) ?: return
+        lifecycleScope.launch(Dispatchers.IO) {
+            val dbFile = ensureDocumentFile(root, INFO_DB_NAME, "*/*")
+            val levelPrefFile = ensureDocumentFile(root, LEVEL_PREF_NAME, "application/xml")
+            val appPrefFile = ensureDocumentFile(root, APP_PREF_NAME, "application/xml")
+            val rawDbFile = File("${FileUtil.privateDbDirPath}$INFO_DB_NAME")
+            val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}$LEVEL_PREF_NAME")
+            val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}$APP_PREF_NAME")
+            dbFile?.let { copyFileToUri(this@DownloadActivity, rawDbFile, it.uri) }
+            levelPrefFile?.let { copyFileToUri(this@DownloadActivity, rawLevelPrefFile, it.uri) }
+            appPrefFile?.let { copyFileToUri(this@DownloadActivity, rawAppPrefFile, it.uri) }
+            withContext(Dispatchers.Main) {
+                showToast("备份完成")
+            }
+        }
+    }
+
+    private fun restoreAppData(uriTree: Uri) {
+        val root = DocumentFile.fromTreeUri(this, uriTree) ?: return
+        lifecycleScope.launch(Dispatchers.IO) {
+            AppInfoDatabase.getInstance().close()
+            val rawDbFile = File("${FileUtil.privateDbDirPath}$INFO_DB_NAME")
+            val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}$LEVEL_PREF_NAME")
+            val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}$APP_PREF_NAME")
+
+            root.findFile(INFO_DB_NAME)?.let { dbFile ->
+                rawDbFile.delete()
+                File("${FileUtil.privateDbDirPath}$INFO_DB_NAME-shm").delete()
+                File("${FileUtil.privateDbDirPath}$INFO_DB_NAME-wal").delete()
+                copyFileFromUri(this@DownloadActivity, dbFile.uri, rawDbFile)
+            }
+            root.findFile(LEVEL_PREF_NAME)?.let { prefFile ->
+                rawLevelPrefFile.delete()
+                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
+            }
+            root.findFile(APP_PREF_NAME)?.let { prefFile ->
+                rawAppPrefFile.delete()
+                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawAppPrefFile)
+            }
+            AppInfoDatabase.getNewInstance()
+            withContext(Dispatchers.Main) {
+                showToast("恢复完成，部分数据可能需要重启应用后生效")
+            }
+        }
+    }
+
+    private fun ensureDocumentFile(
+        root: DocumentFile,
+        fileName: String,
+        mimeType: String
+    ): DocumentFile? {
+        return root.findFile(fileName) ?: root.createFile(mimeType, fileName)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

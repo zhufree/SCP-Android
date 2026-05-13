@@ -1,6 +1,8 @@
 package info.free.scp.view.widget
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH
@@ -12,8 +14,6 @@ import info.free.scp.util.EventUtil
 import info.free.scp.view.home.DirectActivity
 import info.free.scp.view.random.RandomActivity
 import info.free.scp.view.search.SearchActivity
-import org.jetbrains.anko.selector
-import org.jetbrains.anko.startActivity
 import toast
 
 class SearchBar : ConstraintLayout {
@@ -27,37 +27,25 @@ class SearchBar : ConstraintLayout {
     private fun initView(context: Context) {
         binding = LayoutSearchBarBinding.inflate(LayoutInflater.from(context), this)
         binding.btnDirect.setOnClickListener {
-            context.startActivity<DirectActivity>()
+            context.startActivity(Intent(context, DirectActivity::class.java))
         }
         binding.btnRandom.setOnClickListener {
             val randomTypes = listOf("随机全部", "随机SCP", "随机故事", "随机搞笑")
-            context.selector("", randomTypes) { _, i ->
-                when (i) {
-                    0 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomAll)
-                        context.startActivity<RandomActivity>(
-                            "random_type" to 0,
-                            "random_title" to randomTypes[i]
-                        )
+            AlertDialog.Builder(context)
+                .setItems(randomTypes.toTypedArray()) { _, i ->
+                    when (i) {
+                        0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
+                        1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
+                        2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
+                        3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
                     }
-
-                    1 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomScp)
-                        context.startActivity<RandomActivity>("random_type" to 1,
-                                "random_title" to randomTypes[i])
-                    }
-                    2 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomTale)
-                        context.startActivity<RandomActivity>("random_type" to 2,
-                                "random_title" to randomTypes[i])
-                    }
-                    3 -> {
-                        EventUtil.onEvent(context, EventUtil.clickRandomJoke)
-                        context.startActivity<RandomActivity>("random_type" to 3,
-                                "random_title" to randomTypes[i])
-                    }
+                    context.startActivity(
+                        Intent(context, RandomActivity::class.java)
+                            .putExtra("random_type", i)
+                            .putExtra("random_title", randomTypes[i])
+                    )
                 }
-            }
+                .show()
         }
 
         binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
@@ -66,7 +54,10 @@ class SearchBar : ConstraintLayout {
                 if (keyword.isEmpty()) {
                     toast("请输入正确的关键词")
                 } else {
-                    context.startActivity<SearchActivity>("keyword" to keyword)
+                    context.startActivity(
+                        Intent(context, SearchActivity::class.java)
+                            .putExtra("keyword", keyword)
+                    )
 //                    if (searchMode == 0) searchByTitle(keyword) else searchByDetail(keyword)
                 }
             }

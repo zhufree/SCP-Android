@@ -1,10 +1,5 @@
 package info.free.scp
 
-/**
- * Created by zhufree on 2018/8/22.
- *
- */
-
 object SCPConstants {
     const val PACKAGE_NAME = "info.free.scp"
     const val SCP_DB_NAME = "scp_category_v2.db"
@@ -31,23 +26,19 @@ object SCPConstants {
         const val TAG = 2
     }
 
-    // category type
     object Entry {
-        const val SCP_DOC = 1001 // SCP文档，包含其他文档
-        const val SCP_CN_DOC = 1002 // SCP-CN文档，包含其他文档
-        const val STORY_DOC = 1003 // 故事外围
-        const val GOI_DOC = 1004 // 故事外围
-        const val ART_DOC = 1005 // 故事外围
-        const val WANDER_DOC = 1006 // 故事外围
-        const val LIBRARY_DOC = 1007 // 故事外围
-        const val INTERNATIONAL_DOC = 1008 // 故事外围
-        const val INFORMATION_DOC = 1009 // 故事外围
-
+        const val SCP_DOC = 1001
+        const val SCP_CN_DOC = 1002
+        const val STORY_DOC = 1003
+        const val GOI_DOC = 1004
+        const val ART_DOC = 1005
+        const val WANDER_DOC = 1006
+        const val LIBRARY_DOC = 1007
+        const val INTERNATIONAL_DOC = 1008
+        const val INFORMATION_DOC = 1009
     }
 
-
     object Category {
-        // 直接跳转列表 100+
         const val SERIES = 1
         const val SERIES_CN = 2
         const val JOKE = 101
@@ -66,57 +57,38 @@ object SCPConstants {
     }
 
     object ScpType {
-        // save type
         const val SAVE_SERIES = 1
         const val SAVE_SERIES_CN = 2
         const val SAVE_JOKE = 3
         const val SAVE_JOKE_CN = 4
         const val SAVE_EX = 5
         const val SAVE_EX_CN = 6
-
         const val SAVE_TALES = 7
         const val SAVE_TALES_CN = 8
         const val SAVE_CANON = 9
         const val SAVE_CANON_CN = 10
         const val SAVE_STORY_SERIES = 11
         const val SAVE_STORY_SERIES_CN = 12
-
         const val SAVE_REPORT = 13
         const val SAVE_ANOMALOUS_CN = 14
         const val SAVE_SHORT_STORY = 15
-
         const val SAVE_LIBRARY_PAGE = 16
         const val SAVE_GOI = 17
         const val SAVE_ART = 18
-
         const val SAVE_CONTEST = 19
         const val SAVE_CONTEST_CN = 20
         const val SAVE_WANDER = 21
         const val SAVE_WANDER_CN = 22
         const val SAVE_INTERNATIONAL = 23
-        const val SAVE_INFO_PAGE = 24 // 设定说明类页面
-
+        const val SAVE_INFO_PAGE = 24
         const val SAVE_TALES_BY_TIME = 101
         const val SAVE_OFFSET = 100
     }
 
     const val SCP_SITE_URL = "http://scp-wiki-cn.wikidot.com"
 
-    // https://portal.mcseekeri.top/http/scp-wiki-cn.wikidot.com
-
-    // 广播类型
-    object BroadCastAction {
-        const val ACTION_CHANGE_THEME = "changeTheme"
-    }
-
-    // RequestCode
     object RequestCode {
-        const val CATEGORY_TO_DETAIL = 0
-        const val REQUEST_FILE_PERMISSION = 1
         const val REQUEST_PICTURE_DIR = 2
-        const val REQUEST_PUBLIC_FILE = 3
-        const val REQUEST_BACKUP_DIR = 4
-        const val REQUEST_RESTORE_DIR = 5
     }
 
     const val HISTORY_TYPE = 0
@@ -132,5 +104,4 @@ object SCPConstants {
     const val TOP_RATED_TALES = 2
     const val TOP_RATED_GOI = 3
     const val TOP_RATED_WANDERS = 4
-
 }

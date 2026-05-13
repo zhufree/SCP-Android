@@ -7,7 +7,6 @@ import info.free.scp.databinding.ActivityDonationBinding
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.dip
 
 class DonationActivity :BaseActivity() {
     private lateinit var binding: ActivityDonationBinding
@@ -19,9 +18,9 @@ class DonationActivity :BaseActivity() {
         baseToolbar = binding.donationToolbar
 
         binding.btnAfdian.background =
-            ThemeUtil.customShape(Color.parseColor("#8A62DC"), 0, 0, dip(32))
+            ThemeUtil.customShape(Color.parseColor("#8A62DC"), 0, 0, Utils.dp2px(32, this))
         binding.btnMianbaoduo.background =
-            ThemeUtil.customShape(Color.parseColor("#FED04D"), 0, 0, dip(32))
+            ThemeUtil.customShape(Color.parseColor("#FED04D"), 0, 0, Utils.dp2px(32, this))
 
         binding.btnAfdian.setOnClickListener {
             startActivity(Utils.getUrlIntent("https://afdian.net/@zhufree"))

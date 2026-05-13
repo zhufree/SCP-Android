@@ -1,5 +1,6 @@
 package info.free.scp.view.search
 
+import android.content.Intent
 import android.os.Bundle
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -12,7 +13,6 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
 import info.free.scp.view.tag.TagDetailActivity
-import org.jetbrains.anko.startActivity
 
 class SearchActivity : BaseActivity() {
     var adapter: SearchResultAdapter? = null
@@ -40,7 +40,7 @@ class SearchActivity : BaseActivity() {
         binding.tabSearchResult.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (binding.tabSearchResult.selectedTabPosition == 2) {
-                    startActivity<TagDetailActivity>("tag" to keyword)
+                    startActivity(Intent(this@SearchActivity, TagDetailActivity::class.java).putExtra("tag", keyword))
                 }
             }
 

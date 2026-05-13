@@ -1,22 +1,16 @@
 package info.free.scp.view.base
 
 import android.app.Activity
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import info.free.scp.R
-import info.free.scp.SCPConstants
 import info.free.scp.util.ThemeUtil
-import org.jetbrains.anko.AnkoLogger
 
 
-open class BaseActivity : AppCompatActivity(), AnkoLogger {
+open class BaseActivity : AppCompatActivity() {
 
     var baseToolbar: Toolbar? = null
         set(value) {
@@ -26,15 +20,12 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
             value?.setNavigationIcon(R.drawable.baseline_arrow_back_white_24dp)
         }
 
-    private var themeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            refreshTheme()
-        }
-    }
+    private val themeListener: () -> Unit = { refreshTheme() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.setTheme(this)
-        registerBroadCastReceivers()
+        ThemeUtil.registerThemeListener(themeListener)
         window.statusBarColor = ThemeUtil.toolbarBg
     }
 
@@ -49,32 +40,19 @@ open class BaseActivity : AppCompatActivity(), AnkoLogger {
         super.onPause()
     }
 
-    fun requestReadFileTree() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.addCategory(Intent.CATEGORY_OPENABLE)
-        intent.type = "*/*";
-        intent.addFlags(
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-        )
-        startActivityForResult(intent, SCPConstants.RequestCode.REQUEST_PUBLIC_FILE)
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
-    private var mLocalBroadcastManager: LocalBroadcastManager? = null
-
-    fun registerBroadCastReceivers() {
-        mLocalBroadcastManager = LocalBroadcastManager.getInstance(this)
-        mLocalBroadcastManager?.registerReceiver(themeReceiver, IntentFilter(SCPConstants.BroadCastAction.ACTION_CHANGE_THEME))
     }
 
     open fun refreshTheme() {
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         window.statusBarColor = ThemeUtil.toolbarBg
         window.navigationBarColor = ThemeUtil.containerBg
+    }
+
+    override fun onDestroy() {
+        ThemeUtil.unregisterThemeListener(themeListener)
+        super.onDestroy()
     }
 
 

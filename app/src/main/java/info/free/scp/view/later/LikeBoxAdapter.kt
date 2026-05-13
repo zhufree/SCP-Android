@@ -1,13 +1,14 @@
 package info.free.scp.view.later
 
 import android.app.Activity
-import android.content.DialogInterface
+import android.app.AlertDialog
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,16 +18,16 @@ import info.free.scp.bean.ScpLikeBox
 import info.free.scp.databinding.ItemLikeBoxBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.ThemeUtil
-import org.jetbrains.anko.*
-import java.lang.reflect.Field
+import info.free.scp.util.Utils
 
 class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(LikeBoxDiffCallback()) {
-    val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
     private val holderList = mutableListOf<LikeBoxHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LikeBoxHolder {
-        val newHolder = LikeBoxHolder(ItemLikeBoxBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false))
+        val newHolder = LikeBoxHolder(
+            ItemLikeBoxBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        )
         holderList.add(newHolder)
         return newHolder
     }
@@ -40,17 +41,14 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
     }
 
     fun refreshTheme() {
-        holderList.forEach {
-            it.refreshTheme()
-        }
+        holderList.forEach { it.refreshTheme() }
     }
 
     private fun createOnClickListener(box: ScpLikeBox): View.OnClickListener {
         return View.OnClickListener {
-            val intent = Intent()
-            intent.putExtra("box_id", box.id)
-            intent.putExtra("box_name", box.name)
-            intent.setClass(it.context, LikeListActivity::class.java)
+            val intent = Intent(it.context, LikeListActivity::class.java)
+                .putExtra("box_id", box.id)
+                .putExtra("box_name", box.name)
             (it.context as Activity).startActivity(intent)
         }
     }
@@ -64,59 +62,54 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
 
     private fun onLongClick(id: Int) {
         if (id == 1) return
-        val selectOption = listOf("删除收藏夹并删除其中收藏内容", "删除收藏夹，将其中内容转移到默认收藏夹", "重命名收藏夹", "我手滑了")
-        ScpApplication.currentActivity?.selector("Notice", selectOption) { out, which ->
-            val field = out.javaClass.superclass?.getDeclaredField(
-                    "mShowing")
-            field?.isAccessible = true
-            // 将mShowing变量设为false，表示对话框已关闭
-            field?.set(out, false)
-            when (which) {
-                0 -> {
-                    ScpApplication.currentActivity?.alert("Notice") {
-                        positiveButton("确定删除") {
-                            // 获取其中所有收藏内容，取消收藏，删除收藏夹
-                            val likeList = likeDao.getLikeListByBoxId(id)
-                            likeList.forEach {
-                                it.boxId = 0
-                                it.like = false
-                            }
-                            likeDao.saveAll(likeList)
-                            likeDao.deleteLikeBoxById(id)
-                            field?.set(out, true)
-                            out.dismiss()
-                            updateList()
-                        }
-                        negativeButton("我手滑了") { field?.set(out, true) }
-                    }?.show()
-                }
-                1 -> {
-                    ScpApplication.currentActivity?.alert("Notice") {
-                        positiveButton("确定删除") {
-                            field?.set(out, true)
-                            out.dismiss()
-                            // 获取其中所有收藏内容，修改收藏夹id，删除收藏夹
-                            val likeList = likeDao.getLikeListByBoxId(id)
-                            likeList.forEach {
-                                it.boxId = 1
-                            }
-                            likeDao.saveAll(likeList)
-                            likeDao.deleteLikeBoxById(id)
-                            updateList()
-                        }
-                        negativeButton("我手滑了") { field?.set(out, true) }
-                    }?.show()
-                }
-                2 -> {
-                    showInputAlert(out, field, id)
-                }
-                3 -> {
-                    field?.set(out, true)
-                    out.dismiss()
+        val activity = ScpApplication.currentActivity ?: return
+        val selectOption = arrayOf("删除收藏夹并清空其中收藏", "删除收藏夹并转移到默认收藏夹", "重命名收藏夹", "取消")
+        AlertDialog.Builder(activity)
+            .setTitle("Notice")
+            .setItems(selectOption) { dialog, which ->
+                when (which) {
+                    0 -> showDeleteAndClearDialog(activity, id)
+                    1 -> showDeleteAndMoveDialog(activity, id)
+                    2 -> showRenameDialog(activity, id)
+                    3 -> dialog.dismiss()
                 }
             }
+            .show()
+    }
 
-        }
+    private fun showDeleteAndClearDialog(activity: Activity, id: Int) {
+        AlertDialog.Builder(activity)
+            .setTitle("Notice")
+            .setMessage("确定删除该收藏夹，并清空其中的收藏内容吗？")
+            .setPositiveButton("确定删除") { _, _ ->
+                val likeList = likeDao.getLikeListByBoxId(id)
+                likeList.forEach {
+                    it.boxId = 0
+                    it.like = false
+                }
+                likeDao.saveAll(likeList)
+                likeDao.deleteLikeBoxById(id)
+                updateList()
+            }
+            .setNegativeButton("取消", null)
+            .show()
+    }
+
+    private fun showDeleteAndMoveDialog(activity: Activity, id: Int) {
+        AlertDialog.Builder(activity)
+            .setTitle("Notice")
+            .setMessage("确定删除该收藏夹，并把内容转移到默认收藏夹吗？")
+            .setPositiveButton("确定删除") { _, _ ->
+                val likeList = likeDao.getLikeListByBoxId(id)
+                likeList.forEach {
+                    it.boxId = 1
+                }
+                likeDao.saveAll(likeList)
+                likeDao.deleteLikeBoxById(id)
+                updateList()
+            }
+            .setNegativeButton("取消", null)
+            .show()
     }
 
     private fun updateList() {
@@ -130,38 +123,46 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
         submitList(boxList)
     }
 
-    private fun showInputAlert(out: DialogInterface, field: Field?, boxId: Int) {
-        var input: EditText? = null
-        ScpApplication.currentActivity?.alert {
-            customView {
-                linearLayout {
-                    padding = dip(16)
-                    orientation = LinearLayout.VERTICAL
-                    textView("输入新的收藏夹名") {
-                        textColor = ThemeUtil.darkText
-                        textSize = 18f
-                    }
-                    input = editText {
-                        height = ViewGroup.LayoutParams.WRAP_CONTENT
-                        width = ViewGroup.LayoutParams.MATCH_PARENT
-                        singleLine = true
-                    }
+    private fun showRenameDialog(activity: Activity, boxId: Int) {
+        val container = LinearLayout(activity).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(
+                Utils.dp2px(16, activity),
+                Utils.dp2px(16, activity),
+                Utils.dp2px(16, activity),
+                Utils.dp2px(16, activity)
+            )
+        }
+        val titleView = TextView(activity).apply {
+            text = "输入新的收藏夹名"
+            setTextColor(ThemeUtil.darkText)
+            textSize = 18f
+        }
+        val input = EditText(activity).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            isSingleLine = true
+            setText(likeDao.getLikeBoxById(boxId).name)
+        }
+        container.addView(titleView)
+        container.addView(input)
+
+        AlertDialog.Builder(activity)
+            .setTitle("Notice")
+            .setView(container)
+            .setPositiveButton("确定") { _, _ ->
+                val likeBox = likeDao.getLikeBoxById(boxId)
+                val newName = input.text?.toString()?.trim().orEmpty()
+                if (newName.isNotEmpty()) {
+                    likeBox.name = newName
+                    likeDao.saveLikeBox(likeBox)
+                    updateList()
                 }
             }
-            positiveButton("确定") {
-                val likeBox = likeDao.getLikeBoxById(boxId)
-                likeBox.name = input?.text?.toString() ?: likeBox.name
-                likeDao.saveLikeBox(likeBox)
-                updateList()
-                field?.set(out, true)
-                out.dismiss()
-            }
-            negativeButton("取消") {
-                field?.set(out, true)
-                out.dismiss()
-            }
-
-        }?.show()
+            .setNegativeButton("取消", null)
+            .show()
     }
 
     class LikeBoxHolder(private val binding: ItemLikeBoxBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -175,24 +176,17 @@ class LikeBoxAdapter : ListAdapter<ScpLikeBox, LikeBoxAdapter.LikeBoxHolder>(Lik
         }
 
         fun refreshTheme() {
-            binding.clLikeBoxContainer.backgroundColor = ThemeUtil.itemBg
-            binding.tvBoxTitle.textColor = ThemeUtil.darkText
+            binding.clLikeBoxContainer.setBackgroundColor(ThemeUtil.itemBg)
+            binding.tvBoxTitle.setTextColor(ThemeUtil.darkText)
         }
     }
 
     private class LikeBoxDiffCallback : DiffUtil.ItemCallback<ScpLikeBox>() {
-
-        override fun areItemsTheSame(
-                oldItem: ScpLikeBox,
-                newItem: ScpLikeBox
-        ): Boolean {
+        override fun areItemsTheSame(oldItem: ScpLikeBox, newItem: ScpLikeBox): Boolean {
             return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(
-                oldItem: ScpLikeBox,
-                newItem: ScpLikeBox
-        ): Boolean {
+        override fun areContentsTheSame(oldItem: ScpLikeBox, newItem: ScpLikeBox): Boolean {
             return oldItem == newItem
         }
     }

@@ -1,6 +1,7 @@
 package info.free.scp.db
 
 import android.database.sqlite.SQLiteDatabaseCorruptException
+import android.widget.Toast
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -17,7 +18,6 @@ import info.free.scp.db.ScpTable.LIKE_AND_READ_TABLE_NAME
 import info.free.scp.db.ScpTable.VIEW_LIST_TABLE_NAME
 import info.free.scp.db.ScpTable.dropDetailTableSQL
 import info.free.scp.db.ScpTable.dropScpTableSQL
-import org.jetbrains.anko.toast
 
 
 @Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class, ScpLikeBox::class], version = 7)
@@ -100,9 +100,9 @@ abstract class AppInfoDatabase : RoomDatabase() {
                         .allowMainThreadQueries()
                         .build()
             } catch (e1: SQLiteDatabaseCorruptException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             } catch (e2: IllegalStateException) {
-                ScpApplication.currentActivity?.toast("创建数据库出错，请重试或检查版本")
+                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
             }
         }
     }

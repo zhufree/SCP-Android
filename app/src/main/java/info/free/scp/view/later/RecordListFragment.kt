@@ -1,5 +1,6 @@
 package info.free.scp.view.later
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,6 @@ import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.OrderType.DESC
 import info.free.scp.databinding.FragmentLaterListBinding
 import info.free.scp.view.base.BaseFragment
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.support.v4.alert
-import org.jetbrains.anko.yesButton
 
 /**
  * 待读和历史列表共用一个fragment
@@ -58,13 +56,14 @@ class RecordListFragment : BaseFragment() {
         recordType = arguments?.getInt("record_type") ?: LATER_TYPE
         adapter.submitList(viewModel.getRecordList(recordType, orderType))
         adapter.onLongClick = { record ->
-            alert("是否确认删除？") {
-                yesButton {
+            AlertDialog.Builder(requireContext())
+                .setMessage("是否确认删除？")
+                .setPositiveButton("确定") { _, _ ->
                     viewModel.deleteRecord(record)
                     adapter.submitList(viewModel.getRecordList(recordType, orderType))
                 }
-                noButton { }
-            }.show()
+                .setNegativeButton("取消", null)
+                .show()
         }
     }
 

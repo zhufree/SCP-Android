@@ -4,13 +4,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Menu
+import android.widget.Toast
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
 import info.free.scp.databinding.ActivityDraftEditBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseActivity
-import org.jetbrains.anko.toast
 
 class DraftEditActivity : BaseActivity() {
     lateinit var draft: DraftModel
@@ -31,7 +31,7 @@ class DraftEditActivity : BaseActivity() {
                 R.id.save_draft -> {
                     draft.lastModifyTime = System.currentTimeMillis()
                     draftDao.save(draft)
-                    toast("已保存")
+                    Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show()
                 }
             }
             true

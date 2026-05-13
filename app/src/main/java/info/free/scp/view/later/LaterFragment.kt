@@ -25,7 +25,6 @@ import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.home.TabFragmentPager
-import org.jetbrains.anko.support.v4.alert
 import toast
 
 
@@ -64,11 +63,10 @@ class LaterFragment : BaseFragment() {
         }.attach()
         binding.fabImport.setOnClickListener {
             if (!PreferenceUtil.getShownReadSuggest()) {
-                alert(
-                    "要不要访问大佬们整理的待读列表（可以复制列表后点击此按钮导入）",
-                    "不知道读什么？"
-                ) {
-                    positiveButton("带我去！") {
+                AlertDialog.Builder(requireContext())
+                    .setTitle("不知道读什么？")
+                    .setMessage("要不要访问大佬们整理的待读列表（可以复制列表后点击此按钮导入）")
+                    .setPositiveButton("带我去！") { _, _ ->
                         val updateIntent = Intent()
                         updateIntent.action = "android.intent.action.VIEW"
                         val updateUrl =
@@ -76,8 +74,8 @@ class LaterFragment : BaseFragment() {
                         updateIntent.data = updateUrl
                         startActivity(updateIntent)
                     }
-                    negativeButton("不用了") {}
-                }.show()
+                    .setNegativeButton("不用了", null)
+                    .show()
                 PreferenceUtil.setShownReadSuggest()
             }
             showInputListDialog()

@@ -8,13 +8,15 @@ import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.bean.CommentModel
+import info.free.scp.data.detail.DetailRepository
 import info.free.scp.data.reading.ReadingDocumentStatus
 import info.free.scp.data.reading.ReadingListRepository
 import info.free.scp.util.PreferenceUtil
 import kotlinx.coroutines.launch
 
 class DetailViewModel : ViewModel() {
-    var repo = DetailRepository()
+    private val repo = DetailRepository()
     private val readingListRepository = ReadingListRepository()
 
     fun getScp(): MutableLiveData<ScpModel?> {
@@ -35,6 +37,10 @@ class DetailViewModel : ViewModel() {
 
     fun getOfflineTag(): LiveData<String> {
         return repo.offlineTag
+    }
+
+    fun getCommentList(): LiveData<List<CommentModel>> {
+        return repo.commentList
     }
 
     /**

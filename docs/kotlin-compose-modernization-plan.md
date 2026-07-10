@@ -332,13 +332,14 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
 - 新增 `data/detail/DetailTitleFormatter` 与 3 项测试，固化截图文件名移除 ASCII 空格、保留中文/标点和空标题行为；详情截图保存不再内联标题字符串处理。至此阶段 2A 计划中的构建矩阵与首批 characterization tests 已全部补齐。
 - 已将详情页的打开历史写入、待读移除/加入、已读切换、收藏/取消收藏和收藏夹创建接入 `ReadingListRepository`；`DetailActivity`、`DetailViewModel` 与旧 `DetailRepository` 不再直接访问 `AppInfoDatabase`、`ScpDataHelper`、`likeAndReadDao` 或 `readRecordDao`。
 - 已扩展 `ScpCatalogRepository` 的单篇查询与上下篇导航接口，并补 3 项测试；`DetailActivity` 与旧 `DetailRepository` 不再直接持有 `ScpDatabase/scpDao`，站内链接解析和普通顺序阅读均通过目录 Repository。
-- 迁移扫描结果：`view/later`、`LaterAndHistoryActivity` 与 `view/detail` 已无阅读数据库/Helper 或 `ScpDatabase` 直连；旧 `view/category/RandomRepository` 与全局 `ScpDataHelper` 已删除。详情页仍直接访问偏好和网络内容边界，属于下一批 2B 工作。
+- `DetailRepository` 已从 `view/detail` 移入 `data/detail`，统一承载离线正文/Tag 与线上正文/Tag/评论访问；Repository 在 `DetailViewModel` 内改为私有，Activity 通过明确的评论 `LiveData` 接口消费状态，不再穿透访问 Repository。
+- 迁移扫描结果：`view/later`、`LaterAndHistoryActivity` 与 `view/detail` 已无阅读数据库/Helper、`ScpDatabase`、`DetailDatabase` 或 `HttpManager` 直连；旧 `view/category/RandomRepository` 与全局 `ScpDataHelper` 已删除。详情页仍直接访问偏好边界，属于下一批 2B 工作。
 - 2026-07-10 验证矩阵：
   - `.\gradlew.bat testDefaultProductionDebugUnitTest --tests 'info.free.scp.data.*'` 通过。
   - `.\gradlew.bat assembleDefaultProductionDebug --stacktrace` 通过。
   - `.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace` 通过，已覆盖 R8 minify 与资源压缩链路。
 - 发布预检暴露但本切片未处理的 warning：`flatDir` 仓库、Java 8 编译目标、Firebase KTX、旧 Room migration/builder API，以及少量 Android/Compose 废弃 API；这些继续归入阶段 5A 的工具链 warning 清单，不与当前 Repository 重构混改。
-- 当前阶段判断：第 0、1、2A、3、4 阶段完成；2B 的分类、搜索、Tag、草稿、随机、阅读状态与详情目录导航边界已收敛，详情网络内容/偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
+- 当前阶段判断：第 0、1、2A、3、4 阶段完成；2B 的分类、搜索、Tag、草稿、随机、阅读状态、详情目录导航与网络内容边界已收敛，详情偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
 
 ### 阶段 5A：旧依赖与发布收口
 

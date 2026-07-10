@@ -859,7 +859,7 @@ class DetailActivity : BaseActivity() {
 
         binding.tvBottomLike.setOnClickListener { likeScp() }
 
-        viewModel.repo.commentList.observe(this, Observer {
+        viewModel.getCommentList().observe(this, Observer {
             if (it.isEmpty()) {
                 if (HtmlParserService.noComment) {
                     tvLoad?.text = "这篇文档没有评论"

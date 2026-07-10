@@ -327,13 +327,14 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
 - `ReadingListRepositoryTest` 已补收藏夹清空、迁移、重命名和历史清空测试；阅读域 Repository 测试当前共 12 项并通过。
 - 新增 `data/random/RandomRepository + RandomDataSource`，将随机列表的数据入口从 `view/category` 移出；`GroupViewModel` 仅持有列表状态并编排刷新/追加，原 `ScpDataHelper` 随机抽取算法保持不变。
 - 新增 `RandomRepositoryTest`，覆盖刷新替换当前列表、追加下一批结果和随机范围参数透传。随机列表内部的已读/离线详情过滤仍由旧 `ScpDataHelper` 承担，后续迁移该算法时仍需补对应过滤测试。
+- 新增 `data/detail/DetailLinkResolver` 与 5 项 characterization tests，固化本地文档链接补全、绝对链接保留、站点/file 链接归一化和 API path 提取规则；`DetailActivity` 与旧 `DetailRepository` 已统一复用该纯 Kotlin 边界，不再各自硬编码截断长度或 `substring(1)`。
 - 迁移扫描结果：`view/later` 与 `LaterAndHistoryActivity` 已无 `AppInfoDatabase`、`likeAndReadDao` 或 `readRecordDao` 直连；旧 `view/category/RandomRepository` 已删除。
 - 2026-07-10 验证矩阵：
   - `.\gradlew.bat testDefaultProductionDebugUnitTest --tests 'info.free.scp.data.*'` 通过。
   - `.\gradlew.bat assembleDefaultProductionDebug --stacktrace` 通过。
   - `.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace` 通过，已覆盖 R8 minify 与资源压缩链路。
 - 发布预检暴露但本切片未处理的 warning：`flatDir` 仓库、Java 8 编译目标、Firebase KTX、旧 Room migration/builder API，以及少量 Android/Compose 废弃 API；这些继续归入阶段 5A 的工具链 warning 清单，不与当前 Repository 重构混改。
-- 当前阶段判断不变：第 0、1、3、4 阶段完成；2A 的主构建矩阵已补齐，但详情 URL/标题与随机内部过滤测试仍缺；2B 的分类、搜索、Tag、草稿、随机入口和阅读域外围宿主已收敛，`DetailActivity`、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
+- 当前阶段判断不变：第 0、1、3、4 阶段完成；2A 的主构建矩阵与详情 URL 测试已补齐，但详情标题与随机内部过滤测试仍缺；2B 的分类、搜索、Tag、草稿、随机入口和阅读域外围宿主已收敛，`DetailActivity`、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
 
 ### 阶段 5A：旧依赖与发布收口
 

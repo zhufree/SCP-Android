@@ -46,6 +46,7 @@ import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
+import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
@@ -80,7 +81,7 @@ class DetailActivity : BaseActivity() {
     private var url = ""
         set(value) {
             field = value
-            fullUrl = if (value.contains("http")) value else "http://scp-wiki-cn.wikidot.com$value"
+            fullUrl = DetailLinkResolver.toFullUrl(value)
         }
     private var title = ""
     private var index = 0
@@ -159,8 +160,6 @@ class DetailActivity : BaseActivity() {
         }
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
-        fullUrl = if (url.contains("http")) url else "$SCP_SITE_URL$url"
-
         // 有些不是以/开头的而是完整链接
         if (url.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
@@ -213,13 +212,7 @@ class DetailActivity : BaseActivity() {
                 if (onlineMode == 1) {
                     view.loadUrl(requestUrl)
                 } else {
-                    if (requestUrl.startsWith(SCP_SITE_URL)) {
-                        url = requestUrl.subSequence(30, requestUrl.length).toString()
-                    } else if (requestUrl.startsWith("file:")) {
-                        url = requestUrl.subSequence(7, requestUrl.length).toString()
-                    } else {
-                        url = requestUrl
-                    }
+                    url = DetailLinkResolver.toLocalLink(requestUrl)
                     Log.i("scp-detail", url)
                     val tmpScp = scpDao?.getScpByLink(url)
                     tmpScp?.let {

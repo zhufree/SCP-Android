@@ -9,6 +9,7 @@ import info
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.bean.*
+import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDataHelper
@@ -66,7 +67,7 @@ class DetailRepository {
     }
 
     suspend fun loadDetail(link: String) {
-        val response = apiCall { HttpManager.instance.getDetail(link.substring(1)) }
+        val response = apiCall { HttpManager.instance.getDetail(DetailLinkResolver.toApiPath(link)) }
         response?.let {
             executeResponse(response, {
 
@@ -79,7 +80,7 @@ class DetailRepository {
     }
 
     suspend fun loadTag(link: String) {
-        val response = apiCall { HttpManager.instance.getTag(link.substring(1)) }
+        val response = apiCall { HttpManager.instance.getTag(DetailLinkResolver.toApiPath(link)) }
         response?.let {
             executeResponse(response, {
 
@@ -92,7 +93,7 @@ class DetailRepository {
     }
 
     suspend fun loadComment(link: String) {
-        val response = apiCall { HttpManager.instance.getComment(link.substring(1)) }
+        val response = apiCall { HttpManager.instance.getComment(DetailLinkResolver.toApiPath(link)) }
         response?.let {
             executeResponse(response, {
             }, {

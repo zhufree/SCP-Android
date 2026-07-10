@@ -325,18 +325,19 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
 
 - 已继续收敛阅读状态边界：收藏列表的查询、删除与移动，收藏夹的清空/迁移/重命名，以及阅读历史清空均统一进入 `ReadingListRepository`；`LikeListActivity`、`LikeBoxListFragment` 与 `LaterAndHistoryActivity` 不再直接访问 `AppInfoDatabase` 或 DAO。
 - `ReadingListRepositoryTest` 已补收藏夹清空、迁移、重命名、历史清空、打开文章转历史、收藏/取消收藏和创建收藏夹测试；阅读域 Repository 测试当前共 16 项并通过。
-- 新增 `data/random/RandomRepository + RandomDataSource`，将随机列表的数据入口从 `view/category` 移出；`GroupViewModel` 仅持有列表状态并编排刷新/追加，原 `ScpDataHelper` 随机抽取算法保持不变。
-- 新增 `RandomRepositoryTest`，覆盖刷新替换当前列表、追加下一批结果和随机范围参数透传。随机列表内部的已读/离线详情过滤仍由旧 `ScpDataHelper` 承担，后续迁移该算法时仍需补对应过滤测试。
+- 新增 `data/random/RandomRepository + RandomDataSource`，将随机列表的数据入口与过滤规则从 `view/category` 和旧 Helper 移出；`GroupViewModel` 仅持有列表状态并编排刷新/追加。
+- `RandomRepositoryTest` 已扩展为 5 项，覆盖刷新替换、追加与范围透传，以及隐藏已读、过滤缺失离线正文和过滤后补足批次。随机抽取算法已迁入 `data/random`，补足循环在空批次、数据不足或最多 20 次尝试时停止，不再存在旧 Helper 的跨请求计数与无限循环风险。
+- 桌面小部件已改为复用 `RandomRepository`；`ScpDataHelper` 的随机、历史与待读辅助方法均已无调用方，文件已删除。
 - 新增 `data/detail/DetailLinkResolver` 与 5 项 characterization tests，固化本地文档链接补全、绝对链接保留、站点/file 链接归一化和 API path 提取规则；`DetailActivity` 与旧 `DetailRepository` 已统一复用该纯 Kotlin 边界，不再各自硬编码截断长度或 `substring(1)`。
 - 已将详情页的打开历史写入、待读移除/加入、已读切换、收藏/取消收藏和收藏夹创建接入 `ReadingListRepository`；`DetailActivity`、`DetailViewModel` 与旧 `DetailRepository` 不再直接访问 `AppInfoDatabase`、`ScpDataHelper`、`likeAndReadDao` 或 `readRecordDao`。
 - 已扩展 `ScpCatalogRepository` 的单篇查询与上下篇导航接口，并补 3 项测试；`DetailActivity` 与旧 `DetailRepository` 不再直接持有 `ScpDatabase/scpDao`，站内链接解析和普通顺序阅读均通过目录 Repository。
-- 迁移扫描结果：`view/later`、`LaterAndHistoryActivity` 与 `view/detail` 已无阅读数据库/Helper 或 `ScpDatabase` 直连；旧 `view/category/RandomRepository` 已删除。详情页仍直接访问偏好和网络内容边界，属于下一批 2B 工作。
+- 迁移扫描结果：`view/later`、`LaterAndHistoryActivity` 与 `view/detail` 已无阅读数据库/Helper 或 `ScpDatabase` 直连；旧 `view/category/RandomRepository` 与全局 `ScpDataHelper` 已删除。详情页仍直接访问偏好和网络内容边界，属于下一批 2B 工作。
 - 2026-07-10 验证矩阵：
   - `.\gradlew.bat testDefaultProductionDebugUnitTest --tests 'info.free.scp.data.*'` 通过。
   - `.\gradlew.bat assembleDefaultProductionDebug --stacktrace` 通过。
   - `.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace` 通过，已覆盖 R8 minify 与资源压缩链路。
 - 发布预检暴露但本切片未处理的 warning：`flatDir` 仓库、Java 8 编译目标、Firebase KTX、旧 Room migration/builder API，以及少量 Android/Compose 废弃 API；这些继续归入阶段 5A 的工具链 warning 清单，不与当前 Repository 重构混改。
-- 当前阶段判断不变：第 0、1、3、4 阶段完成；2A 的主构建矩阵与详情 URL 测试已补齐，但详情标题与随机内部过滤测试仍缺；2B 的分类、搜索、Tag、草稿、随机入口、阅读状态与详情目录导航边界已收敛，详情网络内容/偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
+- 当前阶段判断不变：第 0、1、3、4 阶段完成；2A 的主构建矩阵、详情 URL 与随机内部过滤测试已补齐，仅详情标题处理测试仍缺；2B 的分类、搜索、Tag、草稿、随机、阅读状态与详情目录导航边界已收敛，详情网络内容/偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
 
 ### 阶段 5A：旧依赖与发布收口
 

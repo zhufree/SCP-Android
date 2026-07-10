@@ -1,5 +1,6 @@
 package info.free.scp.data.reading
 
+import info.free.scp.SCPConstants.HISTORY_TYPE
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.bean.ScpLikeBox
@@ -105,10 +106,26 @@ class ReadingListRepository(
         )
     }
 
-    fun toggleRead(link: String, title: String) {
-        val current = dataSource.getLikeInfo(link)
+    fun getLikeInfo(link: String, title: String): ScpLikeModel {
+        return dataSource.getLikeInfo(link)
             ?: ScpLikeModel(link, title, like = false, hasRead = false, boxId = 0)
-        dataSource.saveLikeInfo(current.copy(hasRead = !current.hasRead))
+    }
+
+    fun toggleRead(link: String, title: String): Boolean {
+        val current = getLikeInfo(link, title)
+        val updated = current.copy(hasRead = !current.hasRead)
+        dataSource.saveLikeInfo(updated)
+        return updated.hasRead
+    }
+
+    fun setLiked(link: String, title: String, boxId: Int) {
+        val current = getLikeInfo(link, title)
+        dataSource.saveLikeInfo(current.copy(like = true, boxId = boxId))
+    }
+
+    fun setUnliked(link: String, title: String) {
+        val current = getLikeInfo(link, title)
+        dataSource.saveLikeInfo(current.copy(like = false))
     }
 
     fun toggleLater(link: String, title: String): Boolean {
@@ -127,6 +144,14 @@ class ReadingListRepository(
         val target = current ?: ScpRecordModel(link, title, LATER_TYPE)
         target.viewListType = LATER_TYPE
         dataSource.saveRecord(target)
+    }
+
+    fun recordOpened(link: String, title: String) {
+        val current = dataSource.getRecord(link)
+        val historyRecord = current ?: ScpRecordModel(link, title, HISTORY_TYPE)
+        historyRecord.viewListType = HISTORY_TYPE
+        dataSource.saveRecord(historyRecord)
+        dataSource.deleteRecord(link, LATER_TYPE)
     }
 
     fun getRecordList(type: Int, order: Int): List<ScpRecordModel> {
@@ -149,6 +174,10 @@ class ReadingListRepository(
             dataSource.saveLikeBox(defaultBox)
         }
         return boxList
+    }
+
+    fun createLikeBox(name: String) {
+        dataSource.saveLikeBox(ScpLikeBox(0, name))
     }
 
     fun getLikeListByBoxId(boxId: Int): List<ScpLikeModel> {

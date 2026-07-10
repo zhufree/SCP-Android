@@ -43,12 +43,8 @@ import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
-import info.free.scp.bean.ScpLikeBox
-import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.detail.DetailLinkResolver
-import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HtmlParserService
 import info.free.scp.util.EventUtil
@@ -405,13 +401,7 @@ class DetailActivity : BaseActivity() {
 
     private fun setData(s: ScpModel, back: Boolean = false) {
         tvLoad?.text = "评论加载中..."
-        viewModel.setScpReadInfo() // scp拿到之后，设置已读数据和拿like数据
-        viewModel.getScpLikeInfo()?.observe(this, Observer { scpInfo ->
-            if (scpInfo == null) {
-                viewModel.setScpLikeInfo() // like数据拿到以后，进行初始化
-            }
-            invalidateOptionsMenu()
-        })
+        viewModel.recordOpened(s.link, s.title)
         // 刷新toolbar（收藏状态
         invalidateOptionsMenu()
         // 更新标题
@@ -543,8 +533,7 @@ class DetailActivity : BaseActivity() {
                 }
                 R.id.add_read_later -> {
                     scp?.let { s->
-                        ScpDataHelper.getInstance().insertViewListItem(s.link, s.title,
-                            SCPConstants.LATER_TYPE)
+                        viewModel.addToLater(s.link, s.title)
                         showToast("已加入待读列表")
                     }?:run {
                         showToast("本文只可在线浏览，不可加入待读")
@@ -691,18 +680,12 @@ class DetailActivity : BaseActivity() {
      * 已收藏
      */
     private fun likeScp() {
-        val scpInfo = viewModel.getScpLikeInfo()?.value ?: return
-        val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
+        val currentScp = scp ?: return
+        val scpInfo = viewModel.getLikeInfo(currentScp.link, currentScp.title)
         if (!scpInfo.like) {
             // 未收藏
             // 获取数据库中的收藏夹
-            val boxList = arrayListOf<ScpLikeBox>()
-            boxList.addAll(likeDao.getLikeBox())
-            if (boxList.isEmpty()) {
-                val defaultBox = ScpLikeBox(0, "默认收藏夹")
-                boxList.add(defaultBox)
-                likeDao.saveLikeBox(defaultBox)
-            }
+            val boxList = viewModel.getLikeBoxList()
             val nameList = arrayListOf<String>()
             nameList.addAll(boxList.map { it.name })
             nameList.add("新建收藏夹")
@@ -714,15 +697,12 @@ class DetailActivity : BaseActivity() {
                         createNewBox()
                     } else {
                         PreferenceUtil.addPoints(2)
-                        scpInfo.boxId = boxList[i].id
-                        scpInfo.like = true
-                        viewModel.likeScp(scpInfo)
+                        viewModel.setLiked(currentScp.link, currentScp.title, boxList[i].id)
                     }
                 }
                 .show()
         } else {
-            scpInfo.like = false
-            viewModel.likeScp(scpInfo)
+            viewModel.setUnliked(currentScp.link, currentScp.title)
         }
     }
 
@@ -752,9 +732,9 @@ class DetailActivity : BaseActivity() {
             .setView(container)
             .setPositiveButton("确定") { _, _ ->
                 input.clearFocus()
-                val defaultBox = ScpLikeBox(0, input.text?.toString() ?: "")
-                Log.i("scp-detail", defaultBox.toString())
-                AppInfoDatabase.getInstance().likeAndReadDao().saveLikeBox(defaultBox)
+                val boxName = input.text?.toString().orEmpty()
+                Log.i("scp-detail", "create like box: $boxName")
+                viewModel.createLikeBox(boxName)
                 likeScp()
             }
             .setNegativeButton("取消", null)
@@ -825,29 +805,18 @@ class DetailActivity : BaseActivity() {
 
     private fun setHasRead() {
         scp?.let { s ->
-            var scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(s.link)
-            if (scpInfo == null) {
-                scpInfo = ScpLikeModel(s.link, s.title, like = false, hasRead = false, boxId = 0)
-            }
-            if (scpInfo.hasRead) {
-                // 取消已读
-                PreferenceUtil.reducePoints(5)
-                scpInfo.hasRead = false
-                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                refreshReadBtnStatus()
-            } else {
-                // 标记已读
+            val hasRead = viewModel.toggleRead(s.link, s.title)
+            if (hasRead) {
                 PreferenceUtil.addPoints(5)
-                scpInfo.hasRead = true
-                AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-                refreshReadBtnStatus()
+            } else {
+                PreferenceUtil.reducePoints(5)
             }
+            refreshReadBtnStatus()
         }
     }
 
     private fun refreshReadBtnStatus() {
-        val scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(url)
-        val hasRead = scpInfo != null && scpInfo.hasRead
+        val hasRead = viewModel.getDocumentStatus(url).hasRead
         readBtnLp = binding.tvBottomSetHasRead.layoutParams as ConstraintLayout.LayoutParams?
         if (hasRead) {
             binding.tvBottomSetHasRead.setText(R.string.set_has_not_read)
@@ -950,9 +919,9 @@ class DetailActivity : BaseActivity() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        val scpInfo = AppInfoDatabase.getInstance().likeAndReadDao().getInfoByLink(url)
+        val isLiked = viewModel.getDocumentStatus(url).isLiked
         val menuItem = menu?.getItem(0)
-        if (scpInfo == null || !scpInfo.like) {
+        if (!isLiked) {
             menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
             binding.tvBottomLike.text = "收藏"
             binding.tvBottomLike.background = ThemeUtil.customShape(

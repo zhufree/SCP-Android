@@ -169,6 +169,70 @@ class ReadingListRepositoryTest {
 
         assertTrue(source.historyCleared)
     }
+
+    @Test
+    fun recordOpenedMovesLaterEntryToHistory() {
+        val source = FakeReadingListDataSource().apply {
+            records["/scp-010"] = ScpRecordModel("/scp-010", "SCP-010", LATER_TYPE)
+        }
+        val repository = ReadingListRepository(source)
+
+        repository.recordOpened("/scp-010", "SCP-010")
+
+        assertEquals(HISTORY_TYPE, source.records["/scp-010"]?.viewListType)
+    }
+
+    @Test
+    fun setLikedPreservesReadStateAndMovesDocumentToSelectedBox() {
+        val source = FakeReadingListDataSource().apply {
+            likeInfo["/scp-011"] = ScpLikeModel(
+                "/scp-011",
+                "SCP-011",
+                like = false,
+                hasRead = true,
+                boxId = 0
+            )
+        }
+        val repository = ReadingListRepository(source)
+
+        repository.setLiked("/scp-011", "SCP-011", boxId = 3)
+
+        assertEquals(
+            ScpLikeModel("/scp-011", "SCP-011", like = true, hasRead = true, boxId = 3),
+            source.likeInfo["/scp-011"]
+        )
+    }
+
+    @Test
+    fun setUnlikedPreservesReadStateAndBox() {
+        val source = FakeReadingListDataSource().apply {
+            likeInfo["/scp-012"] = ScpLikeModel(
+                "/scp-012",
+                "SCP-012",
+                like = true,
+                hasRead = true,
+                boxId = 4
+            )
+        }
+        val repository = ReadingListRepository(source)
+
+        repository.setUnliked("/scp-012", "SCP-012")
+
+        assertEquals(
+            ScpLikeModel("/scp-012", "SCP-012", like = false, hasRead = true, boxId = 4),
+            source.likeInfo["/scp-012"]
+        )
+    }
+
+    @Test
+    fun createLikeBoxSavesRequestedName() {
+        val source = FakeReadingListDataSource()
+        val repository = ReadingListRepository(source)
+
+        repository.createLikeBox("Research")
+
+        assertEquals(listOf(ScpLikeBox(0, "Research")), source.savedLikeBoxes)
+    }
 }
 
 private class FakeReadingListDataSource : ReadingListDataSource {

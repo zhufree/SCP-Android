@@ -6,21 +6,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpItemModel
+import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
-import info.free.scp.bean.ScpModel
-import info.free.scp.db.AppInfoDatabase
+import info.free.scp.data.reading.ReadingDocumentStatus
+import info.free.scp.data.reading.ReadingListRepository
 import info.free.scp.util.PreferenceUtil
 import kotlinx.coroutines.launch
 
 class DetailViewModel : ViewModel() {
     var repo = DetailRepository()
+    private val readingListRepository = ReadingListRepository()
 
     fun getScp(): MutableLiveData<ScpItemModel?> {
         return repo.scp
-    }
-
-    fun getScpLikeInfo(): LiveData<ScpLikeModel>? {
-        return repo.scpLikeInfo
     }
 
     fun getDetail(): MutableLiveData<String?> {
@@ -39,10 +37,6 @@ class DetailViewModel : ViewModel() {
         return repo.offlineTag
     }
 
-    fun likeScp(scpInfo: ScpLikeModel) {
-        AppInfoDatabase.getInstance().likeAndReadDao().save(scpInfo)
-    }
-
     /**
      * 变更scp时就顺带更新其他信息
      */
@@ -50,12 +44,40 @@ class DetailViewModel : ViewModel() {
         repo.setScp(link)
     }
 
-    fun setScpReadInfo() {
-        repo.setScpReadInfo()
+    fun recordOpened(link: String, title: String) {
+        readingListRepository.recordOpened(link, title)
     }
 
-    fun setScpLikeInfo() {
-        repo.setScpLikeInfo()
+    fun getDocumentStatus(link: String): ReadingDocumentStatus {
+        return readingListRepository.getDocumentStatus(link)
+    }
+
+    fun getLikeInfo(link: String, title: String): ScpLikeModel {
+        return readingListRepository.getLikeInfo(link, title)
+    }
+
+    fun setLiked(link: String, title: String, boxId: Int) {
+        readingListRepository.setLiked(link, title, boxId)
+    }
+
+    fun setUnliked(link: String, title: String) {
+        readingListRepository.setUnliked(link, title)
+    }
+
+    fun toggleRead(link: String, title: String): Boolean {
+        return readingListRepository.toggleRead(link, title)
+    }
+
+    fun addToLater(link: String, title: String) {
+        readingListRepository.addToLater(link, title)
+    }
+
+    fun getLikeBoxList(): List<ScpLikeBox> {
+        return readingListRepository.getLikeBoxList()
+    }
+
+    fun createLikeBox(name: String) {
+        readingListRepository.createLikeBox(name)
     }
 
     fun loadDetail(link: String) {

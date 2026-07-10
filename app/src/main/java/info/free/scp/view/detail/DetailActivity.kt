@@ -45,6 +45,7 @@ import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.detail.DetailLinkResolver
+import info.free.scp.data.detail.DetailTitleFormatter
 import info.free.scp.service.HtmlParserService
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -558,7 +559,10 @@ class DetailActivity : BaseActivity() {
                             val canvas = Canvas(bitmap)
                             binding.clDetailContainer.draw(canvas)
                             lifecycleScope.launch(Dispatchers.IO) {
-                                Utils.saveBitmapFile(bitmap, scp?.title?.replace(" ", "") ?: "")
+                                val fileName = DetailTitleFormatter.toScreenshotFileName(
+                                    scp?.title.orEmpty()
+                                )
+                                Utils.saveBitmapFile(bitmap, fileName)
                                 withContext(Dispatchers.Main) {
                                     showToast("图片已保存")
                                     binding.gpShareContent.visibility = GONE

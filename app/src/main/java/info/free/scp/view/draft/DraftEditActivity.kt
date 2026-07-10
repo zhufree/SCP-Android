@@ -1,95 +1,102 @@
 package info.free.scp.view.draft
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.Menu
 import android.widget.Toast
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
-import info.free.scp.databinding.ActivityDraftEditBinding
-import info.free.scp.db.AppInfoDatabase
+import info.free.scp.components.CommonTopBar
+import info.free.scp.data.draft.DraftRepository
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.draft.DraftEditScreen
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
 class DraftEditActivity : BaseActivity() {
-    lateinit var draft: DraftModel
-    var draftDao = AppInfoDatabase.getInstance().draftDao()
-    private lateinit var binding: ActivityDraftEditBinding
+    private lateinit var draft: DraftModel
+    private val draftRepository = DraftRepository()
+    private var draftTitle by mutableStateOf("")
+    private var draftContent by mutableStateOf("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDraftEditBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        baseToolbar = binding.draftToolbar
-        supportActionBar?.setTitle(R.string.draft_list)
-
-        binding.draftToolbar?.inflateMenu(R.menu.menu_draft_edit)
-        binding.draftToolbar?.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.save_draft -> {
-                    draft.lastModifyTime = System.currentTimeMillis()
-                    draftDao.save(draft)
-                    Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show()
+        loadDraft()
+        setContent {
+            MainTheme {
+                Scaffold(
+                    topBar = {
+                        CommonTopBar(
+                            title = getString(R.string.draft_list),
+                            actions = {
+                                IconButton(onClick = { saveDraft(showMessage = true) }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_save_white_24dp),
+                                        tint = Color(ThemeUtil.lightText),
+                                        contentDescription = "Save"
+                                    )
+                                }
+                            },
+                            onBackPressed = {
+                                saveDraft(showMessage = false)
+                                finish()
+                            }
+                        )
+                    },
+                    backgroundColor = Color(ThemeUtil.containerBg)
+                ) { padding ->
+                    DraftEditScreen(
+                        title = draftTitle,
+                        content = draftContent,
+                        onTitleChange = {
+                            draftTitle = it
+                            draft.title = it
+                        },
+                        onContentChange = {
+                            draftContent = it
+                            draft.content = it
+                        },
+                        modifier = Modifier.padding(padding)
+                    )
                 }
             }
-            true
         }
-
-        val draftId = intent.getIntExtra("draftId", -1)
-
-        draft = if (draftId > 0) {
-            draftDao.getDraft(draftId)
-        } else {
-            DraftModel(draftDao.getDraftCount() + 1, System.currentTimeMillis(),
-                PreferenceUtil.getDraftTitle(), PreferenceUtil.getDraftContent()
-            )
-        }
-        PreferenceUtil.saveDraftContent("")
-        PreferenceUtil.saveDraftTitle("")
-        binding.draftToolbar?.setNavigationOnClickListener {
-            draft.lastModifyTime = System.currentTimeMillis()
-            draftDao.save(draft)
-            finish()
-        }
-
-        binding.etTitle.editableText.append(draft.title)
-        binding.etContent.editableText.append(draft.content)
-
-        binding.etTitle.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                draft.title = binding.etTitle.editableText.toString()
-            }
-        })
-
-        binding.etContent.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                draft.content = binding.etContent.editableText.toString()
-            }
-        })
     }
 
     override fun onPause() {
         super.onPause()
-        draft.lastModifyTime = System.currentTimeMillis()
-        draftDao.save(draft)
+        if (::draft.isInitialized) {
+            saveDraft(showMessage = false)
+        }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_draft_edit, menu)
-        return true
+    private fun loadDraft() {
+        val draftId = intent.getIntExtra("draftId", -1)
+        draft = draftRepository.loadDraft(
+            draftId,
+            PreferenceUtil.getDraftTitle(),
+            PreferenceUtil.getDraftContent()
+        )
+        PreferenceUtil.saveDraftContent("")
+        PreferenceUtil.saveDraftTitle("")
+        draftTitle = draft.title
+        draftContent = draft.content
+    }
+
+    private fun saveDraft(showMessage: Boolean) {
+        draftRepository.saveDraft(draft, draftTitle, draftContent)
+        if (showMessage) {
+            Toast.makeText(this, "\u5df2\u4fdd\u5b58", Toast.LENGTH_SHORT).show()
+        }
     }
 }

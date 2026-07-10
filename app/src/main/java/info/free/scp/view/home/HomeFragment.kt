@@ -1,43 +1,43 @@
 package info.free.scp.view.home
 
-
-import android.graphics.drawable.ColorDrawable
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.ScrollableTabRow
+import androidx.compose.material.Tab
+import androidx.compose.material.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.fragment.app.Fragment
 import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.databinding.FragmentHomeBinding
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.home.SearchBarScreen
+import info.free.scp.util.EventUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryFragment
 import info.free.scp.view.category.ScpListFragment
+import info.free.scp.view.random.RandomActivity
+import info.free.scp.view.search.SearchActivity
+import toast
 
-
-/**
- * UI新版本
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class HomeFragment : BaseFragment() {
-    var fragmentList = arrayListOf<BaseFragment>()
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        fragmentList = arrayListOf(
+    private val fragments: List<BaseFragment> by lazy {
+        listOf(
             HomePageFragment.newInstance(),
             ScpListFragment.newInstance(SCPConstants.Entry.LIBRARY_DOC, 0, ""),
             CategoryFragment.newInstance(SCPConstants.Entry.INTERNATIONAL_DOC, 0),
@@ -45,46 +45,107 @@ class HomeFragment : BaseFragment() {
             CategoryFragment.newInstance(SCPConstants.Entry.ART_DOC, 0),
             ScpListFragment.newInstance(SCPConstants.Entry.INFORMATION_DOC, 0, "")
         )
+    }
+    private val titles = listOf(
+        "\u9996\u9875",
+        "\u56fe\u4e66\u9986",
+        "SCP\u56fd\u9645\u7248",
+        "GOI\u683c\u5f0f",
+        "\u827a\u672f\u4f5c\u54c1",
+        "\u80cc\u666f\u8d44\u6599\u4e0e\u6307\u5bfc"
+    )
 
-        val titleList = arrayListOf(
-            "首页", "图书馆",
-            "SCP国际版", "GOI格式", "艺术作品",
-            "背景资料与指导"
-        ) // 单页放滑动分页
-        val homePagerAdapter =
-            this.activity?.let { TabFragmentPager(it, fragmentList, fragmentList.size) }
-        binding.vpHome.adapter = homePagerAdapter
-        binding.vpHome.offscreenPageLimit = 3
-        TabLayoutMediator(binding.tabHome, binding.vpHome) { tab, position ->
-            tab.text = titleList[position]
-        }.attach()
-        binding.tabHome.tabMode = TabLayout.MODE_SCROLLABLE
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                var selectedTab by remember { mutableIntStateOf(0) }
+                MainTheme {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        SearchBarScreen(
+                            onDirect = { startActivity(Intent(requireContext(), DirectActivity::class.java)) },
+                            onRandom = { showRandomDialog() },
+                            onSearch = { keyword -> openSearch(keyword) }
+                        )
+                        ScrollableTabRow(
+                            selectedTabIndex = selectedTab,
+                            backgroundColor = Color(ThemeUtil.itemBg),
+                            contentColor = Color(ThemeUtil.accentColor)
+                        ) {
+                            titles.forEachIndexed { index, title ->
+                                Tab(
+                                    selected = selectedTab == index,
+                                    onClick = { selectedTab = index },
+                                    text = { Text(text = title) }
+                                )
+                            }
+                        }
+                        AndroidView(
+                            modifier = Modifier.weight(1f),
+                            factory = { context ->
+                                android.widget.FrameLayout(context).apply {
+                                    id = R.id.fl_home_container
+                                }
+                            }
+                        )
+                    }
+                }
+                LaunchedEffect(selectedTab) {
+                    showChildFragment(fragments[selectedTab])
+                }
+            }
+        }
     }
 
+    private fun showChildFragment(fragment: Fragment) {
+        if (childFragmentManager.isStateSaved) {
+            return
+        }
+        childFragmentManager.beginTransaction()
+            .replace(R.id.fl_home_container, fragment)
+            .commit()
+    }
+
+    private fun openSearch(keyword: String) {
+        if (keyword.isEmpty()) {
+            toast("\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u5173\u952e\u8bcd")
+            return
+        }
+        startActivity(
+            Intent(requireContext(), SearchActivity::class.java)
+                .putExtra("keyword", keyword)
+        )
+    }
+
+    private fun showRandomDialog() {
+        val randomTypes = listOf("\u968f\u673a\u5168\u90e8", "\u968f\u673aSCP", "\u968f\u673a\u6545\u4e8b", "\u968f\u673a\u641e\u7b11")
+        AlertDialog.Builder(requireContext())
+            .setItems(randomTypes.toTypedArray()) { _, i ->
+                when (i) {
+                    0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
+                    1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
+                    2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
+                    3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
+                }
+                startActivity(
+                    Intent(requireContext(), RandomActivity::class.java)
+                        .putExtra("random_type", i)
+                        .putExtra("random_title", randomTypes[i])
+                )
+            }
+            .show()
+    }
 
     override fun refreshTheme() {
         super.refreshTheme()
-        if (_binding == null) {
-            binding.tabHome.background = ColorDrawable(ThemeUtil.itemBg)
-            binding.tabHome.setSelectedTabIndicatorColor(ThemeUtil.accentColor)
-            binding.tabHome.setTabTextColors(ThemeUtil.mediumText, ThemeUtil.accentColor)
-            fragmentList.forEach { it.refreshTheme() }
-        }
+        fragments.forEach { it.refreshTheme() }
     }
 
-
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        fun newInstance(): HomeFragment {
-            val fragment = HomeFragment()
-            return fragment
-        }
+        fun newInstance(): HomeFragment = HomeFragment()
     }
 }

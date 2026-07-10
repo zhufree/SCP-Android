@@ -4,16 +4,24 @@ import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
+import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.SCPConstants.APP_PREF_NAME
 import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.SCPConstants.LEVEL_PREF_NAME
-import info.free.scp.databinding.ActivityDownloadBinding
+import info.free.scp.components.CommonTopBar
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.user.DownloadScreen
 import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
@@ -26,8 +34,6 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 class DownloadActivity : BaseActivity() {
-
-    private lateinit var binding: ActivityDownloadBinding
     private val selectDatabaseLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let(::importDetailDatabase)
@@ -43,12 +49,40 @@ class DownloadActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDownloadBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContent {
+            MainTheme {
+                Scaffold(
+                    topBar = {
+                        CommonTopBar(
+                            title = getString(R.string.download_settings),
+                            onBackPressed = { finish() }
+                        )
+                    },
+                    backgroundColor = Color(ThemeUtil.containerBg)
+                ) { padding ->
+                    DownloadScreen(
+                        onOpenDownload = { showDownloadRoutes() },
+                        onSelectDatabase = { selectDatabaseLauncher.launch(arrayOf("*/*")) },
+                        onOpenSpiderDoc = {
+                            Utils.openUrl("https://gj5i5wsqre.feishu.cn/docx/X8BvdDE5ioFjJDx8aQKcTMIHnMd")
+                        },
+                        onBackup = { backupDirectoryLauncher.launch(null) },
+                        onRestore = { restoreDirectoryLauncher.launch(null) },
+                        modifier = Modifier.padding(padding)
+                    )
+                }
+            }
+        }
+    }
 
-        baseToolbar = binding.downloadToolbar
-
-        val downloadTitles = listOf("百度网盘", "飞书", "夸克", "面包多", "Google Drive")
+    private fun showDownloadRoutes() {
+        val downloadTitles = listOf(
+            "\u767e\u5ea6\u7f51\u76d8",
+            "\u98de\u4e66",
+            "\u5938\u514b",
+            "\u9762\u5305\u591a",
+            "Google Drive"
+        )
         val downloadLinks = listOf(
             "https://pan.baidu.com/s/17MwfLiMmMxqq2WX_tzmGSw?pwd=t9ch",
             "https://gj5i5wsqre.feishu.cn/drive/folder/fldcnpvwVcYN4iCrUQBCPTgF25e",
@@ -56,44 +90,12 @@ class DownloadActivity : BaseActivity() {
             "https://mbd.pub/o/bread/mbd-YZiZl51u",
             "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
         )
-        binding.btnGoDownload.setOnClickListener {
-            AlertDialog.Builder(this)
-                .setTitle("选择下载线路")
-                .setItems(downloadTitles.toTypedArray()) { _, index ->
-                    Utils.openUrl(downloadLinks[index])
-                }
-                .show()
-        }
-        binding.btnCheckSpider.setOnClickListener {
-            Utils.openUrl("https://gj5i5wsqre.feishu.cn/docx/X8BvdDE5ioFjJDx8aQKcTMIHnMd")
-        }
-
-        arrayOf(
-            binding.btnGoDownload,
-            binding.btnSelectFile,
-            binding.btnCheckSpider,
-            binding.btnBackup,
-            binding.btnRestore
-        ).forEach {
-            it.background = ThemeUtil.customShape(
-                ThemeUtil.linkBlue,
-                0,
-                0,
-                Utils.dp2px(24, this)
-            )
-        }
-
-        binding.btnSelectFile.setOnClickListener {
-            selectDatabaseLauncher.launch(arrayOf("*/*"))
-        }
-
-        binding.btnBackup.setOnClickListener {
-            backupDirectoryLauncher.launch(null)
-        }
-
-        binding.btnRestore.setOnClickListener {
-            restoreDirectoryLauncher.launch(null)
-        }
+        AlertDialog.Builder(this)
+            .setTitle("\u9009\u62e9\u4e0b\u8f7d\u7ebf\u8def")
+            .setItems(downloadTitles.toTypedArray()) { _, index ->
+                Utils.openUrl(downloadLinks[index])
+            }
+            .show()
     }
 
     private fun importDetailDatabase(uri: Uri) {
@@ -107,7 +109,7 @@ class DownloadActivity : BaseActivity() {
                 FileUtil.checkDetailDb()
             }
             withContext(Dispatchers.Main) {
-                showToast(if (success) "数据库已加载" else "数据库读取失败")
+                showToast(if (success) "\u6570\u636e\u5e93\u5df2\u52a0\u8f7d" else "\u6570\u636e\u5e93\u8bfb\u53d6\u5931\u8d25")
             }
         }
     }
@@ -125,7 +127,7 @@ class DownloadActivity : BaseActivity() {
             levelPrefFile?.let { copyFileToUri(this@DownloadActivity, rawLevelPrefFile, it.uri) }
             appPrefFile?.let { copyFileToUri(this@DownloadActivity, rawAppPrefFile, it.uri) }
             withContext(Dispatchers.Main) {
-                showToast("备份完成")
+                showToast("\u5907\u4efd\u5b8c\u6210")
             }
         }
     }
@@ -154,7 +156,7 @@ class DownloadActivity : BaseActivity() {
             }
             AppInfoDatabase.getNewInstance()
             withContext(Dispatchers.Main) {
-                showToast("恢复完成，部分数据可能需要重启应用后生效")
+                showToast("\u6062\u590d\u5b8c\u6210\uff0c\u90e8\u5206\u6570\u636e\u53ef\u80fd\u9700\u8981\u91cd\u542f\u5e94\u7528\u540e\u751f\u6548")
             }
         }
     }

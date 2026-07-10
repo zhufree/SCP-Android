@@ -12,16 +12,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.components.CommonTopBar
-import info.free.scp.db.DetailDatabase
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
@@ -29,6 +26,7 @@ fun TagResultScreen(
     tagViewModel: TagViewModel,
     tagName: String,
     navigateToDetail: (link: String) -> Unit,
+    tagTextProvider: (link: String) -> String? = { link -> tagViewModel.getTagText(link) },
     onBackPressed: () -> Unit
 ) {
     val scpResult by tagViewModel.tagScpList.observeAsState()
@@ -61,7 +59,7 @@ fun TagResultScreen(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(scpList) {
-                        TagScpCard(it) { scp ->
+                        TagScpCard(it, tagTextProvider(it.link)) { scp ->
                             navigateToDetail(scp)
                         }
                     }
@@ -73,8 +71,11 @@ fun TagResultScreen(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
-    val detailDao = DetailDatabase.getInstance()?.detailDao()
+fun TagScpCard(
+    scp: ScpModel,
+    tagText: String?,
+    navigateToDetail: (link: String) -> Unit
+) {
     Card(
         elevation = 1.dp,
         shape = RoundedCornerShape(6.dp),
@@ -96,9 +97,9 @@ fun TagScpCard(scp: ScpModel, navigateToDetail: (link: String) -> Unit) {
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
             )
-            if (detailDao != null) {
+            if (!tagText.isNullOrEmpty()) {
                 Text(
-                    text = ("标签：" + detailDao.getTag(scp.link)),
+                    text = ("标签：" + tagText),
                     color = MaterialTheme.colors.onSecondary,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

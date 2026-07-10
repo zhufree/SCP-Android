@@ -5,6 +5,28 @@ SCP Android 第三方客户端
 
 `kotlin`
 
+## 当前重构状态（2026-07-09）
+
+当前项目处于从旧 `Activity + Fragment + XML` 体系迁移到 Kotlin + Compose 的重构后半程。
+
+- 当前应用版本：`0.3.2`（见 `app/build.gradle`）。
+- 已完成：构建工具链升级、Anko/EasyPermissions 等旧依赖清理、主导航 Compose 壳层、普通页面 XML/Adapter/RecyclerView 迁移。
+- 当前判断：第 4 阶段“页面逐步 Compose 化”已完成；第 2 阶段“架构边界整理”仍在进行；第 5 阶段“平台能力与发布收口”尚未完成。
+- 资源现状：`res/layout + res/menu` 当前仅保留桌面小部件 RemoteViews 所需的 `layout_widget.xml`，普通页面不再依赖 XML 布局。
+- 后续重点：Repository 边界收敛、详情页瘦身、旧依赖删除、测试/构建验证矩阵、桌面小部件与 SAF/FileProvider/WebView 等平台能力复验。
+- 详细计划：见 [docs/kotlin-compose-modernization-plan.md](docs/kotlin-compose-modernization-plan.md)。
+
+主要验证命令：
+
+```powershell
+.\gradlew.bat assembleDebug --stacktrace
+.\gradlew.bat testDefaultProductionDebugUnitTest --tests info.free.scp.data.catalog.* --tests info.free.scp.data.draft.* --tests info.free.scp.data.reading.* --tests info.free.scp.data.tag.* --rerun-tasks
+```
+
+最近验证：2026-07-09 两条命令均通过。
+
+下面保留的是历史功能计划和版本记录，当前重构任务以 `docs/kotlin-compose-modernization-plan.md` 为准。
+
 # Recommend game list
 - 以撒
 - distrust

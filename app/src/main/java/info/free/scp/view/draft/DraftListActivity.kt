@@ -3,62 +3,83 @@ package info.free.scp.view.draft
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.Menu
-import android.view.View
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import info.free.scp.R
-import info.free.scp.bean.DraftModel
-import info.free.scp.databinding.ActivityDraftListBinding
+import info.free.scp.components.CommonTopBar
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.draft.DraftListScreen
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.viewmodel.DraftListViewModel
 
 class DraftListActivity : BaseActivity() {
-    private lateinit var binding: ActivityDraftListBinding
-
-    private val model by lazy {
-        ViewModelProvider(this)
-                .get(DraftListViewModel::class.java)
-    }
+    private val model by viewModels<DraftListViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDraftListBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        baseToolbar = binding.draftListToolbar
-        binding.draftListToolbar.inflateMenu(R.menu.menu_draft_list)
-        binding.draftListToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.add_draft -> {
-                    startActivity(Intent(this, DraftEditActivity::class.java))
-                }
-
-                R.id.draft_help -> {
-                    val jumpIntent = Intent()
-                    jumpIntent.action = "android.intent.action.VIEW"
-                    val updateUrl = Uri.parse("http://scp-wiki-cn.wikidot.com/how-to-write-an-scp")
-                    jumpIntent.data = updateUrl
-                    startActivity(jumpIntent)
+        setContent {
+            val drafts by model.getDraft().observeAsState(emptyList())
+            MainTheme {
+                Scaffold(
+                    topBar = {
+                        CommonTopBar(
+                            title = getString(R.string.draft_list),
+                            actions = {
+                                IconButton(onClick = { openDraftHelp() }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.baseline_help_outline_white_24dp),
+                                        tint = Color(ThemeUtil.lightText),
+                                        contentDescription = "Help"
+                                    )
+                                }
+                                IconButton(onClick = { startActivity(Intent(this@DraftListActivity, DraftEditActivity::class.java)) }) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.baseline_add_white_24dp),
+                                        tint = Color(ThemeUtil.lightText),
+                                        contentDescription = "Add"
+                                    )
+                                }
+                            },
+                            onBackPressed = { finish() }
+                        )
+                    },
+                    backgroundColor = Color(ThemeUtil.containerBg)
+                ) { padding ->
+                    androidx.compose.foundation.layout.Box(
+                        modifier = androidx.compose.ui.Modifier.padding(padding)
+                    ) {
+                        DraftListScreen(
+                            drafts = drafts,
+                            onOpenDraft = { draft ->
+                                startActivity(
+                                    Intent(this@DraftListActivity, DraftEditActivity::class.java)
+                                        .putExtra("draftId", draft.draftId)
+                                )
+                            },
+                            onDeleteDraft = { draft ->
+                                model.deleteDraft(draft.draftId)
+                            }
+                        )
+                    }
                 }
             }
-            true
         }
-
-        val adapter = DraftAdapter()
-        binding.rlDraftList.adapter = adapter
-
-        model.getDraft()?.observe(this, Observer<List<DraftModel>> { drafts ->
-                    // update UI
-                    if (drafts.isNotEmpty()) {
-                        binding.tvEmptyDraft.visibility = View.GONE
-                        adapter.submitList(drafts)
-                        adapter.notifyDataSetChanged()
-                    }
-                })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_draft_list, menu)
-        return true
+    private fun openDraftHelp() {
+        startActivity(
+            Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse("http://scp-wiki-cn.wikidot.com/how-to-write-an-scp")
+            }
+        )
     }
 }

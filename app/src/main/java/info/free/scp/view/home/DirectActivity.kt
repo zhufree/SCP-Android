@@ -3,7 +3,16 @@ package info.free.scp.view.home
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.core.view.children
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.lifecycleScope
 import apiCall
 import executeResponse
 import info.free.scp.R
@@ -12,95 +21,89 @@ import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
-import info.free.scp.databinding.ActivityDirectBinding
+import info.free.scp.components.CommonTopBar
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.home.DirectScreen
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-
-/**
- * 编号直达页
- */
 class DirectActivity : BaseActivity() {
-    private lateinit var binding: ActivityDirectBinding
-    private var chooseType = 0 // 0 scp 1 cn 2 J 3 cn-j
-        set(value) {
-            field = value
-            cnString = when (value) {
-                0 -> ""
-                1 -> "CN-"
-                3 -> "CN-"
-                else -> ""
-            }
-            jString = when (value) {
-                0 -> ""
-                2 -> "-J"
-                3 -> "-J"
-                else -> ""
-            }
-        }
-    private var cnString = "" // CN / J
-    private var jString = "" // CN / J
-    private var numberString = ""
+    private var chooseType by mutableIntStateOf(0)
+    private var cnString by mutableStateOf("")
+    private var jString by mutableStateOf("")
+    private var numberString by mutableStateOf("")
+    private val expression: String
+        get() = "SCP-$cnString$numberString$jString"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDirectBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        initToolbar()
-
-        binding.tvDirectCn.setOnClickListener {
-            chooseType = when (chooseType) {
-                0 -> 1
-                1 -> 0
-                2 -> 3
-                3 -> 2
-                else -> 1
-            }
-            updateExpress()
-        }
-        binding.tvDirectJ.setOnClickListener {
-            chooseType = when (chooseType) {
-                0 -> 2
-                1 -> 3
-                2 -> 0
-                3 -> 1
-                else -> 2
-            }
-            updateExpress()
-        }
-        binding.tvDirectC.setOnClickListener {
-            if (numberString.isNotEmpty()) {
-                numberString = numberString.substring(0, numberString.length - 1)
-                updateExpress()
-            }
-        }
-        binding.glDirectBtns.children.forEachIndexed { index, view ->
-            if (index > 2) {
-                view.setOnClickListener {
-                    when (index - 3) {
-                        in 0..8 -> {
-                            numberString += (index - 2)
-                            updateExpress()
-                        }
-
-                        9 -> {
-                            numberString += "0"
-                            updateExpress()
-                        }
-                        10 -> {
-                            GlobalScope.launch { goDirect() }
-                        }
-                        else -> {
-                        }
-                    }
+        setContent {
+            MainTheme {
+                Scaffold(
+                    topBar = {
+                        CommonTopBar(
+                            title = getString(R.string.title_direct),
+                            onBackPressed = { finish() }
+                        )
+                    },
+                    backgroundColor = Color(ThemeUtil.containerBg)
+                ) { padding ->
+                    DirectScreen(
+                        expression = expression,
+                        onToggleCn = { toggleCn() },
+                        onToggleJoke = { toggleJoke() },
+                        onBackspace = { backspace() },
+                        onNumber = { numberString += it },
+                        onGo = { lifecycleScope.launch { goDirect() } },
+                        modifier = Modifier.padding(padding)
+                    )
                 }
             }
+        }
+    }
+
+    private fun toggleCn() {
+        chooseType = when (chooseType) {
+            0 -> 1
+            1 -> 0
+            2 -> 3
+            3 -> 2
+            else -> 1
+        }
+        updateAffixes()
+    }
+
+    private fun toggleJoke() {
+        chooseType = when (chooseType) {
+            0 -> 2
+            1 -> 3
+            2 -> 0
+            3 -> 1
+            else -> 2
+        }
+        updateAffixes()
+    }
+
+    private fun updateAffixes() {
+        cnString = when (chooseType) {
+            1, 3 -> "CN-"
+            else -> ""
+        }
+        jString = when (chooseType) {
+            2, 3 -> "-J"
+            else -> ""
+        }
+    }
+
+    private fun backspace() {
+        if (numberString.isNotEmpty()) {
+            numberString = numberString.substring(0, numberString.length - 1)
         }
     }
 
@@ -113,19 +116,16 @@ class DirectActivity : BaseActivity() {
             else -> SAVE_SERIES
         }
         val number = when (chooseType) {
-            0 -> "%-$numberString %"
-            1 -> "%-$numberString %"
-            2 -> "%-$numberString-%"
-            3 -> "%-$numberString-%"
+            0, 1 -> "%-$numberString %"
+            2, 3 -> "%-$numberString-%"
             else -> "%-$numberString"
         }
         if (PreferenceUtil.getAppMode() == OFFLINE) {
             val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(scpType, number)
-            scp?.let { s ->
+            scp?.let { item ->
                 EventUtil.onEvent(this, EventUtil.clickDirect)
-                startActivity(Intent(this, DetailActivity::class.java).putExtra("link", s.link))
-            } ?: runOnUiThread { Toast.makeText(this, "没有这篇文章", Toast.LENGTH_SHORT).show() }
-
+                startActivity(Intent(this, DetailActivity::class.java).putExtra("link", item.link))
+            } ?: runOnUiThread { showNotFound() }
         } else {
             loadDirect(scpType, number)
         }
@@ -134,31 +134,27 @@ class DirectActivity : BaseActivity() {
     private suspend fun loadDirect(scpType: Int, number: String) {
         val response = apiCall { HttpManager.instance.getDirect(scpType, number) }
         response?.let {
-            executeResponse(response, {
-
-            }, {
-                if (!response.results.isNullOrEmpty()) {
-                    val scp = response.results[0]
-                    EventUtil.onEvent(this, EventUtil.clickDirect)
-                    startActivity(
-                        Intent(this, DetailActivity::class.java)
-                            .putExtra("link", scp.link)
-                            .putExtra("title", scp.title)
-                    )
-                } else {
-                    Toast.makeText(this@DirectActivity, "没有这篇文章", Toast.LENGTH_SHORT).show()
+            executeResponse(
+                response,
+                {},
+                {
+                    if (!response.results.isNullOrEmpty()) {
+                        val scp = response.results[0]
+                        EventUtil.onEvent(this, EventUtil.clickDirect)
+                        startActivity(
+                            Intent(this, DetailActivity::class.java)
+                                .putExtra("link", scp.link)
+                                .putExtra("title", scp.title)
+                        )
+                    } else {
+                        showNotFound()
+                    }
                 }
-            })
+            )
         }
     }
 
-    private fun initToolbar() {
-        baseToolbar = binding.directToolbar
-        supportActionBar?.setTitle(R.string.title_direct)
-    }
-
-
-    private fun updateExpress() {
-        binding.tvDirectTitle.text = "SCP-$cnString$numberString$jString"
+    private fun showNotFound() {
+        Toast.makeText(this, "\u6ca1\u6709\u8fd9\u7bc7\u6587\u7ae0", Toast.LENGTH_SHORT).show()
     }
 }

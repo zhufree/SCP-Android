@@ -2,29 +2,27 @@ package info.free.scp.view.user
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.lifecycle.Lifecycle
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import info.free.scp.BuildConfig
-import info.free.scp.R
 import info.free.scp.bean.ScpRecordModel
-import info.free.scp.databinding.FragmentUserBinding
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.user.UserDashboardScreen
 import info.free.scp.ui.user.UserDashboardViewModel
 import info.free.scp.util.EventUtil
 import info.free.scp.util.NewbieManager
@@ -38,22 +36,17 @@ import info.free.scp.util.privatePictureDir
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
-import info.free.scp.view.widget.HistoryListItem
-import kotlinx.coroutines.launch
 import java.util.Random
 
-/**
- * 用户页，包含写作相关入口、新人资讯、站点入口和关于信息。
- */
 class UserFragment : BaseFragment() {
-    private var _binding: FragmentUserBinding? = null
-    private val binding get() = _binding!!
+    private var userHeadBitmap by mutableStateOf<Bitmap?>(null)
+    private var profileVersion by mutableStateOf(0)
     private val pickUserHeadImage =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             uri?.let {
                 val imgFile = privatePictureDir(requireContext(), "user_head.jpg")
                 copyFileFromUri(requireContext(), it, imgFile)
-                setHeadImg()
+                loadHeadImg()
             }
         }
 
@@ -61,15 +54,52 @@ class UserFragment : BaseFragment() {
         ViewModelProvider(this)[UserDashboardViewModel::class.java]
     }
 
-    private val historyItemList = mutableListOf<HistoryListItem>()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentUserBinding.inflate(inflater, container, false)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                val uiState by dashboardViewModel.uiState.collectAsState()
+                val version = profileVersion
+                MainTheme {
+                    UserDashboardScreen(
+                        nicknameText = nicknameText(version),
+                        jobText = jobText(version),
+                        dataText = "\u5df2\u9605\u8bfb\u9879\u76ee\uff1a${uiState.readCount}    \u5df2\u6536\u85cf\u9879\u76ee\uff1a${uiState.likeCount}",
+                        userHead = userHeadBitmap,
+                        recentHistory = uiState.recentHistory,
+                        showDonation = BuildConfig.FLAVOR != "GooglePlayProduction",
+                        showOtherWork = PreferenceUtil.getShowMeal(),
+                        onToggleTheme = {
+                            ThemeUtil.changeTheme(
+                                activity,
+                                if (ThemeUtil.currentTheme == NIGHT_THEME) DAY_THEME else NIGHT_THEME
+                            )
+                        },
+                        onPickUserHead = { pickUserHeadImage.launch("image/*") },
+                        onEditNickname = { checkUserInfo() },
+                        onEditJob = { checkJob() },
+                        onOpenDraft = { startActivity(Intent(requireContext(), DraftListActivity::class.java)) },
+                        onOpenGame = { startActivity(Intent(requireContext(), GameListActivity::class.java)) },
+                        onOpenPortal = { startActivity(Intent(requireContext(), PortalListActivity::class.java)) },
+                        onOpenReadSettings = {
+                            EventUtil.onEvent(activity, EventUtil.clickReadSetting)
+                            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+                        },
+                        onOpenLocalData = { startActivity(Intent(requireContext(), DownloadActivity::class.java)) },
+                        onOpenAbout = { startActivity(Intent(requireContext(), AboutAppActivity::class.java)) },
+                        onOpenQuery = { Utils.openUrl(PreferenceUtil.getQueryLink()) },
+                        onOpenOtherWork = { startActivity(Intent(requireContext(), OtherAppActivity::class.java)) },
+                        onOpenDonation = { startActivity(Intent(requireContext(), DonationQrActivity::class.java)) },
+                        onOpenMoreHistory = { startActivity(Intent(requireContext(), LaterAndHistoryActivity::class.java)) },
+                        onOpenHistoryItem = { openHistoryItem(it) }
+                    )
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,141 +107,59 @@ class UserFragment : BaseFragment() {
         if (!PreferenceUtil.hasCheckPrivacy()) {
             NewbieManager.showPrivacyDialog(requireActivity())
         }
-
-        refreshProfileTexts()
-        observeUserDashboardState()
+        loadHeadImg()
         dashboardViewModel.refreshUserDashboard()
+    }
 
-        binding.tvNickname.setOnClickListener { checkUserInfo() }
-        binding.tvJob.setOnClickListener { checkJob() }
+    override fun onResume() {
+        super.onResume()
+        dashboardViewModel.refreshUserDashboard()
+    }
 
-        if (PreferenceUtil.getShowMeal()) {
-            binding.stOtherWork.visibility = VISIBLE
-        }
+    private fun openHistoryItem(scp: ScpRecordModel) {
+        startActivity(
+            Intent(requireContext(), DetailActivity::class.java)
+                .putExtra("link", scp.link)
+                .putExtra("title", scp.title)
+        )
+    }
 
-        setSettingEvent()
-
-        Glide.with(this)
-            .load(R.drawable.author_head)
-            .apply(
-                RequestOptions.bitmapTransform(
-                    RoundedCorners(Utils.dp2px(25, requireContext()))
-                )
-            )
-            .into(binding.ivAuthorHead)
-
-        setHeadImg()
-
-        binding.ivUserHead.setOnClickListener {
-            pickUserHeadImage.launch("image/*")
+    private fun nicknameText(version: Int): String {
+        val nickname = PreferenceUtil.getNickname()
+        return if (nickname.isNotEmpty()) {
+            "\u4ee3\u53f7\uff1a$nickname"
+        } else {
+            "\u4ee3\u53f7\uff1a\u70b9\u51fb\u8bbe\u7f6e"
         }
     }
 
-    private fun observeUserDashboardState() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                dashboardViewModel.uiState.collect { uiState ->
-                    binding.tvDataDesc.text = "已阅读项目：${uiState.readCount}\t已收藏项目：${uiState.likeCount}"
-                    refreshHistoryList(uiState.recentHistory)
-                }
-            }
+    private fun jobText(version: Int): String {
+        val nickname = PreferenceUtil.getNickname()
+        val code = Random(System.currentTimeMillis()).nextInt(600)
+        return if (nickname.isNotEmpty()) {
+            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a${getRank(PreferenceUtil.getPoint())}"
+        } else {
+            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a\u70b9\u51fb\u8bbe\u7f6e"
         }
     }
 
     private fun getRank(point: Int): String {
-        Log.i("point", "point = $point")
         return when {
             point < 200 -> PreferenceUtil.getJobNameByLevel(0)
             point < 700 -> PreferenceUtil.getJobNameByLevel(1)
             point < 1500 -> PreferenceUtil.getJobNameByLevel(2)
-            point < 2500 -> "C级 ${PreferenceUtil.getJobNameByLevel(3)}"
-            point < 4000 -> "B级 ${PreferenceUtil.getJobNameByLevel(4)}"
-            else -> "A级 ${PreferenceUtil.getJobNameByLevel(5)}"
+            point < 2500 -> "C\u7ea7${PreferenceUtil.getJobNameByLevel(3)}"
+            point < 4000 -> "B\u7ea7${PreferenceUtil.getJobNameByLevel(4)}"
+            else -> "A\u7ea7${PreferenceUtil.getJobNameByLevel(5)}"
         }
     }
 
-    private fun refreshProfileTexts() {
-        val nickname = PreferenceUtil.getNickname()
-        val code = Random(System.currentTimeMillis()).nextInt(600)
-        binding.tvNickname.text = if (nickname.isNotEmpty()) {
-            "代号：$nickname"
-        } else {
-            "代号：点击设置"
-        }
-        binding.tvJob.text = if (nickname.isNotEmpty()) {
-            "编号：$code\n职务：${getRank(PreferenceUtil.getPoint())}"
-        } else {
-            "编号：$code\n职务：点击设置"
-        }
-    }
-
-    private fun refreshHistoryList(historyList: List<ScpRecordModel>) {
-        binding.llHistoryList.removeAllViews()
-        historyItemList.clear()
-        historyList.forEach { scp ->
-            val newItem = HistoryListItem(requireContext(), scp.title, scp.showTime())
-            newItem.onItemClick = {
-                startActivity(
-                    Intent(requireContext(), DetailActivity::class.java)
-                        .putExtra("link", scp.link)
-                        .putExtra("title", scp.title)
-                )
-            }
-            binding.llHistoryList.addView(newItem)
-            historyItemList.add(newItem)
-        }
-    }
-
-    private fun setSettingEvent() {
-        binding.ibTheme.setOnClickListener {
-            ThemeUtil.changeTheme(
-                activity,
-                if (ThemeUtil.currentTheme == 1) DAY_THEME else NIGHT_THEME
-            )
-        }
-
-        binding.stDraft.onClick = {
-            startActivity(Intent(requireContext(), DraftListActivity::class.java))
-        }
-        binding.stGame.onClick = {
-            startActivity(Intent(requireContext(), GameListActivity::class.java))
-        }
-        binding.stOtherWork.onClick = {
-            startActivity(Intent(requireContext(), OtherAppActivity::class.java))
-        }
-        binding.stPortal.onClick = {
-            startActivity(Intent(requireContext(), PortalListActivity::class.java))
-        }
-
-        binding.ivMoreHistory.setOnClickListener {
-            startActivity(Intent(requireContext(), LaterAndHistoryActivity::class.java))
-        }
-
-        binding.stRead.onClick = {
-            EventUtil.onEvent(activity, EventUtil.clickReadSetting)
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
-        }
-        binding.stData.onClick = {
-            startActivity(Intent(requireContext(), DownloadActivity::class.java))
-        }
-        binding.stUse.onClick = {
-            startActivity(Intent(requireContext(), AboutAppActivity::class.java))
-        }
-        if (BuildConfig.FLAVOR == "GooglePlayProduction") {
-            binding.btnDonation.visibility = GONE
-        }
-        binding.btnDonation.setOnClickListener {
-            startActivity(Intent(requireContext(), DonationQrActivity::class.java))
-        }
-        binding.stQuery.onClick = {
-            Utils.openUrl(PreferenceUtil.getQueryLink())
-        }
-    }
-
-    private fun setHeadImg() {
+    private fun loadHeadImg() {
         val imgFile = privatePictureDir(requireContext(), "user_head.jpg")
-        if (imgFile.exists()) {
-            binding.ivUserHead.setImageBitmap(BitmapFactory.decodeFile(imgFile.path))
+        userHeadBitmap = if (imgFile.exists()) {
+            BitmapFactory.decodeFile(imgFile.path)
+        } else {
+            null
         }
     }
 
@@ -226,7 +174,7 @@ class UserFragment : BaseFragment() {
             )
         }
         val titleView = TextView(requireContext()).apply {
-            text = "欢迎来到 SCP 基金会，调查员，请输入你的名字"
+            text = "\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c\u8c03\u67e5\u5458\uff0c\u8bf7\u8f93\u5165\u4f60\u7684\u540d\u5b57"
             setTextColor(ThemeUtil.darkText)
             textSize = 18f
         }
@@ -243,68 +191,34 @@ class UserFragment : BaseFragment() {
 
         AlertDialog.Builder(requireContext())
             .setView(container)
-            .setPositiveButton("确定") { _, _ ->
+            .setPositiveButton("\u786e\u5b9a") { _, _ ->
                 PreferenceUtil.saveNickname(input.text?.toString().orEmpty())
-                refreshProfileTexts()
+                profileVersion += 1
                 checkJob()
             }
-            .setNegativeButton("取消", null)
+            .setNegativeButton("\u53d6\u6d88", null)
             .show()
     }
 
     private fun checkJob() {
         val jobList = arrayOf(
-            "收容专家",
-            "研究员",
-            "安保人员",
-            "战术反应人员",
-            "外勤特工",
-            "机动特遣队成员"
+            "\u6536\u5bb9\u4e13\u5bb6",
+            "\u7814\u7a76\u5458",
+            "\u5b89\u4fdd\u4eba\u5458",
+            "\u6218\u672f\u53cd\u5e94\u4eba\u5458",
+            "\u5916\u52e4\u7279\u5de5",
+            "\u673a\u52a8\u7279\u9063\u961f\u6210\u5458"
         )
         AlertDialog.Builder(requireContext())
-            .setTitle("欢迎来到 SCP 基金会，${PreferenceUtil.getNickname()}，请选择你的职业")
+            .setTitle("\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c${PreferenceUtil.getNickname()}\uff0c\u8bf7\u9009\u62e9\u4f60\u7684\u804c\u4e1a")
             .setItems(jobList) { _, i ->
                 PreferenceUtil.setJob(jobList[i])
-                refreshProfileTexts()
+                profileVersion += 1
             }
             .show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        dashboardViewModel.refreshUserDashboard()
-    }
-
-    override fun refreshTheme() {
-        super.refreshTheme()
-        if (_binding == null) {
-            return
-        }
-        arrayOf(binding.tvHistoryListHead, binding.tvNickname).forEach {
-            it.setTextColor(ThemeUtil.darkText)
-        }
-        binding.tvJob.setTextColor(ThemeUtil.mediumText)
-        arrayOf(binding.llHistoryContainer, binding.glSettingItem).forEach {
-            it.background = ThemeUtil.getDrawable(requireContext(), R.drawable.bg_entry_box)
-        }
-        arrayOf(
-            binding.stDraft,
-            binding.stData,
-            binding.stGame,
-            binding.stOtherWork,
-            binding.stPortal,
-            binding.stQuery,
-            binding.stRead,
-            binding.stUse
-        ).forEach {
-            it.refreshTheme()
-        }
-        historyItemList.forEach { it.refreshTheme() }
-    }
-
     companion object {
-        fun newInstance(): UserFragment {
-            return UserFragment()
-        }
+        fun newInstance(): UserFragment = UserFragment()
     }
 }

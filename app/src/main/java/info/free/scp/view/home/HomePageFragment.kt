@@ -1,166 +1,86 @@
 package info.free.scp.view.home
+
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.*
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
-import info.free.scp.R
 import info.free.scp.SCPConstants
-import info.free.scp.databinding.FragmentHomePageBinding
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.home.HomePageScreen
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.GroupListActivity
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.feed.FeedActivity
 import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
 import info.free.scp.view.tag.TagCloudActivity
-import info.free.scp.view.widget.FeedArticleListItem
 import toast
 
-
-/**
- * Use the [HomePageFragment.newInstance] factory method to
- * create an instance of this fragment.
- *
- */
 class HomePageFragment : BaseFragment() {
     private val feedVm by lazy {
         ViewModelProvider(this)[FeedListViewModel::class.java]
     }
-    private val feedItemList = mutableListOf<FeedArticleListItem>()
-    private var _binding: FragmentHomePageBinding? = null
-    private val binding get() = _binding!!
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentHomePageBinding.inflate(inflater, container, false)
-        return binding.root
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                val feedIndex by feedVm.getFeedIndex().observeAsState()
+                var showNotice by remember { mutableStateOf(PreferenceUtil.getShowNotice()) }
+                MainTheme {
+                    HomePageScreen(
+                        notice = PreferenceUtil.getNotice(),
+                        showNotice = showNotice,
+                        latestCreate = feedIndex?.latestCreate.orEmpty(),
+                        latestTranslate = feedIndex?.latestTranslate.orEmpty(),
+                        onDismissNotice = {
+                            PreferenceUtil.setShowNotice(false)
+                            showNotice = false
+                            toast("\u516c\u544a\u5df2\u9690\u85cf\uff0c\u53ef\u5728app\u4f7f\u7528\u8bf4\u660e\u4e2d\u67e5\u770b")
+                        },
+                        onOpenGroup = { goToGroupPage(it) },
+                        onOpenFeed = { startActivity(Intent(requireContext(), FeedActivity::class.java)) },
+                        onOpenTopRated = { startActivity(Intent(requireContext(), TopRatedActivity::class.java)) },
+                        onOpenTags = { startActivity(Intent(requireContext(), TagCloudActivity::class.java)) },
+                        onOpenFeedItem = { feed ->
+                            startActivity(
+                                Intent(requireContext(), DetailActivity::class.java)
+                                    .putExtra("link", feed.link)
+                                    .putExtra("forceOnline", true)
+                            )
+                        }
+                    )
+                }
+                LaunchedEffect(Unit) {
+                    feedVm.loadFeedIndex()
+                }
+            }
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        // 下版本用banner代替
-        binding.tvNotice.text = PreferenceUtil.getNotice()
-        if (!PreferenceUtil.getShowNotice()) {
-            binding.cvNotice.visibility = GONE
-        }
-        binding.ivRemoveNotice.setOnClickListener {
-            PreferenceUtil.setShowNotice(false)
-            binding.cvNotice.visibility = GONE
-            toast("公告已隐藏，可在app使用说明中查看")
-        }
-
-        // TODO banner
-        val bannerImgUrlList = listOf("https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg",
-                "https://wx1.sinaimg.cn/mw690/006S0efgly1gmmcsy0evlj31rc0u0gn4.jpg")
-//        banner_home_page.addBannerLifecycleObserver(this)
-//                .setAdapter(object : BannerImageAdapter<String>(bannerImgUrlList) {
-//                    override fun onBindView(holder: BannerImageHolder, url: String?, position: Int, size: Int) {
-//                        Glide.with(holder.itemView)
-//                                .load(url)
-//                                .apply(RequestOptions.bitmapTransform(RoundedCorners(6)))
-//                                .into(holder.imageView)
-//                    }
-//                })
-//                .addBannerLifecycleObserver(this)//添加生命周期观察者
-//                .setIndicator(CircleIndicator(this.context))
-//                .setIndicatorGravity(RIGHT)
-//                .setIndicatorWidth(dip(8), dip(8))
-//                .setIndicatorSelectedColor(ThemeUtil.toolbarBg)
-        binding.eiScp.setOnClickListener {
-            goToGroupPage(SCPConstants.Entry.SCP_DOC)
-        }
-        binding.eiScpCn.setOnClickListener {
-            goToGroupPage(SCPConstants.Entry.SCP_CN_DOC)
-        }
-        binding.eiScpStory.setOnClickListener {
-            goToGroupPage(SCPConstants.Entry.STORY_DOC)
-        }
-        binding.eiScpWander.setOnClickListener {
-            goToGroupPage(SCPConstants.Entry.WANDER_DOC)
-        }
-
-        binding.btnMoreRecent.background =
-            ThemeUtil.customShape(0, ThemeUtil.linkBlue, Utils.dp2px(1), Utils.dp2px(6))
-        binding.btnMoreRecentTranslate.background =
-            ThemeUtil.customShape(0, ThemeUtil.linkBlue, Utils.dp2px(1), Utils.dp2px(6))
-
-        arrayOf(binding.btnMoreRecent, binding.btnMoreRecentTranslate).forEach {
-            it.setOnClickListener {
-                startActivity(Intent(requireContext(), FeedActivity::class.java))
-            }
-        }
-        binding.btnTopPageEntry.setOnClickListener {
-            startActivity(Intent(requireContext(), TopRatedActivity::class.java))
-        }
-        binding.btnAllTags.setOnClickListener {
-            startActivity(Intent(requireContext(), TagCloudActivity::class.java))
-        }
-
-        feedVm.getFeedIndex().observe(this.viewLifecycleOwner, Observer { fi ->
-            fi.latestCreate.forEach {
-                val newFeedItem = FeedArticleListItem(context!!, it)
-                binding.llLatestCn.addView(newFeedItem)
-                feedItemList.add(newFeedItem)
-            }
-            fi.latestTranslate.forEach {
-                val newFeedItem = FeedArticleListItem(context!!, it)
-                binding.llLatestTranslate.addView(newFeedItem)
-                feedItemList.add(newFeedItem)
-            }
-        })
-        feedVm.loadFeedIndex()
-    }
-
-    private fun goToGroupPage(entry_type: Int) {
+    private fun goToGroupPage(entryType: Int) {
         startActivity(
             Intent(requireContext(), GroupListActivity::class.java)
-                .putExtra("entry_type", entry_type)
+                .putExtra("entry_type", entryType)
         )
     }
 
-    override fun refreshTheme() {
-        super.refreshTheme()
-        binding.clHomePageContainer.setBackgroundColor(ThemeUtil.containerBg)
-        arrayOf(binding.glEntry, binding.clRecentList, binding.clRecentTranslateList).forEach {
-            context?.let { c ->
-                it.background = ThemeUtil.getDrawable(c, R.drawable.bg_entry_box)
-            }
-        }
-        arrayOf(binding.tvRecentHeader, binding.tvRecentTranslateHeader).forEach {
-            it.setTextColor(ThemeUtil.darkText)
-        }
-        arrayOf(
-            binding.eiScp,
-            binding.eiScpCn,
-            binding.eiScpStory,
-            binding.eiScpWander
-        ).forEach { it.refreshTheme() }
-        feedItemList.forEach { it.refreshTheme() }
-        binding.cvNotice.setBackgroundColor(ThemeUtil.itemBg)
-        binding.tvNotice.setTextColor(ThemeUtil.darkText)
-        binding.eiScp.refreshTheme()
-    }
-
-
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        fun newInstance(): HomePageFragment {
-            val fragment = HomePageFragment()
-            return fragment
-        }
+        fun newInstance(): HomePageFragment = HomePageFragment()
     }
 }

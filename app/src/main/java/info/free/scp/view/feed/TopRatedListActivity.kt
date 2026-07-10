@@ -1,23 +1,28 @@
 package info.free.scp.view.feed
 
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import info.free.scp.R
 import info.free.scp.SCPConstants.TOP_RATED_ALL
 import info.free.scp.SCPConstants.TOP_RATED_GOI
 import info.free.scp.SCPConstants.TOP_RATED_SCP
 import info.free.scp.SCPConstants.TOP_RATED_TALES
 import info.free.scp.SCPConstants.TOP_RATED_WANDERS
-import info.free.scp.databinding.ActivityTopRatedBinding
-import info.free.scp.databinding.ActivityTopRatedListBinding
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.feed.TopRatedFeedScreen
 import info.free.scp.view.base.BaseActivity
+import info.free.scp.view.detail.DetailActivity
 
 class TopRatedListActivity : BaseActivity() {
-    private lateinit var binding: ActivityTopRatedListBinding
+    private val viewModel by viewModels<FeedListViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTopRatedListBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        baseToolbar = binding.topRatedToolbar
         val feedType = intent?.getIntExtra("feedType", 0) ?: 0
         val titleResId = when (feedType) {
             TOP_RATED_ALL -> R.string.top_rated_all
@@ -27,8 +32,25 @@ class TopRatedListActivity : BaseActivity() {
             TOP_RATED_WANDERS -> R.string.top_rated_wanderer
             else -> R.string.top_rated_all
         }
-        supportActionBar?.setTitle(titleResId)
-        supportFragmentManager.beginTransaction().replace(R.id.fl_top_rated,
-                SubFeedFragment.newInstance(feedType)).commitAllowingStateLoss()
+        setContent {
+            val feedList by viewModel.getFeed().observeAsState(emptyList())
+            LaunchedEffect(feedType) {
+                viewModel.loadFeed(feedType)
+            }
+            MainTheme {
+                TopRatedFeedScreen(
+                    title = getString(titleResId),
+                    feedList = feedList,
+                    onBackPressed = { finish() },
+                    onOpenFeed = { feed ->
+                        startActivity(
+                            Intent(this, DetailActivity::class.java)
+                                .putExtra("link", feed.link)
+                                .putExtra("forceOnline", true)
+                        )
+                    }
+                )
+            }
+        }
     }
 }

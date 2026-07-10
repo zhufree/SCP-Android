@@ -24,6 +24,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
@@ -45,8 +46,6 @@ import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
-import info.free.scp.databinding.ActivityDetailBinding
-import info.free.scp.databinding.LayoutDialogCookieBinding
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.ScpDataHelper
 import info.free.scp.db.ScpDatabase
@@ -129,11 +128,11 @@ class DetailActivity : BaseActivity() {
         ViewModelProvider(this)[DetailViewModel::class.java]
     }
 
-    private lateinit var binding: ActivityDetailBinding
+    private lateinit var binding: DetailActivityLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetailBinding.inflate(layoutInflater)
+        binding = DetailActivityLayout.create(this)
         setContentView(binding.root)
         tvLoad = TextView(this)
         tvLoad?.text = "评论加载中..."
@@ -501,7 +500,7 @@ class DetailActivity : BaseActivity() {
     private fun initToolbar() {
         baseToolbar = binding.detailToolbar
         supportActionBar?.title = null
-        binding.detailToolbar.inflateMenu(R.menu.detail_menu) //设置右上角的填充菜单
+        populateDetailMenu(binding.detailToolbar.menu)
         binding.detailToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
@@ -590,41 +589,84 @@ class DetailActivity : BaseActivity() {
                 }
 
                 R.id.set_cookie -> {
-                    val cookieView = LayoutDialogCookieBinding.inflate(
-                        LayoutInflater.from(this@DetailActivity),
-                        null, false
-                    )
-                    val cookieDialog = AlertDialog.Builder(this@DetailActivity)
-                        .setTitle("设置Cookie")
-                        .setView(cookieView.root)
-                        .setNeutralButton("如何获取cookie和agent") { _, _ ->
-                            startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
-                        }
-                        .setPositiveButton("OK") { _, _ -> }
-                        .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-                        .create()
-
-                    cookieDialog.show()
-
-                    cookieView.btCookieLogin.setOnClickListener  {
-                        val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
-                        showToast("打开了登陆页面，不工作的话可以点击“切换网页模式”手动登陆")
-                        binding.webView.loadUrl(loginURL)
-                        cookieDialog.dismiss()
-                    }
-                    cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-                        val cookie = cookieView.etCookie.text.toString()
-                        val agent = cookieView.etAgent.text.toString()
-                        PreferenceUtil.setCookie(cookie)
-                        PreferenceUtil.setAgent(agent)
-                        showToast("设置完成")
-                        cookieDialog.dismiss()
-                    }
+                    showCookieDialog()
                 }
                 else -> {
                 }
             }
             true
+        }
+    }
+
+    private fun populateDetailMenu(menu: Menu?) {
+        menu ?: return
+        menu.clear()
+        menu.add(Menu.NONE, R.id.like, 0, R.string.menu_like).apply {
+            setIcon(R.drawable.ic_star_border_white_24dp)
+            setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+        }
+        menu.add(Menu.NONE, R.id.change_theme, 1, R.string.dark_mode)
+        menu.add(Menu.NONE, R.id.add_read_later, 2, R.string.menu_add_read_later)
+        menu.add(Menu.NONE, R.id.switch_read_mode, 3, R.string.online_mode)
+        menu.add(Menu.NONE, R.id.open_in_browser, 4, R.string.menu_open_in_browser)
+        menu.add(Menu.NONE, R.id.copy_link, 5, R.string.menu_copy_link)
+        menu.add(Menu.NONE, R.id.share_picture, 6, R.string.share_with_picture)
+        menu.add(Menu.NONE, R.id.set_cookie, 7, R.string.set_cookie)
+    }
+
+    private fun showCookieDialog() {
+        val margin = Utils.dp2px(16, this)
+        val container = LinearLayout(this).apply {
+            orientation = VERTICAL
+        }
+        val cookieInput = EditText(this).apply {
+            hint = "cookie"
+            setSingleLine(false)
+            setText(PreferenceUtil.getCookie())
+        }
+        val agentInput = EditText(this).apply {
+            hint = "agent"
+            setSingleLine(false)
+            setText(PreferenceUtil.getAgent())
+        }
+        val loginButton = Button(this).apply {
+            text = "\u4f7f\u7528\u7f51\u9875\u767b\u5f55"
+        }
+        val inputLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+            setMargins(margin, margin, margin, 0)
+        }
+        container.addView(cookieInput, inputLp)
+        container.addView(agentInput, inputLp)
+        container.addView(
+            loginButton,
+            LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                setMargins(margin, margin, margin, margin)
+            }
+        )
+
+        val cookieDialog = AlertDialog.Builder(this)
+            .setTitle("\u8bbe\u7f6eCookie")
+            .setView(container)
+            .setNeutralButton("\u5982\u4f55\u83b7\u53d6cookie\u548cagent") { _, _ ->
+                startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
+            }
+            .setPositiveButton("OK") { _, _ -> }
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        cookieDialog.show()
+
+        loginButton.setOnClickListener {
+            val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
+            showToast("\u6253\u5f00\u4e86\u767b\u5f55\u9875\u9762\uff0c\u4e0d\u5de5\u4f5c\u7684\u8bdd\u53ef\u4ee5\u70b9\u51fb\u201c\u5207\u6362\u7f51\u9875\u6a21\u5f0f\u201d\u624b\u52a8\u767b\u5f55")
+            binding.webView.loadUrl(loginURL)
+            cookieDialog.dismiss()
+        }
+        cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
+            PreferenceUtil.setCookie(cookieInput.text.toString())
+            PreferenceUtil.setAgent(agentInput.text.toString())
+            showToast("\u8bbe\u7f6e\u5b8c\u6210")
+            cookieDialog.dismiss()
         }
     }
 
@@ -910,7 +952,7 @@ class DetailActivity : BaseActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.detail_menu, menu)
+        populateDetailMenu(menu)
         return true
     }
 

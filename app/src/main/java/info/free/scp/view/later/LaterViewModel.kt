@@ -1,41 +1,54 @@
 package info.free.scp.view.later
 
 import androidx.lifecycle.ViewModel
-import info.free.scp.SCPConstants.HISTORY_TYPE
-import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.bean.*
-import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDataHelper
+import info.free.scp.data.reading.ReadingListRepository
 
 class LaterViewModel : ViewModel() {
-    private val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    private val recordDao = AppInfoDatabase.getInstance().readRecordDao()
+    private val readingListRepository = ReadingListRepository()
 
     fun getRecordList(type: Int, order: Int): List<ScpRecordModel> {
-        val resultList = emptyList<ScpRecordModel>().toMutableList()
-        resultList.addAll(if (order == ASC) recordDao.getInfoByLinkAsc(type)
-        else recordDao.getInfoByLinkDesc(type))
-        return resultList
+        return readingListRepository.getRecordList(type, order)
     }
 
 
     fun deleteRecord(record: ScpRecordModel) {
-        recordDao.delete(record)
+        readingListRepository.deleteRecord(record)
+    }
+
+    fun clearHistory() {
+        readingListRepository.clearHistory()
     }
 
     fun getLikeBoxList(): List<ScpLikeBox> {
-        val boxList = arrayListOf<ScpLikeBox>()
-        boxList.addAll(likeDao.getLikeBox())
-        if (boxList.isEmpty()) {
-            val defaultBox = ScpLikeBox(0, "默认收藏夹")
-            boxList.add(defaultBox)
-            likeDao.saveLikeBox(defaultBox)
-        }
-        return boxList
+        return readingListRepository.getLikeBoxList()
     }
 
     fun getLikeListByBoxId(boxId: Int): List<ScpLikeModel> {
-        return likeDao.getLikeListByBoxId(boxId)
+        return readingListRepository.getLikeListByBoxId(boxId)
+    }
+
+    fun getExistingLikeBoxes(): List<ScpLikeBox> {
+        return readingListRepository.getExistingLikeBoxes()
+    }
+
+    fun deleteLike(like: ScpLikeModel) {
+        readingListRepository.deleteLike(like)
+    }
+
+    fun moveLike(like: ScpLikeModel, boxId: Int) {
+        readingListRepository.moveLike(like, boxId)
+    }
+
+    fun deleteLikeBoxAndClear(boxId: Int) {
+        readingListRepository.deleteLikeBoxAndClear(boxId)
+    }
+
+    fun deleteLikeBoxAndMoveToDefault(boxId: Int) {
+        readingListRepository.deleteLikeBoxAndMoveToDefault(boxId)
+    }
+
+    fun renameLikeBox(boxId: Int, name: String) {
+        readingListRepository.renameLikeBox(boxId, name)
     }
 }

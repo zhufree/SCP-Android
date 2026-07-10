@@ -1,32 +1,23 @@
 package info.free.scp.view.user
 
-import android.graphics.Color
 import android.os.Bundle
-import info.free.scp.R
-import info.free.scp.databinding.ActivityDonationBinding
-import info.free.scp.util.ThemeUtil
+import androidx.activity.compose.setContent
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.user.DonationScreen
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 
-class DonationActivity :BaseActivity() {
-    private lateinit var binding: ActivityDonationBinding
+class DonationActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDonationBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        baseToolbar = binding.donationToolbar
-
-        binding.btnAfdian.background =
-            ThemeUtil.customShape(Color.parseColor("#8A62DC"), 0, 0, Utils.dp2px(32, this))
-        binding.btnMianbaoduo.background =
-            ThemeUtil.customShape(Color.parseColor("#FED04D"), 0, 0, Utils.dp2px(32, this))
-
-        binding.btnAfdian.setOnClickListener {
-            startActivity(Utils.getUrlIntent("https://afdian.net/@zhufree"))
-        }
-        binding.btnMianbaoduo.setOnClickListener {
-            startActivity(Utils.getUrlIntent("https://mbd.pub/o/author-b2iUl3Bo"))
+        setContent {
+            MainTheme {
+                DonationScreen(
+                    onBackPressed = { finish() },
+                    onOpenAfdian = { startActivity(Utils.getUrlIntent("https://afdian.net/@zhufree")) },
+                    onOpenMianbaoduo = { startActivity(Utils.getUrlIntent("https://mbd.pub/o/author-b2iUl3Bo")) }
+                )
+            }
         }
     }
 }

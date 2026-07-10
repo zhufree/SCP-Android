@@ -1,36 +1,42 @@
 package info.free.scp.view.category
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import info.free.scp.R
-import info.free.scp.SCPConstants
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import info.free.scp.SCPConstants.Entry.ART_DOC
 import info.free.scp.SCPConstants.Entry.GOI_DOC
 import info.free.scp.SCPConstants.Entry.INTERNATIONAL_DOC
 import info.free.scp.SCPConstants.ScpType.SAVE_ART
 import info.free.scp.SCPConstants.ScpType.SAVE_GOI
 import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
-import info.free.scp.databinding.FragmentCategoryBinding
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.category.CategoryEntryScreen
+import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 
-/**
- * 二级目录，点进去还有一层目录
- */
 class CategoryFragment : BaseFragment() {
     private var entryType = -1
-    private var categoryAdapter: CategoryAdapter? = null
-    private var _binding: FragmentCategoryBinding? = null
-    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentCategoryBinding.inflate(inflater, container, false)
-        return binding.root
+    ): ComposeView {
+        entryType = arguments?.getInt("entry_type") ?: -1
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MainTheme {
+                    CategoryEntryScreen(
+                        categories = getCategoryTitles(),
+                        onOpenCategory = { title, index -> openCategory(title, index) }
+                    )
+                }
+            }
+        }
     }
 
     private fun getSaveType(): Int {
@@ -42,46 +48,45 @@ class CategoryFragment : BaseFragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        entryType = arguments?.getInt("entry_type") ?: -1
-        val titleList = when (entryType) {
-            INTERNATIONAL_DOC -> {
-                listOf("俄国分部", "韩国分部", "法国分部", "波兰分部", "西班牙分部",
-                        "泰国分部", "日本分部", "德国分部", "意大利分部", "乌克兰分部", "葡萄牙语分部",
-                        "捷克分部", "非官方分部")
-            }
-            GOI_DOC -> {
-                listOf("1-100", "100-200", "200-300", "300-400", "400+")
-            }
-            ART_DOC -> {
-                listOf("1-100", "100-200", "200-300", "300+")
-            }
-            else -> {
-                listOf("")
-            }
+    private fun getCategoryTitles(): List<String> {
+        return when (entryType) {
+            INTERNATIONAL_DOC -> listOf(
+                "\u4fc4\u7f57\u65af\u5206\u90e8",
+                "\u97e9\u56fd\u5206\u90e8",
+                "\u6cd5\u56fd\u5206\u90e8",
+                "\u6ce2\u5170\u5206\u90e8",
+                "\u897f\u73ed\u7259\u5206\u90e8",
+                "\u6cf0\u56fd\u5206\u90e8",
+                "\u65e5\u672c\u5206\u90e8",
+                "\u5fb7\u56fd\u5206\u90e8",
+                "\u610f\u5927\u5229\u5206\u90e8",
+                "\u4e4c\u514b\u5170\u5206\u90e8",
+                "\u8461\u8404\u7259\u8bed\u5206\u90e8",
+                "\u6377\u514b\u5206\u90e8",
+                "\u975e\u5b98\u65b9\u5206\u90e8"
+            )
+            GOI_DOC -> listOf("1-100", "100-200", "200-300", "300-400", "400+")
+            ART_DOC -> listOf("1-100", "100-200", "200-300", "300+")
+            else -> listOf("")
         }
-        categoryAdapter = CategoryAdapter(getSaveType())
-        binding.rvCategoryList.adapter = categoryAdapter
-        categoryAdapter?.submitList(titleList)
-
     }
 
-    override fun refreshTheme() {
-        super.refreshTheme()
-        categoryAdapter?.refreshTheme()
-
+    private fun openCategory(title: String, position: Int) {
+        PreferenceUtil.addPoints(2)
+        startActivity(
+            Intent(requireContext(), DocListActivity::class.java)
+                .putExtra("saveType", getSaveType())
+                .putExtra("groupIndex", position)
+                .putExtra("extraType", title)
+        )
     }
-
 
     companion object {
-
         fun newInstance(entryType: Int, subPosition: Int): CategoryFragment {
             val fragment = CategoryFragment()
             val args = Bundle()
             args.putInt("entry_type", entryType)
             args.putInt("sub_position", subPosition)
-//            args.putString(ARG_PARAM2, param2)
             fragment.arguments = args
             return fragment
         }

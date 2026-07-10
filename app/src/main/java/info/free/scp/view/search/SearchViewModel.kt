@@ -4,38 +4,23 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants.SearchType.TITLE
-import info.free.scp.bean.*
-import info.free.scp.db.DetailDatabase
-import info.free.scp.db.ScpDatabase
+import info.free.scp.bean.ScpModel
+import info.free.scp.data.catalog.ScpCatalogRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SearchViewModel : ViewModel() {
-    private val scpDao = ScpDatabase.getInstance()?.scpDao()
-    private val detailDao = DetailDatabase.getInstance()?.detailDao()
+    private val catalogRepository = ScpCatalogRepository()
     var titleResult = emptyList<ScpModel>()
     var contentResult: MutableLiveData<List<ScpModel>> = MutableLiveData()
 
     fun searchScp(type: Int, keyword: String) {
-        if (scpDao == null) return
         if (type == TITLE) {
-            titleResult = scpDao.searchScpByTitle(keyword)
+            titleResult = catalogRepository.searchTitle(keyword)
         } else {
-            viewModelScope.launch {
-                contentResult.postValue(searchDetail(keyword))
+            viewModelScope.launch(Dispatchers.IO) {
+                contentResult.postValue(catalogRepository.searchDetail(keyword))
             }
         }
-    }
-
-    private fun searchDetail(keyword: String): List<ScpModel> {
-        if (scpDao == null || detailDao == null) return emptyList()
-        val linkList = detailDao.searchScpByDetail(keyword)
-        val scpList = mutableListOf<ScpModel>()
-        linkList.forEach {
-            val scp = scpDao.getScpByLink(it)
-            scp?.let { s ->
-                scpList.add(s)
-            }
-        }
-        return scpList
     }
 }

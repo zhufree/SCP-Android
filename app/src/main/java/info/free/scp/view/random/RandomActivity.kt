@@ -1,22 +1,19 @@
 package info.free.scp.view.random
 
-import android.graphics.Color
+import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.*
-import info.free.scp.R
-import info.free.scp.databinding.ActivityRandomBinding
-import info.free.scp.util.ThemeUtil
-import info.free.scp.util.Utils
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.random.RandomScreen
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.category.GroupViewModel
+import info.free.scp.view.detail.DetailActivity
 
 class RandomActivity : BaseActivity() {
-    private lateinit var binding: ActivityRandomBinding
-    val adapter: RandomAdapter by lazy {
-        RandomAdapter()
-    }
     private val vm: GroupViewModel by lazy {
         ViewModelProvider(this)[GroupViewModel::class.java]
     }
@@ -31,43 +28,35 @@ class RandomActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRandomBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         randomType = intent.getIntExtra("random_type", 0)
-        baseToolbar = binding.randomToolbar
-        supportActionBar?.title = intent.getStringExtra("random_title") ?: "随机"
-        binding.rvRandomList.adapter = adapter
-        binding.rvRandomList.addOnScrollListener(object : OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                if (newState == SCROLL_STATE_SETTLING) {
-                    binding.btnRefreshRandom.visibility = VISIBLE
-                    binding.btnAddMoreRandom.visibility = VISIBLE
-                }
-                if (newState == SCROLL_STATE_DRAGGING) {
-                    binding.btnRefreshRandom.visibility = GONE
-                    binding.btnAddMoreRandom.visibility = GONE
-                }
+        val title = intent.getStringExtra("random_title") ?: "随机"
+        setContent {
+            val randomList by vm.getRandomList().observeAsState(emptyList())
+            LaunchedEffect(randomRange) {
+                vm.refreshRandomList(randomRange)
             }
-        })
-
-        binding.btnRefreshRandom.background = ThemeUtil.customShape(
-            Color.parseColor("#4A90E2"),
-            0, 0, Utils.dp2px(32, this)
-        )
-        binding.btnAddMoreRandom.background = ThemeUtil.customShape(
-            Color.parseColor("#4A90E2"),
-            0, 0, Utils.dp2px(32, this)
-        )
-        binding.btnRefreshRandom.setOnClickListener {
-            vm.refreshRandomList(randomRange)
+            MainTheme {
+                RandomScreen(
+                    title = title,
+                    randomList = randomList,
+                    onBackPressed = { finish() },
+                    onRefresh = { vm.refreshRandomList(randomRange) },
+                    onAddMore = { vm.refreshRandomList(randomRange, true) },
+                    onOpenRandom = { scp, index ->
+                        val randomLinkList = ArrayList(randomList.map { it.link })
+                        val randomTitleList = ArrayList(randomList.map { it.title })
+                        startActivity(
+                            Intent(this, DetailActivity::class.java)
+                                .putExtra("link", scp.link)
+                                .putExtra("title", scp.title)
+                                .putExtra("read_type", 1)
+                                .putExtra("random_index", index)
+                                .putStringArrayListExtra("random_link_list", randomLinkList)
+                                .putStringArrayListExtra("random_title_list", randomTitleList)
+                        )
+                    }
+                )
+            }
         }
-        binding.btnAddMoreRandom.setOnClickListener {
-            vm.refreshRandomList(randomRange, true)
-        }
-        vm.getRandomList().observe(this) { list ->
-            adapter.submitList(list)
-        }
-        vm.refreshRandomList(randomRange)
     }
 }

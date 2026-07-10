@@ -1,59 +1,33 @@
 package info.free.scp.view.feed
 
-
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import info.free.scp.SCPConstants.TOP_RATED_ALL
-import info.free.scp.SCPConstants.TOP_RATED_GOI
-import info.free.scp.SCPConstants.TOP_RATED_SCP
-import info.free.scp.SCPConstants.TOP_RATED_TALES
-import info.free.scp.SCPConstants.TOP_RATED_WANDERS
-import info.free.scp.databinding.FragmentTopRatedBinding
-import info.free.scp.util.ThemeUtil
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import info.free.scp.ui.MainTheme
+import info.free.scp.ui.feed.TopRatedMenuScreen
 import info.free.scp.view.base.BaseFragment
 
-/**
- * A simple [Fragment] subclass.
- * Use the [TopRatedFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class TopRatedFragment : BaseFragment() {
-    private var _binding: FragmentTopRatedBinding? = null
-    private val binding get() = _binding!!
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
-    }
-
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentTopRatedBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.cvTopRatedAll.setOnClickListener {
-            openTopRatedList(TOP_RATED_ALL)
-        }
-        binding.cvTopRatedScp.setOnClickListener {
-            openTopRatedList(TOP_RATED_SCP)
-        }
-        binding.cvTopRatedTales.setOnClickListener {
-            openTopRatedList(TOP_RATED_TALES)
-        }
-        binding.cvTopRatedGoi.setOnClickListener {
-            openTopRatedList(TOP_RATED_GOI)
-        }
-        binding.cvTopRatedWanderer.setOnClickListener {
-            openTopRatedList(TOP_RATED_WANDERS)
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MainTheme {
+                    TopRatedMenuScreen(
+                        showTopBar = false,
+                        onBackPressed = {},
+                        onOpenFeedType = ::openTopRatedList
+                    )
+                }
+            }
         }
     }
 
@@ -64,21 +38,10 @@ class TopRatedFragment : BaseFragment() {
         )
     }
 
-    override fun refreshTheme() {
-        super.refreshTheme()
-        binding.cvTopRatedGoi.setBackgroundColor(ThemeUtil.containerBg)
-        binding.cvTopRatedTales.setBackgroundColor(ThemeUtil.containerBg)
-        binding.cvTopRatedScp.setBackgroundColor(ThemeUtil.containerBg)
-        binding.cvTopRatedAll.setBackgroundColor(ThemeUtil.containerBg)
-        binding.cvTopRatedWanderer.setBackgroundColor(ThemeUtil.containerBg)
-    }
-
     companion object {
         @JvmStatic
-        fun newInstance() =
-            TopRatedFragment().apply {
-                arguments = Bundle().apply {
-                }
-            }
+        fun newInstance() = TopRatedFragment().apply {
+            arguments = Bundle()
+        }
     }
 }

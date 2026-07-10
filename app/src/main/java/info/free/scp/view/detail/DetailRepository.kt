@@ -6,27 +6,35 @@ import apiCall
 import executeResponse
 import info
 import info.free.scp.bean.*
+import info.free.scp.data.catalog.ScpCatalogRepository
 import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.db.DetailDatabase
-import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
 
 
 class DetailRepository {
-    var scp: MutableLiveData<ScpItemModel?> = MutableLiveData()
+    var scp: MutableLiveData<ScpModel?> = MutableLiveData()
     var detail: MutableLiveData<String?> = MutableLiveData("")
     var tag: MutableLiveData<String?> = MutableLiveData("")
     var commentList: MutableLiveData<List<CommentModel>> = MutableLiveData()
     var offlineDetail: LiveData<String> = MutableLiveData()
     var offlineTag: LiveData<String> = MutableLiveData()
-
-
-    private var scpDao = ScpDatabase.getInstance()?.scpDao()
+    private val catalogRepository = ScpCatalogRepository()
 
     fun setScp(link: String) {
-        scpDao?.let {
-            scp.postValue(it.getScpByLink(link))
-        }
+        scp.postValue(catalogRepository.getDocumentByLink(link))
+    }
+
+    fun getDocumentByLink(link: String): ScpModel? {
+        return catalogRepository.getDocumentByLink(link)
+    }
+
+    fun getNextDocument(index: Int, type: Int): ScpModel? {
+        return catalogRepository.getNextDocument(index, type)
+    }
+
+    fun getPreviousDocument(index: Int, type: Int): ScpModel? {
+        return catalogRepository.getPreviousDocument(index, type)
     }
 
     fun loadOfflineDetail(link: String) {

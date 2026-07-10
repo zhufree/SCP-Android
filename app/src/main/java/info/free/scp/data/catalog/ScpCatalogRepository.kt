@@ -36,6 +36,8 @@ interface ScpCatalogDataSource {
     fun searchByTitle(keyword: String): List<ScpModel>
     fun searchDetailLinks(keyword: String): List<String>
     fun getDocumentByLink(link: String): ScpModel?
+    fun getNextDocument(index: Int, type: Int): ScpModel?
+    fun getPreviousDocument(index: Int, type: Int): ScpModel?
     fun getReadLinks(): Set<String>
     fun shouldHideFinished(): Boolean
 }
@@ -67,6 +69,14 @@ class RoomScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun getDocumentByLink(link: String): ScpModel? {
         return scpDao?.getScpByLink(link)
+    }
+
+    override fun getNextDocument(index: Int, type: Int): ScpModel? {
+        return scpDao?.getNextScp(index, type)
+    }
+
+    override fun getPreviousDocument(index: Int, type: Int): ScpModel? {
+        return scpDao?.getPreviewScp(index, type)
     }
 
     override fun getReadLinks(): Set<String> {
@@ -126,6 +136,18 @@ class ScpCatalogRepository(
         return dataSource.searchDetailLinks(keyword).mapNotNull { link ->
             dataSource.getDocumentByLink(link)
         }
+    }
+
+    fun getDocumentByLink(link: String): ScpModel? {
+        return dataSource.getDocumentByLink(link)
+    }
+
+    fun getNextDocument(index: Int, type: Int): ScpModel? {
+        return dataSource.getNextDocument(index, type)
+    }
+
+    fun getPreviousDocument(index: Int, type: Int): ScpModel? {
+        return dataSource.getPreviousDocument(index, type)
     }
 
     private fun List<ScpModel>.page(groupIndex: Int): List<ScpModel> {

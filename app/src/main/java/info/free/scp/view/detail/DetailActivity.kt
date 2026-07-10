@@ -45,7 +45,6 @@ import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.detail.DetailLinkResolver
-import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HtmlParserService
 import info.free.scp.util.EventUtil
 import info.free.scp.util.PreferenceUtil
@@ -67,7 +66,6 @@ import java.io.InputStreamReader
 
 class DetailActivity : BaseActivity() {
 
-    private val scpDao = ScpDatabase.getInstance()?.scpDao()
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
@@ -210,7 +208,7 @@ class DetailActivity : BaseActivity() {
                 } else {
                     url = DetailLinkResolver.toLocalLink(requestUrl)
                     Log.i("scp-detail", url)
-                    val tmpScp = scpDao?.getScpByLink(url)
+                    val tmpScp = viewModel.getDocumentByLink(url)
                     tmpScp?.let {
                         scp = tmpScp
                         setData(tmpScp)
@@ -742,13 +740,12 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun toNextArticle() {
-        if (scpDao == null) return
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
         when (readType) {
             0 -> {
-                scp = scpDao.getNextScp(index, scpType)
+                scp = viewModel.getNextDocument(index, scpType)
                 scp?.let {
                     viewModel.setScp(it.link)
                 } ?: showToast("已经是最后一篇了")
@@ -770,7 +767,6 @@ class DetailActivity : BaseActivity() {
 
 
     private fun toPreviewArticle() {
-        if (scpDao == null) return
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
         PreferenceUtil.addPoints(1)
@@ -779,7 +775,7 @@ class DetailActivity : BaseActivity() {
                 when (index) {
                     0 -> showToast("已经是第一篇了")
                     else -> {
-                        scp = scpDao.getPreviewScp(index, scpType)
+                        scp = viewModel.getPreviousDocument(index, scpType)
                         scp?.let {
                             setData(it)
                         }

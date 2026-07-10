@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import info.free.scp.SCPConstants
-import info.free.scp.bean.ScpItemModel
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
+import info.free.scp.bean.ScpModel
 import info.free.scp.data.reading.ReadingDocumentStatus
 import info.free.scp.data.reading.ReadingListRepository
 import info.free.scp.util.PreferenceUtil
@@ -17,7 +17,7 @@ class DetailViewModel : ViewModel() {
     var repo = DetailRepository()
     private val readingListRepository = ReadingListRepository()
 
-    fun getScp(): MutableLiveData<ScpItemModel?> {
+    fun getScp(): MutableLiveData<ScpModel?> {
         return repo.scp
     }
 
@@ -42,6 +42,18 @@ class DetailViewModel : ViewModel() {
      */
     fun setScp(link: String) {
         repo.setScp(link)
+    }
+
+    fun getDocumentByLink(link: String): ScpModel? {
+        return repo.getDocumentByLink(link)
+    }
+
+    fun getNextDocument(index: Int, type: Int): ScpModel? {
+        return repo.getNextDocument(index, type)
+    }
+
+    fun getPreviousDocument(index: Int, type: Int): ScpModel? {
+        return repo.getPreviousDocument(index, type)
     }
 
     fun recordOpened(link: String, title: String) {

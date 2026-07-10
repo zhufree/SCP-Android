@@ -83,6 +83,42 @@ class ScpCatalogRepositoryTest {
         assertEquals(listOf("/scp-002", "/scp-001"), result.map { it.link })
     }
 
+    @Test
+    fun documentLookupReturnsCatalogEntryByLink() {
+        val source = FakeScpCatalogDataSource().apply {
+            documentsByLink["/scp-013"] = document("/scp-013", "SCP-013")
+        }
+        val repository = ScpCatalogRepository(source)
+
+        val result = repository.getDocumentByLink("/scp-013")
+
+        assertEquals("/scp-013", result?.link)
+    }
+
+    @Test
+    fun nextDocumentUsesCurrentIndexAndType() {
+        val source = FakeScpCatalogDataSource().apply {
+            nextDocuments[13 to SAVE_SERIES] = document("/scp-014", "SCP-014")
+        }
+        val repository = ScpCatalogRepository(source)
+
+        val result = repository.getNextDocument(index = 13, type = SAVE_SERIES)
+
+        assertEquals("/scp-014", result?.link)
+    }
+
+    @Test
+    fun previousDocumentUsesCurrentIndexAndType() {
+        val source = FakeScpCatalogDataSource().apply {
+            previousDocuments[13 to SAVE_SERIES] = document("/scp-012", "SCP-012")
+        }
+        val repository = ScpCatalogRepository(source)
+
+        val result = repository.getPreviousDocument(index = 13, type = SAVE_SERIES)
+
+        assertEquals("/scp-012", result?.link)
+    }
+
     private fun document(link: String, title: String): ScpModel {
         return ScpModel(link = link, title = title)
     }
@@ -95,6 +131,8 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
     val titleSearchResults = mutableMapOf<String, List<ScpModel>>()
     val detailSearchResults = mutableMapOf<String, List<String>>()
     val documentsByLink = mutableMapOf<String, ScpModel>()
+    val nextDocuments = mutableMapOf<Pair<Int, Int>, ScpModel>()
+    val previousDocuments = mutableMapOf<Pair<Int, Int>, ScpModel>()
     var hideFinished = false
     var readLinkSet = emptySet<String>()
 
@@ -120,6 +158,14 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun getDocumentByLink(link: String): ScpModel? {
         return documentsByLink[link]
+    }
+
+    override fun getNextDocument(index: Int, type: Int): ScpModel? {
+        return nextDocuments[index to type]
+    }
+
+    override fun getPreviousDocument(index: Int, type: Int): ScpModel? {
+        return previousDocuments[index to type]
     }
 
     override fun getReadLinks(): Set<String> {

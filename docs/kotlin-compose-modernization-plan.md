@@ -1,5 +1,7 @@
 # SCP Android Kotlin + Compose 现代化重构方案
 
+> 当前状态与接手续作请先阅读 [`refactor-handoff.md`](refactor-handoff.md)。本文件保留完整阶段定义和历史执行记录；下方按日期命名的复盘结论仅代表当时快照。
+
 ## 2026-07-09 复盘结论
 
 - 当前阶段判断：第 0 阶段“构建与工具链基线”、第 1 阶段“旧依赖清理”、第 3 阶段“Compose 应用壳层”和第 4 阶段“页面逐步 Compose 化”已经完成；第 2 阶段“架构边界整理”已经启动但尚未完成；第 5 阶段“平台能力与发布收口”尚未完成。
@@ -340,6 +342,7 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
   - `.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace` 通过，已覆盖 R8 minify 与资源压缩链路。
 - 发布预检暴露但本切片未处理的 warning：`flatDir` 仓库、Java 8 编译目标、Firebase KTX、旧 Room migration/builder API，以及少量 Android/Compose 废弃 API；这些继续归入阶段 5A 的工具链 warning 清单，不与当前 Repository 重构混改。
 - 当前阶段判断：第 0、1、2A、3、4 阶段完成；2B 的分类、搜索、Tag、草稿、随机、阅读状态、详情目录导航与网络内容边界已收敛，详情偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
+- 2026-07-26 交接复核：新增 [`refactor-handoff.md`](refactor-handoff.md)，并更新 README 的阶段、验证命令和计划入口；当前 `d17efe8` 已重新通过 50 项数据层 JVM 测试、主 debug APK 与 release staging 构建。阶段 5B 的文档与交接要求至此完成。
 
 ### 阶段 5A：旧依赖与发布收口
 

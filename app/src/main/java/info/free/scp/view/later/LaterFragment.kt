@@ -22,6 +22,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -32,32 +33,29 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATER_TYPE
-import info.free.scp.data.catalog.ScpCatalogRepository
-import info.free.scp.data.reading.ReadListImportParser
-import info.free.scp.data.reading.ReadingListRepository
-import info.free.scp.data.settings.PreferenceSettingsStore
-import info.free.scp.data.settings.ReadingPreferencesStore
+import info.free.scp.bean.ScpLikeBox
+import info.free.scp.bean.ScpRecordModel
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.SearchBarScreen
+import info.free.scp.ui.later.LikeBoxListScreen
+import info.free.scp.ui.later.RecordListScreen
 import info.free.scp.util.EventUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
+import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.home.DirectActivity
 import info.free.scp.view.random.RandomActivity
 import info.free.scp.view.search.SearchActivity
 import toast
 
 class LaterFragment : BaseFragment() {
-    private val recordListFragment = RecordListFragment.newInstance(LATER_TYPE)
-    private val likeListFragment = LikeBoxListFragment.newInstance()
-    private val readingListRepository = ReadingListRepository()
-    private val catalogRepository = ScpCatalogRepository()
-    private val readingPreferences: ReadingPreferencesStore = PreferenceSettingsStore()
+    private val viewModel by lazy {
+        ViewModelProvider(this)[LaterViewModel::class.java]
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +66,7 @@ class LaterFragment : BaseFragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 var selectedTab by remember { mutableIntStateOf(0) }
+                val uiState by viewModel.uiState.collectAsState()
                 MainTheme {
                     Box(modifier = Modifier.fillMaxSize()) {
                         Column(
@@ -93,14 +92,24 @@ class LaterFragment : BaseFragment() {
                                     )
                                 }
                             }
-                            AndroidView(
-                                modifier = Modifier.weight(1f),
-                                factory = { context ->
-                                    android.widget.FrameLayout(context).apply {
-                                        id = R.id.fl_later_container
-                                    }
+                            Box(modifier = Modifier.weight(1f)) {
+                                if (selectedTab == 0) {
+                                    RecordListScreen(
+                                        records = uiState.records,
+                                        scrollToTopSignal = uiState.recordScrollToTopSignal,
+                                        onOpenRecord = ::openRecord,
+                                        onDeleteRecord = viewModel::deleteRecord
+                                    )
+                                } else {
+                                    LikeBoxListScreen(
+                                        likeBoxes = uiState.likeBoxes,
+                                        onOpenBox = ::openLikeBox,
+                                        onDeleteAndClear = { viewModel.deleteLikeBoxAndClear(it.id) },
+                                        onDeleteAndMove = { viewModel.deleteLikeBoxAndMoveToDefault(it.id) },
+                                        onRenameBox = { box, name -> viewModel.renameLikeBox(box.id, name) }
+                                    )
                                 }
-                            )
+                            }
                         }
                         FloatingActionButton(
                             modifier = Modifier
@@ -118,7 +127,11 @@ class LaterFragment : BaseFragment() {
                     }
                 }
                 LaunchedEffect(selectedTab) {
-                    showChildFragment(if (selectedTab == 0) recordListFragment else likeListFragment)
+                    if (selectedTab == 0) {
+                        viewModel.loadRecords(LATER_TYPE)
+                    } else {
+                        viewModel.loadLikeBoxes()
+                    }
                 }
             }
         }
@@ -126,21 +139,26 @@ class LaterFragment : BaseFragment() {
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
-        if (!hidden && recordListFragment.isAdded) {
-            recordListFragment.refreshList()
+        if (!hidden) {
+            viewModel.loadRecords(LATER_TYPE)
+            viewModel.loadLikeBoxes()
         }
     }
 
-    private fun showChildFragment(fragment: Fragment) {
-        if (childFragmentManager.isStateSaved) {
-            return
-        }
-        childFragmentManager.beginTransaction()
-            .replace(R.id.fl_later_container, fragment)
-            .commit()
-        if (fragment === recordListFragment && recordListFragment.isAdded) {
-            recordListFragment.refreshList()
-        }
+    private fun openRecord(record: ScpRecordModel) {
+        startActivity(
+            Intent(requireContext(), DetailActivity::class.java)
+                .putExtra("link", record.link)
+                .putExtra("title", record.link)
+        )
+    }
+
+    private fun openLikeBox(box: ScpLikeBox) {
+        startActivity(
+            Intent(requireContext(), LikeListActivity::class.java)
+                .putExtra("box_id", box.id)
+                .putExtra("box_name", box.name)
+        )
     }
 
     private fun openSearch(keyword: String) {
@@ -174,7 +192,7 @@ class LaterFragment : BaseFragment() {
     }
 
     private fun handleImportClick() {
-        if (readingPreferences.shouldShowReadSuggestion) {
+        if (viewModel.shouldShowReadSuggestion()) {
             AlertDialog.Builder(requireContext())
                 .setTitle("\u4e0d\u77e5\u9053\u8bfb\u4ec0\u4e48\uff1f")
                 .setMessage("\u8981\u4e0d\u8981\u8bbf\u95ee\u5927\u4f6c\u4eec\u6574\u7406\u7684\u5f85\u8bfb\u5217\u8868\uff1f\u53ef\u4ee5\u590d\u5236\u5217\u8868\u540e\u70b9\u51fb\u6b64\u6309\u94ae\u5bfc\u5165\u3002")
@@ -187,7 +205,7 @@ class LaterFragment : BaseFragment() {
                 }
                 .setNegativeButton("\u4e0d\u7528\u4e86", null)
                 .show()
-            readingPreferences.markReadSuggestionShown()
+            viewModel.markReadSuggestionShown()
         }
         showInputListDialog()
     }
@@ -226,22 +244,11 @@ class LaterFragment : BaseFragment() {
     }
 
     private fun splitReadList(input: String) {
-        val importRequests = ReadListImportParser.parse(input)
-        if (importRequests.isEmpty()) {
+        if (!viewModel.importReadList(input)) {
             toast("\u8bc6\u522b\u5931\u8d25\uff0c\u8bf7\u5bf9\u7167\u8981\u6c42\u4fee\u6539\u683c\u5f0f")
             return
         }
-        importRequests.forEach { request ->
-            val targetScp = catalogRepository.getDocumentByNumber(
-                request.scpType,
-                request.numberPattern
-            )
-            if (targetScp != null) {
-                readingListRepository.addToLater(targetScp.link, targetScp.title)
-            }
-        }
         toast("\u5bfc\u5165\u5b8c\u6210")
-        recordListFragment.refreshList()
     }
 
     companion object {

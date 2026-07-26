@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.SCPConstants.OrderType.DESC
 import info.free.scp.bean.*
+import info.free.scp.data.catalog.ScpCatalogRepository
+import info.free.scp.data.reading.ReadListImportParser
 import info.free.scp.data.reading.ReadingListRepository
+import info.free.scp.data.settings.PreferenceSettingsStore
+import info.free.scp.data.settings.ReadingPreferencesStore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,6 +28,8 @@ data class LaterUiState(
 
 class LaterViewModel : ViewModel() {
     private val readingListRepository = ReadingListRepository()
+    private val catalogRepository = ScpCatalogRepository()
+    private val readingPreferences: ReadingPreferencesStore = PreferenceSettingsStore()
     private val _uiState = MutableStateFlow(LaterUiState())
     val uiState: StateFlow<LaterUiState> = _uiState.asStateFlow()
 
@@ -103,5 +109,26 @@ class LaterViewModel : ViewModel() {
     fun renameLikeBox(boxId: Int, name: String) {
         readingListRepository.renameLikeBox(boxId, name)
         loadLikeBoxes()
+    }
+
+    fun shouldShowReadSuggestion(): Boolean = readingPreferences.shouldShowReadSuggestion
+
+    fun markReadSuggestionShown() {
+        readingPreferences.markReadSuggestionShown()
+    }
+
+    fun importReadList(input: String): Boolean {
+        val requests = ReadListImportParser.parse(input)
+        if (requests.isEmpty()) {
+            return false
+        }
+        requests.forEach { request ->
+            catalogRepository.getDocumentByNumber(request.scpType, request.numberPattern)
+                ?.let { document ->
+                    readingListRepository.addToLater(document.link, document.title)
+                }
+        }
+        loadRecords(LATER_TYPE)
+        return true
     }
 }

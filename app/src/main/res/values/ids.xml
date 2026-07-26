@@ -2,7 +2,6 @@
 <resources>
     <item name="flMainContainer" type="id" />
     <item name="fl_read_settings" type="id" />
-    <item name="fl_later_container" type="id" />
     <item name="fl_home_container" type="id" />
     <item name="ablToolbarWrapper" type="id" />
     <item name="detail_toolbar" type="id" />

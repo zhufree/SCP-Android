@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
@@ -22,8 +20,6 @@ import info.free.scp.view.detail.DetailActivity
 class RecordListFragment : BaseFragment() {
     private var recordType = LATER_TYPE
     private var orderType = DESC
-    private var records by mutableStateOf<List<ScpRecordModel>>(emptyList())
-    private var scrollToTopSignal by mutableIntStateOf(0)
 
     private val viewModel by lazy {
         ViewModelProvider(this)[LaterViewModel::class.java]
@@ -39,10 +35,11 @@ class RecordListFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
+                val uiState by viewModel.uiState.collectAsState()
                 MainTheme {
                     RecordListScreen(
-                        records = records,
-                        scrollToTopSignal = scrollToTopSignal,
+                        records = uiState.records,
+                        scrollToTopSignal = uiState.recordScrollToTopSignal,
                         onOpenRecord = { openRecord(it) },
                         onDeleteRecord = { deleteRecord(it) }
                     )
@@ -52,13 +49,12 @@ class RecordListFragment : BaseFragment() {
     }
 
     fun refreshList() {
-        records = viewModel.getRecordList(recordType, orderType)
+        viewModel.loadRecords(recordType, orderType)
     }
 
     fun reverseList(orderType: Int) {
         this.orderType = orderType
-        records = viewModel.getRecordList(recordType, orderType)
-        scrollToTopSignal += 1
+        viewModel.loadRecords(recordType, orderType, scrollToTop = true)
     }
 
     private fun openRecord(record: ScpRecordModel) {
@@ -71,7 +67,6 @@ class RecordListFragment : BaseFragment() {
 
     private fun deleteRecord(record: ScpRecordModel) {
         viewModel.deleteRecord(record)
-        refreshList()
     }
 
     companion object {

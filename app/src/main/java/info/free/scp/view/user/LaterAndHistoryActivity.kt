@@ -13,9 +13,9 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -33,22 +33,28 @@ import info.free.scp.view.later.LaterViewModel
 
 class LaterAndHistoryActivity : BaseActivity() {
     private val viewModel by viewModels<LaterViewModel>()
-    private var orderType by mutableIntStateOf(ASC)
-    private var records by mutableStateOf<List<ScpRecordModel>>(emptyList())
-    private var scrollToTopSignal by mutableIntStateOf(0)
     private var showClearDialog by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        refreshList()
+        viewModel.loadRecords(HISTORY_TYPE, ASC)
         setContent {
+            val uiState by viewModel.uiState.collectAsState()
             MainTheme {
                 Scaffold(
                     topBar = {
                         CommonTopBar(
                             title = "\u9605\u8bfb\u5386\u53f2",
                             actions = {
-                                IconButton(onClick = { reverseOrder() }) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.loadRecords(
+                                            HISTORY_TYPE,
+                                            -uiState.recordOrder,
+                                            scrollToTop = true
+                                        )
+                                    }
+                                ) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_swap_vertical_circle_white_24dp),
                                         tint = Color(ThemeUtil.lightText),
@@ -70,8 +76,8 @@ class LaterAndHistoryActivity : BaseActivity() {
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         RecordListScreen(
-                            records = records,
-                            scrollToTopSignal = scrollToTopSignal,
+                            records = uiState.records,
+                            scrollToTopSignal = uiState.recordScrollToTopSignal,
                             onOpenRecord = { openRecord(it) },
                             onDeleteRecord = { deleteRecord(it) }
                         )
@@ -104,16 +110,6 @@ class LaterAndHistoryActivity : BaseActivity() {
         }
     }
 
-    private fun refreshList() {
-        records = viewModel.getRecordList(HISTORY_TYPE, orderType)
-    }
-
-    private fun reverseOrder() {
-        orderType = -orderType
-        refreshList()
-        scrollToTopSignal += 1
-    }
-
     private fun openRecord(record: ScpRecordModel) {
         startActivity(
             Intent(this, DetailActivity::class.java)
@@ -124,11 +120,9 @@ class LaterAndHistoryActivity : BaseActivity() {
 
     private fun deleteRecord(record: ScpRecordModel) {
         viewModel.deleteRecord(record)
-        refreshList()
     }
 
     private fun clearHistory() {
         viewModel.clearHistory()
-        refreshList()
     }
 }

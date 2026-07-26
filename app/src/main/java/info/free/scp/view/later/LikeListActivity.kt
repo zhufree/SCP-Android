@@ -10,9 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -30,24 +28,22 @@ class LikeListActivity : BaseActivity() {
     private val viewModel by viewModels<LaterViewModel>()
     private var boxId = 0
     private var boxName = "收藏列表"
-    private var orderType by mutableIntStateOf(0)
-    private var likeList by mutableStateOf<List<ScpLikeModel>>(emptyList())
-    private var likeBoxes by mutableStateOf<List<ScpLikeBox>>(emptyList())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         boxId = intent?.getIntExtra("box_id", 0) ?: 0
         boxName = intent?.getStringExtra("box_name") ?: "收藏列表"
-        refreshLists()
+        viewModel.loadLikes(boxId)
 
         setContent {
+            val uiState by viewModel.uiState.collectAsState()
             MainTheme {
                 Scaffold(
                     topBar = {
                         CommonTopBar(
                             title = boxName,
                             actions = {
-                                IconButton(onClick = { reverseOrder() }) {
+                                IconButton(onClick = { viewModel.reverseLikeOrder() }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_swap_vertical_circle_white_24dp),
                                         tint = Color(ThemeUtil.lightText),
@@ -62,8 +58,8 @@ class LikeListActivity : BaseActivity() {
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         LikeListScreen(
-                            likes = likeList,
-                            likeBoxes = likeBoxes,
+                            likes = uiState.likes,
+                            likeBoxes = uiState.availableLikeBoxes,
                             onOpenLike = { like -> openLike(like) },
                             onDeleteLike = { like -> deleteLike(like) },
                             onMoveLike = { like, box -> moveLike(like, box) }
@@ -72,25 +68,6 @@ class LikeListActivity : BaseActivity() {
                 }
             }
         }
-    }
-
-    private fun refreshLists() {
-        val orderedList = mutableListOf<ScpLikeModel>()
-        if (boxId == 1) {
-            orderedList.addAll(viewModel.getLikeListByBoxId(0))
-        }
-        orderedList.addAll(viewModel.getLikeListByBoxId(boxId))
-        likeList = if (orderType == 1) {
-            orderedList.sortedBy { it.title }
-        } else {
-            orderedList
-        }
-        likeBoxes = viewModel.getExistingLikeBoxes()
-    }
-
-    private fun reverseOrder() {
-        orderType = if (orderType == 0) 1 else 0
-        refreshLists()
     }
 
     private fun openLike(like: ScpLikeModel) {
@@ -103,11 +80,9 @@ class LikeListActivity : BaseActivity() {
 
     private fun deleteLike(like: ScpLikeModel) {
         viewModel.deleteLike(like)
-        refreshLists()
     }
 
     private fun moveLike(like: ScpLikeModel, box: ScpLikeBox) {
         viewModel.moveLike(like, box.id)
-        refreshLists()
     }
 }

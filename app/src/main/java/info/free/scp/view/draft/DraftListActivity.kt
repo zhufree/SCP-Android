@@ -20,6 +20,7 @@ import info.free.scp.ui.draft.DraftListScreen
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.viewmodel.DraftListViewModel
+import info.free.scp.viewmodel.DraftListUiState
 
 class DraftListActivity : BaseActivity() {
     private val model by viewModels<DraftListViewModel>()
@@ -27,7 +28,7 @@ class DraftListActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val drafts by model.getDraft().observeAsState(emptyList())
+            val uiState by model.uiState.observeAsState(DraftListUiState())
             MainTheme {
                 Scaffold(
                     topBar = {
@@ -58,7 +59,7 @@ class DraftListActivity : BaseActivity() {
                         modifier = androidx.compose.ui.Modifier.padding(padding)
                     ) {
                         DraftListScreen(
-                            drafts = drafts,
+                            drafts = uiState.drafts,
                             onOpenDraft = { draft ->
                                 startActivity(
                                     Intent(this@DraftListActivity, DraftEditActivity::class.java)

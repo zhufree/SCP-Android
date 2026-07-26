@@ -38,18 +38,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.BuildConfig
 import info.free.scp.R
-import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.data.detail.DetailTitleFormatter
+import info.free.scp.data.settings.DetailSettingsStore
+import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import info.free.scp.service.HtmlParserService
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.PreferenceUtil.APP_SP
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -67,6 +65,7 @@ import java.io.InputStreamReader
 
 class DetailActivity : BaseActivity() {
 
+    private val detailSettings: DetailSettingsStore = PreferenceDetailSettingsStore()
     private var onlineMode = 0 // 0 离线 1 网页
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
@@ -84,10 +83,10 @@ class DetailActivity : BaseActivity() {
 
     private var scp: ScpModel? = null
     private var detailHtml = ""
-    private var currentTextSize = PreferenceUtil.getDetailTextSize()
+    private var currentTextSize = detailSettings.detailTextSize
         set(value) {
             field = value
-            PreferenceUtil.setDetailTextSize(value)
+            detailSettings.detailTextSize = value
             nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
                     "$currentTextSize;}* {color:#aaa;}</style>"
             dayTextStyle = "<style>p {font-size:$currentTextSize}" +
@@ -282,8 +281,7 @@ class DetailActivity : BaseActivity() {
                 binding.pbLoading.visibility = GONE
                 if ((view != null && url !== null) && (url.contains("wikidot.com"))) {
                     val cookies = CookieManager.getInstance().getCookie(url)
-                    PreferenceUtil.setCookie(cookies)
-                    PreferenceUtil.setAgent(view.settings.userAgentString)
+                    detailSettings.updateWebCredentials(cookies, view.settings.userAgentString)
                 }
                 Log.i("scp-detail", "webView.height = ${binding.webView.height}")
                 Log.i("scp-detail", "nsv_web_wrapper.height = ${binding.nsvWebWrapper.height}")
@@ -293,7 +291,7 @@ class DetailActivity : BaseActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (!PreferenceUtil.getShownDetailNotice()) {
+        if (detailSettings.shouldShowDetailNotice) {
             AlertDialog.Builder(this)
                     .setTitle("Notice")
                     .setMessage("！！！升级到0.2.6版本后请务必确认数据库也更新到新版本，使用旧版本数据库会导致正文页面闪退\n" +
@@ -302,7 +300,7 @@ class DetailActivity : BaseActivity() {
                             "3.文档数量较多，如果发现有疏漏，如文不对题等，可右上角菜单选择反馈问题\n" +
                             "4.图片依然需要网络才能显示出来，另有一些网页上依赖代码等复杂的文章，请切换跳转网页查看\n")
                     .setPositiveButton("OK") { dialog, _ ->
-                        PreferenceUtil.setShownDetailNotice()
+                        detailSettings.markDetailNoticeShown()
                         dialog.dismiss()
                     }
                     .create().show()
@@ -361,7 +359,6 @@ class DetailActivity : BaseActivity() {
             )
         }
         binding.nsvWebWrapper.scrollTo(0, 0)
-//        translate(PreferenceUtil.getTraditionalText())
         binding.btnComment.show()
         binding.llCommentContainer.removeAllViews()
         binding.llCommentContainer.visibility = GONE
@@ -423,7 +420,7 @@ class DetailActivity : BaseActivity() {
         url = s.link
         refreshReadBtnStatus()
         viewModel.loadDetail(url)
-        if (PreferenceUtil.getAppMode() == OFFLINE) {
+        if (detailSettings.isOfflineReadingEnabled) {
             viewModel.getOfflineDetail().observe(this) { detail ->
                 if (!detail.isNullOrEmpty()) {
                     setDetail(detail)
@@ -486,7 +483,7 @@ class DetailActivity : BaseActivity() {
         binding.detailToolbar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.switch_read_mode -> {
-                    PreferenceUtil.addPoints(1)
+                    detailSettings.increasePoints(1)
                     if (onlineMode == 0) {
                         if (Utils.enabledNetwork(this)) {
                             binding.pbLoading.visibility = VISIBLE
@@ -510,7 +507,7 @@ class DetailActivity : BaseActivity() {
                     scp?.let { s->
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
                     }
-                    PreferenceUtil.addPoints(1)
+                    detailSettings.increasePoints(1)
                     startActivity(Utils.getUrlIntent(fullUrl))
                 }
                 R.id.copy_link -> {
@@ -603,15 +600,16 @@ class DetailActivity : BaseActivity() {
         val container = LinearLayout(this).apply {
             orientation = VERTICAL
         }
+        val webCredentials = detailSettings.webCredentials
         val cookieInput = EditText(this).apply {
             hint = "cookie"
             setSingleLine(false)
-            setText(PreferenceUtil.getCookie())
+            setText(webCredentials.cookie)
         }
         val agentInput = EditText(this).apply {
             hint = "agent"
             setSingleLine(false)
-            setText(PreferenceUtil.getAgent())
+            setText(webCredentials.userAgent)
         }
         val loginButton = Button(this).apply {
             text = "\u4f7f\u7528\u7f51\u9875\u767b\u5f55"
@@ -647,8 +645,10 @@ class DetailActivity : BaseActivity() {
             cookieDialog.dismiss()
         }
         cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-            PreferenceUtil.setCookie(cookieInput.text.toString())
-            PreferenceUtil.setAgent(agentInput.text.toString())
+            detailSettings.updateWebCredentials(
+                cookieInput.text.toString(),
+                agentInput.text.toString()
+            )
             showToast("\u8bbe\u7f6e\u5b8c\u6210")
             cookieDialog.dismiss()
         }
@@ -698,7 +698,7 @@ class DetailActivity : BaseActivity() {
                     if (i == boxList.size) {
                         createNewBox()
                     } else {
-                        PreferenceUtil.addPoints(2)
+                        detailSettings.increasePoints(2)
                         viewModel.setLiked(currentScp.link, currentScp.title, boxList[i].id)
                     }
                 }
@@ -746,7 +746,7 @@ class DetailActivity : BaseActivity() {
     private fun toNextArticle() {
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
-        PreferenceUtil.addPoints(1)
+        detailSettings.increasePoints(1)
         when (readType) {
             0 -> {
                 scp = viewModel.getNextDocument(index, scpType)
@@ -773,7 +773,7 @@ class DetailActivity : BaseActivity() {
     private fun toPreviewArticle() {
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
-        PreferenceUtil.addPoints(1)
+        detailSettings.increasePoints(1)
         when (readType) {
             0 -> {
                 when (index) {
@@ -807,9 +807,9 @@ class DetailActivity : BaseActivity() {
         scp?.let { s ->
             val hasRead = viewModel.toggleRead(s.link, s.title)
             if (hasRead) {
-                PreferenceUtil.addPoints(5)
+                detailSettings.increasePoints(5)
             } else {
-                PreferenceUtil.reducePoints(5)
+                detailSettings.decreasePoints(5)
             }
             refreshReadBtnStatus()
         }
@@ -878,7 +878,7 @@ class DetailActivity : BaseActivity() {
             }
         })
         binding.btnComment.setOnClickListener {
-            if (PreferenceUtil.getCookie().isEmpty()) {
+            if (!detailSettings.hasCommentCredentials()) {
                 showToast("先点击右上角菜单设置 cookie 才能加载评论")
             } else {
                 binding.llCommentContainer.visibility = VISIBLE

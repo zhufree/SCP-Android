@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
@@ -12,10 +11,13 @@ import info.free.scp.bean.CommentModel
 import info.free.scp.data.detail.DetailRepository
 import info.free.scp.data.reading.ReadingDocumentStatus
 import info.free.scp.data.reading.ReadingListRepository
-import info.free.scp.util.PreferenceUtil
+import info.free.scp.data.settings.DetailSettingsStore
+import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import kotlinx.coroutines.launch
 
-class DetailViewModel : ViewModel() {
+class DetailViewModel(
+    private val detailSettings: DetailSettingsStore = PreferenceDetailSettingsStore()
+) : ViewModel() {
     private val repo = DetailRepository()
     private val readingListRepository = ReadingListRepository()
 
@@ -99,7 +101,7 @@ class DetailViewModel : ViewModel() {
     }
 
     fun loadDetail(link: String) {
-        if (PreferenceUtil.getAppMode() == SCPConstants.AppMode.OFFLINE) {
+        if (detailSettings.isOfflineReadingEnabled) {
             repo.loadOfflineDetail(link)
             repo.loadOfflineTag(link)
         } else {

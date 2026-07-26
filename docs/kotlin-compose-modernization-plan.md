@@ -341,8 +341,9 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
   - `.\gradlew.bat assembleDefaultProductionDebug --stacktrace` 通过。
   - `.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace` 通过，已覆盖 R8 minify 与资源压缩链路。
 - 发布预检暴露但本切片未处理的 warning：`flatDir` 仓库、Java 8 编译目标、Firebase KTX、旧 Room migration/builder API，以及少量 Android/Compose 废弃 API；这些继续归入阶段 5A 的工具链 warning 清单，不与当前 Repository 重构混改。
-- 当前阶段判断：第 0、1、2A、3、4 阶段完成；2B 的分类、搜索、Tag、草稿、随机、阅读状态、详情目录导航与网络内容边界已收敛，详情偏好、下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
+- 当前阶段判断：第 0、1、2A、3、4 阶段完成；2B 的分类、搜索、Tag、草稿、随机、阅读状态、详情目录导航、网络内容与详情偏好边界已收敛，下载/备份与部分设置/首页平台入口仍待处理；2C 尚未启动。
 - 2026-07-26 交接复核：新增 [`refactor-handoff.md`](refactor-handoff.md)，并更新 README 的阶段、验证命令和计划入口；当前 `d17efe8` 已重新通过 50 项数据层 JVM 测试、主 debug APK 与 release staging 构建。阶段 5B 的文档与交接要求至此完成。
+- 2026-07-26 详情偏好边界：新增 `data/settings/DetailSettingsStore`，将 `DetailActivity`、`DetailViewModel` 的阅读模式、字号、Cookie/User-Agent、详情提示和积分访问收敛为语义化接口；`view/detail` 已无 `PreferenceUtil`、`APP_SP` 直连。50 项数据层 JVM 测试、主 debug APK 与 release staging 构建通过；因无连接设备，WebView/Cookie 行为仍待手动复验。
 
 ### 阶段 5A：旧依赖与发布收口
 

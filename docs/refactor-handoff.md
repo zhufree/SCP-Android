@@ -16,7 +16,7 @@
 | 0 构建与工具链基线 | 完成 | 主 debug 与 release staging 可构建 |
 | 1 旧依赖首批清理 | 完成 | Anko、EasyPermissions 等已移除 |
 | 2A 安全网与验证矩阵 | 完成 | 8 个测试文件、50 项数据层 JVM 测试；debug/release staging 构建通过 |
-| 2B Repository 边界 | 进行中 | 分类、搜索、Tag、草稿、随机、阅读状态及详情内容/导航已收敛；偏好和平台数据仍未全部收敛 |
+| 2B Repository 边界 | 进行中 | 分类、搜索、Tag、草稿、随机、阅读状态、详情内容/导航及详情偏好已收敛；下载/备份和其他平台数据仍待处理 |
 | 2C 状态模型与宿主瘦身 | 未开始 | 等待 2B 边界稳定后拆分 `DetailActivity` 等宿主 |
 | 3 Compose 应用壳层 | 完成 | `MainActivity` 使用 Compose 承载主导航 |
 | 4 页面 Compose 化 | 完成 | 普通页面 XML、RecyclerView/Adapter、菜单资源已清理；仅保留 RemoteViews 小部件布局 |
@@ -31,6 +31,7 @@
 - `data/draft`：草稿列表、读取、保存和删除。
 - `data/random`：随机批次获取、隐藏已读/缺失正文过滤和有限次数补足；桌面小部件已复用。
 - `data/detail`：详情链接归一化、截图标题格式化、离线/在线正文、Tag 和评论访问。
+- `data/settings`：详情阅读模式、字号、Web 凭据、提示状态和积分写入的语义化边界。
 - `data/user`：用户面板统计与最近历史。
 
 对应的增量提交如下：
@@ -45,7 +46,7 @@
 
 ## 当前验证基线
 
-以下命令已在 2026-07-26、当前代码锚点 `d17efe8` 上重新执行并通过：
+以下命令已在 2026-07-26、当前详情偏好边界工作树上重新执行并通过：
 
 ```powershell
 .\gradlew.bat testDefaultProductionDebugUnitTest --tests 'info.free.scp.data.*'
@@ -57,30 +58,33 @@
 - 使用该定制源集是因为项目的 `Test` product flavor 在 Windows 不区分大小写的文件系统上会与常规 `app/src/test` 冲突。
 - release staging 已覆盖 Kotlin/Java 编译、R8 minify、资源压缩和 APK 打包。
 - 当前构建仍报告 `flatDir`、Java 8 source/target、Room kapt 参数和 Gradle 9 兼容性等 warning；它们属于阶段 5A，不应与 Repository 切片混改。
+- 当前未连接 Android 设备，因此 WebView 在线/离线切换、Cookie 编辑与评论入口仍需设备级手动复验。
 
-## 下一步：先完成详情偏好边界
+## 本轮完成：详情偏好边界
 
-下一切片应把 `DetailActivity`、`DetailViewModel` 对 `PreferenceUtil` 的直接访问收敛到明确的详情设置边界，例如 `DetailSettingsStore`。当前直接访问包括：
+- 新增 `DetailSettingsStore` 与 `PreferenceDetailSettingsStore`，集中承载详情阅读模式、字号、Cookie/User-Agent、提示状态和积分增减。
+- `DetailActivity`、`DetailViewModel` 只依赖语义化设置接口，`view/detail` 对 `PreferenceUtil`、`APP_SP` 的定向扫描已无命中。
+- 文档先前记录的 `APP_SP` 偏好监听入口在当前代码中并不存在，实际只有一个未使用 import，本轮已清理。
+- 未拆分 `DetailActivity` UI、未改变导航、偏好 key、默认值和写入顺序。
+- 数据层测试、主 debug 构建和 release staging 构建均通过；设备级 WebView/Cookie 复验待补。
 
-- 阅读模式和详情字号；
-- Cookie、User-Agent 与详情提示已展示标记；
-- 阅读/互动积分增减；
-- `APP_SP` 偏好监听入口。
+## 下一步：下载/备份边界
+
+下一切片应处理 `DownloadActivity` 对 `AppInfoDatabase`、`DetailDatabase` 的直接访问，同时保持现有 Storage Access Framework 协议、数据库文件名和备份格式不变。
 
 建议验收标准：
 
-1. `view/detail` 不再直接调用 `PreferenceUtil`，只依赖语义化接口；偏好 key 和存储实现留在数据/设置层。
-2. 离线/在线加载、Cookie 编辑、评论入口、字号调整、提示弹窗和积分行为保持不变。
-3. 可抽成纯 Kotlin 的判断先补 characterization tests；单纯委托存储的移动至少通过当前测试与两条构建命令。
-4. 一个可验证切片一个提交，不同时拆 `DetailActivity` UI 或升级依赖。
+1. `DownloadActivity` 不再直接持有数据库单例或 DAO，备份/恢复通过明确的数据边界执行。
+2. SAF 的 `OpenDocument` / `OpenDocumentTree` 流程、持久化 URI 权限、数据库文件名和导入导出格式保持不变。
+3. 为可抽离的文件选择/备份计划补最小 characterization tests；数据库文件操作至少通过构建矩阵和设备手动复验。
+4. 不在同一切片升级 Room、修改 schema 或清理工具链 warning。
 
-完成详情偏好边界后，按以下顺序推进：
+完成下载/备份边界后，按以下顺序推进：
 
-1. 下载/备份边界：处理 `DownloadActivity` 对 `AppInfoDatabase`、`DetailDatabase` 的直接访问，保留现有 SAF 协议和数据库文件格式。
-2. 剩余入口：处理 `LaterFragment` 的目录直查、`DirectActivity` 的数据库/网络直连，以及仍位于 `view/feed` 的 Repository。
-3. 用户与首页设置：收敛昵称、职位、积分、公告、草稿默认内容等 `PreferenceUtil` 访问。
-4. 阶段 2C：建立稳定 UI State，拆分 `DetailActivity`，再决定 Fragment 过渡容器去留。
-5. 阶段 5A：分批清依赖/warning，并手动复验桌面小部件、SAF、FileProvider、WebView、各 flavor 与 release shrink/minify。
+1. 剩余入口：处理 `LaterFragment` 的目录直查、`DirectActivity` 的数据库/网络直连，以及仍位于 `view/feed` 的 Repository。
+2. 用户与首页设置：收敛昵称、职位、积分、公告、草稿默认内容等 `PreferenceUtil` 访问。
+3. 阶段 2C：建立稳定 UI State，拆分 `DetailActivity`，再决定 Fragment 过渡容器去留。
+4. 阶段 5A：分批清依赖/warning，并手动复验桌面小部件、SAF、FileProvider、WebView、各 flavor 与 release shrink/minify。
 
 ## 已知约束与不要破坏的行为
 

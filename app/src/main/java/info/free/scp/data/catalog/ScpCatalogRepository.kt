@@ -1,6 +1,7 @@
 package info.free.scp.data.catalog
 
 import info.free.scp.SCPConstants
+import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_ANOMALOUS_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
@@ -28,6 +29,7 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.FileUtil
 
 interface ScpCatalogDataSource {
     fun getDocumentsByType(type: Int): List<ScpModel>
@@ -41,6 +43,7 @@ interface ScpCatalogDataSource {
     fun getPreviousDocument(index: Int, type: Int): ScpModel?
     fun getReadLinks(): Set<String>
     fun shouldHideFinished(): Boolean
+    fun isDetailDataAvailable(): Boolean
 }
 
 class RoomScpCatalogDataSource : ScpCatalogDataSource {
@@ -90,6 +93,10 @@ class RoomScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun shouldHideFinished(): Boolean {
         return PreferenceUtil.getHideFinished()
+    }
+
+    override fun isDetailDataAvailable(): Boolean {
+        return FileUtil.checkDataReady(DETAIL_DB_NAME)
     }
 }
 
@@ -141,6 +148,10 @@ class ScpCatalogRepository(
         return dataSource.searchDetailLinks(keyword).mapNotNull { link ->
             dataSource.getDocumentByLink(link)
         }
+    }
+
+    fun isDetailSearchAvailable(): Boolean {
+        return dataSource.isDetailDataAvailable()
     }
 
     fun getDocumentByLink(link: String): ScpModel? {

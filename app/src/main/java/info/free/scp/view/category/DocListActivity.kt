@@ -10,9 +10,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -39,9 +37,6 @@ import info.free.scp.SCPConstants.ScpType.SAVE_WANDER
 import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
 import info.free.scp.bean.ScpModel
 import info.free.scp.components.CommonTopBar
-import info.free.scp.data.reading.ReadingListRepository
-import info.free.scp.data.settings.InteractionPointsStore
-import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.category.ScpDocumentListScreen
 import info.free.scp.ui.category.ScpDocumentStatus
@@ -51,32 +46,28 @@ import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 
 class DocListActivity : BaseActivity() {
-    private val interactionPoints: InteractionPointsStore = PreferenceSettingsStore()
     private val vm by viewModels<GroupViewModel>()
-    private val readingListRepository = ReadingListRepository()
 
     private var saveType = 1
     private var groupIndex = -1
     private var extraType = ""
-    private var orderType = ASC
-    private var docList by mutableStateOf<List<ScpModel>>(emptyList())
-    private var scrollToTopSignal by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         saveType = intent.getIntExtra("saveType", 1)
         groupIndex = intent.getIntExtra("groupIndex", -1)
         extraType = intent.getStringExtra("extraType") ?: ""
-        refreshDocList()
+        vm.loadDocuments(saveType, groupIndex, extraType)
 
         setContent {
+            val uiState by vm.categoryUiState.collectAsState()
             MainTheme {
                 Scaffold(
                     topBar = {
                         CommonTopBar(
                             title = getListTitle(saveType),
                             actions = {
-                                IconButton(onClick = { reverseScpList() }) {
+                                IconButton(onClick = { vm.reverseDocumentOrder() }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_swap_vertical_circle_white_24dp),
                                         tint = Color(ThemeUtil.lightText),
@@ -91,9 +82,9 @@ class DocListActivity : BaseActivity() {
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         ScpDocumentListScreen(
-                            documents = docList,
-                            scrollToTopSignal = scrollToTopSignal,
-                            statusProvider = { scp -> getDocumentStatus(scp) },
+                            documents = uiState.documents,
+                            scrollToTopSignal = uiState.scrollToTopSignal,
+                            statusProvider = vm::getDocumentStatus,
                             onOpenDocument = { scp, index -> openDocument(scp, index) },
                             onToggleRead = { scp -> toggleRead(scp) },
                             onToggleLater = { scp -> toggleLater(scp) }
@@ -106,7 +97,7 @@ class DocListActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        refreshDocList()
+        vm.loadDocuments(saveType, groupIndex, extraType)
     }
 
     private fun getListTitle(saveType: Int): String {
@@ -132,49 +123,8 @@ class DocListActivity : BaseActivity() {
         }
     }
 
-    private fun getDocList(saveType: Int, groupIndex: Int, extraType: String): List<ScpModel> {
-        return when (saveType) {
-            SAVE_SERIES, SAVE_SERIES_CN, SAVE_JOKE, SAVE_JOKE_CN, SAVE_EX, SAVE_EX_CN -> {
-                vm.getDocList(saveType, groupIndex)
-            }
-            SAVE_TALES, SAVE_TALES_CN, SAVE_TALES_BY_TIME, SAVE_WANDER, SAVE_WANDER_CN -> {
-                vm.getDocList(saveType, extraType = extraType)
-            }
-            SAVE_CANON, SAVE_CANON_CN, SAVE_STORY_SERIES, SAVE_STORY_SERIES_CN,
-            SAVE_CONTEST, SAVE_CONTEST_CN, SCPConstants.Entry.LIBRARY_DOC -> {
-                vm.getDocList(saveType)
-            }
-            SAVE_INTERNATIONAL -> {
-                vm.getDocList(saveType, extraType = extraType)
-            }
-            else -> {
-                vm.getDocList(saveType, groupIndex)
-            }
-        }
-    }
-
-    private fun refreshDocList() {
-        val ascList = getDocList(saveType, groupIndex, extraType)
-        docList = if (orderType == ASC) ascList else ascList.reversed()
-    }
-
-    private fun reverseScpList() {
-        orderType = -orderType
-        refreshDocList()
-        scrollToTopSignal += 1
-    }
-
-    private fun getDocumentStatus(scp: ScpModel): ScpDocumentStatus {
-        val status = readingListRepository.getDocumentStatus(scp.link)
-        return ScpDocumentStatus(
-            isLiked = status.isLiked,
-            hasRead = status.hasRead,
-            isInLater = status.isInLater
-        )
-    }
-
     private fun openDocument(scp: ScpModel, index: Int) {
-        interactionPoints.increasePoints(2)
+        vm.rewardDocumentOpen()
         startActivity(
             Intent(this, DetailActivity::class.java)
                 .putExtra("link", scp.link)
@@ -185,11 +135,11 @@ class DocListActivity : BaseActivity() {
     }
 
     private fun toggleRead(scp: ScpModel) {
-        readingListRepository.toggleRead(scp.link, scp.title)
+        vm.toggleRead(scp)
     }
 
     private fun toggleLater(scp: ScpModel) {
-        val isInLater = readingListRepository.toggleLater(scp.link, scp.title)
+        val isInLater = vm.toggleLater(scp)
         if (isInLater) {
             EventUtil.onEvent(this, EventUtil.addLater)
         }

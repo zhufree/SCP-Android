@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.random.RandomScreen
@@ -31,7 +31,8 @@ class RandomActivity : BaseActivity() {
         randomType = intent.getIntExtra("random_type", 0)
         val title = intent.getStringExtra("random_title") ?: "随机"
         setContent {
-            val randomList by vm.getRandomList().observeAsState(emptyList())
+            val randomState by vm.randomUiState.collectAsState()
+            val randomList = randomState.documents
             LaunchedEffect(randomRange) {
                 vm.refreshRandomList(randomRange)
             }

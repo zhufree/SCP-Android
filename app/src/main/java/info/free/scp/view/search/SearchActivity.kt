@@ -12,51 +12,30 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.lifecycleScope
-import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.SearchType.CONTENT
-import info.free.scp.SCPConstants.SearchType.TITLE
 import info.free.scp.bean.ScpModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.search.SearchResultScreen
-import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.tag.TagDetailActivity
 import info.free.scp.view.user.DownloadActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 class SearchActivity : BaseActivity() {
     private val viewModel by viewModels<SearchViewModel>()
     private var keyword = ""
-    private var selectedTab by mutableIntStateOf(0)
-    private var titleResults by mutableStateOf<List<ScpModel>>(emptyList())
-    private var contentLoading by mutableStateOf(false)
-    private var contentSearched by mutableStateOf(false)
-    private var needsOfflineData by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         keyword = intent?.getStringExtra("keyword") ?: ""
-        searchTitle()
+        viewModel.startSearch(keyword)
         setContent {
-            val contentResults by viewModel.contentResult.observeAsState(emptyList())
-            LaunchedEffect(contentResults) {
-                if (contentSearched) {
-                    contentLoading = false
-                }
-            }
+            val uiState by viewModel.uiState.collectAsState()
             MainTheme {
                 Scaffold(
                     topBar = {
@@ -70,31 +49,26 @@ class SearchActivity : BaseActivity() {
                     Box(modifier = Modifier.padding(padding)) {
                         androidx.compose.foundation.layout.Column {
                             SearchTabs(
-                                selectedTab = selectedTab,
+                                selectedTab = uiState.selectedTab,
                                 onSelectTab = { tab ->
-                                    selectedTab = tab
+                                    viewModel.selectTab(tab)
                                     if (tab == 2) {
                                         openTagSearch()
                                     }
                                 }
                             )
-                            LaunchedEffect(selectedTab) {
-                                if (selectedTab == 1 && !contentSearched) {
-                                    searchContent()
-                                }
-                            }
-                            when (selectedTab) {
+                            when (uiState.selectedTab) {
                                 0 -> SearchResultScreen(
-                                    results = titleResults,
+                                    results = uiState.titleResults,
                                     loading = false,
                                     needsOfflineData = false,
                                     onOpenResult = { openResult(it) },
                                     onOpenDownload = { openDownload() }
                                 )
                                 1 -> SearchResultScreen(
-                                    results = contentResults,
-                                    loading = contentLoading,
-                                    needsOfflineData = needsOfflineData,
+                                    results = uiState.contentResults,
+                                    loading = uiState.contentLoading,
+                                    needsOfflineData = uiState.needsOfflineData,
                                     onOpenResult = { openResult(it) },
                                     onOpenDownload = { openDownload() }
                                 )
@@ -110,26 +84,6 @@ class SearchActivity : BaseActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun searchTitle() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            viewModel.searchScp(TITLE, "%$keyword%")
-            withContext(Dispatchers.Main) {
-                titleResults = viewModel.titleResult
-            }
-        }
-    }
-
-    private fun searchContent() {
-        if (FileUtil.checkDataReady(SCPConstants.DETAIL_DB_NAME)) {
-            needsOfflineData = false
-            contentLoading = true
-            viewModel.searchScp(CONTENT, "%$keyword%")
-            contentSearched = true
-        } else {
-            needsOfflineData = true
         }
     }
 

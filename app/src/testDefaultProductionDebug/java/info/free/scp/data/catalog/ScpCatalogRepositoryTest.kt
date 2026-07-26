@@ -148,6 +148,7 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
     val previousDocuments = mutableMapOf<Pair<Int, Int>, ScpModel>()
     var hideFinished = false
     var readLinkSet = emptySet<String>()
+    var detailDataAvailable = true
 
     override fun getDocumentsByType(type: Int): List<ScpModel> {
         return documentsByType[type].orEmpty()
@@ -191,5 +192,9 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun shouldHideFinished(): Boolean {
         return hideFinished
+    }
+
+    override fun isDetailDataAvailable(): Boolean {
+        return detailDataAvailable
     }
 }

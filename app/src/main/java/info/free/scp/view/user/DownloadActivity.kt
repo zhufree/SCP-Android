@@ -10,30 +10,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.lifecycleScope
 import info.free.scp.R
-import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.APP_PREF_NAME
-import info.free.scp.SCPConstants.INFO_DB_NAME
-import info.free.scp.SCPConstants.LEVEL_PREF_NAME
 import info.free.scp.components.CommonTopBar
-import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.DetailDatabase
+import info.free.scp.data.backup.AndroidAppDataBackupRepository
+import info.free.scp.data.backup.AppDataBackupRepository
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.user.DownloadScreen
-import info.free.scp.util.FileUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
-import info.free.scp.util.copyFileFromUri
-import info.free.scp.util.copyFileToUri
 import info.free.scp.view.base.BaseActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.File
 
 class DownloadActivity : BaseActivity() {
+    private val backupRepository: AppDataBackupRepository = AndroidAppDataBackupRepository()
     private val selectDatabaseLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.let(::importDetailDatabase)
@@ -99,15 +91,8 @@ class DownloadActivity : BaseActivity() {
     }
 
     private fun importDetailDatabase(uri: Uri) {
-        val destFile = File(FileUtil.privateDbDirPath + SCPConstants.DETAIL_DB_NAME)
         lifecycleScope.launch(Dispatchers.IO) {
-            val success = runCatching {
-                copyFileFromUri(this@DownloadActivity, uri, destFile)
-            }.getOrDefault(false)
-            if (success) {
-                DetailDatabase.getInstance()
-                FileUtil.checkDetailDb()
-            }
+            val success = backupRepository.importDetailDatabase(uri)
             withContext(Dispatchers.Main) {
                 showToast(if (success) "\u6570\u636e\u5e93\u5df2\u52a0\u8f7d" else "\u6570\u636e\u5e93\u8bfb\u53d6\u5931\u8d25")
             }
@@ -115,58 +100,23 @@ class DownloadActivity : BaseActivity() {
     }
 
     private fun backupAppData(uriTree: Uri) {
-        val root = DocumentFile.fromTreeUri(this, uriTree) ?: return
         lifecycleScope.launch(Dispatchers.IO) {
-            val dbFile = ensureDocumentFile(root, INFO_DB_NAME, "*/*")
-            val levelPrefFile = ensureDocumentFile(root, LEVEL_PREF_NAME, "application/xml")
-            val appPrefFile = ensureDocumentFile(root, APP_PREF_NAME, "application/xml")
-            val rawDbFile = File("${FileUtil.privateDbDirPath}$INFO_DB_NAME")
-            val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}$LEVEL_PREF_NAME")
-            val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}$APP_PREF_NAME")
-            dbFile?.let { copyFileToUri(this@DownloadActivity, rawDbFile, it.uri) }
-            levelPrefFile?.let { copyFileToUri(this@DownloadActivity, rawLevelPrefFile, it.uri) }
-            appPrefFile?.let { copyFileToUri(this@DownloadActivity, rawAppPrefFile, it.uri) }
-            withContext(Dispatchers.Main) {
-                showToast("\u5907\u4efd\u5b8c\u6210")
+            if (backupRepository.backupAppData(uriTree)) {
+                withContext(Dispatchers.Main) {
+                    showToast("\u5907\u4efd\u5b8c\u6210")
+                }
             }
         }
     }
 
     private fun restoreAppData(uriTree: Uri) {
-        val root = DocumentFile.fromTreeUri(this, uriTree) ?: return
         lifecycleScope.launch(Dispatchers.IO) {
-            AppInfoDatabase.getInstance().close()
-            val rawDbFile = File("${FileUtil.privateDbDirPath}$INFO_DB_NAME")
-            val rawLevelPrefFile = File("${FileUtil.privatePrefDirPath}$LEVEL_PREF_NAME")
-            val rawAppPrefFile = File("${FileUtil.privatePrefDirPath}$APP_PREF_NAME")
-
-            root.findFile(INFO_DB_NAME)?.let { dbFile ->
-                rawDbFile.delete()
-                File("${FileUtil.privateDbDirPath}$INFO_DB_NAME-shm").delete()
-                File("${FileUtil.privateDbDirPath}$INFO_DB_NAME-wal").delete()
-                copyFileFromUri(this@DownloadActivity, dbFile.uri, rawDbFile)
-            }
-            root.findFile(LEVEL_PREF_NAME)?.let { prefFile ->
-                rawLevelPrefFile.delete()
-                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawLevelPrefFile)
-            }
-            root.findFile(APP_PREF_NAME)?.let { prefFile ->
-                rawAppPrefFile.delete()
-                copyFileFromUri(this@DownloadActivity, prefFile.uri, rawAppPrefFile)
-            }
-            AppInfoDatabase.getNewInstance()
-            withContext(Dispatchers.Main) {
-                showToast("\u6062\u590d\u5b8c\u6210\uff0c\u90e8\u5206\u6570\u636e\u53ef\u80fd\u9700\u8981\u91cd\u542f\u5e94\u7528\u540e\u751f\u6548")
+            if (backupRepository.restoreAppData(uriTree)) {
+                withContext(Dispatchers.Main) {
+                    showToast("\u6062\u590d\u5b8c\u6210\uff0c\u90e8\u5206\u6570\u636e\u53ef\u80fd\u9700\u8981\u91cd\u542f\u5e94\u7528\u540e\u751f\u6548")
+                }
             }
         }
-    }
-
-    private fun ensureDocumentFile(
-        root: DocumentFile,
-        fileName: String,
-        mimeType: String
-    ): DocumentFile? {
-        return root.findFile(fileName) ?: root.createFile(mimeType, fileName)
     }
 
     private fun showToast(message: String) {

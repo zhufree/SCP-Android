@@ -36,6 +36,7 @@ interface ScpCatalogDataSource {
     fun searchByTitle(keyword: String): List<ScpModel>
     fun searchDetailLinks(keyword: String): List<String>
     fun getDocumentByLink(link: String): ScpModel?
+    fun getDocumentByNumber(type: Int, numberPattern: String): ScpModel?
     fun getNextDocument(index: Int, type: Int): ScpModel?
     fun getPreviousDocument(index: Int, type: Int): ScpModel?
     fun getReadLinks(): Set<String>
@@ -69,6 +70,10 @@ class RoomScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun getDocumentByLink(link: String): ScpModel? {
         return scpDao?.getScpByLink(link)
+    }
+
+    override fun getDocumentByNumber(type: Int, numberPattern: String): ScpModel? {
+        return scpDao?.getScpByNumber(type, numberPattern)
     }
 
     override fun getNextDocument(index: Int, type: Int): ScpModel? {
@@ -140,6 +145,10 @@ class ScpCatalogRepository(
 
     fun getDocumentByLink(link: String): ScpModel? {
         return dataSource.getDocumentByLink(link)
+    }
+
+    fun getDocumentByNumber(type: Int, numberPattern: String): ScpModel? {
+        return dataSource.getDocumentByNumber(type, numberPattern)
     }
 
     fun getNextDocument(index: Int, type: Int): ScpModel? {

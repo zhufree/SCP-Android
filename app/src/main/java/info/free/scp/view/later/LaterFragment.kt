@@ -36,9 +36,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.Fragment
 import info.free.scp.R
 import info.free.scp.SCPConstants.LATER_TYPE
+import info.free.scp.data.catalog.ScpCatalogRepository
 import info.free.scp.data.reading.ReadListImportParser
 import info.free.scp.data.reading.ReadingListRepository
-import info.free.scp.db.ScpDatabase
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.SearchBarScreen
 import info.free.scp.util.EventUtil
@@ -55,6 +55,7 @@ class LaterFragment : BaseFragment() {
     private val recordListFragment = RecordListFragment.newInstance(LATER_TYPE)
     private val likeListFragment = LikeBoxListFragment.newInstance()
     private val readingListRepository = ReadingListRepository()
+    private val catalogRepository = ScpCatalogRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -229,7 +230,7 @@ class LaterFragment : BaseFragment() {
             return
         }
         importRequests.forEach { request ->
-            val targetScp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(
+            val targetScp = catalogRepository.getDocumentByNumber(
                 request.scpType,
                 request.numberPattern
             )

@@ -1,4 +1,4 @@
-package info.free.scp.view.feed
+package info.free.scp.data.feed
 
 import androidx.lifecycle.MutableLiveData
 import apiCall
@@ -14,9 +14,7 @@ class FeedRepository {
     suspend fun loadFeedList(feedType: Int) {
         val response = apiCall { HttpManager.instance.getLatest(feedType) }
         response?.let {
-            executeResponse(response, {
-
-            }, {
+            executeResponse(response, {}, {
                 feedList.value = response.results
             })
         }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.viewModelScope
 import info.free.scp.bean.FeedIndexModel
 import info.free.scp.bean.FeedModel
+import info.free.scp.data.feed.FeedRepository
 import kotlinx.coroutines.launch
 
 class FeedListViewModel : ViewModel() {

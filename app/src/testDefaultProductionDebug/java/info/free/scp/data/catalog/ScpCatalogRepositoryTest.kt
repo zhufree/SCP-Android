@@ -96,6 +96,18 @@ class ScpCatalogRepositoryTest {
     }
 
     @Test
+    fun documentLookupReturnsCatalogEntryByTypeAndNumberPattern() {
+        val source = FakeScpCatalogDataSource().apply {
+            documentsByNumber[SAVE_SERIES to "%-173 %"] = document("/scp-173", "SCP-173")
+        }
+        val repository = ScpCatalogRepository(source)
+
+        val result = repository.getDocumentByNumber(SAVE_SERIES, "%-173 %")
+
+        assertEquals("/scp-173", result?.link)
+    }
+
+    @Test
     fun nextDocumentUsesCurrentIndexAndType() {
         val source = FakeScpCatalogDataSource().apply {
             nextDocuments[13 to SAVE_SERIES] = document("/scp-014", "SCP-014")
@@ -131,6 +143,7 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
     val titleSearchResults = mutableMapOf<String, List<ScpModel>>()
     val detailSearchResults = mutableMapOf<String, List<String>>()
     val documentsByLink = mutableMapOf<String, ScpModel>()
+    val documentsByNumber = mutableMapOf<Pair<Int, String>, ScpModel>()
     val nextDocuments = mutableMapOf<Pair<Int, Int>, ScpModel>()
     val previousDocuments = mutableMapOf<Pair<Int, Int>, ScpModel>()
     var hideFinished = false
@@ -158,6 +171,10 @@ private class FakeScpCatalogDataSource : ScpCatalogDataSource {
 
     override fun getDocumentByLink(link: String): ScpModel? {
         return documentsByLink[link]
+    }
+
+    override fun getDocumentByNumber(type: Int, numberPattern: String): ScpModel? {
+        return documentsByNumber[type to numberPattern]
     }
 
     override fun getNextDocument(index: Int, type: Int): ScpModel? {

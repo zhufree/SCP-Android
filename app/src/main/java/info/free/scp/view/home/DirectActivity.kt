@@ -13,27 +13,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.lifecycleScope
-import apiCall
-import executeResponse
 import info.free.scp.R
-import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE
 import info.free.scp.SCPConstants.ScpType.SAVE_JOKE_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES
 import info.free.scp.SCPConstants.ScpType.SAVE_SERIES_CN
 import info.free.scp.components.CommonTopBar
-import info.free.scp.db.ScpDatabase
-import info.free.scp.service.HttpManager
+import info.free.scp.data.direct.DirectDocumentRepository
+import info.free.scp.data.direct.DirectLookupResult
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.DirectScreen
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 import kotlinx.coroutines.launch
 
 class DirectActivity : BaseActivity() {
+    private val directDocumentRepository = DirectDocumentRepository()
     private var chooseType by mutableIntStateOf(0)
     private var cnString by mutableStateOf("")
     private var jString by mutableStateOf("")
@@ -120,37 +117,18 @@ class DirectActivity : BaseActivity() {
             2, 3 -> "%-$numberString-%"
             else -> "%-$numberString"
         }
-        if (PreferenceUtil.getAppMode() == OFFLINE) {
-            val scp = ScpDatabase.getInstance()?.scpDao()?.getScpByNumber(scpType, number)
-            scp?.let { item ->
+        when (val result = directDocumentRepository.findDocument(scpType, number)) {
+            is DirectLookupResult.Found -> {
                 EventUtil.onEvent(this, EventUtil.clickDirect)
-                startActivity(Intent(this, DetailActivity::class.java).putExtra("link", item.link))
-            } ?: runOnUiThread { showNotFound() }
-        } else {
-            loadDirect(scpType, number)
-        }
-    }
-
-    private suspend fun loadDirect(scpType: Int, number: String) {
-        val response = apiCall { HttpManager.instance.getDirect(scpType, number) }
-        response?.let {
-            executeResponse(
-                response,
-                {},
-                {
-                    if (!response.results.isNullOrEmpty()) {
-                        val scp = response.results[0]
-                        EventUtil.onEvent(this, EventUtil.clickDirect)
-                        startActivity(
-                            Intent(this, DetailActivity::class.java)
-                                .putExtra("link", scp.link)
-                                .putExtra("title", scp.title)
-                        )
-                    } else {
-                        showNotFound()
-                    }
+                val detailIntent = Intent(this, DetailActivity::class.java)
+                    .putExtra("link", result.document.link)
+                if (result.includeTitleInNavigation) {
+                    detailIntent.putExtra("title", result.document.title)
                 }
-            )
+                startActivity(detailIntent)
+            }
+            DirectLookupResult.NotFound -> showNotFound()
+            DirectLookupResult.Failed -> Unit
         }
     }
 

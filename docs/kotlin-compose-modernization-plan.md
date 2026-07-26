@@ -345,6 +345,16 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
 - 2026-07-26 交接复核：新增 [`refactor-handoff.md`](refactor-handoff.md)，并更新 README 的阶段、验证命令和计划入口；当前 `d17efe8` 已重新通过 50 项数据层 JVM 测试、主 debug APK 与 release staging 构建。阶段 5B 的文档与交接要求至此完成。
 - 2026-07-26 详情偏好边界：新增 `data/settings/DetailSettingsStore`，将 `DetailActivity`、`DetailViewModel` 的阅读模式、字号、Cookie/User-Agent、详情提示和积分访问收敛为语义化接口；`view/detail` 已无 `PreferenceUtil`、`APP_SP` 直连。50 项数据层 JVM 测试、主 debug APK 与 release staging 构建通过；因无连接设备，WebView/Cookie 行为仍待手动复验。
 
+## 阶段 2B/2C 完成记录（2026-07-26）
+
+- 2B 已完成：新增 `data/backup` 与备份计划测试，`DownloadActivity` 不再直接持有数据库单例/DAO；新增 `data/direct`，收敛直达页本地查询与远程 fallback；`FeedRepository` 已移入 `data/feed`；剩余用户、首页、阅读、草稿与积分偏好已统一为语义化 SettingsStore。
+- 2B 最终扫描：`view`/`ui` 对 `PreferenceUtil|APP_SP` 为 0 命中；对 `AppInfoDatabase|ScpDatabase|DetailDatabase|HttpManager|ScpDataHelper|apiCall` 仅命中 `DownloadActivity.importDetailDatabase` 方法名，不存在旧单例或 DAO 直连。
+- 2C UI State 已完成：分类/随机、搜索、待读/收藏/历史、草稿和详情分别通过 `CategoryListUiState`/`RandomListUiState`、`SearchUiState`、`LaterUiState`、`DraftListUiState`、`DetailUiState` 暴露稳定状态，宿主统一消费 ViewModel 状态。
+- 2C 详情宿主拆分已完成：新增可测试的 `DetailHtmlComposer` 与 `DetailMenuAction`；Cookie 输入 UI 移入 `DetailCookieDialog`；收藏、已读、阅读模式、外部打开和上下篇的积分副作用由 `DetailViewModel` 编排。`DetailActivity` 仅保留 WebView、Intent、剪贴板、截图等平台交互及生命周期协调。
+- Fragment 去留决定已落实：`RecordListFragment`、`LikeBoxListFragment` 只是 Compose 列表的二次容器，已删除；`LaterFragment` 直接渲染两个 Compose Screen 并消费单一 `LaterUiState`，待读导入数据流也已迁入 `LaterViewModel`。`HomeFragment`、`LaterFragment` 继续作为 `MainActivity` 固定 tag 与生命周期恢复边界；`ScpListFragment` 继续为首页多分类内容提供独立 ViewModel/状态恢复边界，待未来整体导航改造时再统一评估。
+- 阶段 2 最终验证：`app/src/testDefaultProductionDebug/java` 共 12 个测试文件、62 个 `@Test`；`testDefaultProductionDebugUnitTest`、`assembleDefaultProductionDebug --stacktrace`、`assembleDefaultProductionReleaseStaging --stacktrace` 全部通过，release staging 覆盖 R8 minify、资源压缩与 APK 打包。
+- 当前 `adb devices -l` 无连接设备。WebView 在线/离线、Cookie 登录、SAF 备份恢复、FileProvider 分享与桌面小部件的设备级复验归入阶段 5A 发布收口；阶段 2 的 Repository、UI State 与宿主代码验收至此完成。
+
 ### 阶段 5A：旧依赖与发布收口
 
 11. 删除未使用旧依赖。

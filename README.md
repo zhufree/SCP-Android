@@ -11,20 +11,20 @@ SCP Android 第三方客户端
 
 - 当前应用版本：`0.3.2`（见 `app/build.gradle`）。
 - 已完成：构建工具链升级、Anko/EasyPermissions 等旧依赖清理、主导航 Compose 壳层、普通页面 XML/Adapter/RecyclerView 迁移。
-- 当前判断：第 0、1、2A、3、4、5B 阶段已完成；第 2B 阶段“Repository 边界收敛”进行中；第 2C 和第 5A 阶段尚未开始。
+- 当前判断：第 0、1、2A、2B、2C、3、4、5B 阶段已完成；下一阶段为 5A“旧依赖与发布收口”。
 - 资源现状：`res/layout + res/menu` 当前仅保留桌面小部件 RemoteViews 所需的 `layout_widget.xml`，普通页面不再依赖 XML 布局。
-- 后续重点：详情偏好、下载/备份和剩余平台入口的边界收敛；随后再进行详情宿主瘦身、旧依赖/warning 清理和平台能力复验。
+- 后续重点：分批清理旧依赖和工具链 warning，并在连接设备后复验 WebView、Cookie、SAF、FileProvider 与桌面小部件等平台能力。
 - 快速交接：见 [docs/refactor-handoff.md](docs/refactor-handoff.md)；完整计划与历史记录见 [docs/kotlin-compose-modernization-plan.md](docs/kotlin-compose-modernization-plan.md)。
 
 主要验证命令：
 
 ```powershell
 .\gradlew.bat assembleDefaultProductionDebug --stacktrace
-.\gradlew.bat testDefaultProductionDebugUnitTest --tests 'info.free.scp.data.*'
+.\gradlew.bat testDefaultProductionDebugUnitTest
 .\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace
 ```
 
-最近验证：2026-07-26，数据层 50 项 JVM 测试、主 debug APK 和 release staging（含 R8/资源压缩）均在 `d17efe8` 上通过。
+最近验证：2026-07-26，12 个测试文件中的 62 项 JVM 测试、主 debug APK 和 release staging（含 R8/资源压缩）均在阶段 2 最终工作树上通过。
 
 下面保留的是历史功能计划和版本记录，当前重构任务以 `docs/kotlin-compose-modernization-plan.md` 为准。
 

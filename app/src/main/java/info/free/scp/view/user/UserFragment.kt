@@ -21,12 +21,13 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.BuildConfig
 import info.free.scp.bean.ScpRecordModel
+import info.free.scp.data.settings.PreferenceSettingsStore
+import info.free.scp.data.settings.UserPreferencesStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.user.UserDashboardScreen
 import info.free.scp.ui.user.UserDashboardViewModel
 import info.free.scp.util.EventUtil
 import info.free.scp.util.NewbieManager
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -39,6 +40,7 @@ import info.free.scp.view.draft.DraftListActivity
 import java.util.Random
 
 class UserFragment : BaseFragment() {
+    private val userPreferences: UserPreferencesStore = PreferenceSettingsStore()
     private var userHeadBitmap by mutableStateOf<Bitmap?>(null)
     private var profileVersion by mutableStateOf(0)
     private val pickUserHeadImage =
@@ -72,7 +74,7 @@ class UserFragment : BaseFragment() {
                         userHead = userHeadBitmap,
                         recentHistory = uiState.recentHistory,
                         showDonation = BuildConfig.FLAVOR != "GooglePlayProduction",
-                        showOtherWork = PreferenceUtil.getShowMeal(),
+                        showOtherWork = userPreferences.showOtherWork,
                         onToggleTheme = {
                             ThemeUtil.changeTheme(
                                 activity,
@@ -91,7 +93,7 @@ class UserFragment : BaseFragment() {
                         },
                         onOpenLocalData = { startActivity(Intent(requireContext(), DownloadActivity::class.java)) },
                         onOpenAbout = { startActivity(Intent(requireContext(), AboutAppActivity::class.java)) },
-                        onOpenQuery = { Utils.openUrl(PreferenceUtil.getQueryLink()) },
+                        onOpenQuery = { Utils.openUrl(userPreferences.queryLink) },
                         onOpenOtherWork = { startActivity(Intent(requireContext(), OtherAppActivity::class.java)) },
                         onOpenDonation = { startActivity(Intent(requireContext(), DonationQrActivity::class.java)) },
                         onOpenMoreHistory = { startActivity(Intent(requireContext(), LaterAndHistoryActivity::class.java)) },
@@ -104,7 +106,7 @@ class UserFragment : BaseFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (!PreferenceUtil.hasCheckPrivacy()) {
+        if (!userPreferences.hasAcceptedPrivacy) {
             NewbieManager.showPrivacyDialog(requireActivity())
         }
         loadHeadImg()
@@ -125,7 +127,7 @@ class UserFragment : BaseFragment() {
     }
 
     private fun nicknameText(version: Int): String {
-        val nickname = PreferenceUtil.getNickname()
+        val nickname = userPreferences.nickname
         return if (nickname.isNotEmpty()) {
             "\u4ee3\u53f7\uff1a$nickname"
         } else {
@@ -134,10 +136,10 @@ class UserFragment : BaseFragment() {
     }
 
     private fun jobText(version: Int): String {
-        val nickname = PreferenceUtil.getNickname()
+        val nickname = userPreferences.nickname
         val code = Random(System.currentTimeMillis()).nextInt(600)
         return if (nickname.isNotEmpty()) {
-            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a${getRank(PreferenceUtil.getPoint())}"
+            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a${getRank(userPreferences.points)}"
         } else {
             "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a\u70b9\u51fb\u8bbe\u7f6e"
         }
@@ -145,12 +147,12 @@ class UserFragment : BaseFragment() {
 
     private fun getRank(point: Int): String {
         return when {
-            point < 200 -> PreferenceUtil.getJobNameByLevel(0)
-            point < 700 -> PreferenceUtil.getJobNameByLevel(1)
-            point < 1500 -> PreferenceUtil.getJobNameByLevel(2)
-            point < 2500 -> "C\u7ea7${PreferenceUtil.getJobNameByLevel(3)}"
-            point < 4000 -> "B\u7ea7${PreferenceUtil.getJobNameByLevel(4)}"
-            else -> "A\u7ea7${PreferenceUtil.getJobNameByLevel(5)}"
+            point < 200 -> userPreferences.getJobNameForLevel(0)
+            point < 700 -> userPreferences.getJobNameForLevel(1)
+            point < 1500 -> userPreferences.getJobNameForLevel(2)
+            point < 2500 -> "C\u7ea7${userPreferences.getJobNameForLevel(3)}"
+            point < 4000 -> "B\u7ea7${userPreferences.getJobNameForLevel(4)}"
+            else -> "A\u7ea7${userPreferences.getJobNameForLevel(5)}"
         }
     }
 
@@ -184,7 +186,7 @@ class UserFragment : BaseFragment() {
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             isSingleLine = true
-            setText(PreferenceUtil.getNickname())
+            setText(userPreferences.nickname)
         }
         container.addView(titleView)
         container.addView(input)
@@ -192,7 +194,7 @@ class UserFragment : BaseFragment() {
         AlertDialog.Builder(requireContext())
             .setView(container)
             .setPositiveButton("\u786e\u5b9a") { _, _ ->
-                PreferenceUtil.saveNickname(input.text?.toString().orEmpty())
+                userPreferences.saveNickname(input.text?.toString().orEmpty())
                 profileVersion += 1
                 checkJob()
             }
@@ -210,9 +212,9 @@ class UserFragment : BaseFragment() {
             "\u673a\u52a8\u7279\u9063\u961f\u6210\u5458"
         )
         AlertDialog.Builder(requireContext())
-            .setTitle("\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c${PreferenceUtil.getNickname()}\uff0c\u8bf7\u9009\u62e9\u4f60\u7684\u804c\u4e1a")
+            .setTitle("\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c${userPreferences.nickname}\uff0c\u8bf7\u9009\u62e9\u4f60\u7684\u804c\u4e1a")
             .setItems(jobList) { _, i ->
-                PreferenceUtil.setJob(jobList[i])
+                userPreferences.saveJob(jobList[i])
                 profileVersion += 1
             }
             .show()

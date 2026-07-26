@@ -17,15 +17,17 @@ import info.free.scp.R
 import info.free.scp.bean.DraftModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.data.draft.DraftRepository
+import info.free.scp.data.settings.DraftPreferencesStore
+import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.draft.DraftEditScreen
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
 class DraftEditActivity : BaseActivity() {
     private lateinit var draft: DraftModel
     private val draftRepository = DraftRepository()
+    private val draftPreferences: DraftPreferencesStore = PreferenceSettingsStore()
     private var draftTitle by mutableStateOf("")
     private var draftContent by mutableStateOf("")
 
@@ -82,13 +84,12 @@ class DraftEditActivity : BaseActivity() {
 
     private fun loadDraft() {
         val draftId = intent.getIntExtra("draftId", -1)
+        val defaults = draftPreferences.consumeDraftDefaults()
         draft = draftRepository.loadDraft(
             draftId,
-            PreferenceUtil.getDraftTitle(),
-            PreferenceUtil.getDraftContent()
+            defaults.title,
+            defaults.content
         )
-        PreferenceUtil.saveDraftContent("")
-        PreferenceUtil.saveDraftTitle("")
         draftTitle = draft.title
         draftContent = draft.content
     }

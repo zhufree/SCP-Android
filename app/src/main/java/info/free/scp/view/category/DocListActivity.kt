@@ -40,16 +40,18 @@ import info.free.scp.SCPConstants.ScpType.SAVE_WANDER_CN
 import info.free.scp.bean.ScpModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.data.reading.ReadingListRepository
+import info.free.scp.data.settings.InteractionPointsStore
+import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.category.ScpDocumentListScreen
 import info.free.scp.ui.category.ScpDocumentStatus
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
 
 class DocListActivity : BaseActivity() {
+    private val interactionPoints: InteractionPointsStore = PreferenceSettingsStore()
     private val vm by viewModels<GroupViewModel>()
     private val readingListRepository = ReadingListRepository()
 
@@ -172,7 +174,7 @@ class DocListActivity : BaseActivity() {
     }
 
     private fun openDocument(scp: ScpModel, index: Int) {
-        PreferenceUtil.addPoints(2)
+        interactionPoints.increasePoints(2)
         startActivity(
             Intent(this, DetailActivity::class.java)
                 .putExtra("link", scp.link)

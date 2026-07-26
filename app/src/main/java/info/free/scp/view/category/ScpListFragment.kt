@@ -15,15 +15,17 @@ import androidx.lifecycle.ViewModelProvider
 import info.free.scp.SCPConstants
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.reading.ReadingListRepository
+import info.free.scp.data.settings.InteractionPointsStore
+import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.category.ScpDocumentListScreen
 import info.free.scp.ui.category.ScpDocumentStatus
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 
 class ScpListFragment : BaseFragment() {
+    private val interactionPoints: InteractionPointsStore = PreferenceSettingsStore()
     private val vm by lazy {
         ViewModelProvider(this)[GroupViewModel::class.java]
     }
@@ -125,7 +127,7 @@ class ScpListFragment : BaseFragment() {
     }
 
     private fun openDocument(scp: ScpModel, index: Int) {
-        PreferenceUtil.addPoints(2)
+        interactionPoints.increasePoints(2)
         startActivity(
             Intent(requireContext(), DetailActivity::class.java)
                 .putExtra("link", scp.link)

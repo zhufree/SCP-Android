@@ -15,9 +15,10 @@ import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import info.free.scp.R
 import info.free.scp.components.CommonTopBar
+import info.free.scp.data.settings.PreferenceSettingsStore
+import info.free.scp.data.settings.ReadingPreferencesStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
@@ -58,6 +59,7 @@ class SettingsActivity : BaseActivity() {
     }
 
     class ReadSettingsFragment : PreferenceFragmentCompat() {
+        private val readingPreferences: ReadingPreferencesStore = PreferenceSettingsStore()
         override fun onCreatePreferences(bundle: Bundle?, rootKey: String?) {
             setPreferencesFromResource(R.xml.pref_read_settings, rootKey)
             preferenceManager?.sharedPreferencesName = "read_settings"
@@ -66,7 +68,7 @@ class SettingsActivity : BaseActivity() {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             findPreference<SwitchPreference>("hide_finished_article")?.isChecked =
-                PreferenceUtil.getHideFinished()
+                readingPreferences.hideFinishedArticles
             findPreference<SwitchPreference>("hide_finished_article")?.setOnPreferenceClickListener {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 false

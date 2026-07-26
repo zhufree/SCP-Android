@@ -14,10 +14,12 @@ import info.free.scp.SCPConstants.ScpType.SAVE_GOI
 import info.free.scp.SCPConstants.ScpType.SAVE_INTERNATIONAL
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.category.CategoryEntryScreen
-import info.free.scp.util.PreferenceUtil
+import info.free.scp.data.settings.InteractionPointsStore
+import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.view.base.BaseFragment
 
 class CategoryFragment : BaseFragment() {
+    private val interactionPoints: InteractionPointsStore = PreferenceSettingsStore()
     private var entryType = -1
 
     override fun onCreateView(
@@ -72,7 +74,7 @@ class CategoryFragment : BaseFragment() {
     }
 
     private fun openCategory(title: String, position: Int) {
-        PreferenceUtil.addPoints(2)
+        interactionPoints.increasePoints(2)
         startActivity(
             Intent(requireContext(), DocListActivity::class.java)
                 .putExtra("saveType", getSaveType())

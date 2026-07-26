@@ -39,10 +39,11 @@ import info.free.scp.SCPConstants.LATER_TYPE
 import info.free.scp.data.catalog.ScpCatalogRepository
 import info.free.scp.data.reading.ReadListImportParser
 import info.free.scp.data.reading.ReadingListRepository
+import info.free.scp.data.settings.PreferenceSettingsStore
+import info.free.scp.data.settings.ReadingPreferencesStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.SearchBarScreen
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
@@ -56,6 +57,7 @@ class LaterFragment : BaseFragment() {
     private val likeListFragment = LikeBoxListFragment.newInstance()
     private val readingListRepository = ReadingListRepository()
     private val catalogRepository = ScpCatalogRepository()
+    private val readingPreferences: ReadingPreferencesStore = PreferenceSettingsStore()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -172,7 +174,7 @@ class LaterFragment : BaseFragment() {
     }
 
     private fun handleImportClick() {
-        if (!PreferenceUtil.getShownReadSuggest()) {
+        if (readingPreferences.shouldShowReadSuggestion) {
             AlertDialog.Builder(requireContext())
                 .setTitle("\u4e0d\u77e5\u9053\u8bfb\u4ec0\u4e48\uff1f")
                 .setMessage("\u8981\u4e0d\u8981\u8bbf\u95ee\u5927\u4f6c\u4eec\u6574\u7406\u7684\u5f85\u8bfb\u5217\u8868\uff1f\u53ef\u4ee5\u590d\u5236\u5217\u8868\u540e\u70b9\u51fb\u6b64\u6309\u94ae\u5bfc\u5165\u3002")
@@ -185,7 +187,7 @@ class LaterFragment : BaseFragment() {
                 }
                 .setNegativeButton("\u4e0d\u7528\u4e86", null)
                 .show()
-            PreferenceUtil.setShownReadSuggest()
+            readingPreferences.markReadSuggestionShown()
         }
         showInputListDialog()
     }

@@ -16,14 +16,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import info.free.scp.R
+import info.free.scp.data.settings.InteractionPointsStore
+import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.user.DonationQrScreen
 import info.free.scp.util.EventUtil
-import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 
 class DonationQrActivity : BaseActivity() {
+    private val interactionPoints: InteractionPointsStore = PreferenceSettingsStore()
     private var payType by mutableIntStateOf(0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +44,7 @@ class DonationQrActivity : BaseActivity() {
 
     private fun donate() {
         EventUtil.onEvent(this, EventUtil.clickDonation)
-        PreferenceUtil.addPoints(2)
+        interactionPoints.increasePoints(2)
         val qrRes = if (payType == 0) {
             R.drawable.img_donation_wechat
         } else {

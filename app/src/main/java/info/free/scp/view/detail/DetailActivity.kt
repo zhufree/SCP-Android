@@ -34,8 +34,9 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.distinctUntilChanged
+import androidx.lifecycle.map
 import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants.SCP_SITE_URL
@@ -165,7 +166,16 @@ class DetailActivity : BaseActivity() {
             binding.webView.loadUrl(fullUrl)
         }
 
-        viewModel.getScp().observe(this, Observer {
+        observeUiState()
+
+        binding.webView.requestFocus()
+
+        //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
+        configureWebViewClient()
+    }
+
+    private fun observeUiState() {
+        viewModel.uiState.map { it.document }.distinctUntilChanged().observe(this) {
             // 数据库取到
             if (it != null) {
                 scp = it
@@ -177,11 +187,23 @@ class DetailActivity : BaseActivity() {
                     binding.nsvWebWrapper.scrollTo(0, 0)
                 }
             }
-        })
+        }
+        viewModel.uiState.map { it.content }.distinctUntilChanged().observe(this) { content ->
+            if (!content.isNullOrEmpty()) {
+                setDetail(content)
+            }
+        }
+        viewModel.uiState.map { it.tag }.distinctUntilChanged().observe(this) { tag ->
+            if (!tag.isNullOrEmpty()) {
+                showTag(tag)
+            }
+        }
+        viewModel.uiState.map { it.comments }.distinctUntilChanged().observe(this) { comments ->
+            comments?.let(::showComments)
+        }
+    }
 
-        binding.webView.requestFocus()
-
-        //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
+    private fun configureWebViewClient() {
         binding.webView.webViewClient = object : WebViewClient() {
             @Deprecated("Deprecated in Java")
             override fun shouldOverrideUrlLoading(view: WebView, requestUrl: String): Boolean {
@@ -420,29 +442,6 @@ class DetailActivity : BaseActivity() {
         url = s.link
         refreshReadBtnStatus()
         viewModel.loadDetail(url)
-        if (detailSettings.isOfflineReadingEnabled) {
-            viewModel.getOfflineDetail().observe(this) { detail ->
-                if (!detail.isNullOrEmpty()) {
-                    setDetail(detail)
-                }
-            }
-            viewModel.getOfflineTag().observe(this) { tag ->
-                if (!tag.isNullOrEmpty()) {
-                    showTag(tag)
-                }
-            }
-        } else {
-            viewModel.getDetail().observe(this) { detail ->
-                if (!detail.isNullOrEmpty()) {
-                    setDetail(detail)
-                }
-            }
-            viewModel.getTag().observe(this) { tag ->
-                if (!tag.isNullOrEmpty()) {
-                    showTag(tag)
-                }
-            }
-        }
     }
 
     private fun showTag(tagString: String) {
@@ -859,24 +858,6 @@ class DetailActivity : BaseActivity() {
 
         binding.tvBottomLike.setOnClickListener { likeScp() }
 
-        viewModel.getCommentList().observe(this, Observer {
-            if (it.isEmpty()) {
-                if (HtmlParserService.noComment) {
-                    tvLoad?.text = "这篇文档没有评论"
-                } else {
-                    tvLoad?.text = "因中分官网要求登录才能查看评论，暂时无法获取"
-                }
-            } else {
-                binding.llCommentContainer.removeAllViews()
-                val commentLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-                commentLp.topMargin = Utils.dp2px(4)
-                it.forEach { c ->
-                    val newComment = CommentLayout(this)
-                    newComment.setData(c)
-                    binding.llCommentContainer.addView(newComment, commentLp)
-                }
-            }
-        })
         binding.btnComment.setOnClickListener {
             if (!detailSettings.hasCommentCredentials()) {
                 showToast("先点击右上角菜单设置 cookie 才能加载评论")
@@ -886,6 +867,25 @@ class DetailActivity : BaseActivity() {
                 binding.btnComment.hide()
                 viewModel.loadComment(url)
             }
+        }
+    }
+
+    private fun showComments(comments: List<info.free.scp.bean.CommentModel>) {
+        if (comments.isEmpty()) {
+            tvLoad?.text = if (HtmlParserService.noComment) {
+                "这篇文档没有评论"
+            } else {
+                "因中分官网要求登录才能查看评论，暂时无法获取"
+            }
+            return
+        }
+        binding.llCommentContainer.removeAllViews()
+        val commentLayoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+            topMargin = Utils.dp2px(4)
+        }
+        comments.forEach { comment ->
+            val commentView = CommentLayout(this).apply { setData(comment) }
+            binding.llCommentContainer.addView(commentView, commentLayoutParams)
         }
     }
 

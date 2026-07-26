@@ -1,6 +1,7 @@
 package info.free.scp.view.detail
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,34 +16,33 @@ import info.free.scp.data.settings.DetailSettingsStore
 import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import kotlinx.coroutines.launch
 
+data class DetailUiState(
+    val document: ScpModel? = null,
+    val content: String? = null,
+    val tag: String? = null,
+    val comments: List<CommentModel>? = null,
+    val isOfflineReadingEnabled: Boolean = false
+)
+
 class DetailViewModel(
     private val detailSettings: DetailSettingsStore = PreferenceDetailSettingsStore()
 ) : ViewModel() {
     private val repo = DetailRepository()
     private val readingListRepository = ReadingListRepository()
+    private val _uiState = MediatorLiveData(
+        DetailUiState(isOfflineReadingEnabled = detailSettings.isOfflineReadingEnabled)
+    )
+    val uiState: LiveData<DetailUiState> = _uiState
+    private var offlineDetailSource: LiveData<String>? = null
+    private var offlineTagSource: LiveData<String>? = null
 
-    fun getScp(): MutableLiveData<ScpModel?> {
-        return repo.scp
-    }
-
-    fun getDetail(): MutableLiveData<String?> {
-        return repo.detail
-    }
-
-    fun getTag(): MutableLiveData<String?> {
-        return repo.tag
-    }
-
-    fun getOfflineDetail(): LiveData<String> {
-        return repo.offlineDetail
-    }
-
-    fun getOfflineTag(): LiveData<String> {
-        return repo.offlineTag
-    }
-
-    fun getCommentList(): LiveData<List<CommentModel>> {
-        return repo.commentList
+    init {
+        _uiState.addSource(repo.scp) { document -> updateState { copy(document = document) } }
+        _uiState.addSource(repo.commentList) { comments -> updateState { copy(comments = comments) } }
+        if (!detailSettings.isOfflineReadingEnabled) {
+            _uiState.addSource(repo.detail) { content -> updateState { copy(content = content) } }
+            _uiState.addSource(repo.tag) { tag -> updateState { copy(tag = tag) } }
+        }
     }
 
     /**
@@ -104,6 +104,7 @@ class DetailViewModel(
         if (detailSettings.isOfflineReadingEnabled) {
             repo.loadOfflineDetail(link)
             repo.loadOfflineTag(link)
+            bindOfflineSources()
         } else {
             viewModelScope.launch {
                 repo.loadDetail(link)
@@ -116,5 +117,20 @@ class DetailViewModel(
         viewModelScope.launch {
             repo.loadComment(link)
         }
+    }
+
+    private fun bindOfflineSources() {
+        offlineDetailSource?.let(_uiState::removeSource)
+        offlineTagSource?.let(_uiState::removeSource)
+        offlineDetailSource = repo.offlineDetail.also { source ->
+            _uiState.addSource(source) { content -> updateState { copy(content = content) } }
+        }
+        offlineTagSource = repo.offlineTag.also { source ->
+            _uiState.addSource(source) { tag -> updateState { copy(tag = tag) } }
+        }
+    }
+
+    private fun updateState(transform: DetailUiState.() -> DetailUiState) {
+        _uiState.value = (_uiState.value ?: DetailUiState()).transform()
     }
 }

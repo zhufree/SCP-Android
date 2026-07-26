@@ -77,6 +77,7 @@ class DetailViewModel(
     }
 
     fun setLiked(link: String, title: String, boxId: Int) {
+        detailSettings.increasePoints(2)
         readingListRepository.setLiked(link, title, boxId)
     }
 
@@ -85,7 +86,13 @@ class DetailViewModel(
     }
 
     fun toggleRead(link: String, title: String): Boolean {
-        return readingListRepository.toggleRead(link, title)
+        val hasRead = readingListRepository.toggleRead(link, title)
+        if (hasRead) {
+            detailSettings.increasePoints(5)
+        } else {
+            detailSettings.decreasePoints(5)
+        }
+        return hasRead
     }
 
     fun addToLater(link: String, title: String) {
@@ -98,6 +105,18 @@ class DetailViewModel(
 
     fun createLikeBox(name: String) {
         readingListRepository.createLikeBox(name)
+    }
+
+    fun rewardReadModeSwitch() {
+        detailSettings.increasePoints(1)
+    }
+
+    fun rewardExternalOpen() {
+        detailSettings.increasePoints(1)
+    }
+
+    fun rewardArticleNavigation() {
+        detailSettings.increasePoints(1)
     }
 
     fun loadDetail(link: String) {

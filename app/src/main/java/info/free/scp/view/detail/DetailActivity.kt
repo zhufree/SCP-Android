@@ -2,7 +2,6 @@ package info.free.scp.view.detail
 
 import android.app.AlertDialog
 import android.content.*
-import android.content.DialogInterface.BUTTON_POSITIVE
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -24,7 +23,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.CookieManager
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.LinearLayout.VERTICAL
@@ -43,11 +41,13 @@ import info.free.scp.SCPConstants.SCP_SITE_URL
 import info.free.scp.SCPConstants.SIMPLE
 import info.free.scp.SCPConstants.TRADITIONAL
 import info.free.scp.bean.ScpModel
+import info.free.scp.data.detail.DetailHtmlComposer
 import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.data.detail.DetailTitleFormatter
 import info.free.scp.data.settings.DetailSettingsStore
 import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import info.free.scp.service.HtmlParserService
+import info.free.scp.ui.detail.DetailMenuAction
 import info.free.scp.util.EventUtil
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
@@ -84,32 +84,10 @@ class DetailActivity : BaseActivity() {
 
     private var scp: ScpModel? = null
     private var detailHtml = ""
-    private var currentTextSize = detailSettings.detailTextSize
-        set(value) {
-            field = value
-            detailSettings.detailTextSize = value
-            nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-                    "$currentTextSize;}* {color:#aaa;}</style>"
-            dayTextStyle = "<style>p {font-size:$currentTextSize}" +
-                    ";}* {color:#000;}</style>"
-        }
-
-    private var nightTextStyle = "<style>body{background-color:#222;}p {font-size:" +
-            "$currentTextSize;}* {color:#aaa;} blockquote, .forum-category-box  .description-block, .content-panel, .scp-image-block .scp-image-caption, table.wiki-content-table th, #toc, #lock-info, .change-textarea-size a, .mobile-top-bar li ul li a, .mobile-top-bar li ul, .top-bar li ul, .description, .btn-default, div[style*=\"background:#F5F5F5;\"]{background:#333!important;} div[style*=\"background:#f2f2c2;\"]{background:#f2f2c22b!important;} div[style*=\"background:#d3d3d3;\"]{background:#d3d3d32b!important;}</style>"
-    private var dayTextStyle = "<style>body{background-color:#fff;}p {font-size:$currentTextSize;}* {color:#000;}</style>"
-    private val siteStyle = "<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"
-    private var currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
-    private val jqScript = "<script type=\"text/javascript\" src=\"jquery-ui.min.js\"></script>\n"
-    private val initScript = "<script type=\"text/javascript\" src=\"init.combined.js\"></script>"
-    private val tabScript = "<script type=\"text/javascript\" src=\"tabview-min.js\"></script>"
-    private val wikiScript = "<script type=\"text/javascript\" src=\"WIKIDOT.combined.js\"></script>"
-    private val darkReaderScript = "<script type=\"text/javascript\" src=\"darkreader.min.js\"></script><script>document.addEventListener('DOMContentLoaded', ()=>{DarkReader.enable({\n" +
-            "    brightness: 100,\n" +
-            "    contrast: 90,\n" +
-            "    sepia: 10\n" +
-            "})});</script>"
-    // patched Darkreader to fix some bugs
-    private val jsScript = (if (ThemeUtil.currentTheme == NIGHT_THEME) darkReaderScript else "") + "$jqScript$initScript$tabScript$wikiScript"
+    private val htmlComposer = DetailHtmlComposer(
+        textSize = detailSettings.detailTextSize,
+        initialNightTheme = ThemeUtil.currentTheme == NIGHT_THEME
+    )
     private var screenHeight = 0
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
 
@@ -123,6 +101,7 @@ class DetailActivity : BaseActivity() {
     private val viewModel by lazy {
         ViewModelProvider(this)[DetailViewModel::class.java]
     }
+    private val cookieDialog by lazy { DetailCookieDialog(this) }
 
     private lateinit var binding: DetailActivityLayout
 
@@ -375,8 +354,7 @@ class DetailActivity : BaseActivity() {
         } else {
             binding.pbLoading.visibility = GONE
             binding.webView.loadDataWithBaseURL(
-                "file:///android_asset/", currentTextStyle
-                        + detailHtml + jsScript,
+                "file:///android_asset/", composeOfflineHtml(),
                 "text/html", "utf-8", null
             )
         }
@@ -409,10 +387,8 @@ class DetailActivity : BaseActivity() {
      * 不改变网页内容，只刷新样式
      */
     private fun refreshStyle() {
-        currentTextStyle = siteStyle + (if (ThemeUtil.currentTheme == NIGHT_THEME) nightTextStyle else dayTextStyle)
         binding.webView.loadDataWithBaseURL(
-            "file:///android_asset/", currentTextStyle
-                    + detailHtml + jsScript,
+            "file:///android_asset/", composeOfflineHtml(),
             "text/html", "utf-8", null
         )
     }
@@ -480,9 +456,9 @@ class DetailActivity : BaseActivity() {
         supportActionBar?.title = null
         populateDetailMenu(binding.detailToolbar.menu)
         binding.detailToolbar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.switch_read_mode -> {
-                    detailSettings.increasePoints(1)
+            when (DetailMenuAction.fromMenuItemId(it.itemId)) {
+                DetailMenuAction.SWITCH_READ_MODE -> {
+                    viewModel.rewardReadModeSwitch()
                     if (onlineMode == 0) {
                         if (Utils.enabledNetwork(this)) {
                             binding.pbLoading.visibility = VISIBLE
@@ -497,19 +473,19 @@ class DetailActivity : BaseActivity() {
                         it.setTitle(R.string.online_mode)
                         binding.webView.loadDataWithBaseURL(
                             "file:///android_asset/",
-                            currentTextStyle + detailHtml + jsScript,
+                            composeOfflineHtml(),
                             "text/html", "utf-8", null
                         )
                     }
                 }
-                R.id.open_in_browser -> {
+                DetailMenuAction.OPEN_IN_BROWSER -> {
                     scp?.let { s->
                         EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
                     }
-                    detailSettings.increasePoints(1)
+                    viewModel.rewardExternalOpen()
                     startActivity(Utils.getUrlIntent(fullUrl))
                 }
-                R.id.copy_link -> {
+                DetailMenuAction.COPY_LINK -> {
                     scp?.let {s->
                         EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
                     }
@@ -519,14 +495,14 @@ class DetailActivity : BaseActivity() {
                     clipboardManager?.setPrimaryClip(clipData)
                     showToast("已复制到剪贴板")
                 }
-                R.id.like -> {
+                DetailMenuAction.TOGGLE_LIKE -> {
                     likeScp()
                 }
-                R.id.change_theme -> {
+                DetailMenuAction.CHANGE_THEME -> {
                     it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
                     changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
                 }
-                R.id.add_read_later -> {
+                DetailMenuAction.ADD_READ_LATER -> {
                     scp?.let { s->
                         viewModel.addToLater(s.link, s.title)
                         showToast("已加入待读列表")
@@ -534,7 +510,7 @@ class DetailActivity : BaseActivity() {
                         showToast("本文只可在线浏览，不可加入待读")
                     }
                 }
-                R.id.share_picture -> {
+                DetailMenuAction.SHARE_PICTURE -> {
                     // 截屏分享
                     scp?.let { s ->
                         EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
@@ -568,11 +544,10 @@ class DetailActivity : BaseActivity() {
                     })
                 }
 
-                R.id.set_cookie -> {
+                DetailMenuAction.SET_COOKIE -> {
                     showCookieDialog()
                 }
-                else -> {
-                }
+                null -> Unit
             }
             true
         }
@@ -595,62 +570,20 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun showCookieDialog() {
-        val margin = Utils.dp2px(16, this)
-        val container = LinearLayout(this).apply {
-            orientation = VERTICAL
-        }
-        val webCredentials = detailSettings.webCredentials
-        val cookieInput = EditText(this).apply {
-            hint = "cookie"
-            setSingleLine(false)
-            setText(webCredentials.cookie)
-        }
-        val agentInput = EditText(this).apply {
-            hint = "agent"
-            setSingleLine(false)
-            setText(webCredentials.userAgent)
-        }
-        val loginButton = Button(this).apply {
-            text = "\u4f7f\u7528\u7f51\u9875\u767b\u5f55"
-        }
-        val inputLp = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-            setMargins(margin, margin, margin, 0)
-        }
-        container.addView(cookieInput, inputLp)
-        container.addView(agentInput, inputLp)
-        container.addView(
-            loginButton,
-            LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                setMargins(margin, margin, margin, margin)
+        cookieDialog.show(
+            credentials = detailSettings.webCredentials,
+            onOpenHelp = {
+                startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
+            },
+            onOpenLogin = {
+                showToast("\u6253\u5f00\u4e86\u767b\u5f55\u9875\u9762\uff0c\u4e0d\u5de5\u4f5c\u7684\u8bdd\u53ef\u4ee5\u70b9\u51fb\u201c\u5207\u6362\u7f51\u9875\u6a21\u5f0f\u201d\u624b\u52a8\u767b\u5f55")
+                binding.webView.loadUrl("https://scp-wiki-cn.wikidot.com/scp-7616")
+            },
+            onSave = { cookie, userAgent ->
+                detailSettings.updateWebCredentials(cookie, userAgent)
+                showToast("\u8bbe\u7f6e\u5b8c\u6210")
             }
         )
-
-        val cookieDialog = AlertDialog.Builder(this)
-            .setTitle("\u8bbe\u7f6eCookie")
-            .setView(container)
-            .setNeutralButton("\u5982\u4f55\u83b7\u53d6cookie\u548cagent") { _, _ ->
-                startActivity(Utils.getUrlIntent("https://mbd.pub/o/bread/YZicl55u"))
-            }
-            .setPositiveButton("OK") { _, _ -> }
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-            .create()
-
-        cookieDialog.show()
-
-        loginButton.setOnClickListener {
-            val loginURL = "https://scp-wiki-cn.wikidot.com/scp-7616"
-            showToast("\u6253\u5f00\u4e86\u767b\u5f55\u9875\u9762\uff0c\u4e0d\u5de5\u4f5c\u7684\u8bdd\u53ef\u4ee5\u70b9\u51fb\u201c\u5207\u6362\u7f51\u9875\u6a21\u5f0f\u201d\u624b\u52a8\u767b\u5f55")
-            binding.webView.loadUrl(loginURL)
-            cookieDialog.dismiss()
-        }
-        cookieDialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-            detailSettings.updateWebCredentials(
-                cookieInput.text.toString(),
-                agentInput.text.toString()
-            )
-            showToast("\u8bbe\u7f6e\u5b8c\u6210")
-            cookieDialog.dismiss()
-        }
     }
 
     private fun changeTheme(mode: Int) {
@@ -666,8 +599,7 @@ class DetailActivity : BaseActivity() {
             val converter = JChineseConvertor.getInstance()
             detailHtml = if (translateType == SIMPLE) converter.t2s(detailHtml) else converter.s2t(detailHtml)
             binding.webView.loadDataWithBaseURL(
-                "file:///android_asset/", currentTextStyle
-                        + detailHtml + jsScript,
+                "file:///android_asset/", composeOfflineHtml(),
                 "text/html", "utf-8", null
             )
         } catch (e: IOException) {
@@ -697,7 +629,6 @@ class DetailActivity : BaseActivity() {
                     if (i == boxList.size) {
                         createNewBox()
                     } else {
-                        detailSettings.increasePoints(2)
                         viewModel.setLiked(currentScp.link, currentScp.title, boxList[i].id)
                     }
                 }
@@ -745,7 +676,7 @@ class DetailActivity : BaseActivity() {
     private fun toNextArticle() {
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
-        detailSettings.increasePoints(1)
+        viewModel.rewardArticleNavigation()
         when (readType) {
             0 -> {
                 scp = viewModel.getNextDocument(index, scpType)
@@ -772,7 +703,7 @@ class DetailActivity : BaseActivity() {
     private fun toPreviewArticle() {
         index = if (scp?.index != -1) scp?.index ?: 0 else index
         scpType = if (scp?.scpType != -1) scp?.scpType ?: 0 else scpType
-        detailSettings.increasePoints(1)
+        viewModel.rewardArticleNavigation()
         when (readType) {
             0 -> {
                 when (index) {
@@ -804,14 +735,16 @@ class DetailActivity : BaseActivity() {
 
     private fun setHasRead() {
         scp?.let { s ->
-            val hasRead = viewModel.toggleRead(s.link, s.title)
-            if (hasRead) {
-                detailSettings.increasePoints(5)
-            } else {
-                detailSettings.decreasePoints(5)
-            }
+            viewModel.toggleRead(s.link, s.title)
             refreshReadBtnStatus()
         }
+    }
+
+    private fun composeOfflineHtml(): String {
+        return htmlComposer.compose(
+            content = detailHtml,
+            nightTheme = ThemeUtil.currentTheme == NIGHT_THEME
+        )
     }
 
     private fun refreshReadBtnStatus() {

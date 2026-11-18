@@ -2,7 +2,6 @@ package info.free.scp.service
 
 import info.free.scp.PrivateConstants
 import info.free.scp.bean.*
-import io.reactivex.Observable
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.http.*

@@ -6,7 +6,7 @@ plugins {
 }
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
-apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 
@@ -15,31 +15,25 @@ android {
 
     defaultConfig {
         applicationId "info.free.scp"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 30
         versionName "0.3.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables.useSupportLibrary = true
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
-        multiDexEnabled true
+        multiDexEnabled = true
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
     }
     buildTypes {
         debug {
         }
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         releaseStaging {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled = true
+            shrinkResources = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -67,29 +61,28 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
     }
 
     repositories {
-        maven { url 'https://jitpack.io' }
-        flatDir {
-            dirs 'libs'
-        }
+        maven { url = 'https://jitpack.io' }
     }
     buildFeatures {
-        buildConfig true
+        buildConfig = true
         // Enables Jetpack Compose for this module
-        compose true
+        compose = true
     }
-    namespace 'info.free.scp'
+    namespace = 'info.free.scp'
     lint {
-        abortOnError false
-        checkReleaseBuilds false
+        abortOnError = false
+        checkReleaseBuilds = false
     }
 }
 
@@ -104,25 +97,16 @@ dependencies {
     implementation 'androidx.preference:preference-ktx:1.2.1'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.2.0'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.6.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
-    kapt 'com.github.bumptech.glide:compiler:4.9.0'
 
     implementation 'androidx.core:core-ktx:1.13.1'
     // 升级之后字段必须标注是否可为null
     implementation "androidx.room:room-runtime:2.7.2"
-    kapt "androidx.room:room-compiler:2.7.2"
+    ksp "androidx.room:room-compiler:2.7.2"
     implementation "androidx.room:room-ktx:2.7.2"
 
     implementation("androidx.compose.ui:ui:1.7.4")
@@ -137,18 +121,17 @@ dependencies {
     implementation "androidx.navigation:navigation-compose:2.8.3"
     // Integration with observables
     implementation("androidx.compose.runtime:runtime-livedata:1.7.4")
-    implementation("androidx.compose.runtime:runtime-rxjava2:1.7.4")
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6'
-    implementation group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: '2.8.6'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.6'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.6'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:33.5.0')
-    implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-database-ktx'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-database'
 
     implementation "com.google.accompanist:accompanist-pager:0.25.0"
 
@@ -163,7 +146,6 @@ dependencies {
     implementation("org.jsoup:jsoup:1.19.1")
 }
 
-
-repositories {
-    maven { url "https://kotlin.bintray.com/kotlinx" }
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

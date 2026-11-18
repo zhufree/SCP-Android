@@ -31,42 +31,42 @@ abstract class AppInfoDatabase : RoomDatabase() {
         private var INSTANCE: AppInfoDatabase? = null
 
         private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
             }
         }
         private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
             }
         }
         private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
             }
         }
 
         private val MIGRATION_4_5: Migration = object : Migration(4, 5) {
-            override fun migrate(database: SupportSQLiteDatabase) {
+            override fun migrate(db: SupportSQLiteDatabase) {
                 // 升级时删掉数据部分，只留info部分
-                database.execSQL(dropDetailTableSQL)
-                database.execSQL(dropScpTableSQL)
-                database.execSQL("ALTER TABLE $VIEW_LIST_TABLE_NAME RENAME TO temp_record_table;")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `records` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `viewListType` INTEGER NOT NULL, `viewTime` INTEGER NOT NULL, PRIMARY KEY(`link`))")
-                database.execSQL("INSERT INTO `records` (link, title, viewListType, viewTime) SELECT link, title, viewListType, datetime('now','localtime') FROM temp_record_table;")
-                database.execSQL("DROP TABLE temp_record_table;")
-                database.execSQL("ALTER TABLE $LIKE_AND_READ_TABLE_NAME RENAME TO temp_like_table;")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `like_table` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `like` INTEGER NOT NULL, `hasRead` INTEGER NOT NULL, PRIMARY KEY(`link`))")
-                database.execSQL("INSERT INTO `like_table` (link, title, `like`, hasRead) SELECT link, title, `like`, hasRead FROM temp_like_table;")
-                database.execSQL("DROP TABLE temp_like_table;")
+                db.execSQL(dropDetailTableSQL)
+                db.execSQL(dropScpTableSQL)
+                db.execSQL("ALTER TABLE $VIEW_LIST_TABLE_NAME RENAME TO temp_record_table;")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `records` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `viewListType` INTEGER NOT NULL, `viewTime` INTEGER NOT NULL, PRIMARY KEY(`link`))")
+                db.execSQL("INSERT INTO `records` (link, title, viewListType, viewTime) SELECT link, title, viewListType, datetime('now','localtime') FROM temp_record_table;")
+                db.execSQL("DROP TABLE temp_record_table;")
+                db.execSQL("ALTER TABLE $LIKE_AND_READ_TABLE_NAME RENAME TO temp_like_table;")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `like_table` (`link` TEXT NOT NULL, `title` TEXT NOT NULL, `like` INTEGER NOT NULL, `hasRead` INTEGER NOT NULL, PRIMARY KEY(`link`))")
+                db.execSQL("INSERT INTO `like_table` (link, title, `like`, hasRead) SELECT link, title, `like`, hasRead FROM temp_like_table;")
+                db.execSQL("DROP TABLE temp_like_table;")
             }
         }
         private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("CREATE TABLE IF NOT EXISTS `draft` (`draftId` INTEGER NOT NULL, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `lastModifyTime` INTEGER NOT NULL, PRIMARY KEY(`draftId`))")
             }
         }
         private val MIGRATION_6_7: Migration = object : Migration(6, 7) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE `like_table` ADD COLUMN `boxId` INTEGER NOT NULL DEFAULT 0;")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `like_box_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `like_table` ADD COLUMN `boxId` INTEGER NOT NULL DEFAULT 0;")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `like_box_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL)")
             }
         }
 

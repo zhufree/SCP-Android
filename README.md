@@ -5,26 +5,27 @@ SCP Android 第三方客户端
 
 `kotlin`
 
-## 当前重构状态（2026-07-26）
+## 当前重构状态（2026-11-18）
 
 当前项目处于从旧 `Activity + Fragment + XML` 体系迁移到 Kotlin + Compose 的重构后半程。
 
 - 当前应用版本：`0.3.2`（见 `app/build.gradle`）。
 - 已完成：构建工具链升级、Anko/EasyPermissions 等旧依赖清理、主导航 Compose 壳层、普通页面 XML/Adapter/RecyclerView 迁移。
-- 当前判断：第 0、1、2A、2B、2C、3、4、5B 阶段已完成；下一阶段为 5A“旧依赖与发布收口”。
+- 当前判断：第 0、1、2A、2B、2C、3、4、5B 阶段已完成。阶段 5A 的旧依赖和工具链收口已完成，包括 Java 17、KSP、Firebase 主模块，以及 Glide、multidex、显式 vectordrawable 的删除。剩下的是真机平台复验。
 - 资源现状：`res/layout + res/menu` 当前仅保留桌面小部件 RemoteViews 所需的 `layout_widget.xml`，普通页面不再依赖 XML 布局。
-- 后续重点：分批清理旧依赖和工具链 warning，并在连接设备后复验 WebView、Cookie、SAF、FileProvider 与桌面小部件等平台能力。
+- 后续重点：连接设备后复验 WebView、Cookie、SAF、FileProvider 与桌面小部件。
 - 快速交接：见 [docs/refactor-handoff.md](docs/refactor-handoff.md)；完整计划与历史记录见 [docs/kotlin-compose-modernization-plan.md](docs/kotlin-compose-modernization-plan.md)。
 
 主要验证命令：
 
 ```powershell
-.\gradlew.bat assembleDefaultProductionDebug --stacktrace
+.\gradlew.bat assembleDefaultProductionDebug
 .\gradlew.bat testDefaultProductionDebugUnitTest
-.\gradlew.bat assembleDefaultProductionReleaseStaging --stacktrace
+.\gradlew.bat assembleDefaultProductionReleaseStaging
+.\gradlew.bat assembleDebug
 ```
 
-最近验证：2026-07-26，12 个测试文件中的 62 项 JVM 测试、主 debug APK 和 release staging（含 R8/资源压缩）均在阶段 2 最终工作树上通过。
+最近验证：2026-11-18，62 项 JVM 测试 0 失败，主 debug、release staging（含 R8/资源压缩）和全部 debug 渠道通过。工具链 warning 清理后的复跑同样通过。
 
 下面保留的是历史功能计划和版本记录，当前重构任务以 `docs/kotlin-compose-modernization-plan.md` 为准。
 

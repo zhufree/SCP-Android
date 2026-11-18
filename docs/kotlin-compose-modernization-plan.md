@@ -355,6 +355,19 @@ Remedy: 先补小而稳定的 characterization tests，覆盖纯 Kotlin 解析/�
 - 阶段 2 最终验证：`app/src/testDefaultProductionDebug/java` 共 12 个测试文件、62 个 `@Test`；`testDefaultProductionDebugUnitTest`、`assembleDefaultProductionDebug --stacktrace`、`assembleDefaultProductionReleaseStaging --stacktrace` 全部通过，release staging 覆盖 R8 minify、资源压缩与 APK 打包。
 - 当前 `adb devices -l` 无连接设备。WebView 在线/离线、Cookie 登录、SAF 备份恢复、FileProvider 分享与桌面小部件的设备级复验归入阶段 5A 发布收口；阶段 2 的 Repository、UI State 与宿主代码验收至此完成。
 
+## 阶段 5A 执行记录（2026-11-18）
+
+- 已删除无调用方的 RxJava2 组：`rxjava`、`rxandroid`、Retrofit `adapter-rxjava2`、Compose `runtime-rxjava2`，并去掉 `ApiService` 里未使用的 `io.reactivex.Observable` import。
+- 定向扫描：`io.reactivex` 为 0 命中。`ConstraintLayout` 仍由详情页程序化布局使用，未删除。
+- 验证：`testDefaultProductionDebugUnitTest` 为 12 个测试文件、62 项、0 失败；`assembleDefaultProductionDebug` 与 `assembleDefaultProductionReleaseStaging` 通过，后者覆盖 R8 minify 与资源压缩。
+- 未纳入 RxJava 切片：CardView、`legacy-support-v4`、`lifecycle-extensions`、Firebase KTX、Java 8 编译目标、Room 旧 API、`flatDir` 与 Gradle 9 warning。
+- 随后已删除 CardView、`legacy-support-v4` 和 `lifecycle-extensions`。Fragment 继续由 AppCompat 传递依赖提供；`LiveData.map`、`distinctUntilChanged` 和 `lifecycleScope` 改为显式依赖 `lifecycle-livedata-ktx` 与 `lifecycle-runtime-ktx` 2.8.6。
+- 同一验证矩阵再次通过：62 项 JVM 测试、debug APK、release staging。
+- 仍未处理：Firebase KTX、Java 8 编译目标、Room 旧 API、`flatDir`、Gradle 9 warning，以及 `vectordrawable`。
+- 同日随后一次完成上述工具链项，不再按组拆分。Java/Kotlin 17，KSP `2.2.0-2.0.2` 替换 kapt，关闭 Jetifier，删除 `flatDir`、Bintray、Glide、显式 `vectordrawable` 和 `androidx.multidex`。Firebase 改用 BOM 33.5.0 主模块。Room schema 与 `allowMainThreadQueries()` 未改；破坏性迁移回退显式为 `dropAllTables = true`。
+- 全渠道 `assembleDebug`、主 debug、release staging 和 62 项 JVM 测试通过。处理赋值语法与源码弃用 API 后，`--warning-mode all` 复跑测试、主 debug 和 release staging，日志中没有对应弃用警告。
+- `adb devices -l` 仍无设备。阶段 5A 剩下桌面小部件、SAF、FileProvider、WebView/Cookie 的真机复验。
+
 ### 阶段 5A：旧依赖与发布收口
 
 11. 删除未使用旧依赖。

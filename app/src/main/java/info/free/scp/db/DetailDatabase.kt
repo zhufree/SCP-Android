@@ -23,9 +23,9 @@ abstract class DetailDatabase : RoomDatabase() {
         private var INSTANCE: DetailDatabase? = null
 
         private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("DROP TABLE IF EXISTS scp_detail;")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `scp_detail` (`link` TEXT NOT NULL, `detail` TEXT, `not_found` INTEGER, `tags` TEXT, PRIMARY KEY(`link`));")
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS scp_detail;")
+                db.execSQL("CREATE TABLE IF NOT EXISTS `scp_detail` (`link` TEXT NOT NULL, `detail` TEXT, `not_found` INTEGER, `tags` TEXT, PRIMARY KEY(`link`));")
             }
         }
 
@@ -35,7 +35,7 @@ abstract class DetailDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, DetailDatabase::class.java,
                             DETAIL_DB_NAME)
                         .addMigrations(MIGRATION_1_2)
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration(dropAllTables = true)
                         .allowMainThreadQueries()
                         .build()
                     PreferenceUtil.setAppMode(OFFLINE)

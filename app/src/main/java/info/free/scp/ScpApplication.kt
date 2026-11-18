@@ -1,14 +1,14 @@
 package info.free.scp
 
 import android.app.Activity
+import android.app.Application
 import android.app.DownloadManager
 import android.content.Context
-import android.content.res.Resources
+import android.content.res.Configuration
 import android.os.Bundle
-import androidx.multidex.MultiDexApplication
+import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.database
 import info.free.scp.PrivateConstants.FIREBASE_URL
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.ThemeUtil
@@ -19,8 +19,13 @@ import info.free.scp.view.base.BaseActivity
  * 自定义application
  */
 
-class ScpApplication : MultiDexApplication() {
+class ScpApplication : Application() {
 
+    override fun attachBaseContext(base: Context) {
+        val config = Configuration(base.resources.configuration)
+        config.fontScale = 1.0f
+        super.attachBaseContext(base.createConfigurationContext(config))
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -56,15 +61,6 @@ class ScpApplication : MultiDexApplication() {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             }
         })
-    }
-
-    override fun getResources(): Resources {
-        val resources = super.getResources()
-        if (resources != null && resources.configuration.fontScale != 1.0f) {
-            resources.configuration.fontScale = 1.0f
-            resources.updateConfiguration(resources.configuration, resources.displayMetrics)
-        }
-        return resources
     }
 
     override fun onTerminate() {

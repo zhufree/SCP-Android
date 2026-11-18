@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.database.ktx.getValue
+import com.google.firebase.database.getValue
 import info.free.scp.ScpApplication
 import info.free.scp.bean.GameModel
 import info.free.scp.bean.PortalModel

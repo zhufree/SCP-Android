@@ -2,7 +2,6 @@
 
 package info.free.scp.util
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.ContentValues
@@ -17,9 +16,7 @@ import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.util.Log
-import android.view.WindowManager
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -36,17 +33,12 @@ import java.text.SimpleDateFormat
 
 object Utils {
 
-    fun getScreenHeight(context: Activity): Int {
-        val metric = DisplayMetrics()
-        context.windowManager.defaultDisplay.getMetrics(metric)
-        return metric.heightPixels
+    fun getScreenHeight(context: Context): Int {
+        return context.resources.displayMetrics.heightPixels
     }
 
     fun getScreenWidth(context: Context): Int {
-        val metric = DisplayMetrics()
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay.getMetrics(metric)
-        return metric.widthPixels
+        return context.resources.displayMetrics.widthPixels
     }
 
     fun dp2px(dpValue: Int, context: Context = ScpApplication.context): Int {
@@ -68,19 +60,17 @@ object Utils {
     fun enabledNetwork(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            val networkInfo = connectivityManager.activeNetworkInfo
-            if (networkInfo != null) {
-                return networkInfo.isAvailable
-            }
-        } else {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val network = connectivityManager.activeNetwork ?: return false
             val status = connectivityManager.getNetworkCapabilities(network) ?: return false
-            if (status.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)) {
-                return true
-            }
+            return status.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
         }
-        return false
+        return legacyNetworkAvailable(connectivityManager)
+    }
+
+    @Suppress("DEPRECATION")
+    private fun legacyNetworkAvailable(connectivityManager: ConnectivityManager): Boolean {
+        return connectivityManager.activeNetworkInfo?.isAvailable == true
     }
 
     fun onlyEnabled4G(context: Context): Boolean {

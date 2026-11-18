@@ -4,9 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.database.getValue
 import info.free.scp.BuildConfig
 import info.free.scp.ScpApplication.Companion.database
 import info.free.scp.db.AppInfoDatabase

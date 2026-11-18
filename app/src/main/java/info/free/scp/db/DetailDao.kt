@@ -33,9 +33,9 @@ interface DetailDao {
     fun getLinksByTag(tag: String): List<String>
 
     @Query("SELECT tags FROM scp_detail;")
-    fun getAllTags(): List<String?>
+    fun getAllTags(): List<String>
 
-    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @SuppressWarnings(RoomWarnings.QUERY_MISMATCH)
     @Query("SELECT link FROM scp_detail WHERE detail LIKE :keyword;")
     fun searchScpByDetail(keyword: String): List<String>
     // AND last_update >= :timeout

@@ -24,7 +24,7 @@ abstract class ScpDatabase : RoomDatabase() {
                     INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                             SCP_DB_NAME)
                         .createFromAsset(SCP_DB_NAME)
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration(dropAllTables = true)
                         .allowMainThreadQueries()
                         .build()
                 }
@@ -46,7 +46,7 @@ abstract class ScpDatabase : RoomDatabase() {
                 INSTANCE = Room.databaseBuilder(ScpApplication.context, ScpDatabase::class.java,
                         SCP_DB_NAME)
                     .createFromAsset(SCP_DB_NAME)
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(dropAllTables = true)
                     .allowMainThreadQueries()
                     .build()
             } catch (e1: SQLiteDatabaseCorruptException) {

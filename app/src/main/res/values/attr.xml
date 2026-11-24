@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <attr name="toolbarBg" format="color" />
+    <attr name="onToolbar" format="color" />
     <attr name="containerBg" format="color" />
     <attr name="itemBoxBg" format="color" />
     <attr name="accentColor" format="color" />

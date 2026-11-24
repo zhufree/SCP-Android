@@ -29,29 +29,28 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 
 | 类别 | 内容 |
 | --- | --- |
-| 语言 / 构建 | Kotlin 2.2.0、Gradle 8.13、AGP 8.13.2、KSP、Java 17 |
-| UI | Jetpack Compose 1.7.4（Material 2）、AppCompat（Activity/Fragment 宿主）、WebView（阅读页）、Coil（图片） |
+| 语言 / 构建 | Kotlin 2.4.21、Gradle 9.9.2、AGP 9.5.2、KSP 2.3.14、Java 17 字节码 |
+| UI | Compose BOM 2025.11.01（Material 2）、AppCompat（Activity/Fragment 宿主）、WebView（阅读页）、Coil（图片） |
 | 架构 | ViewModel + LiveData/StateFlow，`data/*` Repository 边界 |
 | 本地存储 | Room 2.7.2（3 个数据库）、SharedPreferences |
-| 网络 | Retrofit 2.9.0 + Gson、OkHttp、jsoup 1.19.1（评论解析） |
-| 远程配置 | Firebase Realtime Database（BoM 33.5.0） |
-| SDK | `minSdk 21`、`targetSdk 34`、`compileSdk 34` |
-| 测试 | JUnit 4（JVM 单元测试，70 项） |
+| 网络 | Retrofit 3.0.0 + Gson、OkHttp 5.5.1、jsoup 1.24.1（评论解析） |
+| 远程配置 | Firebase Realtime Database（BoM 33.16.0） |
+| SDK | `minSdk 21`、`targetSdk 37`、`compileSdk 37` |
+| 测试 | JUnit 4（JVM 单元测试） |
 
 ## 构建与运行
 
-环境：JDK 17+、Android SDK（platform 34），使用仓库自带的 Gradle wrapper。
+环境：JDK 17+（推荐 21）、Android 17 SDK Platform（`android-37.0`），使用仓库自带的 Gradle wrapper。
 
 1. 克隆仓库并切换到需要的分支（当前重构分支为 `compose-refactor`）。
 2. 准备三个被 `.gitignore` 忽略的本地文件，否则无法编译：`local.properties`（`sdk.dir`）、`app/google-services.json`（Firebase 配置）、`app/src/main/java/info/free/scp/PrivateConstants.kt`（`FEED_API_URL`、`FIREBASE_URL` 两个常量）。仅为编译可使用占位值，模板与说明见 [docs/build-and-release.md](docs/build-and-release.md)。
-3. 构建并安装 debug 包：
+3. 构建 debug APK 并运行 JVM 单元测试：
 
    ```bash
-   ./gradlew installDefaultProductionDebug      # Windows: .\gradlew.bat installDefaultProductionDebug
+   ./gradlew :app:assembleDefaultProductionDebug :app:testDefaultProductionDebugUnitTest
    ```
 
-   或在 Android Studio 中选择 `DefaultProductionDebug` 变体运行。
-4. 运行单元测试：`./gradlew testDefaultProductionDebugUnitTest`。
+   APK 位于 `app/build/outputs/apk/DefaultProduction/debug/`。Windows 使用 `gradlew.bat`；如用 Android Studio，选择 `DefaultProductionDebug` 变体。首次联网构建后，使用同一个 `GRADLE_USER_HOME` 可追加 `--offline`。
 
 占位配置只保证能编译（交接文档记录开发机即如此）；在线接口与远程配置需要真实的后端地址和 Firebase 配置，获取方式待确认，见构建文档。
 

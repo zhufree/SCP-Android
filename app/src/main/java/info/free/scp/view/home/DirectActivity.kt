@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +49,7 @@ class DirectActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     DirectScreen(
                         expression = expression,

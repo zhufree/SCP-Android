@@ -6,10 +6,11 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,7 +45,7 @@ class SearchActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         androidx.compose.foundation.layout.Column {
@@ -119,22 +120,17 @@ private fun SearchTabs(
     )
     TabRow(
         selectedTabIndex = selectedTab,
-        backgroundColor = Color(ThemeUtil.itemBg),
-        contentColor = Color(ThemeUtil.accentColor)
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.primary
     ) {
         titles.forEachIndexed { index, title ->
             Tab(
                 selected = selectedTab == index,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 onClick = { onSelectTab(index) },
                 text = {
-                    Text(
-                        text = title,
-                        color = if (selectedTab == index) {
-                            Color(ThemeUtil.darkText)
-                        } else {
-                            Color(ThemeUtil.mediumText)
-                        }
-                    )
+                    Text(text = title)
                 }
             )
         }

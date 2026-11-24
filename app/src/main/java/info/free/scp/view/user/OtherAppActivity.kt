@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,21 +33,19 @@ class OtherAppActivity : BaseActivity() {
     }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun OtherAppPage(finish: () -> Unit) {
-    val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Open))
     Scaffold(
-        scaffoldState = scaffoldState,
-        backgroundColor = MaterialTheme.colors.background,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             CommonTopBar(title = "开发者其他作品") {
                 finish()
             }
         },
-    ) { _ ->
+    ) { padding ->
         Column(
             modifier = Modifier
+                .padding(padding)
                 .padding(16.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -55,19 +53,20 @@ fun OtherAppPage(finish: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
             val cd6 = CornerSize(6.dp)
             Card(
-                elevation = 2.dp,
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
                     .height(200.dp),
-                backgroundColor = MaterialTheme.colors.background,
                 shape = RoundedCornerShape(cd6, cd6, cd6, cd6),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Button(
+                    modifier = Modifier.fillMaxSize(),
                     onClick = {
                         Utils.openUrl("https://www.bilibili.com/video/BV1m5411971n")
                     }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.background
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Column(
@@ -85,25 +84,26 @@ fun OtherAppPage(finish: () -> Unit) {
                         Text(
                             text = "场所码捷径",
                             fontSize = 18.sp,
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
             }
             Card(
-                elevation = 2.dp,
                 modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
                     .height(200.dp),
-                backgroundColor = MaterialTheme.colors.background,
                 shape = RoundedCornerShape(cd6, cd6, cd6, cd6),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
                 Button(
+                    modifier = Modifier.fillMaxSize(),
                     onClick = {
                         Utils.openUrl("https://www.coolapk.com/apk/231900")
                     }, colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.background
+                        containerColor = MaterialTheme.colorScheme.surface
                     )
                 ) {
                     Column(
@@ -123,7 +123,7 @@ fun OtherAppPage(finish: () -> Unit) {
                         Text(
                             text = "批量图片处理工具",
                             fontSize = 18.sp,
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

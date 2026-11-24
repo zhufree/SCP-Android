@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import info.free.scp.ui.MainTheme
+import info.free.scp.view.base.keepContentInsideSystemBars
 import info.free.scp.view.detail.DetailActivity
 
 class TagDetailActivity : AppCompatActivity() {
@@ -23,6 +24,7 @@ class TagDetailActivity : AppCompatActivity() {
                 finish()
             }
         }
+        keepContentInsideSystemBars()
     }
 }
 

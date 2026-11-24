@@ -5,9 +5,11 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.PhoneAndroid
@@ -21,11 +23,6 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
-import eth.zhufree.baihehub.ui.hehuanHong
-import eth.zhufree.baihehub.ui.shizhuHong
 import info.free.scp.bean.GameModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
@@ -54,26 +51,23 @@ class GameListActivity : BaseActivity() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun GamePage(gameViewModel: FireViewModel, finish: () -> Unit) {
     Scaffold(topBar = {
         CommonTopBar(title = "游戏列表") {
             finish()
         }
-    }) { _ ->
+    }) { padding ->
         val tabTitles = listOf("PC", "mobile")
         val tabIcons = listOf(Icons.Default.Computer, Icons.Default.PhoneAndroid)
-        val pagerState = rememberPagerState(
-            initialPage = 0,
-        )
+        val pagerState = rememberPagerState { tabTitles.size }
         val scope = rememberCoroutineScope()
         val games by gameViewModel.gameList.observeAsState()
-        Column {
+        Column(modifier = Modifier.padding(padding)) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
-                backgroundColor = MaterialTheme.colors.background,
+                containerColor = MaterialTheme.colorScheme.background,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 tabTitles.forEachIndexed { index, title ->
                     Tab(
@@ -83,27 +77,16 @@ fun GamePage(gameViewModel: FireViewModel, finish: () -> Unit) {
                                 pagerState.scrollToPage(index, 0f)
                             }
                         },
-                        text = {
-                            Text(
-                                text = title,
-                                color = if (pagerState.currentPage == index) shizhuHong else hehuanHong
-                            )
-                        },
-                        icon = {
-                            Icon(
-                                imageVector = tabIcons[index],
-                                "icon",
-                                tint = if (pagerState.currentPage == index) shizhuHong else hehuanHong
-                            )
-                        },
-                        selectedContentColor = MaterialTheme.colors.primaryVariant
+                        text = { Text(text = title) },
+                        icon = { Icon(imageVector = tabIcons[index], contentDescription = title) },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxHeight(),
-                count = tabTitles.size
+                modifier = Modifier.fillMaxHeight()
             ) { pagePosition ->
                 when (pagePosition) {
                     0 -> {
@@ -122,7 +105,6 @@ fun GamePage(gameViewModel: FireViewModel, finish: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun GamePage(games: List<GameModel>) {
     Column(modifier = Modifier
@@ -130,25 +112,27 @@ fun GamePage(games: List<GameModel>) {
         .verticalScroll(rememberScrollState())) {
         Spacer(modifier = Modifier.height(8.dp))
         games.forEach { game ->
-            Card(shape = RectangleShape, elevation = 5.dp, onClick = {
-                Utils.openUrl(game.link)
-            }) {
+            Card(
+                onClick = {
+                    Utils.openUrl(game.link)
+                },
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            ) {
                 Column(
-                    modifier = Modifier
-                        .background(MaterialTheme.colors.onBackground)
-                        .padding(8.dp),
+                    modifier = Modifier.padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
                         model = game.cover, contentDescription = "game", modifier = Modifier
                             .fillMaxWidth()
                     )
-                    Text(text = game.name, fontSize = 20.sp, color = MaterialTheme.colors.onPrimary)
-                    Text(text = game.desc, fontSize = 18.sp, color = MaterialTheme.colors.onPrimary)
+                    Text(text = game.name, fontSize = 20.sp, color = MaterialTheme.colorScheme.onSurface)
+                    Text(text = game.desc, fontSize = 18.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     Text(
                         text = "平台：${game.platform}",
                         fontSize = 16.sp,
-                        color = MaterialTheme.colors.onPrimary
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }

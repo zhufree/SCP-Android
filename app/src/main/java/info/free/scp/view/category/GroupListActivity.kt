@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
@@ -69,7 +69,7 @@ class GroupListActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         GroupListScreen(

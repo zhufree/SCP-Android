@@ -10,12 +10,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +31,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import info.free.scp.ui.MainTheme
+import info.free.scp.util.ThemeUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
@@ -188,12 +190,10 @@ private fun MainShell(
     }
     Scaffold(
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = MaterialTheme.colors.onSurface,
-                contentColor = MaterialTheme.colors.onPrimary
-            ) {
+            // Material 3 默认配色：容器 surfaceContainer，选中指示 secondaryContainer
+            NavigationBar {
                 MainTab.entries.forEach { tab ->
-                    BottomNavigationItem(
+                    NavigationBarItem(
                         selected = selectedTab == tab,
                         onClick = { onTabSelected(tab) },
                         icon = {

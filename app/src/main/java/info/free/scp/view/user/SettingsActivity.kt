@@ -6,7 +6,7 @@ import android.widget.FrameLayout
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
+import androidx.preference.SwitchPreferenceCompat
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.components.CommonTopBar
@@ -46,7 +46,7 @@ class SettingsActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     AndroidView(
                         modifier = Modifier
@@ -80,9 +80,9 @@ class SettingsActivity : BaseActivity() {
 
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
-            findPreference<SwitchPreference>("hide_finished_article")?.isChecked =
+            findPreference<SwitchPreferenceCompat>("hide_finished_article")?.isChecked =
                 readingPreferences.hideFinishedArticles
-            findPreference<SwitchPreference>("hide_finished_article")?.setOnPreferenceClickListener {
+            findPreference<SwitchPreferenceCompat>("hide_finished_article")?.setOnPreferenceClickListener {
                 EventUtil.onEvent(context, EventUtil.hideReadContent)
                 false
             }
@@ -95,7 +95,7 @@ class SettingsActivity : BaseActivity() {
                 }
                 true
             }
-            findPreference<SwitchPreference>("detail_wifi_only")?.apply {
+            findPreference<SwitchPreferenceCompat>("detail_wifi_only")?.apply {
                 isChecked = updates.wifiOnly
                 setOnPreferenceChangeListener { _, value ->
                     updates.wifiOnly = value as Boolean

@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,9 +98,9 @@ private fun SearchResultItem(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 5.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(6.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier.padding(start = 20.dp, top = 15.dp, end = 16.dp, bottom = 15.dp),

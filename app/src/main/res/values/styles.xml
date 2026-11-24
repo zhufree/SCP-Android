@@ -1,59 +1,139 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-    </style>
-    <!--Toolbar样式-->
-    <!--Toolbar弹出菜单样式-->
-    <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat">
-        <item name="android:colorBackground">?attr/containerBg</item>
-        <item name="android:textColor">@color/colorPrimaryDark</item>
-        <item name="android:textAlignment">center</item>
-        <item name="android:textSize">16sp</item>
-    </style>
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <!--
+        日夜主题都显式继承 Theme.Material3.Light / Dark（不是 DayNight），因此不跟随系统 uiMode，
+        也不需要 values-night：日夜只由 ThemeUtil.currentTheme 在运行时用 setTheme 切换。
+        色值全部来自 colors.xml 的 md_day_* / md_night_*。
+    -->
 
-    <style name="DayTheme" parent="AppTheme">
-        <!--导航条颜色-->
-        <item name="toolbarBg">@color/colorPrimary</item>
-        <!--页面容器背景色（白）-->
-        <item name="containerBg">@color/containerBg</item>
-        <!--条目背景色（浅蓝）-->
-        <item name="itemBoxBg">@color/white</item>
-        <item name="accentColor">@color/colorAccent</item>
-        <!--浅色底深色字-->
-        <item name="darkText">@color/darkText</item>
-        <!--深色底浅色字-->
-        <item name="mediumText">@color/mediumText</item>
-        <item name="lightText">@color/lightTextGray</item>
-        <!--不可点击的按钮颜色-->
-        <item name="disabledBg">@color/dividerGray</item>
-        <item name="linkBlue">@color/linkBlue</item>
-        <item name="todoYellow">@color/todoYellow</item>
-        <item name="dividerGray">@color/dividerGray</item>
+    <!-- 日间主题（同时是 Manifest 里的默认应用主题） -->
+    <style name="DayTheme" parent="Theme.Material3.Light.NoActionBar">
+        <!-- Material 3 色彩角色 -->
+        <item name="colorPrimary">@color/md_day_primary</item>
+        <item name="colorOnPrimary">@color/md_day_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_day_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_day_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_day_secondary</item>
+        <item name="colorOnSecondary">@color/md_day_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_day_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_day_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_day_tertiary</item>
+        <item name="colorOnTertiary">@color/md_day_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_day_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_day_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/md_day_background</item>
+        <item name="colorOnBackground">@color/md_day_onBackground</item>
+        <item name="colorSurface">@color/md_day_surface</item>
+        <item name="colorOnSurface">@color/md_day_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_day_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_day_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_day_outline</item>
+        <item name="colorOutlineVariant">@color/md_day_outlineVariant</item>
+        <item name="colorError">@color/md_day_error</item>
+        <item name="colorOnError">@color/md_day_onError</item>
+        <item name="colorErrorContainer">@color/md_day_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_day_onErrorContainer</item>
+        <item name="colorSurfaceContainerLowest">@color/md_day_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_day_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_day_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_day_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_day_surfaceContainerHighest</item>
+        <!-- Preference 分类标题等仍读取 colorAccent -->
+        <item name="colorAccent">@color/md_day_primary</item>
+
+        <!-- 系统栏：Android 15+ 强制 edge-to-edge 后以下颜色不生效，由 ActivityInsets.kt 绘制 -->
+        <item name="android:statusBarColor">@color/md_day_toolbar</item>
+        <item name="android:navigationBarColor">@color/md_day_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowBackground">@color/md_day_background</item>
+
+        <!-- ThemeUtil 读取的自定义属性 -->
+        <item name="toolbarBg">@color/md_day_toolbar</item>
+        <item name="onToolbar">@color/md_day_onToolbar</item>
+        <item name="containerBg">@color/md_day_background</item>
+        <item name="itemBoxBg">@color/md_day_surface</item>
+        <item name="accentColor">@color/md_day_secondary</item>
+        <item name="darkText">@color/md_day_darkText</item>
+        <item name="mediumText">@color/md_day_mediumText</item>
+        <item name="lightText">@color/md_day_lightText</item>
+        <item name="disabledBg">@color/md_day_disabled</item>
+        <item name="linkBlue">@color/md_day_link</item>
+        <item name="todoYellow">@color/md_day_todo</item>
+        <item name="dividerGray">@color/md_day_divider</item>
         <item name="folderIcon">@drawable/baseline_folder_open_black_24dp</item>
     </style>
 
-    <style name="NightTheme" parent="AppTheme">
-        <item name="toolbarBg">@color/colorPrimaryDark</item>
-        <item name="containerBg">@color/containerBgNight</item>
-        <item name="itemBoxBg">@color/itemBgNight</item>
-        <item name="accentColor">@color/colorAccent</item>
-        <item name="darkText">@color/darkTextNight</item>
-        <item name="mediumText">@color/mediumText</item>
-        <item name="lightText">@color/lightTextGray</item>
-        <item name="disabledBg">@color/disabledBgNight</item>
-        <item name="linkBlue">@color/linkBlue</item>
-        <item name="todoYellow">@color/todoYellow</item>
-        <item name="dividerGray">@color/dividerGrayNight</item>
+    <style name="AppTheme" parent="DayTheme" />
+
+    <style name="NightTheme" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/md_night_primary</item>
+        <item name="colorOnPrimary">@color/md_night_onPrimary</item>
+        <item name="colorPrimaryContainer">@color/md_night_primaryContainer</item>
+        <item name="colorOnPrimaryContainer">@color/md_night_onPrimaryContainer</item>
+        <item name="colorSecondary">@color/md_night_secondary</item>
+        <item name="colorOnSecondary">@color/md_night_onSecondary</item>
+        <item name="colorSecondaryContainer">@color/md_night_secondaryContainer</item>
+        <item name="colorOnSecondaryContainer">@color/md_night_onSecondaryContainer</item>
+        <item name="colorTertiary">@color/md_night_tertiary</item>
+        <item name="colorOnTertiary">@color/md_night_onTertiary</item>
+        <item name="colorTertiaryContainer">@color/md_night_tertiaryContainer</item>
+        <item name="colorOnTertiaryContainer">@color/md_night_onTertiaryContainer</item>
+        <item name="android:colorBackground">@color/md_night_background</item>
+        <item name="colorOnBackground">@color/md_night_onBackground</item>
+        <item name="colorSurface">@color/md_night_surface</item>
+        <item name="colorOnSurface">@color/md_night_onSurface</item>
+        <item name="colorSurfaceVariant">@color/md_night_surfaceVariant</item>
+        <item name="colorOnSurfaceVariant">@color/md_night_onSurfaceVariant</item>
+        <item name="colorOutline">@color/md_night_outline</item>
+        <item name="colorOutlineVariant">@color/md_night_outlineVariant</item>
+        <item name="colorError">@color/md_night_error</item>
+        <item name="colorOnError">@color/md_night_onError</item>
+        <item name="colorErrorContainer">@color/md_night_errorContainer</item>
+        <item name="colorOnErrorContainer">@color/md_night_onErrorContainer</item>
+        <item name="colorSurfaceContainerLowest">@color/md_night_surfaceContainerLowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_night_surfaceContainerLow</item>
+        <item name="colorSurfaceContainer">@color/md_night_surfaceContainer</item>
+        <item name="colorSurfaceContainerHigh">@color/md_night_surfaceContainerHigh</item>
+        <item name="colorSurfaceContainerHighest">@color/md_night_surfaceContainerHighest</item>
+        <item name="colorAccent">@color/md_night_primary</item>
+
+        <item name="android:statusBarColor">@color/md_night_toolbar</item>
+        <item name="android:navigationBarColor">@color/md_night_background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowBackground">@color/md_night_background</item>
+
+        <item name="toolbarBg">@color/md_night_toolbar</item>
+        <item name="onToolbar">@color/md_night_onToolbar</item>
+        <item name="containerBg">@color/md_night_background</item>
+        <item name="itemBoxBg">@color/md_night_surface</item>
+        <item name="accentColor">@color/md_night_primary</item>
+        <item name="darkText">@color/md_night_darkText</item>
+        <item name="mediumText">@color/md_night_mediumText</item>
+        <item name="lightText">@color/md_night_lightText</item>
+        <item name="disabledBg">@color/md_night_disabled</item>
+        <item name="linkBlue">@color/md_night_link</item>
+        <item name="todoYellow">@color/md_night_todo</item>
+        <item name="dividerGray">@color/md_night_divider</item>
         <item name="folderIcon">@drawable/baseline_folder_open_gray_24dp</item>
     </style>
 
-<!--    TODO: add style for popups  -->
+    <!-- 程序化构建的标题栏放在此主题下：标题和溢出菜单图标用浅色（标题栏日夜都是深色） -->
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
+    <!-- 弹出菜单：颜色取自当前 Activity 的 ThemeUtil 属性，随日夜切换 -->
+    <style name="ToolbarPopupTheme" parent="ThemeOverlay.Material3">
+        <item name="colorSurfaceContainer">?attr/itemBoxBg</item>
+        <item name="colorSurface">?attr/itemBoxBg</item>
+        <item name="colorOnSurface">?attr/darkText</item>
+        <item name="android:colorBackground">?attr/itemBoxBg</item>
+        <item name="android:textColor">?attr/darkText</item>
+        <item name="android:textColorPrimary">?attr/darkText</item>
+        <item name="android:textSize">16sp</item>
+    </style>
 
 </resources>

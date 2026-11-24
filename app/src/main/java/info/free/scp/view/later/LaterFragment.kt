@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.runtime.LaunchedEffect
@@ -81,12 +81,14 @@ class LaterFragment : BaseFragment() {
                             )
                             TabRow(
                                 selectedTabIndex = selectedTab,
-                                backgroundColor = Color(ThemeUtil.itemBg),
-                                contentColor = Color(ThemeUtil.accentColor)
+                                containerColor = MaterialTheme.colorScheme.surface,
+                                contentColor = MaterialTheme.colorScheme.primary
                             ) {
                                 listOf("\u5f85\u8bfb", "\u6536\u85cf\u5939").forEachIndexed { index, title ->
                                     Tab(
                                         selected = selectedTab == index,
+                                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                         onClick = { selectedTab = index },
                                         text = { Text(text = title) }
                                     )
@@ -115,13 +117,11 @@ class LaterFragment : BaseFragment() {
                             modifier = Modifier
                                 .align(Alignment.BottomEnd)
                                 .padding(24.dp),
-                            backgroundColor = MaterialTheme.colors.primary,
                             onClick = { handleImportClick() }
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Download,
-                                contentDescription = "Import",
-                                tint = Color.White
+                                contentDescription = "Import"
                             )
                         }
                     }

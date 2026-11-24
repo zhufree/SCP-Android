@@ -21,10 +21,6 @@ val teal200 = Color(0xFF03DAC5)
 val lightGray = Color(0xfffafafa)
 val topBtn = Color(0xffb0e0e6)
 
-val shiruiHong = Color(0xfff0c9cf)
-val hehuanHong = Color(0xffF0A1A8)
-val shizhuHong = Color(0xffee4863)
-val danshuHong = Color(0xffee2746)
 val bookBadge = Color(0xff5dbe8a) // 蔻梢绿
 val audioBadge = Color(0xff29b7cb) // 蔚蓝
 val manhuaBadge = Color(0xfff97d1c) // 橘橙

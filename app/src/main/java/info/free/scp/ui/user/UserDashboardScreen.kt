@@ -17,12 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
@@ -135,13 +136,13 @@ private fun ProfileHeader(
                 .padding(top = 24.dp, end = 24.dp)
                 .size(36.dp)
                 .clip(RoundedCornerShape(18.dp))
-                .background(MaterialTheme.colors.primary),
+                .background(MaterialTheme.colorScheme.primary),
             onClick = onToggleTheme
         ) {
             Icon(
                 imageVector = Icons.Default.DarkMode,
                 contentDescription = "Theme",
-                tint = Color.White
+                tint = MaterialTheme.colorScheme.onPrimary
             )
         }
         Row(
@@ -178,7 +179,7 @@ private fun ProfileHeader(
                         .align(Alignment.BottomCenter)
                         .background(Color.White.copy(alpha = 0.78f), RoundedCornerShape(6.dp))
                         .padding(horizontal = 8.dp, vertical = 4.dp),
-                    color = MaterialTheme.colors.primary,
+                    color = Color(0xFF1B5E3A),
                     fontSize = 12.sp
                 )
             }
@@ -203,7 +204,7 @@ private fun ProfileHeader(
                 Text(
                     text = dataText,
                     modifier = Modifier.padding(top = 8.dp),
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 14.sp,
                     lineHeight = 20.sp
                 )
@@ -225,24 +226,24 @@ private fun EntryGrid(
     onOpenOtherWork: () -> Unit
 ) {
     val items = buildList {
-        add(DashboardEntry("\u8349\u7a3f\u7bb1", R.drawable.baseline_border_color_white_24dp, Color(0xFFF26BD9), onOpenDraft))
-        add(DashboardEntry("\u6e38\u620f\u5217\u8868", R.drawable.baseline_videogame_asset_white_24dp, Color(0xFF10BED6), onOpenGame))
-        add(DashboardEntry("\u4f20\u9001\u95e8", R.drawable.baseline_sensor_door_white_24dp, Color(0xFFF44336), onOpenPortal))
-        add(DashboardEntry("\u9605\u8bfb\u8bbe\u7f6e", R.drawable.baseline_settings_white_24dp, Color(0xFFEBA0B3), onOpenReadSettings))
-        add(DashboardEntry("\u672c\u5730\u6570\u636e", R.drawable.baseline_download_for_offline_white_24dp, Color(0xFF8076A3), onOpenLocalData))
-        add(DashboardEntry("app\u4f7f\u7528\u8bf4\u660e", R.drawable.baseline_info_white_24dp, Color(0xFF346C9C), onOpenAbout))
-        add(DashboardEntry("\u7528\u6237\u95ee\u5377", R.drawable.baseline_receipt_long_white_24dp, Color(0xFF346C9C), onOpenQuery))
+        add(DashboardEntry("\u8349\u7a3f\u7bb1", R.drawable.baseline_border_color_white_24dp, onOpenDraft))
+        add(DashboardEntry("\u6e38\u620f\u5217\u8868", R.drawable.baseline_videogame_asset_white_24dp, onOpenGame))
+        add(DashboardEntry("\u4f20\u9001\u95e8", R.drawable.baseline_sensor_door_white_24dp, onOpenPortal))
+        add(DashboardEntry("\u9605\u8bfb\u8bbe\u7f6e", R.drawable.baseline_settings_white_24dp, onOpenReadSettings))
+        add(DashboardEntry("\u672c\u5730\u6570\u636e", R.drawable.baseline_download_for_offline_white_24dp, onOpenLocalData))
+        add(DashboardEntry("app\u4f7f\u7528\u8bf4\u660e", R.drawable.baseline_info_white_24dp, onOpenAbout))
+        add(DashboardEntry("\u7528\u6237\u95ee\u5377", R.drawable.baseline_receipt_long_white_24dp, onOpenQuery))
         if (showOtherWork) {
-            add(DashboardEntry("\u5176\u4ed6\u4f5c\u54c1", R.drawable.baseline_food_bank_white_24dp, Color(0xFF2296F3), onOpenOtherWork))
+            add(DashboardEntry("\u5176\u4ed6\u4f5c\u54c1", R.drawable.baseline_food_bank_white_24dp, onOpenOtherWork))
         }
     }
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 40.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 2.dp,
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(bottom = 24.dp)) {
             items.chunked(4).forEach { row ->
@@ -277,14 +278,15 @@ private fun DashboardEntryItem(item: DashboardEntry, modifier: Modifier = Modifi
             modifier = Modifier
                 .size(50.dp)
                 .clip(RoundedCornerShape(25.dp))
-                .background(item.background)
+                .background(MaterialTheme.colorScheme.primaryContainer)
                 .padding(14.dp),
             contentAlignment = Alignment.Center
         ) {
-            Image(
+            Icon(
                 painter = painterResource(item.iconRes),
                 contentDescription = item.title,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
         Text(
@@ -303,9 +305,9 @@ private fun DonationCard(onOpenDonation: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 14.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 2.dp,
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Box(modifier = Modifier.height(140.dp)) {
             Image(
@@ -332,7 +334,7 @@ private fun DonationCard(onOpenDonation: () -> Unit) {
                         .height(30.dp),
                     onClick = onOpenDonation
                 ) {
-                    Text(text = "\u652f\u6301\u5f00\u53d1\u8005", color = Color.White, fontSize = 12.sp)
+                    Text(text = "\u652f\u6301\u5f00\u53d1\u8005", fontSize = 12.sp)
                 }
             }
         }
@@ -349,9 +351,9 @@ private fun HistoryCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 8.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp,
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column {
             Row(
@@ -417,7 +419,6 @@ private fun HistoryRow(history: ScpRecordModel, onClick: () -> Unit) {
 private data class DashboardEntry(
     val title: String,
     val iconRes: Int,
-    val background: Color,
     val onClick: () -> Unit
 )
 

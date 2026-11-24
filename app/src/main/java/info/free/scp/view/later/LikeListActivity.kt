@@ -6,9 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -46,7 +46,7 @@ class LikeListActivity : BaseActivity() {
                                 IconButton(onClick = { viewModel.reverseLikeOrder() }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_swap_vertical_circle_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Reverse"
                                     )
                                 }
@@ -54,7 +54,7 @@ class LikeListActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         LikeListScreen(

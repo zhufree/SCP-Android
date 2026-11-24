@@ -27,6 +27,7 @@ open class BaseActivity : AppCompatActivity() {
         ThemeUtil.setTheme(this)
         ThemeUtil.registerThemeListener(themeListener)
         window.statusBarColor = ThemeUtil.toolbarBg
+        keepContentInsideSystemBars()
     }
 
 
@@ -48,6 +49,7 @@ open class BaseActivity : AppCompatActivity() {
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         window.statusBarColor = ThemeUtil.toolbarBg
         window.navigationBarColor = ThemeUtil.containerBg
+        refreshSystemBars()
     }
 
     override fun onDestroy() {

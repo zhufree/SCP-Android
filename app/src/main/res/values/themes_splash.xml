@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        冷启动主题。Android 12+ 见 values-v31（系统 SplashScreen API，不增加依赖）；
+        更低版本用 windowBackground 画近黑底 + 居中标志。
+        进入 BaseActivity.onCreate 后由 ThemeUtil.setTheme 换成 DayTheme/NightTheme，所以这里只管启动画面。
+    -->
+    <style name="Theme.App.Splash" parent="DayTheme">
+        <item name="android:windowBackground">@drawable/splash_window</item>
+    </style>
+</resources>

@@ -7,7 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Computer
 import androidx.compose.material.icons.filled.PhoneAndroid
@@ -22,11 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
-import eth.zhufree.baihehub.ui.hehuanHong
-import eth.zhufree.baihehub.ui.shizhuHong
 import info.free.scp.bean.GameModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
@@ -55,8 +50,6 @@ class PortalListActivity : BaseActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun PortalPage(portalViewModel: FireViewModel, finish: () -> Unit) {
     Scaffold(
@@ -65,20 +58,24 @@ fun PortalPage(portalViewModel: FireViewModel, finish: () -> Unit) {
                 finish()
             }
         },
-        backgroundColor = MaterialTheme.colors.background
-    ) { _ ->
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
         val portals by portalViewModel.portalList.observeAsState()
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(padding)
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
             Spacer(modifier = Modifier.height(16.dp))
             portals?.forEach {
-                Card(elevation = 2.dp, onClick = {
+                Card( onClick = {
                     Utils.openUrl(it.url)
-                }, backgroundColor = MaterialTheme.colors.onBackground) {
+                },
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+                ) {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -94,7 +91,7 @@ fun PortalPage(portalViewModel: FireViewModel, finish: () -> Unit) {
                             text = it.title,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }

@@ -11,9 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -120,10 +120,9 @@ private fun DownloadActionButton(
     Button(
         modifier = modifier.height(48.dp),
         onClick = onClick,
-        shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color(ThemeUtil.linkBlue))
+        shape = RoundedCornerShape(24.dp)
     ) {
-        Text(text = text, color = Color.White, fontSize = 16.sp, textAlign = TextAlign.Center)
+        Text(text = text, fontSize = 16.sp, textAlign = TextAlign.Center)
     }
 }
 

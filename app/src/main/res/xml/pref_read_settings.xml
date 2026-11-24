@@ -1,10 +1,10 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/category_settings">
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="hide_finished_article"
-            android:textColor="?attr/darkText"
-            android:title="@string/hide_finished_article" />
+            android:title="@string/hide_finished_article"
+            android:widgetLayout="@layout/preference_widget_material_switch" />
 
         <!--        <DropDownPreference-->
         <!--            android:key="category_count"-->
@@ -44,10 +44,11 @@
         <Preference
             android:key="check_data_update"
             android:title="检查数据更新" />
-        <SwitchPreference
+        <SwitchPreferenceCompat
             android:key="detail_wifi_only"
             android:persistent="false"
-            android:title="正文仅 Wi-Fi 下载" />
+            android:title="正文仅 Wi-Fi 下载"
+            android:widgetLayout="@layout/preference_widget_material_switch" />
     </PreferenceCategory>
     <PreferenceCategory
         android:key="detail_parts"

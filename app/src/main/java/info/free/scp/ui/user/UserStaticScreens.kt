@@ -16,13 +16,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +59,7 @@ fun AboutAppScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         Column(
             modifier = Modifier
@@ -136,7 +136,7 @@ fun DonationScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         Column(
             modifier = Modifier
@@ -150,7 +150,7 @@ fun DonationScreen(
                     .fillMaxWidth()
                     .height(64.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF8A62DC)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8A62DC)),
                 onClick = onOpenAfdian,
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
@@ -166,20 +166,20 @@ fun DonationScreen(
                     .fillMaxWidth()
                     .height(64.dp),
                 shape = RoundedCornerShape(32.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFED04D)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFED04D)),
                 onClick = onOpenMianbaoduo,
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 Text(
                     text = stringResource(R.string.go_mianbaoduo),
-                    color = Color.White,
+                    color = Color(0xFF1A1C1A),
                     fontSize = 20.sp
                 )
             }
             Spacer(Modifier.height(30.dp))
             Text(
                 text = stringResource(R.string.donation_introduction),
-                color = Color(0xFFB9B9B9),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
         }
@@ -205,7 +205,7 @@ fun DonationQrScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         Column(
             modifier = Modifier
@@ -242,7 +242,7 @@ fun DonationQrScreen(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(R.string.donation_introduction),
-                color = Color(0xFFB9B9B9),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 14.sp
             )
             Spacer(Modifier.height(60.dp))
@@ -251,13 +251,11 @@ fun DonationQrScreen(
                     .fillMaxWidth()
                     .height(54.dp),
                 shape = RoundedCornerShape(27.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF5D6BE8)),
                 onClick = onDonate,
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
                 Text(
                     text = stringResource(R.string.donation_notice),
-                    color = Color.White,
                     fontSize = 18.sp
                 )
             }
@@ -277,7 +275,7 @@ private fun QrTypeButton(
     ) {
         Text(
             text = text,
-            color = if (selected) Color(0xFF666666) else Color(ThemeUtil.darkText),
+            color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 16.sp
         )
     }
@@ -294,11 +292,10 @@ private fun PrimaryActionButton(
             .fillMaxWidth()
             .height(48.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color(ThemeUtil.linkBlue)),
         onClick = onClick,
         contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
-        Text(text = text, color = MaterialTheme.colors.onBackground)
+        Text(text = text)
     }
 }
 
@@ -312,11 +309,14 @@ private fun SecondaryActionButton(
             .width(150.dp)
             .height(48.dp),
         shape = RoundedCornerShape(24.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color(ThemeUtil.todoYellow)),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+        ),
         onClick = onClick,
         contentPadding = PaddingValues(horizontal = 12.dp)
     ) {
-        Text(text = text, fontSize = 18.sp, color = Color(ThemeUtil.darkText))
+        Text(text = text, fontSize = 18.sp)
     }
 }
 

@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -53,17 +55,19 @@ fun LatestFeedScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         Column(modifier = Modifier.padding(padding)) {
             TabRow(
                 selectedTabIndex = selectedTab,
-                backgroundColor = Color(ThemeUtil.toolbarBg),
-                contentColor = Color.White
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary
             ) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                         onClick = { selectedTab = index },
                         text = { Text(text = title) }
                     )
@@ -91,7 +95,7 @@ fun TopRatedFeedScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         FeedListScreen(
             modifier = Modifier.padding(padding),
@@ -140,9 +144,9 @@ private fun FeedListItem(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 5.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(8.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)

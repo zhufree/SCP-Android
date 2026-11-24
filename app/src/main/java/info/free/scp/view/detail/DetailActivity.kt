@@ -208,9 +208,17 @@ class DetailActivity : BaseActivity() {
         }
     }
 
+    private var articleMessage: String? = null
+
+    private fun cssColor(color: Int) = String.format("#%06X", color and 0xFFFFFF)
+
     private fun showArticleMessage(message: String) {
+        articleMessage = message
         binding.pbLoading.visibility = GONE
-        binding.webView.loadDataWithBaseURL(null, "<p>$message</p>", "text/html", "utf-8", null)
+        // 消息页的背景和文字色跟随 ThemeUtil，避免和页面底色出现色差
+        val style = "<style>body{background-color:${cssColor(ThemeUtil.containerBg)};}" +
+            "* {color:${cssColor(ThemeUtil.darkText)};}</style>"
+        binding.webView.loadDataWithBaseURL(null, "$style<p>$message</p>", "text/html", "utf-8", null)
     }
 
     private fun configureWebViewClient() {
@@ -405,7 +413,9 @@ class DetailActivity : BaseActivity() {
 
     override fun refreshTheme() {
         super.refreshTheme()
+        binding.root.setBackgroundColor(ThemeUtil.containerBg)
         binding.clDetailContainer.setBackgroundColor(ThemeUtil.containerBg)
+        binding.tvDetailToolbar.setTextColor(ThemeUtil.onToolbar)
         refreshStyle()
         refreshReadBtnStatus()
         refreshButtonStyle()
@@ -422,6 +432,12 @@ class DetailActivity : BaseActivity() {
      * 不改变网页内容，只刷新样式
      */
     private fun refreshStyle() {
+        articleMessage?.let {
+            if (detailHtml.isEmpty()) {
+                showArticleMessage(it)
+                return
+            }
+        }
         if (detailHtml.isEmpty() || onlineMode == 1) return
         binding.webView.loadDataWithBaseURL(
             "file:///android_asset/", composeOfflineHtml(),

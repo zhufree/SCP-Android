@@ -1,27 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#5e7987</color>
-    <color name="colorPrimaryDark">#134857</color>
-    <color name="colorAccent">#DF2424</color>
+    <!--
+        配色以启动图标（黑底荧光绿花纹 + 白色 SCP 标志）为依据，按 Material 3 色彩角色定义。
+        日夜两套只在这里写一次：View 侧由 styles.xml 的 DayTheme/NightTheme 引用，
+        Compose 侧由 ui/Theme.kt 的 MainTheme 通过 colorResource 引用，切换仍只由 ThemeUtil.currentTheme 决定。
+        对比度数字见 docs/build-and-release.md。
+    -->
 
-    <color name="containerBg">#F5F5F5</color>
-    <color name="containerBgNight">#222</color>
-    <!--浅色底深色字-->
-    <color name="darkText">#4A4A4A</color>
-    <color name="darkTextNight">#777777</color>
-    <!--深色底浅色字-->
-    <color name="mediumText">#666666</color>
-    <color name="lightTextGray">#B9B9B9</color>
+    <!-- ===== 日间 ===== -->
+    <color name="md_day_primary">#1B5E3A</color>
+    <color name="md_day_onPrimary">#FFFFFF</color>
+    <color name="md_day_primaryContainer">#C6E9D1</color>
+    <color name="md_day_onPrimaryContainer">#06301B</color>
+    <color name="md_day_secondary">#2E7D32</color>
+    <color name="md_day_onSecondary">#FFFFFF</color>
+    <color name="md_day_secondaryContainer">#CFEBD2</color>
+    <color name="md_day_onSecondaryContainer">#0F3A14</color>
+    <color name="md_day_tertiary">#43A047</color>
+    <color name="md_day_onTertiary">#0B2A10</color>
+    <color name="md_day_tertiaryContainer">#D4F0D6</color>
+    <color name="md_day_onTertiaryContainer">#0B2A10</color>
+    <color name="md_day_background">#F3F6F4</color>
+    <color name="md_day_onBackground">#1A1C1A</color>
+    <color name="md_day_surface">#FFFFFF</color>
+    <color name="md_day_onSurface">#1A1C1A</color>
+    <color name="md_day_surfaceVariant">#DDE5DF</color>
+    <color name="md_day_onSurfaceVariant">#414942</color>
+    <color name="md_day_outline">#717971</color>
+    <color name="md_day_outlineVariant">#C1C9C2</color>
+    <color name="md_day_error">#BA1A1A</color>
+    <color name="md_day_onError">#FFFFFF</color>
+    <color name="md_day_errorContainer">#FFDAD6</color>
+    <color name="md_day_onErrorContainer">#410002</color>
+    <color name="md_day_surfaceContainerLowest">#FFFFFF</color>
+    <color name="md_day_surfaceContainerLow">#F6FAF7</color>
+    <color name="md_day_surfaceContainer">#EEF3EF</color>
+    <color name="md_day_surfaceContainerHigh">#E8EEE9</color>
+    <color name="md_day_surfaceContainerHighest">#E2E8E3</color>
+    <!-- 标题栏/状态栏：日间用主色，文字和图标用 onToolbar -->
+    <color name="md_day_toolbar">#1B5E3A</color>
+    <color name="md_day_onToolbar">#FFFFFF</color>
 
-    <color name="disabledBgNight">#555</color>
-    <color name="itemBgNight">#202020</color>
+    <!-- ===== 夜间 ===== -->
+    <color name="md_night_primary">#81C995</color>
+    <color name="md_night_onPrimary">#0A2A16</color>
+    <color name="md_night_primaryContainer">#1F5133</color>
+    <color name="md_night_onPrimaryContainer">#C6EFD2</color>
+    <color name="md_night_secondary">#A5D6A7</color>
+    <color name="md_night_onSecondary">#10301A</color>
+    <color name="md_night_secondaryContainer">#2C4A33</color>
+    <color name="md_night_onSecondaryContainer">#D2EDD6</color>
+    <color name="md_night_tertiary">#66BB6A</color>
+    <color name="md_night_onTertiary">#0B2A10</color>
+    <color name="md_night_tertiaryContainer">#2A5230</color>
+    <color name="md_night_onTertiaryContainer">#CFF0D2</color>
+    <color name="md_night_background">#0E1512</color>
+    <color name="md_night_onBackground">#DDE5DF</color>
+    <color name="md_night_surface">#17211B</color>
+    <color name="md_night_onSurface">#DDE5DF</color>
+    <color name="md_night_surfaceVariant">#2B3630</color>
+    <color name="md_night_onSurfaceVariant">#BFC9C2</color>
+    <color name="md_night_outline">#8A938C</color>
+    <color name="md_night_outlineVariant">#3B4540</color>
+    <color name="md_night_error">#FFB4AB</color>
+    <color name="md_night_onError">#690005</color>
+    <color name="md_night_errorContainer">#93000A</color>
+    <color name="md_night_onErrorContainer">#FFDAD6</color>
+    <color name="md_night_surfaceContainerLowest">#09100D</color>
+    <color name="md_night_surfaceContainerLow">#141C17</color>
+    <color name="md_night_surfaceContainer">#18211C</color>
+    <color name="md_night_surfaceContainerHigh">#222B26</color>
+    <color name="md_night_surfaceContainerHighest">#2D3631</color>
+    <color name="md_night_toolbar">#14402A</color>
+    <color name="md_night_onToolbar">#FFFFFF</color>
 
-    <color name="linkBlue">#4A90E2</color>
-    <color name="todoYellow">#F99933</color>
-    <color name="dividerGray">#EDEDED</color>
-    <color name="dividerGrayNight">#ABABAB</color>
+    <!-- ===== 与 ThemeUtil 属性对应的补充色（正文层级、链接、待办、分割线、禁用） ===== -->
+    <color name="md_day_darkText">#3A433D</color>
+    <color name="md_day_mediumText">#5C645E</color>
+    <color name="md_day_lightText">#6A746D</color>
+    <color name="md_day_link">#1F6FB5</color>
+    <color name="md_day_todo">#B35F00</color>
+    <color name="md_day_divider">#DDE5DF</color>
+    <color name="md_day_disabled">#E2E8E3</color>
 
-    <color name="itemBgWhite">#ffffff</color>
+    <color name="md_night_darkText">#C9D3CC</color>
+    <color name="md_night_mediumText">#A3ADA6</color>
+    <color name="md_night_lightText">#8A938C</color>
+    <color name="md_night_link">#8AB4F8</color>
+    <color name="md_night_todo">#FFB74D</color>
+    <color name="md_night_divider">#3B4540</color>
+    <color name="md_night_disabled">#2D3631</color>
+
+    <!-- ===== 启动图标/启动页 ===== -->
+    <color name="ic_launcher_background">#0A0F0C</color>
+    <color name="splash_background">#0A0F0C</color>
+
+    <!-- ===== 旧名称：保留给桌面小部件、FAB 等仍按名称引用的位置，值指向日间主色体系 ===== -->
+    <color name="colorPrimary">#1B5E3A</color>
+    <color name="colorPrimaryDark">#0F4D2E</color>
+    <color name="colorAccent">#2E7D32</color>
+
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
 </resources>

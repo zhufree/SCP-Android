@@ -4,22 +4,21 @@ plugins {
     id 'com.google.gms.google-services'
     // Add the Crashlytics Gradle plugin
 }
-apply plugin: 'kotlin-android'
 apply plugin: 'kotlinx-serialization'
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 
 android {
-    compileSdk 34
+    compileSdk = 37
 
     defaultConfig {
-        applicationId "info.free.scp"
-        minSdk 21
-        targetSdk 34
-        versionCode 31
-        versionName "0.3.5"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        applicationId = 'info.free.scp'
+        minSdk = 21
+        targetSdk = 37
+        versionCode = 31
+        versionName = '0.3.5'
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
         multiDexEnabled = true
         ndk.abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
     }
@@ -29,51 +28,42 @@ android {
         release {
             minifyEnabled = true
             shrinkResources = true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         releaseStaging {
             minifyEnabled = true
             shrinkResources = true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     flavorDimensions += 'channel'
     flavorDimensions += "version"
     productFlavors {
         Test {
-            dimension 'version'
+            dimension = 'version'
             versionNameSuffix = "-test"
         }
         Production {
-            dimension 'version'
+            dimension = 'version'
         }
         Default {
-            dimension 'channel'
+            dimension = 'channel'
         }
         firim {
-            dimension 'channel'
+            dimension = 'channel'
         }
         GooglePlay {
-            dimension 'channel'
+            dimension = 'channel'
         }
         Github {
-            dimension 'channel'
+            dimension = 'channel'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
-        }
-    }
-
-    repositories {
-        maven { url = 'https://jitpack.io' }
-    }
     buildFeatures {
         buildConfig = true
         // Enables Jetpack Compose for this module
@@ -86,65 +76,70 @@ android {
     }
 }
 
+// material3 1.4.0 间接要求 lifecycle-common-java8:2.9.4。该模块从 2.8 起只是空壳（DefaultLifecycleObserver 已并入
+// lifecycle-common），离线缓存里也没有这个版本，排除后不影响运行。
+configurations.configureEach {
+    exclude group: 'androidx.lifecycle', module: 'lifecycle-common-java8'
+}
+
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 //    implementation fileTree(include: ['*.aar'], dir: 'libs')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:2.2.0"
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.13.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.preference:preference-ktx:1.2.1'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.2'
     testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.xerial:sqlite-jdbc:3.41.2.2'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    testImplementation 'org.xerial:sqlite-jdbc:3.54.1.0'
+    androidTestImplementation 'androidx.test:runner:1.7.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
+    implementation 'com.squareup.retrofit2:retrofit:3.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:3.0.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.5.1'
 
-    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.core:core-ktx:1.17.0'
     // 升级之后字段必须标注是否可为null
     implementation "androidx.room:room-runtime:2.7.2"
     ksp "androidx.room:room-compiler:2.7.2"
     implementation "androidx.room:room-ktx:2.7.2"
 
-    implementation("androidx.compose.ui:ui:1.7.4")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.7.4")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.7.4")
-    implementation("androidx.compose.foundation:foundation:1.7.4")
-    implementation("androidx.compose.material:material:1.7.4")
+    implementation platform('androidx.compose:compose-bom:2025.11.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    implementation 'androidx.compose.foundation:foundation'
+    implementation 'androidx.compose.material3:material3'
     // Integration with activities
-    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.activity:activity-compose:1.11.0'
     // Integration with ViewModels
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6'
-    implementation "androidx.navigation:navigation-compose:2.8.3"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4'
+    implementation 'androidx.navigation:navigation-compose:2.9.8'
     // Integration with observables
-    implementation("androidx.compose.runtime:runtime-livedata:1.7.4")
+    implementation 'androidx.compose.runtime:runtime-livedata'
 
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.6'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.6'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.6'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.4'
     implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
 
     // firebase
-    implementation platform('com.google.firebase:firebase-bom:33.5.0')
+    implementation platform('com.google.firebase:firebase-bom:33.16.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-database'
 
-    implementation "com.google.accompanist:accompanist-pager:0.25.0"
-
     // Material design icons
-    implementation("androidx.compose.material:material-icons-core:1.7.4")
-    implementation("androidx.compose.material:material-icons-extended:1.7.4")
+    implementation 'androidx.compose.material:material-icons-core'
+    implementation 'androidx.compose.material:material-icons-extended'
 
     // Coil
-    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("io.coil-kt:coil-compose:2.7.0")
 
     // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    implementation("org.jsoup:jsoup:1.19.1")
+    implementation("org.jsoup:jsoup:1.24.1")
 }
 
 ksp {

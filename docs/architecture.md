@@ -116,7 +116,19 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 
 ## 4. 主题
 
-`ThemeUtil` 维护白天/夜间两套颜色（`DAY_THEME=0`/`NIGHT_THEME=1`）并保存在偏好中；`ScpApplication.onCreate` 初始化；`BaseActivity`/`BaseFragment.refreshTheme()` 在切换时由 `MainActivity.refreshTheme()` 向三个主 Fragment 传播，Compose 侧通过 `themeVersion` 触发重组，`MainTheme`（`ui/Theme.kt`）按 `ThemeUtil` 选择 Material 配色。
+`ThemeUtil` 维护白天/夜间两套颜色（`DAY_THEME=0`/`NIGHT_THEME=1`）并保存在偏好中；`ScpApplication.onCreate` 初始化；`BaseActivity`/`BaseFragment.refreshTheme()` 在切换时由 `MainActivity.refreshTheme()` 向三个主 Fragment 传播，Compose 侧通过 `themeVersion` 触发重组。**应用内的日夜选择（“我的”页月亮按钮）是唯一来源**：`MainTheme` 不再读取 `isSystemInDarkTheme()`，系统深色模式不会联动应用；系统“强制深色”也用 `android:forceDarkAllowed=false` 关闭。
+
+配色为 Material 3 色彩角色，以启动图标（黑底荧光绿 + 白色标志）为依据：主色深绿 `#1B5E3A`，夜间用柔和亮绿 `#81C995`，夜间背景 `#0E1512`。色值只在 `res/values/colors.xml` 的 `md_day_*` / `md_night_*` 写一次，色值表和对比度见 `docs/build-and-release.md` 第 10 节。
+
+- **View 侧**：`DayTheme` 继承 `Theme.Material3.Light.NoActionBar`，`NightTheme` 继承 `Theme.Material3.Dark.NoActionBar`（都不是 DayNight 基类，所以不跟随系统 uiMode，也不需要 `values-night`）。两个 style 逐项设置 M3 角色属性（`colorPrimary`、`colorSurfaceContainer*`、`colorOutline`、`colorError*` 等）和 `ThemeUtil` 读取的自定义属性（`toolbarBg`、`onToolbar`、`containerBg`、`itemBoxBg`、`accentColor`、`darkText` 等）。`AppTheme` 等同 `DayTheme`，是 Manifest 里的应用默认主题。
+- **Compose 侧**：`MainTheme`（`ui/Theme.kt`）按 `ThemeUtil.currentTheme` 选 `lightColorScheme`/`darkColorScheme`，值由 `colorResource(R.color.md_*)` 取得，与 View 侧同源；组件全部是 `androidx.compose.material3`（已移除 Material 2 依赖）。形状见 `ui/Shape.kt`（小 8dp、中 12dp、大 16dp），卡片统一 12dp 圆角、1dp 阴影。新增 Compose 页面优先用 `MaterialTheme.colorScheme.*`；沿用的 `Color(ThemeUtil.xxx)` 读取是快照状态，切换主题后自动重组，不要缓存成普通变量。
+- **M3 Scaffold 注意**：M3 的 `Scaffold` 内容区从屏幕顶端开始，必须使用 lambda 传入的 `padding`，否则内容会被标题栏盖住（M2 不需要）。M3 `Card` 的内容是 `Column`，固定高度的条目里要给 `Row` 加 `fillMaxHeight()` 才能垂直居中。
+- 标题栏（`CommonTopBar` 和 `DetailActivityLayout` 的 Toolbar）日夜都是深色底，文字和图标用 `ThemeUtil.onToolbar`；程序化构建的 Toolbar 必须放在 `AppTheme.AppBarOverlay` 主题下（`DetailActivityLayout` 用 `ContextThemeWrapper` 包裹 `AppBarLayout`），弹出菜单用 `ToolbarPopupTheme`（颜色取自当前 Activity 的 ThemeUtil 属性）。
+- 设置页 Preference：开关换成 Material 3 `MaterialSwitch`（`SwitchPreferenceCompat` + `layout/preference_widget_material_switch.xml`），分类标题颜色来自 `colorAccent`。
+- `targetSdk 35+` 在 Android 15+ 强制 edge-to-edge，`window.statusBarColor` 不再生效。`view/base/ActivityInsets.kt` 的 `keepContentInsideSystemBars()` 把内容放到系统栏内侧，并用窗口背景给状态栏区域画 `toolbarBg`、其余区域画 `containerBg`；`refreshSystemBars()` 负责状态栏/导航栏图标深浅，并在主题切换时刷新。新增 Activity 若不继承 `BaseActivity`，需要自己调用 `keepContentInsideSystemBars()`。
+- 启动页：`MainActivity` 的 Manifest 主题是 `Theme.App.Splash`（继承 `DayTheme`）。Android 12+ 用系统 SplashScreen 属性（`values-v31`：近黑底 + 白色标志），更低版本用 `windowBackground`；进入 `BaseActivity.onCreate` 后 `ThemeUtil.setTheme` 换成日/夜主题，所以 `ThemeUtil` 仍是唯一切换点。没有使用 `androidx.core:core-splashscreen`（见 build-and-release 第 10 节）。
+- 预测性返回：Manifest `<application android:enableOnBackInvokedCallback="true">`。代码里没有重写 `onBackPressed`/`OnBackPressedCallback`/`KEYCODE_BACK`，标题栏返回箭头直接调用 `finish()`；以后新增自定义返回逻辑请用 `OnBackPressedCallback`，不要重写 `onBackPressed`。
+- 详情页 WebView 的夜间效果：离线正文由 `DetailHtmlComposer` 注入夜间 CSS 和 `darkreader.min.js`；在线网页在 `onPageStarted` 中注入 DarkReader；“文章不存在”等消息页在 `showArticleMessage` 里按 `ThemeUtil.containerBg`/`darkText` 生成 CSS。
 
 ## 5. 桌面小部件
 

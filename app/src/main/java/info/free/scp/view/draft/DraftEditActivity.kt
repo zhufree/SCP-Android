@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,7 +44,7 @@ class DraftEditActivity : BaseActivity() {
                                 IconButton(onClick = { saveDraft(showMessage = true) }) {
                                     Icon(
                                         painter = painterResource(R.drawable.ic_save_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Save"
                                     )
                                 }
@@ -55,7 +55,7 @@ class DraftEditActivity : BaseActivity() {
                             }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     DraftEditScreen(
                         title = draftTitle,

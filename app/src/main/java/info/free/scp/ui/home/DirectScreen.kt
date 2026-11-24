@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -111,19 +111,20 @@ private fun DirectKeyButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    val backgroundColor = when (tone) {
-        KeyTone.Neutral -> Color(ThemeUtil.disabledBg)
-        KeyTone.Number -> Color(ThemeUtil.accentColor)
-        KeyTone.Go -> MaterialTheme.colors.primary
+    val containerColor = when (tone) {
+        KeyTone.Neutral -> MaterialTheme.colorScheme.surfaceVariant
+        KeyTone.Number -> MaterialTheme.colorScheme.primaryContainer
+        KeyTone.Go -> MaterialTheme.colorScheme.primary
     }
     val textColor = when (tone) {
-        KeyTone.Neutral -> Color(ThemeUtil.lightText)
-        KeyTone.Number, KeyTone.Go -> MaterialTheme.colors.onSurface
+        KeyTone.Neutral -> MaterialTheme.colorScheme.onSurfaceVariant
+        KeyTone.Number -> MaterialTheme.colorScheme.onPrimaryContainer
+        KeyTone.Go -> MaterialTheme.colorScheme.onPrimary
     }
     Box(
         modifier = modifier
             .height(80.dp)
-            .background(backgroundColor, RoundedCornerShape(12.dp))
+            .background(containerColor, MaterialTheme.shapes.medium)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {

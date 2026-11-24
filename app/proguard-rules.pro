@@ -140,3 +140,4 @@ public static final int *;
   public <fields>;
   public <methods>;
 }
+-dontoptimize

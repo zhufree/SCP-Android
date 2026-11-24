@@ -10,10 +10,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
+import info.free.scp.view.base.keepContentInsideSystemBars
 
 class TagCloudActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,10 +43,10 @@ class TagCloudActivity : AppCompatActivity() {
                 }
             }
         }
+        keepContentInsideSystemBars()
     }
 }
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun MainApp(
     tagViewModel: TagViewModel,
@@ -57,11 +59,12 @@ fun MainApp(
                 finish()
             }
         },
-        backgroundColor = MaterialTheme.colors.background
-    ) { _ ->
+        containerColor = MaterialTheme.colorScheme.background
+    ) { padding ->
         val tagMap by tagViewModel.tagMap.observeAsState()
         Column(
             modifier = Modifier
+                .padding(padding)
                 .padding(8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -73,7 +76,7 @@ fun MainApp(
                     Text(
                         text = "加载中请稍候",
                         fontSize = 20.sp,
-                        color = MaterialTheme.colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -84,7 +87,8 @@ fun MainApp(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(4.dp), // Random height to simulate staggered grid
-                                elevation = 2.dp
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
                             ) {
                                 Column(
                                     modifier = Modifier
@@ -97,13 +101,13 @@ fun MainApp(
                                 ) {
                                     Text(
                                         text = it,
-                                        color = MaterialTheme.colors.onPrimary,
+                                        color = MaterialTheme.colorScheme.onSurface,
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 20.sp,
                                     )
                                     Text(
                                         text = map[it].toString(),
-                                        color = MaterialTheme.colors.onSecondary,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         fontSize = 18.sp
                                     )
                                 }

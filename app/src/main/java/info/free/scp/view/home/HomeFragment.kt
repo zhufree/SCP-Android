@@ -8,9 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ScrollableTabRow
-import androidx.compose.material.Tab
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -73,12 +74,14 @@ class HomeFragment : BaseFragment() {
                         )
                         ScrollableTabRow(
                             selectedTabIndex = selectedTab,
-                            backgroundColor = Color(ThemeUtil.itemBg),
-                            contentColor = Color(ThemeUtil.accentColor)
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary
                         ) {
                             titles.forEachIndexed { index, title ->
                                 Tab(
                                     selected = selectedTab == index,
+                                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                                     onClick = { selectedTab = index },
                                     text = { Text(text = title) }
                                 )

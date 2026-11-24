@@ -1,22 +1,19 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '2.2.0'
+    def kotlinVersion = '2.4.21'
 
     repositories {
         google()
-        maven {
-            url = "https://maven.aliyun.com/nexus/content/groups/public/"
-        }
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.13.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.0'
-        classpath "org.jetbrains.kotlin:kotlin-serialization:2.2.0"
-        classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.2.0"
-        classpath "com.google.devtools.ksp:symbol-processing-gradle-plugin:2.2.0-2.0.2"
-        classpath 'com.google.gms:google-services:4.4.0'
+        classpath 'com.android.tools.build:gradle:9.5.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlinVersion"
+        classpath 'com.google.devtools.ksp:symbol-processing-gradle-plugin:2.3.14'
+        classpath 'com.google.gms:google-services:4.6.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -25,10 +22,6 @@ buildscript {
 allprojects {
     repositories {
         google()
-        // jcenter()
-        maven {
-            url = "https://maven.aliyun.com/nexus/content/groups/public/"
-        }
         mavenCentral()
     }
 }

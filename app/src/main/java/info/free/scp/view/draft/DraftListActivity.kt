@@ -6,9 +6,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
@@ -38,14 +38,14 @@ class DraftListActivity : BaseActivity() {
                                 IconButton(onClick = { openDraftHelp() }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_help_outline_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Help"
                                     )
                                 }
                                 IconButton(onClick = { startActivity(Intent(this@DraftListActivity, DraftEditActivity::class.java)) }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_add_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Add"
                                     )
                                 }
@@ -53,7 +53,7 @@ class DraftListActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     androidx.compose.foundation.layout.Box(
                         modifier = androidx.compose.ui.Modifier.padding(padding)

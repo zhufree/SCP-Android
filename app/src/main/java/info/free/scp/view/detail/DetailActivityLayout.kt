@@ -1,7 +1,7 @@
 package info.free.scp.view.detail
 
 import android.content.Context
-import android.content.res.ColorStateList
+import android.view.ContextThemeWrapper
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.View
@@ -56,16 +56,17 @@ class DetailActivityLayout private constructor(
                 setBackgroundColor(ThemeUtil.containerBg)
             }
 
-            val appBar = AppBarLayout(context).apply {
+            // 与旧版布局里 AppBarLayout 的 android:theme 一致：标题和溢出菜单图标用浅色
+            val appBar = AppBarLayout(ContextThemeWrapper(context, R.style.AppTheme_AppBarOverlay)).apply {
                 id = R.id.ablToolbarWrapper
                 fitsSystemWindows = true
             }
-            val toolbar = Toolbar(context).apply {
+            val toolbar = Toolbar(appBar.context).apply {
                 id = R.id.detail_toolbar
                 setBackgroundColor(ThemeUtil.toolbarBg)
                 popupTheme = R.style.ToolbarPopupTheme
             }
-            val titleView = TextView(context).apply {
+            val titleView = TextView(appBar.context).apply {
                 id = R.id.tv_detail_toolbar
                 ellipsize = android.text.TextUtils.TruncateAt.MARQUEE
                 isFocusable = true
@@ -73,6 +74,7 @@ class DetailActivityLayout private constructor(
                 marqueeRepeatLimit = -1
                 setSingleLine(true)
                 textSize = 18f
+                setTextColor(ThemeUtil.onToolbar)
             }
             toolbar.addView(titleView, Toolbar.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
             appBar.addView(
@@ -286,10 +288,8 @@ class DetailActivityLayout private constructor(
 
             val commentButton = FloatingActionButton(context).apply {
                 id = R.id.btn_comment
-                backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.colorPrimary))
-                elevation = Utils.dp2px(10, context).toFloat()
+                // 颜色交给 Material 3 主题的 FloatingActionButton 样式（primaryContainer / onPrimaryContainer）
                 setImageResource(R.drawable.baseline_textsms_white_24dp)
-                rippleColor = ContextCompat.getColor(context, R.color.colorPrimaryDark)
             }
             bottomBar.addView(
                 commentButton,

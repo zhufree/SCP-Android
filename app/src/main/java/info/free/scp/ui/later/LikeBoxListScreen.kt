@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Card
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -201,9 +203,9 @@ private fun LikeBoxItem(
                 onClick = onClick,
                 onLongClick = onLongClick
             ),
-        shape = RoundedCornerShape(6.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 2.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Text(
             modifier = Modifier

@@ -13,10 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,8 +40,8 @@ private data class TopRatedEntry(
 )
 
 private val topRatedEntries = listOf(
-    TopRatedEntry(SCPConstants.TOP_RATED_ALL, R.string.top_rated_all, Color(0xFFBA6502)),
-    TopRatedEntry(SCPConstants.TOP_RATED_SCP, R.string.top_rated_scp, Color(0xFF0780B7)),
+    TopRatedEntry(SCPConstants.TOP_RATED_ALL, R.string.top_rated_all, Color(0xFFB45F00)),
+    TopRatedEntry(SCPConstants.TOP_RATED_SCP, R.string.top_rated_scp, Color(0xFF06709F)),
     TopRatedEntry(SCPConstants.TOP_RATED_TALES, R.string.top_rated_tale, Color(0xFF80562F)),
     TopRatedEntry(SCPConstants.TOP_RATED_GOI, R.string.top_rated_goi, Color(0xFF322E2E)),
     TopRatedEntry(SCPConstants.TOP_RATED_WANDERS, R.string.top_rated_wanderer, Color(0xFF136899))
@@ -61,7 +62,7 @@ fun TopRatedMenuScreen(
                 )
             }
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         TopRatedMenuContent(
             modifier = Modifier.padding(padding),
@@ -112,9 +113,9 @@ private fun TopRatedEntryCard(
 ) {
     Card(
         modifier = modifier.clickable(onClick = onClick),
-        shape = RoundedCornerShape(if (compact) 5.dp else 6.dp),
-        elevation = if (compact) 2.dp else 4.dp,
-        backgroundColor = if (compact) Color(ThemeUtil.containerBg) else entry.color
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = if (compact) Color(ThemeUtil.containerBg) else entry.color),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (compact) 1.dp else 3.dp)
     ) {
         Box(
             modifier = Modifier
@@ -125,7 +126,7 @@ private fun TopRatedEntryCard(
         ) {
             Text(
                 text = stringResource(entry.titleRes),
-                color = if (compact) Color(ThemeUtil.darkText) else MaterialTheme.colors.onSurface,
+                color = if (compact) Color(ThemeUtil.darkText) else Color.White,
                 textAlign = TextAlign.Center,
                 fontSize = if (compact) 22.sp else 30.sp
             )

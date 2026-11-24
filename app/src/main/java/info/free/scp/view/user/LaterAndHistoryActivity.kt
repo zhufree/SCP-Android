@@ -6,12 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -57,14 +57,14 @@ class LaterAndHistoryActivity : BaseActivity() {
                                 ) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_swap_vertical_circle_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Reverse"
                                     )
                                 }
                                 IconButton(onClick = { showClearDialog = true }) {
                                     Icon(
                                         painter = painterResource(R.drawable.baseline_delete_forever_white_24dp),
-                                        tint = Color(ThemeUtil.lightText),
+                                        tint = Color(ThemeUtil.onToolbar),
                                         contentDescription = "Clear history"
                                     )
                                 }
@@ -72,7 +72,7 @@ class LaterAndHistoryActivity : BaseActivity() {
                             onBackPressed = { finish() }
                         )
                     },
-                    backgroundColor = Color(ThemeUtil.containerBg)
+                    containerColor = Color(ThemeUtil.containerBg)
                 ) { padding ->
                     Box(modifier = Modifier.padding(padding)) {
                         RecordListScreen(

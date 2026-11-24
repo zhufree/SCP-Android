@@ -16,11 +16,14 @@
 package info.free.scp.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Shapes
+import androidx.compose.material3.Shapes
 import androidx.compose.ui.unit.dp
 
+// Material 3 圆角档位：小 8dp（输入框、按钮内元素）、中 12dp（卡片、列表项）、大 16dp（对话框、选中胶囊）
 val shapes = Shapes(
-    small = RoundedCornerShape(4.dp),
-    medium = RoundedCornerShape(4.dp),
-    large = RoundedCornerShape(0.dp)
+    extraSmall = RoundedCornerShape(4.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(12.dp),
+    large = RoundedCornerShape(16.dp),
+    extraLarge = RoundedCornerShape(28.dp)
 )

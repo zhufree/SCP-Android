@@ -64,7 +64,7 @@ class CommentLayout : LinearLayout {
         )
 
         contentRow.orientation = HORIZONTAL
-        accentView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
+        accentView.setBackgroundColor(ThemeUtil.accentColor)
         contentRow.addView(
             accentView,
             LayoutParams(accentWidth, MATCH_PARENT).apply { marginEnd = Utils.dp2px(2, context) }

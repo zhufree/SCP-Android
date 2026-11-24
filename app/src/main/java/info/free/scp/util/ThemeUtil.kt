@@ -7,7 +7,9 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import androidx.compose.material.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.FragmentActivity
 import info.free.scp.R
@@ -18,18 +20,20 @@ import info.free.scp.R
  */
 
 object ThemeUtil {
-    var toolbarBg: Int = -1
-    var containerBg: Int = -1
-    var itemBg: Int = -1
-    var accentColor: Int = -1
-    var darkText: Int = -1
-    var mediumText: Int = -1
-    var lightText: Int = -1
-    var disabledBg: Int = -1
-    var linkBlue: Int = -1
-    var todoYellow: Int = -1
-    var dividerGray: Int = -1
-    var currentTheme: Int = -1
+    // 用 Compose 快照状态保存，Compose 页面读取后会在切换主题时自动重组
+    var toolbarBg by mutableIntStateOf(-1)
+    var onToolbar by mutableIntStateOf(-1)
+    var containerBg by mutableIntStateOf(-1)
+    var itemBg by mutableIntStateOf(-1)
+    var accentColor by mutableIntStateOf(-1)
+    var darkText by mutableIntStateOf(-1)
+    var mediumText by mutableIntStateOf(-1)
+    var lightText by mutableIntStateOf(-1)
+    var disabledBg by mutableIntStateOf(-1)
+    var linkBlue by mutableIntStateOf(-1)
+    var todoYellow by mutableIntStateOf(-1)
+    var dividerGray by mutableIntStateOf(-1)
+    var currentTheme by mutableIntStateOf(-1)
     private val themeListeners = linkedSetOf<() -> Unit>()
     const val DAY_THEME = 0
     const val NIGHT_THEME = 1
@@ -89,7 +93,8 @@ object ThemeUtil {
                 R.attr.disabledBg,
                 R.attr.linkBlue,
                 R.attr.todoYellow,
-                R.attr.dividerGray
+                R.attr.dividerGray,
+                R.attr.onToolbar
         ))
         toolbarBg = allColor.getColor(0, Color.WHITE)
         containerBg = allColor.getColor(1, Color.WHITE)
@@ -102,6 +107,7 @@ object ThemeUtil {
         linkBlue = allColor.getColor(8, Color.WHITE)
         todoYellow = allColor.getColor(9, Color.WHITE)
         dividerGray = allColor.getColor(10, Color.WHITE)
+        onToolbar = allColor.getColor(11, Color.WHITE)
         allColor.recycle()
     }
 

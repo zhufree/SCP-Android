@@ -50,10 +50,10 @@ class HtmlParserService {
             }
         }
         if (discussButton !== null) {
-            if (discussButton!!.text() == "讨论 (0)"){
+            if (discussButton.text() == "讨论 (0)"){
                 noComment = true // use it in DetailActivity later
             }
-            return discussButton!!.attr("href")
+            return discussButton.attr("href")
         }
         throw Exception("Comment link not found")
     }
@@ -79,10 +79,10 @@ class HtmlParserService {
             override fun onResponse(call: Call, response: Response) {
                 response.use {
                     try {
-                        if (!response.isSuccessful || response.body == null) {
+                        if (!response.isSuccessful) {
                             throw IOException("Unexpected code $response on $scpId")
                         }
-                        val commentUrl = parseCommentUrl(response.body!!.string())
+                        val commentUrl = parseCommentUrl(response.body.string())
                         val requestForComment: Request = Request.Builder()
                             .url(SCP_BASE + commentUrl)
                             .addHeader("Cookie", cookie)
@@ -99,10 +99,10 @@ class HtmlParserService {
 
                             override fun onResponse(call: Call, response: Response) {
                                 response.use {
-                                    if (!response.isSuccessful || response.body == null) {
+                                    if (!response.isSuccessful) {
                                         throw IOException("Unexpected code $response on $commentUrl")
                                     }
-                                    val comments = parseComments(response.body!!.string())
+                                    val comments = parseComments(response.body.string())
                                     continuation.resume(ApiBean.ApiListResponse<CommentModel>(comments))
                                 }
                             }

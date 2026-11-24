@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,12 +16,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +56,7 @@ fun RandomScreen(
                 onBackPressed = onBackPressed
             )
         },
-        backgroundColor = Color(ThemeUtil.containerBg)
+        containerColor = Color(ThemeUtil.containerBg)
     ) { padding ->
         Box(
             modifier = Modifier
@@ -105,12 +108,12 @@ private fun RandomListItem(
             .height(70.dp)
             .padding(horizontal = 7.dp, vertical = 5.dp)
             .clickable(onClick = onClick),
-        shape = RoundedCornerShape(6.dp),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
+            modifier = Modifier.fillMaxHeight().padding(horizontal = 20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -140,10 +143,6 @@ private fun RandomActionButton(
             .fillMaxWidth()
             .height(48.dp),
         shape = RoundedCornerShape(32.dp),
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color(0xFF4A90E2),
-            contentColor = Color.White
-        ),
         onClick = onClick
     ) {
         Text(text = text, fontSize = 24.sp)

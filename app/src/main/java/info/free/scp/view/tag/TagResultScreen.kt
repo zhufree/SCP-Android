@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.sp
 import info.free.scp.bean.ScpModel
 import info.free.scp.components.CommonTopBar
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun TagResultScreen(
     tagViewModel: TagViewModel,
@@ -37,6 +36,7 @@ fun TagResultScreen(
     }) { p ->
         Column(
             modifier = Modifier
+                .padding(p)
                 .padding(8.dp)
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -47,7 +47,7 @@ fun TagResultScreen(
                     Text(
                         text = "加载中请稍候",
                         fontSize = 20.sp,
-                        color = MaterialTheme.colors.onPrimary,
+                        color = MaterialTheme.colorScheme.onSurface,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.padding(16.dp)
                     )
@@ -69,7 +69,6 @@ fun TagResultScreen(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun TagScpCard(
     scp: ScpModel,
@@ -77,12 +76,12 @@ fun TagScpCard(
     navigateToDetail: (link: String) -> Unit
 ) {
     Card(
-        elevation = 1.dp,
-        shape = RoundedCornerShape(6.dp),
-        backgroundColor = MaterialTheme.colors.onBackground,
+        shape = MaterialTheme.shapes.medium,
         onClick = {
             navigateToDetail(scp.link)
-        }
+        },
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
             modifier = Modifier
@@ -91,7 +90,7 @@ fun TagScpCard(
         ) {
             Text(
                 scp.title,
-                color = MaterialTheme.colors.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 maxLines = 3,
@@ -100,7 +99,7 @@ fun TagScpCard(
             if (!tagText.isNullOrEmpty()) {
                 Text(
                     text = ("标签：" + tagText),
-                    color = MaterialTheme.colors.onSecondary,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )

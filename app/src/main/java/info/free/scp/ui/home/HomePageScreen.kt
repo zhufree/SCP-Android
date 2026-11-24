@@ -16,13 +16,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -93,9 +94,9 @@ fun HomePageScreen(
 private fun NoticeCard(notice: String, onDismiss: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 2.dp,
-        shape = RoundedCornerShape(6.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -121,9 +122,9 @@ private fun NoticeCard(notice: String, onDismiss: () -> Unit) {
 private fun EntryGrid(onOpenGroup: (Int) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp,
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier.padding(vertical = 24.dp, horizontal = 8.dp),
@@ -200,9 +201,9 @@ private fun FeedSection(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        backgroundColor = Color(ThemeUtil.itemBg),
-        elevation = 1.dp,
-        shape = RoundedCornerShape(8.dp)
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(modifier = Modifier.padding(bottom = 16.dp)) {
             Text(
@@ -241,7 +242,7 @@ private fun FeedArticleRow(feed: FeedModel, onClick: () -> Unit) {
             Spacer(modifier = Modifier.weight(1f))
             Text(text = feed.rank, color = Color(ThemeUtil.mediumText), fontSize = 12.sp)
         }
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(top = 10.dp),
             color = Color(ThemeUtil.dividerGray)
         )
@@ -254,12 +255,12 @@ private fun HomeFeatureButton(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(120.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colors.primary)
+            .clip(MaterialTheme.shapes.medium)
+            .background(MaterialTheme.colorScheme.primary)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, color = Color.White, fontSize = 30.sp)
+        Text(text = text, color = MaterialTheme.colorScheme.onPrimary, fontSize = 30.sp)
     }
 }
 

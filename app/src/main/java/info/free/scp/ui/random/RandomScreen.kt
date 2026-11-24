@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import info.free.scp.util.normalizeLink
 import info.free.scp.R
 import info.free.scp.bean.ScpItemModel
 import info.free.scp.components.CommonTopBar
@@ -63,7 +64,7 @@ fun RandomScreen(
                 state = listState,
                 modifier = Modifier.fillMaxSize(),
                 content = {
-                    itemsIndexed(randomList, key = { _, item -> item.link }) { index, item ->
+                    itemsIndexed(randomList, key = { _, item -> normalizeLink(item.link) }) { index, item ->
                         RandomListItem(
                             item = item,
                             onClick = { onOpenRandom(item, index) }

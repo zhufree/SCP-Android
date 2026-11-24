@@ -3,12 +3,12 @@ package info.free.scp.data.backup
 import info.free.scp.SCPConstants.APP_PREF_NAME
 import info.free.scp.SCPConstants.INFO_DB_NAME
 import info.free.scp.SCPConstants.LEVEL_PREF_NAME
+import java.io.File
 
 data class BackupFileSpec(
     val fileName: String,
     val mimeType: String,
-    val localPath: String,
-    val sidecarPaths: List<String> = emptyList()
+    val localPath: String
 )
 
 class BackupFilePlan(
@@ -19,21 +19,17 @@ class BackupFilePlan(
         BackupFileSpec(
             fileName = INFO_DB_NAME,
             mimeType = "*/*",
-            localPath = "$privateDatabaseDirectory$INFO_DB_NAME",
-            sidecarPaths = listOf(
-                "$privateDatabaseDirectory$INFO_DB_NAME-shm",
-                "$privateDatabaseDirectory$INFO_DB_NAME-wal"
-            )
+            localPath = File(privateDatabaseDirectory, INFO_DB_NAME).path
         ),
         BackupFileSpec(
             fileName = LEVEL_PREF_NAME,
             mimeType = "application/xml",
-            localPath = "$privatePreferenceDirectory$LEVEL_PREF_NAME"
+            localPath = File(privatePreferenceDirectory, LEVEL_PREF_NAME).path
         ),
         BackupFileSpec(
             fileName = APP_PREF_NAME,
             mimeType = "application/xml",
-            localPath = "$privatePreferenceDirectory$APP_PREF_NAME"
+            localPath = File(privatePreferenceDirectory, APP_PREF_NAME).path
         )
     )
 }

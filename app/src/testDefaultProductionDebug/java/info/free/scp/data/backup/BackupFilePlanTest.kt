@@ -33,15 +33,7 @@ class BackupFilePlanTest {
     }
 
     @Test
-    fun removesRoomSidecarsOnlyWhenRestoringDatabase() {
-        assertEquals(
-            listOf(
-                "/databases/$INFO_DB_NAME-shm",
-                "/databases/$INFO_DB_NAME-wal"
-            ),
-            plan.files.first().sidecarPaths
-        )
-        assertEquals(emptyList<String>(), plan.files[1].sidecarPaths)
-        assertEquals(emptyList<String>(), plan.files[2].sidecarPaths)
+    fun onlyPreferencesAreExportedAsXml() {
+        assertEquals(listOf("*/*", "application/xml", "application/xml"), plan.files.map { it.mimeType })
     }
 }

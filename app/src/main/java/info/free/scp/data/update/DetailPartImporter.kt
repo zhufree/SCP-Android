@@ -2,7 +2,8 @@ package info.free.scp.data.update
 
 import android.database.sqlite.SQLiteDatabase
 import android.util.Log
-import info.free.scp.util.FileUtil
+import info.free.scp.SCPConstants.AppMode.OFFLINE
+import info.free.scp.util.PreferenceUtil
 import java.io.File
 
 internal val DETAIL_IMPORT_LOCK = Any()
@@ -47,7 +48,7 @@ internal class DetailPartImporter(private val databases: UpdateDatabases) {
         if (plan[part.id] == PartAction.SKIP) return@synchronized
         val retired = plan.filterValues { it == PartAction.DELETE }.keys
         databases.withDetailTarget { target -> merge(file, target, manifest, part, retired) }
-        FileUtil.checkDetailDb()
+        PreferenceUtil.setAppMode(OFFLINE)
     }
 
     private fun merge(file: File, target: File, manifest: UpdateManifest, part: DetailPart, retired: Set<String>) {

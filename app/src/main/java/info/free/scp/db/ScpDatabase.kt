@@ -1,38 +1,31 @@
 package info.free.scp.db
 
-import android.database.sqlite.SQLiteDatabaseCorruptException
-import android.widget.Toast
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpItemModel
-
+import info.free.scp.data.update.PreserveDatabaseOnCorruption
 
 @Database(entities = [ScpItemModel::class], version = 2)
 abstract class ScpDatabase : RoomDatabase() {
     abstract fun scpDao(): ScpDao
 
     companion object {
-        private var INSTANCE: ScpDatabase? = null
+        private var instance: ScpDatabase? = null
+        @Volatile internal var ready = false
 
         @Synchronized
         fun getInstance(): ScpDatabase? {
-            try {
-                if (INSTANCE == null) {
-                    val context = ScpApplication.context
-                    val builder = Room.databaseBuilder(context, ScpDatabase::class.java, SCP_DB_NAME)
-                    // The copy helper can recopy the asset over an installed, pre-Room v0 database.
-                    if (!context.getDatabasePath(SCP_DB_NAME).exists()) builder.createFromAsset(SCP_DB_NAME)
-                    INSTANCE = builder.allowMainThreadQueries().build()
-                }
-            } catch (e1: SQLiteDatabaseCorruptException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            } catch (e2: IllegalStateException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            }
-            return INSTANCE
+            if (!ready) return null
+            return instance ?: builder(ScpApplication.context, SCP_DB_NAME).build().also { instance = it }
         }
+
+        internal fun builder(context: Context, name: String): Builder<ScpDatabase> =
+            Room.databaseBuilder(context, ScpDatabase::class.java, name)
+                .openHelperFactory(PreserveDatabaseOnCorruption)
+                .allowMainThreadQueries()
     }
 }

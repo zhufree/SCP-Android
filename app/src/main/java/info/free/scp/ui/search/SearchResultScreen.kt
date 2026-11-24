@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import info.free.scp.util.normalizeLink
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.ui.MainTheme
@@ -47,7 +48,7 @@ fun SearchResultScreen(
             .padding(vertical = 5.dp)
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(results, key = { it.link }) { result ->
+            items(results, key = { normalizeLink(it.link) }) { result ->
                 SearchResultItem(
                     result = result,
                     onClick = { onOpenResult(result) }

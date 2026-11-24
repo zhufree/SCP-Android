@@ -100,6 +100,18 @@ class RandomRepositoryTest {
         assertEquals(listOf("3,4", "3,4"), source.requestedRanges)
     }
 
+    @Test
+    fun appendingRefillsWithoutRepeatingAnExistingArticleOrAlias() {
+        val existing = document("/scp-1", "first")
+        val source = FakeRandomDataSource(batches = listOf(
+            listOf(document("/SCP-1#pages", "alias"), document("/scp-2", "second")),
+            listOf(document("/scp-3", "third"))
+        ))
+        val result = RandomRepository(source, batchSize = 2).getRandomList("", listOf(existing), append = true)
+
+        assertEquals(listOf("first", "second", "third"), result.map { it.title })
+    }
+
     private fun document(link: String, title: String): ScpItemModel {
         return ScpItemModel().apply {
             this.link = link

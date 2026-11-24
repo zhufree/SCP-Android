@@ -1,84 +1,74 @@
 package info.free.scp.data.detail
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import apiCall
-import executeResponse
-import info
+import info.free.scp.ScpApplication
 import info.free.scp.bean.CommentModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.data.catalog.ScpCatalogRepository
 import info.free.scp.db.DetailDatabase
 import info.free.scp.service.HttpManager
+import info.free.scp.util.Utils
 import info.free.scp.util.normalizeLink
+import kotlinx.coroutines.CancellationException
+import retrofit2.HttpException
 
-class DetailRepository {
-    val scp: MutableLiveData<ScpModel?> = MutableLiveData()
-    val detail: MutableLiveData<String?> = MutableLiveData("")
-    val tag: MutableLiveData<String?> = MutableLiveData("")
-    val commentList: MutableLiveData<List<CommentModel>> = MutableLiveData()
-    var offlineDetail: LiveData<String> = MutableLiveData()
-    var offlineTag: LiveData<String> = MutableLiveData()
+internal class DetailRepository {
     private val catalogRepository = ScpCatalogRepository()
 
-    fun setScp(link: String) {
-        scp.postValue(catalogRepository.getDocumentByLink(link))
+    fun getDocumentByLink(link: String): ScpModel? = catalogRepository.getDocumentByLink(link)
+
+    fun getNextDocument(index: Int, type: Int): ScpModel? = catalogRepository.getNextDocument(index, type)
+
+    fun getPreviousDocument(index: Int, type: Int): ScpModel? = catalogRepository.getPreviousDocument(index, type)
+
+    fun loadOfflineDetail(link: String): DetailReadResult {
+        return try {
+            val dao = DetailDatabase.getInstance()?.detailDao() ?: return DetailReadResult.Missing
+            val key = normalizeLink(link)
+            // Newly published parts use canonical keys. Prefer those over unowned legacy aliases.
+            classifyDetail(dao.getArticle(key) ?: dao.getLegacyArticle(key))
+        } catch (failure: Exception) {
+            classifyDetail(null, failure)
+        }
     }
 
-    fun getDocumentByLink(link: String): ScpModel? {
-        return catalogRepository.getDocumentByLink(link)
-    }
+    fun isNetworkAvailable(): Boolean = Utils.enabledNetwork(ScpApplication.context)
 
-    fun getNextDocument(index: Int, type: Int): ScpModel? {
-        return catalogRepository.getNextDocument(index, type)
-    }
-
-    fun getPreviousDocument(index: Int, type: Int): ScpModel? {
-        return catalogRepository.getPreviousDocument(index, type)
-    }
-
-    fun loadOfflineDetail(link: String) {
-        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(normalizeLink(link))
-            ?: MutableLiveData()
-    }
-
-    fun loadOfflineTag(link: String) {
-        offlineTag = DetailDatabase.getInstance()?.detailDao()?.getLiveTag(normalizeLink(link))
-            ?: MutableLiveData()
-    }
-
-    suspend fun loadDetail(link: String) {
-        val response = apiCall { HttpManager.instance.getDetail(DetailLinkResolver.toApiPath(link)) }
-        response?.let {
-            executeResponse(response, {
-            }, {
-                if (response.results.isNotEmpty()) {
-                    detail.postValue(response.results[0])
+    suspend fun loadOnlineDetail(link: String): DetailReadResult {
+        val path = DetailLinkResolver.toApiPath(link)
+        return try {
+            val response = HttpManager.instance.getDetail(path)
+            when {
+                response.code == 404 -> DetailReadResult.NotFound
+                !response.error.isNullOrEmpty() -> DetailReadResult.Failed
+                else -> {
+                    val html = response.results.firstOrNull()
+                    if (html.isNullOrBlank() || html.trim() == "null") return DetailReadResult.Missing
+                    val tags = loadOnlineTags(path)
+                    DetailReadResult.Hit(html, tags)
                 }
-            })
+            }
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (failure: HttpException) {
+            if (failure.code() == 404) DetailReadResult.NotFound else DetailReadResult.Failed
+        } catch (failure: Exception) {
+            DetailReadResult.Failed
         }
     }
 
-    suspend fun loadTag(link: String) {
-        val response = apiCall { HttpManager.instance.getTag(DetailLinkResolver.toApiPath(link)) }
-        response?.let {
-            executeResponse(response, {
-            }, {
-                if (response.results.isNotEmpty()) {
-                    tag.postValue(response.results[0])
-                }
-            })
-        }
+    private suspend fun loadOnlineTags(path: String): String? = try {
+        HttpManager.instance.getTag(path).results.firstOrNull()
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (failure: Exception) {
+        null
     }
 
-    suspend fun loadComment(link: String) {
-        val response = apiCall { HttpManager.instance.getComment(DetailLinkResolver.toApiPath(link)) }
-        response?.let {
-            executeResponse(response, {
-            }, {
-                info(response.results.toString())
-                commentList.postValue(response.results)
-            })
-        }
+    suspend fun loadComment(link: String): List<CommentModel> = try {
+        HttpManager.instance.getComment(DetailLinkResolver.toApiPath(link)).results
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (failure: Exception) {
+        emptyList()
     }
 }

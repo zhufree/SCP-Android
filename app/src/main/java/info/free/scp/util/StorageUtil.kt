@@ -33,26 +33,15 @@ fun privatePictureDir(context: Context, fileName: String): File {
 
 @Throws(IOException::class)
 fun copyFileFromUri(context: Context, fileUri: Uri, outputFile: File): Boolean {
-    val resolver = context.contentResolver
-    val inputStream = resolver.openInputStream(fileUri)
-    val outputStream = outputFile.outputStream()
-    inputStream?.copyTo(outputStream)
-    inputStream?.close()
-    outputStream.close()
+    val input = context.contentResolver.openInputStream(fileUri) ?: return false
+    input.use { source -> outputFile.outputStream().use { source.copyTo(it) } }
     return true
 }
 
 @Throws(IOException::class)
-fun copyFileToUri(context: Context, inputFile: File, outputUri: Uri): Boolean {
-    val resolver = context.contentResolver
-    val inputStream = inputFile.inputStream()
-    val outputStream = resolver.openOutputStream(outputUri)
-    outputStream?.let {
-        inputStream.copyTo(outputStream)
+fun copyFileToUri(context: Context, inputFile: File, outputUri: Uri) {
+    inputFile.inputStream().use { source ->
+        val output = context.contentResolver.openOutputStream(outputUri, "wt") ?: throw IOException("无法打开输出文件")
+        output.use { source.copyTo(it) }
     }
-    inputStream.close()
-    outputStream?.close()
-    return true
 }
-
-

@@ -2,8 +2,10 @@ package info.free.scp.data.update
 
 import java.io.File
 
+internal val databaseSidecars = listOf("-wal", "-shm", "-journal")
+
 internal fun deleteSidecars(file: File) {
-    for (suffix in listOf("-wal", "-shm", "-journal")) {
+    for (suffix in databaseSidecars) {
         deleteFile(File(file.path + suffix))
     }
 }
@@ -20,13 +22,15 @@ internal fun moveFile(from: File, to: File) {
 internal class DatabaseSwap(val live: File, val staging: File) {
     private val backup = File(live.path + ".bak")
 
-    fun recover(probe: (File) -> Unit) {
-        if (!backup.exists()) return
-        when {
-            !live.exists() -> moveFile(backup, live)
-            runCatching { probe(live) }.isSuccess -> deleteFile(backup)
-            else -> restoreBackup()
+    /** Returns true when an interrupted swap was rolled back. */
+    fun recover(probe: (File) -> Unit): Boolean {
+        if (!backup.exists()) return false
+        if (live.exists() && runCatching { probe(live) }.isSuccess) {
+            deleteFile(backup)
+            return false
         }
+        restoreBackup()
+        return true
     }
 
     fun install(probe: (File) -> Unit) {

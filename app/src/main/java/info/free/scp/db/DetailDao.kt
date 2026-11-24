@@ -1,6 +1,5 @@
 package info.free.scp.db
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.Companion.REPLACE
@@ -20,14 +19,14 @@ interface DetailDao {
     @Query("SELECT detail FROM scp_detail WHERE link = :link")
     fun getDetail(link: String): String?
 
-    @Query("SELECT detail FROM scp_detail WHERE link = :link")
-    fun getLiveDetail(link: String): LiveData<String>?
+    @Query("SELECT * FROM scp_detail WHERE link = :link")
+    fun getArticle(link: String): ScpDetail?
+
+    @Query(LEGACY_DETAIL_LOOKUP)
+    fun getLegacyArticle(link: String): ScpDetail?
 
     @Query("SELECT tags FROM scp_detail WHERE link = :link")
     fun getTag(link: String): String?
-
-    @Query("SELECT tags FROM scp_detail WHERE link = :link")
-    fun getLiveTag(link: String): LiveData<String>?
 
     @Query("SELECT link FROM scp_detail WHERE tags LIKE :tag")
     fun getLinksByTag(tag: String): List<String>

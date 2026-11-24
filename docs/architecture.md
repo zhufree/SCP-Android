@@ -75,14 +75,12 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
                                           SharedPreferences 设置/积分/Cookie
 ```
 
-- **目录**：`ScpDatabase`（`scp_category_v2.db`）冷启动时从较新的内置库或已校验的 Release 暂存文件安装。仅在目录文件缺失时走 Room 的 `createFromAsset` 初始化路径，已安装的原始 v0 数据文件直接打开并由 Room 初始化本地版本。所有分类列表、搜索、上下篇、编号直达（离线时）、随机（`RandomRepository` 当前直接查本地目录库）都依赖它。
-- **正文**：取决于 `PreferenceUtil.getAppMode()`（`ONLINE=0` / `OFFLINE=1`）。
-  - 离线：成功合并正文块或从 SAF 安装完整的 `scp_detail_v2.db` 后，`FileUtil.checkDetailDb()`/`DetailDatabase.getInstance()` 会把模式置为 `OFFLINE`；`DetailViewModel.loadDetail` 从 `DetailDao` 读取正文与 Tag。离线才支持全文搜索（`DetailDao.searchScpByDetail`）和本地 Tag 检索。
-  - 在线：`DetailRepository.loadDetail/loadTag` 调用 `GET /get_detail/{link}`、`GET /get_scp_tag/{link}`。
+- **目录**：`ScpDatabase` 在冷启动中安装较新的内置库或已校验的 Release 暂存文件。Room 开库并读取 `scps` 失败时隔离旧库，从 assets 重装。目录可读后才向分类、搜索、上下篇、编号直达和随机入口提供 DAO。分类列表保留目录行，搜索和随机按规范链接保留第一条。
+- **正文**：成功安装整库或分块后启用离线优先。按文章键读取正文、Tag 和 `not_found`。本地缺页或读取出错时，联网调用 `GET /get_detail/{link}`、`GET /get_scp_tag/{link}`，必要时加载原网页。无网络和 404 均有明确提示。换篇清空 WebView、Tag 和评论状态，并取消旧篇请求。全文搜索和本地 Tag 检索覆盖已安装正文。
   - `DetailActivity` 把正文交给 `DetailHtmlComposer` 拼上 `assets` 内的 `style.css`、`jquery-ui.min.js`、`init.combined.js`、`tabview-min.js`、`WIKIDOT.combined.js`（夜间模式再加 `darkreader.min.js`），用 `loadDataWithBaseURL("file:///android_asset/", …)` 渲染。
 - **评论**：始终在线。`HtmlParserService` 用 OkHttp 请求 `https://scp-wiki-cn.wikidot.com/<页面>`，找到讨论链接后用 jsoup 解析帖子；请求带用户在详情页 Cookie 对话框中保存的 `Cookie` 与 `User-Agent`（`PreferenceUtil.getCookie/getAgent`）。
 - **最近更新 / 最高评分 / 首页 Feed**：仅在线，走后端接口（见下表）。离线数据库不包含这些页面（`download_notice` 文案）。
-- **用户数据**：`AppInfoDatabase`（`scp_info.db`）保存收藏、收藏夹、已读、待读/历史、草稿；积分、昵称、职位等在 SharedPreferences（`level`、`app`、`init` 等文件）。
+- **用户数据**：`AppInfoDatabase`（`scp_info.db`）是进程级单例，保存收藏、收藏夹、已读、待读/历史、草稿。积分、昵称、职位等在 SharedPreferences（`level`、`app`、`init` 等文件）。
 - **远程配置**：`ScpApplication.database` 指向 Firebase Realtime Database（地址来自 `PrivateConstants.FIREBASE_URL`）。
   - `UpdateManager.getConfig()` 读 `config` 节点：`app_version`（与 `BuildConfig.VERSION_CODE` 比较，较大则弹更新对话框）、`update_desc`、`update_link`、`notice`、`api_url`、`query_link`。
   - `FireViewModel` 读 `games`、`portals` 节点（游戏列表、站点传送门）。
@@ -91,7 +89,7 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 
 正文合并使用独立 SQLite 连接，以块文件为主库，`ATTACH` 本地正文库后执行一个写事务。失败时自动改为游标分批复制，行上限约 2 MB。分块合并与整库 SAF 导入使用同一互斥锁。Android SQLite 的 WAL、`ATTACH`、游标回退和 Room 读取行为待设备验证。
 
-运行期用共享的 `normalizeLink` 处理链接键，包括目录与正文查询、搜索结果打开和用户状态读写。用户库版本为 8，7→8 使用独立的固定规则更新历史、待读、收藏和已读键，并合并同一文章的用户状态。SAF 恢复覆盖用户库文件后会主动打开 Room，旧备份因此走相同的升级链。具体规则见 [数据库表结构说明](database.md)。
+运行期用共享的 `normalizeLink` 处理链接键，包括目录与正文查询、搜索结果打开和用户状态读写。用户库版本为 8，7→8 使用独立的固定规则更新历史、待读、收藏和已读键，并合并同一文章的用户状态。SAF 恢复在暂存副本上执行同一升级链，冷启动验证新库后提交替换。Activity 重建和暂存恢复期间继续使用进程内的用户库及草稿订阅。具体规则见 [数据库表结构说明](database.md)。
 
 ### 后端接口（`service/ApiService.kt`）
 

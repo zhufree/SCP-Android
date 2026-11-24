@@ -21,6 +21,9 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.CookieManager
+import android.webkit.WebResourceError
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.EditText
@@ -33,8 +36,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.distinctUntilChanged
-import androidx.lifecycle.map
 import info.free.scp.BuildConfig
 import info.free.scp.R
 import info.free.scp.SCPConstants.SCP_SITE_URL
@@ -95,6 +96,8 @@ class DetailActivity : BaseActivity() {
     private var historyIndex = 0
     private var fullUrl = ""
     private var forceOnline = false
+    private var renderedArticle = DetailUiState()
+    private var historyBack = false
 
     private var tvLoad: TextView? = null
 
@@ -136,11 +139,12 @@ class DetailActivity : BaseActivity() {
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         // 有些不是以/开头的而是完整链接
+        configureWebViewClient()
         if (initialLink.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else if (!forceOnline) {
-            viewModel.setScp(url) // 设置scp
+            if (viewModel.uiState.value?.articleKey.isNullOrEmpty()) viewModel.setScp(initialLink)
         } else {
             binding.pbLoading.visibility = VISIBLE
             binding.webView.loadUrl(fullUrl)
@@ -150,37 +154,63 @@ class DetailActivity : BaseActivity() {
 
         binding.webView.requestFocus()
 
-        //覆盖WebView默认通过第三方或系统浏览器打开网页的行为
-        configureWebViewClient()
     }
 
     private fun observeUiState() {
-        viewModel.uiState.map { it.document }.distinctUntilChanged().observe(this) {
-            // 数据库取到
-            if (it != null) {
-                scp = it
-                scp?.let { s ->
-                    setData(s)
-                } ?: run {
-                    // 数据库没有，加载链接
-                    binding.webView.loadUrl(fullUrl)
-                    binding.nsvWebWrapper.scrollTo(0, 0)
+        viewModel.uiState.observe(this) { state ->
+            val previous = renderedArticle
+            renderedArticle = state
+            if (forceOnline) {
+                if (state.comments != previous.comments) state.comments?.let(::showComments)
+                return@observe
+            }
+            val changedArticle = state.articleKey != previous.articleKey
+            if (changedArticle) {
+                url = state.requestedLink
+                title = state.document?.title ?: state.articleKey
+                binding.tvDetailToolbar.text = title
+                scp = null
+                detailHtml = ""
+                onlineMode = 0
+                binding.webView.stopLoading()
+                binding.webView.loadUrl("about:blank")
+                binding.nsvWebWrapper.scrollTo(0, 0)
+                binding.tvTagContainer.text = ""
+                binding.btnComment.hide()
+                binding.llCommentContainer.visibility = GONE
+                binding.llCommentContainer.removeAllViews()
+                binding.pbLoading.visibility = VISIBLE
+                invalidateOptionsMenu()
+                refreshReadBtnStatus()
+            }
+            if (changedArticle || state.document != previous.document) {
+                scp = state.document
+                state.document?.let {
+                    setData(it, historyBack)
+                    historyBack = false
                 }
             }
-        }
-        viewModel.uiState.map { it.content }.distinctUntilChanged().observe(this) { content ->
-            if (!content.isNullOrEmpty()) {
-                setDetail(content)
+            if (changedArticle || state.body != previous.body) {
+                when (val body = state.body) {
+                    ArticleBody.Loading -> Unit
+                    ArticleBody.Website -> {
+                        onlineMode = 1
+                        binding.webView.loadUrl(fullUrl)
+                    }
+                    is ArticleBody.Content -> {
+                        setDetail(body.html)
+                        body.tags?.takeIf(String::isNotBlank)?.let(::showTag)
+                    }
+                    is ArticleBody.Message -> showArticleMessage(body.text)
+                }
             }
+            if (state.comments != previous.comments) state.comments?.let(::showComments)
         }
-        viewModel.uiState.map { it.tag }.distinctUntilChanged().observe(this) { tag ->
-            if (!tag.isNullOrEmpty()) {
-                showTag(tag)
-            }
-        }
-        viewModel.uiState.map { it.comments }.distinctUntilChanged().observe(this) { comments ->
-            comments?.let(::showComments)
-        }
+    }
+
+    private fun showArticleMessage(message: String) {
+        binding.pbLoading.visibility = GONE
+        binding.webView.loadDataWithBaseURL(null, "<p>$message</p>", "text/html", "utf-8", null)
     }
 
     private fun configureWebViewClient() {
@@ -205,27 +235,31 @@ class DetailActivity : BaseActivity() {
                     }
                 }
 
-                if (onlineMode == 1) {
-                    view.loadUrl(requestUrl)
-                } else {
-                    url = requestUrl
-                    Log.i("scp-detail", url)
-                    val tmpScp = viewModel.getDocumentByLink(url)
-                    tmpScp?.let {
-                        scp = tmpScp
-                        setData(tmpScp)
-                    } ?: run {
-                        binding.pbLoading.visibility = VISIBLE
-                        view.loadUrl(fullUrl)
-                    }
-                }
-                return false
+                if (onlineMode == 1 || forceOnline) return false
+                viewModel.setScp(requestUrl)
+                return true
             }
-
 
             override fun onPageCommitVisible(view: WebView?, url: String?) {
-                binding.pbLoading.visibility = GONE
+                if (url != "about:blank") binding.pbLoading.visibility = GONE
             }
+
+            override fun onReceivedError(
+                view: WebView, request: WebResourceRequest, error: WebResourceError
+            ) {
+                if (request.isForMainFrame && request.url.toString() == view.url) {
+                    showArticleMessage("在线正文加载失败，请检查网络后重试")
+                }
+            }
+
+            override fun onReceivedHttpError(
+                view: WebView, request: WebResourceRequest, response: WebResourceResponse
+            ) {
+                if (request.isForMainFrame && request.url.toString() == view.url && response.statusCode == 404) {
+                    showArticleMessage("文章不存在（404）")
+                }
+            }
+
             private fun readJavaScriptFromAsset(fileName: String): String {
                 val inputStream = assets.open(fileName)
                 val reader = BufferedReader(InputStreamReader(inputStream))
@@ -241,7 +275,7 @@ class DetailActivity : BaseActivity() {
             }
             override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                 super.onPageStarted(view, url, favicon)
-                binding.pbLoading.visibility = VISIBLE
+                if (url != "about:blank") binding.pbLoading.visibility = VISIBLE
                 if (view != null && (onlineMode == 1 || (url != null && url.startsWith("http"))) && ThemeUtil.currentTheme == NIGHT_THEME) {
                     // add dark reader to online mode
                     val darkReaderScript = readJavaScriptFromAsset("darkreader.min.js") + ""
@@ -280,7 +314,7 @@ class DetailActivity : BaseActivity() {
             }
 
             override fun onPageFinished(view: WebView?, url: String?) {
-                binding.pbLoading.visibility = GONE
+                if (url != "about:blank") binding.pbLoading.visibility = GONE
                 if ((view != null && url !== null) && (url.contains("wikidot.com"))) {
                     val cookies = CookieManager.getInstance().getCookie(url)
                     detailSettings.updateWebCredentials(cookies, view.settings.userAgentString)
@@ -388,6 +422,7 @@ class DetailActivity : BaseActivity() {
      * 不改变网页内容，只刷新样式
      */
     private fun refreshStyle() {
+        if (detailHtml.isEmpty() || onlineMode == 1) return
         binding.webView.loadDataWithBaseURL(
             "file:///android_asset/", composeOfflineHtml(),
             "text/html", "utf-8", null
@@ -416,9 +451,8 @@ class DetailActivity : BaseActivity() {
 //        }
         binding.tvDetailToolbar.text = s.title
         binding.tvDetailToolbar.isSelected = true
-        url = s.link
+        title = s.title
         refreshReadBtnStatus()
-        viewModel.loadDetail(url)
     }
 
     private fun showTag(tagString: String) {
@@ -469,14 +503,12 @@ class DetailActivity : BaseActivity() {
                         } else {
                             showToast("请先开启网络")
                         }
-                    } else {
+                    } else if (detailHtml.isNotEmpty()) {
                         onlineMode = 0
                         it.setTitle(R.string.online_mode)
-                        binding.webView.loadDataWithBaseURL(
-                            "file:///android_asset/",
-                            composeOfflineHtml(),
-                            "text/html", "utf-8", null
-                        )
+                        refreshStyle()
+                    } else {
+                        showToast("当前文章没有可切换的本地正文")
                     }
                 }
                 DetailMenuAction.OPEN_IN_BROWSER -> {
@@ -596,6 +628,10 @@ class DetailActivity : BaseActivity() {
      * 繁简转换
      */
     private fun translate(translateType: Int) {
+        if (detailHtml.isEmpty() || onlineMode == 1) {
+            showToast("当前没有可转换的正文")
+            return
+        }
         try {
             val converter = JChineseConvertor.getInstance()
             detailHtml = if (translateType == SIMPLE) converter.t2s(detailHtml) else converter.s2t(detailHtml)
@@ -712,7 +748,7 @@ class DetailActivity : BaseActivity() {
                     else -> {
                         scp = viewModel.getPreviousDocument(index, scpType)
                         scp?.let {
-                            setData(it)
+                            viewModel.setScp(it.link, it)
                         }
                     }
                 }
@@ -837,7 +873,8 @@ class DetailActivity : BaseActivity() {
         if (keyCode == KEYCODE_BACK && historyIndex > 0) {
             scp = historyList[historyIndex - 1]
             scp?.let {
-                setData(it, true)
+                historyBack = true
+                viewModel.setScp(it.link, it)
             }
             historyList.removeAt(historyIndex - 1)
             historyIndex--

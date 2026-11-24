@@ -10,7 +10,7 @@
 | `DetailDatabase` | `scp_detail_v2.db` | 2 | 按块合并，或经 SAF 导入整库 | `scp_detail` |
 | `AppInfoDatabase` | `scp_info.db` | 8 | 首次运行时本地创建 | `records`、`like_table`、`like_box_table`、`draft` |
 
-数据库文件位于应用私有目录 `databases/`（`FileUtil.privateDbDirPath`）。
+数据库文件位于应用私有目录 `databases/`，路径由 Android `Context.getDatabasePath()` 提供。
 
 ## 1. ScpDatabase（目录库）
 
@@ -62,8 +62,8 @@
 - 该目录下另有 `1.json`、`3.json`、`4.json`。其中 `4.json` 含 `scps`（`sId`、`index`、`createdAt`…）和 `details` 表，与当前实体不一致，应是更早的数据模型（当时代码版本号更高）。**当前以代码中的 `version = 2` 与 `2.json` 为准**。
 - 发布目录保持上述 8 列，空子类用空串。发布文件的 `PRAGMA user_version` 为 0，Room 的本地版本为 2。
 - 当前内置库没有 `spider_meta`。`assets/scp_category_v2.meta.json` 标记为 `legacy`、契约 `0`，用于无本地副本时初始化。以后更新内置库时，用新库的 `spider_meta(key, value)` 生成同名 JSON。
-- 新目录要求契约版本 `1`。按 `export_id` 识别同一导出，按 `exported_at` 比较不同导出。下载后校验压缩包和原始文件的 SHA-256，再执行只读 SQLite 的 `quick_check`、列和元数据检查，并用临时 Room 实例校验一次副本。原始库保留为 `scp_category_v2.staging.db`。
-- 冷启动在 Room 打开前安装目录。旧库先移到 `.bak`，清理 `-wal`、`-shm`、`-journal` 后将 staging 改名为正式库。独立打开失败时还原旧库。
+- 新目录要求契约版本 `1`。按 `export_id` 识别同一导出，按 `exported_at` 比较不同导出。下载后校验压缩包和原始文件的 SHA-256，再执行只读 SQLite 的 `quick_check`、列和元数据检查，并用临时 Room 实例校验一次副本。原始库暂存为 `scp_category_v2.staging.db`，冷启动时再次用 Room 开库并查询一行。
+- 冷启动用 Room 开库并查询 `scps`。暂存安装完成前保留旧库 `.bak`，新库验证失败则回滚。现有目录打不开时，将文件和旁路文件隔离到 `.corrupt`，从 assets 独立恢复。恢复失败会提示重启重试，当前进程暂停目录查询。
 
 ## 2. DetailDatabase（正文库）
 
@@ -76,11 +76,9 @@
 | `not_found` | INTEGER | 页面是否 404（发布库用 1 表示已记录的 404，0 表示正常） |
 | `tags` | TEXT | Tag 字符串（`getLinksByTag` 用 `LIKE` 匹配） |
 
-`DetailDao`：取正文/Tag（含 `LiveData` 版本）、按 Tag 取 link、取全部 Tag 字符串（Tag 云计数）、全文 `detail LIKE :keyword` 搜索。
+`DetailDao` 可按文章键读出正文、404 标记与 Tag，另提供按 Tag 查文章、Tag 云和正文全文搜索。详情先查规范键，再查历史别名。整库旧别名与分块规范键共存时优先使用规范键。
 
-迁移：`MIGRATION_1_2` 先 `DROP TABLE scp_detail` 再重建；另设置了 `fallbackToDestructiveMigration(dropAllTables = true)`。
-
-`DetailDatabase.getInstance()` 只有在 `scp_detail_v2.db` 文件存在时才会创建实例，并把应用模式设为离线；文件不存在时返回 `null`，调用方按“未离线”处理。
+SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型检查，再用 Room 验证 schema 和至少一条有效正文。冷启动再次验证正式文件，成功后删除旧库 `.bak` 并启用离线优先。Room 禁用破坏性迁移，旧库读取失败时可以重新导入整库。
 
 ### 分块导入使用的本地表
 
@@ -89,7 +87,7 @@
 | `x_detail_part` | `link`（主键）、`part_id` | 记录当前写入该正文的块 |
 | `x_part_state` | `part_id`（主键）、`parts_version`、`digest`、`export_id`、`sha256`、`rows`、`installed_at` | 记录已装块及校验信息，时间为 Unix 毫秒 |
 
-快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则升级后，首个成功的重装事务也会清理归属于已撤除块的行。同规则下暂时缺席的块保留。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。Room 对附加表的校验和破坏性重建时的清理行为待设备验证。
+快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则升级后，首个成功的重装事务也会清理归属于已撤除块的行。同规则下暂时缺席的块保留。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。Room 打开含附加表的库、Android SQLite 的 WAL 与分块合并行为待设备验证。
 
 ## 3. AppInfoDatabase（用户数据库）
 
@@ -136,6 +134,8 @@
 | `title` | TEXT | 标题 |
 | `content` | TEXT | 内容 |
 
+新增草稿由 SQLite 在一条 INSERT 语句里按现有最大 ID 分配主键。编辑对已有主键执行 UPDATE。草稿沿用现有 schema 和 ID。
+
 ### 迁移历史（`AppInfoDatabase`）
 
 | 迁移 | 内容 |
@@ -151,7 +151,8 @@
 ## 4. 数据库之外的本地数据
 
 - **SharedPreferences**：`init`（首次安装、隐私确认、各版本首次启动标记）、`app`（公告、`api_url`、应用模式、Cookie/User-Agent 等）、`level`（积分、昵称、职位、草稿缓存等）、`read_settings`（隐藏已读、目录条数/高度/间距、字号等）。键名定义在 `util/PreferenceUtil.kt`。
-- **备份**（`data/backup/BackupFilePlan`）：备份/恢复三个文件：`scp_info.db`（含 `-shm`/`-wal` 旁路文件）、`level.xml`、`app.xml`。**不包含** `scp_detail_v2.db`。恢复前会关闭 `AppInfoDatabase`，覆盖文件后重建并主动打开数据库，旧备份由 Room 执行对应迁移（包括 7→8）。
+- **SAF 备份**包含 `scp_info.db`、`level.xml`、`app.xml`。SQLite 用 `VACUUM INTO` 生成含已提交 WAL 数据的单文件快照。旧版 SQLite 在同一个读源事务里复制用户表及序列号。
+- **SAF 恢复**先暂存三件，在只读 SQLite 中校验文件完整性、版本和必需表，校验偏好 XML，再用 Room 在副本上跑迁移和读取验证。全部通过才发布待恢复目录。下次冷启动先保留三件的 `.bak`，再替换并读取验证。中途失败或进程中断时按记录还原原文件。前台会显示安装、失败或回滚结果。
 
 ## 5. 数据来源与 SCP-Spider
 

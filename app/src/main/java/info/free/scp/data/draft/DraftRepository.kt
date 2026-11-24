@@ -7,8 +7,8 @@ import info.free.scp.db.AppInfoDatabase
 interface DraftDataSource {
     fun getDraftList(): LiveData<List<DraftModel>>
     fun getDraft(draftId: Int): DraftModel
-    fun getDraftCount(): Int
-    fun saveDraft(draft: DraftModel)
+    fun insertDraft(draft: DraftModel): Int
+    fun updateDraft(draft: DraftModel)
     fun deleteDraft(draftId: Int)
 }
 
@@ -23,12 +23,14 @@ class RoomDraftDataSource : DraftDataSource {
         return draftDao.getDraft(draftId)
     }
 
-    override fun getDraftCount(): Int {
-        return draftDao.getDraftCount()
+    override fun insertDraft(draft: DraftModel): Int {
+        val id = draftDao.insert(draft.lastModifyTime, draft.title, draft.content)
+        check(id in 1..Int.MAX_VALUE.toLong()) { "无法分配草稿 ID" }
+        return id.toInt()
     }
 
-    override fun saveDraft(draft: DraftModel) {
-        draftDao.save(draft)
+    override fun updateDraft(draft: DraftModel) {
+        check(draftDao.update(draft) == 1) { "该草稿已被删除" }
     }
 
     override fun deleteDraft(draftId: Int) {
@@ -47,7 +49,7 @@ class DraftRepository(
             dataSource.getDraft(draftId)
         } else {
             DraftModel(
-                draftId = dataSource.getDraftCount() + 1,
+                draftId = 0,
                 lastModifyTime = nowProvider(),
                 title = defaultTitle,
                 content = defaultContent
@@ -56,11 +58,13 @@ class DraftRepository(
     }
 
     fun saveDraft(draft: DraftModel, title: String, content: String): DraftModel {
-        draft.title = title
-        draft.content = content
-        draft.lastModifyTime = nowProvider()
-        dataSource.saveDraft(draft)
-        return draft
+        val saved = draft.copy(title = title, content = content, lastModifyTime = nowProvider())
+        if (saved.draftId == 0) {
+            saved.draftId = dataSource.insertDraft(saved)
+        } else {
+            dataSource.updateDraft(saved)
+        }
+        return saved
     }
 
     fun deleteDraft(draftId: Int) {

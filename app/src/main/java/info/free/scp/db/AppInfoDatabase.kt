@@ -1,7 +1,6 @@
 package info.free.scp.db
 
-import android.database.sqlite.SQLiteDatabaseCorruptException
-import android.widget.Toast
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -14,13 +13,16 @@ import info.free.scp.bean.DraftModel
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpRecordModel
+import info.free.scp.data.update.PreserveDatabaseOnCorruption
 import info.free.scp.db.ScpTable.LIKE_AND_READ_TABLE_NAME
 import info.free.scp.db.ScpTable.VIEW_LIST_TABLE_NAME
 import info.free.scp.db.ScpTable.dropDetailTableSQL
 import info.free.scp.db.ScpTable.dropScpTableSQL
 
 
-@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class, ScpLikeBox::class], version = 8)
+internal const val APP_INFO_VERSION = 8
+
+@Database(entities = [ScpRecordModel::class, ScpLikeModel::class, DraftModel::class, ScpLikeBox::class], version = APP_INFO_VERSION)
 @TypeConverters(Converters::class)
 abstract class AppInfoDatabase : RoomDatabase() {
     abstract fun likeAndReadDao(): LikeAndReadDao
@@ -132,33 +134,15 @@ abstract class AppInfoDatabase : RoomDatabase() {
             }
         }
 
-        fun getInstance(): AppInfoDatabase {
-            if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(ScpApplication.context, AppInfoDatabase::class.java,
-                        INFO_DB_NAME)
-                        .addMigrations(MIGRATION_1_2)
-                        .addMigrations(MIGRATION_2_3)
-                        .addMigrations(MIGRATION_3_4)
-                        .addMigrations(MIGRATION_4_5)
-                        .addMigrations(MIGRATION_5_6)
-                        .addMigrations(MIGRATION_6_7)
-                        .addMigrations(MIGRATION_7_8)
-                        .allowMainThreadQueries()
-                        .build()
-            }
-            return INSTANCE!!
-        }
+        @Synchronized
+        fun getInstance(): AppInfoDatabase =
+            INSTANCE ?: builder(ScpApplication.context, INFO_DB_NAME).build().also { INSTANCE = it }
 
-        fun getNewInstance() {
-            INSTANCE?.close()
-            try {
-                INSTANCE = null
-                getInstance()
-            } catch (e1: SQLiteDatabaseCorruptException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            } catch (e2: IllegalStateException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            }
-        }
+        internal fun builder(context: Context, name: String): Builder<AppInfoDatabase> =
+            Room.databaseBuilder(context, AppInfoDatabase::class.java, name)
+                .openHelperFactory(PreserveDatabaseOnCorruption)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                    MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+                .allowMainThreadQueries()
     }
 }

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import info.free.scp.data.catalog.catalogRowKey
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.ui.MainTheme
@@ -69,7 +70,7 @@ fun ScpDocumentListScreen(
         state = listState,
         modifier = Modifier.fillMaxSize()
     ) {
-        itemsIndexed(documents, key = { _, item -> item.link }) { index, document ->
+        itemsIndexed(documents, key = { _, item -> catalogRowKey(item) }) { index, document ->
             val status = statusProvider(document)
             ScpDocumentListItem(
                 document = document,

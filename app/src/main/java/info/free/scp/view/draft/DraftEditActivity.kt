@@ -33,7 +33,7 @@ class DraftEditActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loadDraft()
+        loadDraft(savedInstanceState)
         setContent {
             MainTheme {
                 Scaffold(
@@ -82,8 +82,14 @@ class DraftEditActivity : BaseActivity() {
         }
     }
 
-    private fun loadDraft() {
-        val draftId = intent.getIntExtra("draftId", -1)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (draft.draftId == 0) saveDraft(showMessage = false)
+        outState.putInt("draftId", draft.draftId)
+    }
+
+    private fun loadDraft(savedInstanceState: Bundle?) {
+        val draftId = savedInstanceState?.getInt("draftId") ?: intent.getIntExtra("draftId", -1)
         val defaults = draftPreferences.consumeDraftDefaults()
         draft = draftRepository.loadDraft(
             draftId,
@@ -95,7 +101,12 @@ class DraftEditActivity : BaseActivity() {
     }
 
     private fun saveDraft(showMessage: Boolean) {
-        draftRepository.saveDraft(draft, draftTitle, draftContent)
+        try {
+            draft = draftRepository.saveDraft(draft, draftTitle, draftContent)
+        } catch (failure: Exception) {
+            Toast.makeText(this, "草稿保存失败", Toast.LENGTH_SHORT).show()
+            return
+        }
         if (showMessage) {
             Toast.makeText(this, "\u5df2\u4fdd\u5b58", Toast.LENGTH_SHORT).show()
         }

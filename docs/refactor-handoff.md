@@ -111,14 +111,26 @@
 
 全渠道 debug 构建里，`libandroidx.graphics.path.so` 无法 strip，按原样打进包。这不影响构建成功。
 
+## 2026-11-24 合并前修复
+
+- 用户备份包含已提交 WAL 数据。恢复先校验 DB/XML 并在副本上迁移，在下次冷启动替换。备份缺件、SAF 读写失败和换库回滚会显示结果。
+- 目录库启动时验证 Room identity 与真实查询。旧目录打不开时隔离为 `.corrupt` 并使用内置库，暂存下载失败后仍可走内置恢复。SAF 整库正文须通过 Room 和真实正文查询，正式库可读后启用离线优先。
+- 详情换篇清空旧正文和异步状态。缺页和本地读取失败时按文章回退在线。分类列表用目录行 ID，搜索和随机按规范链接去重。
+- 用户库随进程存活。草稿新增与编辑走独立 SQL，SQLite 在 INSERT 内分配新主键。三套 Room schema 版本维持原值。
+- 移除四个旧签名 APK，并忽略各渠道 `*Production/release/` 输出目录。
+
+离线用本机缓存的 Kotlin 2.3.0、JUnit 4.13.2 和 sqlite-jdbc 3.41.2.2 从源码编译并通过 108 项 JVM 测试。另用本机缓存的 KSP 2.3.9 和 Room 2.8.4 验证 DAO 生成及三套数据库的版本、建表 SQL、identity hash。项目声明的 Gradle 8.13 和部分依赖未缓存，完整项目构建与设备行为待确认。
+
 ## 下一步：阶段 5A 设备复验
 
-本地代码和工具链收口已经完成。下一步只剩连上设备后的手动复验：
+以下路径仍待用设备和项目配置的 Gradle 工具链复验。
 
 1. 桌面小部件。
-2. SAF 导入、备份和恢复。
-3. FileProvider 截图分享。
-4. WebView 在线/离线与 Cookie 登录。
+2. 旧版本覆盖升级、目录损坏恢复、正文整库/分块共存、仅装分块时的换篇回退。
+3. SAF 文件断流、磁盘空间不足、杀进程回滚、历史用户库与偏好恢复。
+4. Activity 重建后草稿列表持续刷新，删除中间草稿后新建不会覆盖旧稿。
+5. FileProvider 截图分享。
+6. WebView 在线/离线与 Cookie 登录。
 
 本机 `local.properties`、`app/google-services.json` 和 `app/src/main/java/info/free/scp/PrivateConstants.kt` 是本地占位，已在 gitignore 中，不要提交。真机联网或 Firebase 前需要换回真实配置。
 
@@ -140,4 +152,4 @@ rg -n "PreferenceUtil|APP_SP" app/src/main/java/info/free/scp/view app/src/main/
 .\gradlew.bat testDefaultProductionDebugUnitTest
 ```
 
-阶段 5A 的设备复验开始前应确认：62 项 JVM 测试通过，且已连接设备。每个阶段的完成证据必须同时包含定向扫描、自动测试/构建结果，以及涉及平台行为时的手动验证结果。原文写“远端 `origin/compose-refactor` 已不存在，不要推送”；2026-11-23 用 `git ls-remote --heads origin` 核对，该分支在远端存在且指向 `57f4e7a`（与本地一致）。是否可以推送以仓库所有者为准（待确认）。
+开始设备复验前先运行当前分支的完整 JVM 测试集，并确认设备已连接。每个阶段的完成证据必须同时包含定向扫描、自动测试/构建结果，以及涉及平台行为时的手动验证结果。原文写“远端 `origin/compose-refactor` 已不存在，不要推送”；2026-11-23 用 `git ls-remote --heads origin` 核对，该分支在远端存在且指向 `57f4e7a`（与本地一致）。是否可以推送以仓库所有者为准（待确认）。

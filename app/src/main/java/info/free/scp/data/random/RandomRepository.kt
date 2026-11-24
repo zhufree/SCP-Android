@@ -1,6 +1,7 @@
 package info.free.scp.data.random
 
 import info.free.scp.bean.ScpItemModel
+import info.free.scp.data.catalog.distinctDocuments
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
@@ -55,11 +56,11 @@ class RandomRepository(
         currentList: List<ScpItemModel> = emptyList(),
         append: Boolean = false
     ): List<ScpItemModel> {
-        val nextBatch = loadBatch(range)
-        return if (append) currentList + nextBatch else nextBatch
+        val previous = if (append) currentList.distinctDocuments() else emptyList()
+        return previous + loadBatch(range, previous.mapTo(mutableSetOf()) { normalizeLink(it.link) })
     }
 
-    private fun loadBatch(range: String): List<ScpItemModel> {
+    private fun loadBatch(range: String, seen: MutableSet<String>): List<ScpItemModel> {
         val hideFinished = dataSource.shouldHideFinished()
         val readLinks = if (hideFinished) dataSource.getReadLinks() else emptySet()
         val result = mutableListOf<ScpItemModel>()
@@ -71,8 +72,9 @@ class RandomRepository(
             if (candidates.isEmpty()) break
 
             candidates.forEach { document ->
-                val isRead = hideFinished && normalizeLink(document.link) in readLinks
-                if (!isRead && dataSource.hasOfflineDetail(document.link)) {
+                val key = normalizeLink(document.link)
+                if (key !in readLinks && key !in seen && dataSource.hasOfflineDetail(document.link)) {
+                    seen.add(key)
                     result.add(document)
                 }
             }

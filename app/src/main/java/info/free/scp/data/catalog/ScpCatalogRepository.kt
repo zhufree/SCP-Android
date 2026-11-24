@@ -1,7 +1,6 @@
 package info.free.scp.data.catalog
 
 import info.free.scp.SCPConstants
-import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.SCPConstants.ScpType.SAVE_ANOMALOUS_CN
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON
 import info.free.scp.SCPConstants.ScpType.SAVE_CANON_CN
@@ -29,7 +28,6 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
-import info.free.scp.util.FileUtil
 import info.free.scp.util.normalizeLink
 
 interface ScpCatalogDataSource {
@@ -49,7 +47,7 @@ interface ScpCatalogDataSource {
 
 class RoomScpCatalogDataSource : ScpCatalogDataSource {
     private val scpDao by lazy { ScpDatabase.getInstance()?.scpDao() }
-    private val detailDao by lazy { DetailDatabase.getInstance()?.detailDao() }
+    private val detailDao get() = DetailDatabase.getInstance()?.detailDao()
     private val likeDao get() = AppInfoDatabase.getInstance().likeAndReadDao()
 
     override fun getDocumentsByType(type: Int): List<ScpModel> {
@@ -98,7 +96,7 @@ class RoomScpCatalogDataSource : ScpCatalogDataSource {
     }
 
     override fun isDetailDataAvailable(): Boolean {
-        return FileUtil.checkDataReady(DETAIL_DB_NAME)
+        return DetailDatabase.ready
     }
 }
 
@@ -143,13 +141,13 @@ class ScpCatalogRepository(
     }
 
     fun searchTitle(keyword: String): List<ScpModel> {
-        return dataSource.searchByTitle(keyword)
+        return dataSource.searchByTitle(keyword).distinctDocuments()
     }
 
     fun searchDetail(keyword: String): List<ScpModel> {
         return dataSource.searchDetailLinks(keyword).mapNotNull { link ->
             dataSource.getDocumentByLink(link)
-        }
+        }.distinctDocuments()
     }
 
     fun isDetailSearchAvailable(): Boolean {

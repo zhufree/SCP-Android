@@ -29,10 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDatabase
 import info.free.scp.ui.MainTheme
-import info.free.scp.util.FileUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.base.BaseFragment
@@ -101,15 +98,7 @@ class MainActivity : BaseActivity() {
             }
         }
         UpdateManager.getInstance(this).checkAppData()
-        FileUtil.checkDetailDb()
         requireFilePermission()
-        ScpDatabase.getInstance()
-        AppInfoDatabase.getNewInstance()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        AppInfoDatabase.getInstance()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

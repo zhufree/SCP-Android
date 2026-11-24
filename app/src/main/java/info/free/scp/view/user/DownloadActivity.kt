@@ -90,32 +90,30 @@ class DownloadActivity : BaseActivity() {
             .show()
     }
 
-    private fun importDetailDatabase(uri: Uri) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val success = backupRepository.importDetailDatabase(uri)
-            withContext(Dispatchers.Main) {
-                showToast(if (success) "正文库已就绪，下次冷启动时生效" else "\u6570\u636e\u5e93\u8bfb\u53d6\u5931\u8d25")
-            }
+    private fun importDetailDatabase(uri: Uri) =
+        runFileOperation("正文库已通过校验，下次冷启动时生效", "正文库导入失败") {
+            backupRepository.importDetailDatabase(uri)
         }
+
+    private fun backupAppData(uriTree: Uri) = runFileOperation("备份完成", "备份失败") {
+        backupRepository.backupAppData(uriTree)
     }
 
-    private fun backupAppData(uriTree: Uri) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (backupRepository.backupAppData(uriTree)) {
-                withContext(Dispatchers.Main) {
-                    showToast("\u5907\u4efd\u5b8c\u6210")
-                }
-            }
+    private fun restoreAppData(uriTree: Uri) =
+        runFileOperation("备份已通过校验，下次冷启动时恢复", "恢复准备失败") {
+            backupRepository.restoreAppData(uriTree)
         }
-    }
 
-    private fun restoreAppData(uriTree: Uri) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            if (backupRepository.restoreAppData(uriTree)) {
-                withContext(Dispatchers.Main) {
-                    showToast("\u6062\u590d\u5b8c\u6210\uff0c\u90e8\u5206\u6570\u636e\u53ef\u80fd\u9700\u8981\u91cd\u542f\u5e94\u7528\u540e\u751f\u6548")
-                }
-            }
+    private fun runFileOperation(success: String, failure: String, operation: () -> Result<Unit>) {
+        lifecycleScope.launch {
+            val result = withContext(Dispatchers.IO) { operation() }
+            val error = result.exceptionOrNull()
+            if (error == null) showToast(success)
+            else AlertDialog.Builder(this@DownloadActivity)
+                .setTitle(failure)
+                .setMessage(error.message ?: "文件读写失败")
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
         }
     }
 

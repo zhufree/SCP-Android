@@ -1,7 +1,6 @@
 package info.free.scp.view.detail
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,18 +9,30 @@ import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpModel
 import info.free.scp.bean.CommentModel
 import info.free.scp.data.detail.DetailRepository
+import info.free.scp.data.detail.DetailReadResult
 import info.free.scp.data.reading.ReadingDocumentStatus
 import info.free.scp.data.reading.ReadingListRepository
 import info.free.scp.data.settings.DetailSettingsStore
 import info.free.scp.data.settings.PreferenceDetailSettingsStore
+import info.free.scp.util.normalizeLink
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-data class DetailUiState(
+internal sealed interface ArticleBody {
+    data object Loading : ArticleBody
+    data object Website : ArticleBody
+    data class Content(val html: String, val tags: String?) : ArticleBody
+    data class Message(val text: String) : ArticleBody
+}
+
+internal data class DetailUiState(
+    val articleKey: String = "",
+    val requestedLink: String = "",
     val document: ScpModel? = null,
-    val content: String? = null,
-    val tag: String? = null,
-    val comments: List<CommentModel>? = null,
-    val isOfflineReadingEnabled: Boolean = false
+    val body: ArticleBody = ArticleBody.Loading,
+    val comments: List<CommentModel>? = null
 )
 
 class DetailViewModel(
@@ -29,31 +40,25 @@ class DetailViewModel(
 ) : ViewModel() {
     private val repo = DetailRepository()
     private val readingListRepository = ReadingListRepository()
-    private val _uiState = MediatorLiveData(
-        DetailUiState(isOfflineReadingEnabled = detailSettings.isOfflineReadingEnabled)
-    )
-    val uiState: LiveData<DetailUiState> = _uiState
-    private var offlineDetailSource: LiveData<String>? = null
-    private var offlineTagSource: LiveData<String>? = null
+    private val _uiState = MutableLiveData(DetailUiState())
+    internal val uiState: LiveData<DetailUiState> = _uiState
+    private var articleJob: Job? = null
+    private var commentJob: Job? = null
 
-    init {
-        _uiState.addSource(repo.scp) { document -> updateState { copy(document = document) } }
-        _uiState.addSource(repo.commentList) { comments -> updateState { copy(comments = comments) } }
-        if (!detailSettings.isOfflineReadingEnabled) {
-            _uiState.addSource(repo.detail) { content -> updateState { copy(content = content) } }
-            _uiState.addSource(repo.tag) { tag -> updateState { copy(tag = tag) } }
+    fun setScp(link: String, knownDocument: ScpModel? = null) {
+        val key = normalizeLink(link)
+        if (_uiState.value?.articleKey == key) return
+        articleJob?.cancel()
+        commentJob?.cancel()
+        _uiState.value = DetailUiState(articleKey = key, requestedLink = link, document = knownDocument)
+        articleJob = viewModelScope.launch {
+            val document = knownDocument ?: withContext(Dispatchers.IO) {
+                runCatching { repo.getDocumentByLink(key) }.getOrNull()
+            }
+            updateState { copy(document = document) }
+            val body = withContext(Dispatchers.IO) { readArticle(key) }
+            updateState { copy(body = body) }
         }
-    }
-
-    /**
-     * 变更scp时就顺带更新其他信息
-     */
-    fun setScp(link: String) {
-        repo.setScp(link)
-    }
-
-    fun getDocumentByLink(link: String): ScpModel? {
-        return repo.getDocumentByLink(link)
     }
 
     fun getNextDocument(index: Int, type: Int): ScpModel? {
@@ -119,33 +124,35 @@ class DetailViewModel(
         detailSettings.increasePoints(1)
     }
 
-    fun loadDetail(link: String) {
-        if (detailSettings.isOfflineReadingEnabled) {
-            repo.loadOfflineDetail(link)
-            repo.loadOfflineTag(link)
-            bindOfflineSources()
-        } else {
-            viewModelScope.launch {
-                repo.loadDetail(link)
-                repo.loadTag(link)
-            }
+    private suspend fun readArticle(key: String): ArticleBody {
+        val local = if (detailSettings.isOfflineReadingEnabled) repo.loadOfflineDetail(key)
+            else DetailReadResult.Missing
+        when (local) {
+            is DetailReadResult.Hit -> return ArticleBody.Content(local.html, local.tags)
+            DetailReadResult.NotFound -> return ArticleBody.Message("文章不存在（404）")
+            DetailReadResult.Missing, DetailReadResult.Failed -> Unit
+        }
+        if (!repo.isNetworkAvailable()) {
+            return ArticleBody.Message(when {
+                local == DetailReadResult.Failed -> "本地正文读取失败，请联网后重试"
+                detailSettings.isOfflineReadingEnabled -> "本地未下载这篇正文，请联网阅读或安装对应正文块"
+                else -> "当前无网络，请联网后阅读"
+            })
+        }
+        return when (val online = repo.loadOnlineDetail(key)) {
+            is DetailReadResult.Hit -> ArticleBody.Content(online.html, online.tags)
+            DetailReadResult.NotFound -> ArticleBody.Message("文章不存在（404）")
+            DetailReadResult.Missing, DetailReadResult.Failed -> ArticleBody.Website
         }
     }
 
     fun loadComment(link: String) {
-        viewModelScope.launch {
-            repo.loadComment(link)
-        }
-    }
-
-    private fun bindOfflineSources() {
-        offlineDetailSource?.let(_uiState::removeSource)
-        offlineTagSource?.let(_uiState::removeSource)
-        offlineDetailSource = repo.offlineDetail.also { source ->
-            _uiState.addSource(source) { content -> updateState { copy(content = content) } }
-        }
-        offlineTagSource = repo.offlineTag.also { source ->
-            _uiState.addSource(source) { tag -> updateState { copy(tag = tag) } }
+        val key = normalizeLink(link)
+        commentJob?.cancel()
+        commentJob = viewModelScope.launch {
+            val comments = repo.loadComment(key)
+            val current = _uiState.value?.articleKey
+            if (current == key || current.isNullOrEmpty()) updateState { copy(comments = comments) }
         }
     }
 

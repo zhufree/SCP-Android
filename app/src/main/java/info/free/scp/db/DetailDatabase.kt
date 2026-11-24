@@ -1,51 +1,31 @@
 package info.free.scp.db
 
-import android.database.sqlite.SQLiteDatabaseCorruptException
-import android.widget.Toast
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
-import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.ScpApplication
 import info.free.scp.bean.ScpDetail
-import info.free.scp.util.FileUtil
-import info.free.scp.util.PreferenceUtil
-
+import info.free.scp.data.update.PreserveDatabaseOnCorruption
 
 @Database(entities = [ScpDetail::class], version = 2)
 abstract class DetailDatabase : RoomDatabase() {
     abstract fun detailDao(): DetailDao
 
     companion object {
-        private var INSTANCE: DetailDatabase? = null
+        private var instance: DetailDatabase? = null
+        @Volatile internal var ready = false
 
-        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("DROP TABLE IF EXISTS scp_detail;")
-                db.execSQL("CREATE TABLE IF NOT EXISTS `scp_detail` (`link` TEXT NOT NULL, `detail` TEXT, `not_found` INTEGER, `tags` TEXT, PRIMARY KEY(`link`));")
-            }
-        }
-
+        @Synchronized
         fun getInstance(): DetailDatabase? {
-            try {
-                if (INSTANCE == null && FileUtil.checkDataReady(DETAIL_DB_NAME)) {
-                    INSTANCE = Room.databaseBuilder(ScpApplication.context, DetailDatabase::class.java,
-                            DETAIL_DB_NAME)
-                        .addMigrations(MIGRATION_1_2)
-                        .fallbackToDestructiveMigration(dropAllTables = true)
-                        .allowMainThreadQueries()
-                        .build()
-                    PreferenceUtil.setAppMode(OFFLINE)
-                }
-            } catch (e1: SQLiteDatabaseCorruptException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            } catch (e2: IllegalStateException) {
-                Toast.makeText(ScpApplication.context, "创建数据库出错，请重试或检查版本", Toast.LENGTH_SHORT).show()
-            }
-            return INSTANCE
+            if (!ready) return null
+            return instance ?: builder(ScpApplication.context, DETAIL_DB_NAME).build().also { instance = it }
         }
+
+        internal fun builder(context: Context, name: String): Builder<DetailDatabase> =
+            Room.databaseBuilder(context, DetailDatabase::class.java, name)
+                .openHelperFactory(PreserveDatabaseOnCorruption)
+                .allowMainThreadQueries()
     }
 }

@@ -72,15 +72,15 @@ object PrivateConstants {
 `app/build.gradle` 的 `defaultConfig` 中手工维护：
 
 ```
-versionCode 30
-versionName "0.3.2"
+versionCode 31
+versionName "0.3.5"
 ```
 
 应用内更新提示用 `BuildConfig.VERSION_CODE` 与 Firebase `config/app_version` 比较，后者更大时弹出“发现新版本”对话框并跳转 `config/update_link`（`UpdateManager.getConfig()`）。发版时需要同步更新 Firebase 里的这些字段，由维护者在 Firebase 控制台操作，仓库内无脚本。
 
 ## 6. 发布产物
 
-仓库中已提交了几个发布输出目录：`app/DefaultProduction/release/`、`app/GithubProduction/release/`、`app/GooglePlayProduction/release/`、`app/firimProduction/release/`。每个目录含 APK、`output-metadata.json`（记录 `versionCode 30` / `versionName 0.3.2`）和 baseline profile（`.dm`）。其中只有 `DefaultProduction` 里的 APK 名带版本号（`app-0.3.2-release.apk`）。这些看起来是 Android Studio 的“生成已签名 APK”向导选择 `app/<渠道>Production` 作为输出目录的结果（推断，待确认）。
+发布输出目录 `app/DefaultProduction/release/`、`app/GithubProduction/release/`、`app/GooglePlayProduction/release/`、`app/firimProduction/release/` 里的旧签名 APK 已从仓库移除，并在 `app/.gitignore` 里忽略这些输出路径。它们来自 Android Studio 的“生成已签名 APK”向导（推断，待确认）；发版时在本地生成，不要提交。当前版本为 `versionCode 31` / `versionName 0.3.5`。
 
 `app/build.gradle` 中**没有** `signingConfigs`，因此 Gradle 命令行产出的 release 包是否已签名、使用哪把 keystore、如何保管，仓库里没有记录，**待确认**。
 

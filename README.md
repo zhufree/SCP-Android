@@ -113,7 +113,7 @@ SCP-Android/
 
 当前项目处于从旧 `Activity + Fragment + XML` 体系迁移到 Kotlin + Compose 的重构后半程。
 
-- 当前应用版本：`0.3.2`（见 `app/build.gradle`）。
+- 当前应用版本：`0.3.5`（versionCode 31）（见 `app/build.gradle`）。
 - 已完成：构建工具链升级、Anko/EasyPermissions 等旧依赖清理、主导航 Compose 壳层、普通页面 XML/Adapter/RecyclerView 迁移。
 - 当前判断：第 0、1、2A、2B、2C、3、4、5B 阶段已完成。阶段 5A 的旧依赖和工具链收口已完成，包括 Java 17、KSP、Firebase 主模块，以及 Glide、multidex、显式 vectordrawable 的删除。剩下的是真机平台复验。
 - 资源现状：`res/layout + res/menu` 当前仅保留桌面小部件 RemoteViews 所需的 `layout_widget.xml`，普通页面不再依赖 XML 布局。

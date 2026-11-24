@@ -19,6 +19,17 @@ interface ScpDao {
     @Query("SELECT * FROM scps WHERE link = :link ORDER BY _id LIMIT 1")
     fun getScpByLink(link: String): ScpItemModel?
 
+    // Compatibility for catalog files installed before Spider normalized its links.
+    @Query("""
+        SELECT * FROM scps
+        WHERE (
+            CASE WHEN instr(link, '#') > 0 THEN substr(link, 1, instr(link, '#') - 1)
+            ELSE link END
+        ) = :link COLLATE NOCASE
+        ORDER BY _id LIMIT 1
+    """)
+    fun getLegacyScpByLink(link: String): ScpItemModel?
+
     @Query("SELECT * FROM scps WHERE link = :link ORDER BY _id LIMIT 1")
     fun getLiveScpByLink(link: String): LiveData<ScpItemModel>?
 

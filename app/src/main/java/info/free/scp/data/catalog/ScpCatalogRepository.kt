@@ -30,6 +30,7 @@ import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
 import info.free.scp.util.FileUtil
+import info.free.scp.util.normalizeLink
 
 interface ScpCatalogDataSource {
     fun getDocumentsByType(type: Int): List<ScpModel>
@@ -49,7 +50,7 @@ interface ScpCatalogDataSource {
 class RoomScpCatalogDataSource : ScpCatalogDataSource {
     private val scpDao by lazy { ScpDatabase.getInstance()?.scpDao() }
     private val detailDao by lazy { DetailDatabase.getInstance()?.detailDao() }
-    private val likeDao by lazy { AppInfoDatabase.getInstance().likeAndReadDao() }
+    private val likeDao get() = AppInfoDatabase.getInstance().likeAndReadDao()
 
     override fun getDocumentsByType(type: Int): List<ScpModel> {
         return scpDao?.getAllScpListByType(type).orEmpty()
@@ -72,7 +73,8 @@ class RoomScpCatalogDataSource : ScpCatalogDataSource {
     }
 
     override fun getDocumentByLink(link: String): ScpModel? {
-        return scpDao?.getScpByLink(link)
+        val key = normalizeLink(link)
+        return scpDao?.getScpByLink(key) ?: scpDao?.getLegacyScpByLink(key)
     }
 
     override fun getDocumentByNumber(type: Int, numberPattern: String): ScpModel? {
@@ -134,7 +136,7 @@ class ScpCatalogRepository(
         val page = documents.page(groupIndex)
         return if (dataSource.shouldHideFinished()) {
             val readLinks = dataSource.getReadLinks()
-            page.filterNot { it.link in readLinks }
+            page.filterNot { normalizeLink(it.link) in readLinks }
         } else {
             page
         }

@@ -4,7 +4,12 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.database.getValue
+import info.free.scp.ScpApplication
+import kotlinx.coroutines.launch
 import info.free.scp.BuildConfig
 import info.free.scp.ScpApplication.Companion.database
 import info.free.scp.db.AppInfoDatabase
@@ -20,6 +25,15 @@ class UpdateManager(private var activity: BaseActivity) {
     companion object {
         var manager: UpdateManager? = null
 
+        internal fun confirmCatalogDownload(host: BaseActivity) {
+            AlertDialog.Builder(host)
+                .setTitle("下载目录更新")
+                .setMessage("当前网络可能产生流量费用。是否下载目录库？")
+                .setPositiveButton("下载") { _, _ -> ScpApplication.dataUpdates.downloadCatalog() }
+                .setNegativeButton("取消", null)
+                .show()
+        }
+
         fun getInstance(newActivity: BaseActivity): UpdateManager {
             manager?.activity = newActivity
             return manager ?: UpdateManager(newActivity)
@@ -29,38 +43,33 @@ class UpdateManager(private var activity: BaseActivity) {
     private val currentVersionCode = BuildConfig.VERSION_CODE
 
 
-    /**
-     * 检测更新和数据初始化
-     * ---start---
-     * 0. 第一次启动，进入新手引导流程，不检查更新
-     * 1. 检测app版本，确保是最新版：checkUpdateAndCategory()
-     * 2. 检测本地是否有备份数据，如果有，执行恢复并把初始化标记位都置为true，跳转5，否则转3
-     * 3. 检测目录是否初始化，加载目录，完毕后加载正文
-     * 4. 检测正文是否加载完成，没有的话继续加载
-     * 5. 录已加载完的前提下，检测姓名和职位是否存在（一般是第二天打开了，提示输入姓名和职位
-     * ---finish---
-     */
+    /** Checks the data release independently of Firebase app version notices and onboarding. */
     fun checkAppData() {
         Log.i("scp", "start checkAppData()")
+        val updates = ScpApplication.dataUpdates
+        updates.check()
         if (PreferenceUtil.isFirstInstallApp()) {
-            // 显示新人引导，下次再检测更新
             PreferenceUtil.setFirstInstallApp()
             NewbieManager.showLevelDialog(activity)
             return
         }
         if (PreferenceUtil.getFirstOpenCurrentVersion(currentVersionCode.toString())) {
-            // 当前版本第一次启动app，把检测更新时间重置，再检测一次更新
             PreferenceUtil.setFirstOpenCurrentVersion(currentVersionCode.toString())
-            // 更新category数据库
-//            FileUtil.copyCategoryDb(true)
             AppInfoDatabase.getInstance()
+        }
+
+        val host = activity
+        host.lifecycleScope.launch {
+            host.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                updates.state.collect { state ->
+                    if (!state.busy && updates.claimMeteredPrompt()) confirmCatalogDownload(host)
+                }
+            }
         }
 
         if (Utils.enabledNetwork(activity)) {
             PreferenceUtil.addPoints(1)
             Log.i("scp", "checkUpdate")
-            // 记录上次检测更新时间
-            // 检测app版本，如果有更新版本就不加载目录，等更新之后再加载
             getConfig()
         }
     }
@@ -93,7 +102,6 @@ class UpdateManager(private var activity: BaseActivity) {
                     }
                     .setNegativeButton("暂不升级") { _, _ -> }
                     .create().show()
-                // 有新版本就不检查数据更新，知道更新到最新
             }
         }.addOnFailureListener {
             Log.e("firebase", "Error getting data", it)

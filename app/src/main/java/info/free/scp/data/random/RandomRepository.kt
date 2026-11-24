@@ -5,6 +5,7 @@ import info.free.scp.db.AppInfoDatabase
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.util.PreferenceUtil
+import info.free.scp.util.normalizeLink
 
 interface RandomDataSource {
     fun getRandomDocuments(range: String, count: Int): List<ScpItemModel>
@@ -16,7 +17,7 @@ interface RandomDataSource {
 class RoomRandomDataSource : RandomDataSource {
     private val scpDao by lazy { ScpDatabase.getInstance()?.scpDao() }
     private val detailDao by lazy { DetailDatabase.getInstance()?.detailDao() }
-    private val likeDao by lazy { AppInfoDatabase.getInstance().likeAndReadDao() }
+    private val likeDao get() = AppInfoDatabase.getInstance().likeAndReadDao()
 
     override fun getRandomDocuments(range: String, count: Int): List<ScpItemModel> {
         if (count <= 0) return emptyList()
@@ -39,7 +40,7 @@ class RoomRandomDataSource : RandomDataSource {
 
     override fun hasOfflineDetail(link: String): Boolean {
         val dao = detailDao ?: return true
-        val detail = dao.getDetail(link)
+        val detail = dao.getDetail(normalizeLink(link))
         return !detail.isNullOrEmpty() && detail != "null"
     }
 }
@@ -70,7 +71,7 @@ class RandomRepository(
             if (candidates.isEmpty()) break
 
             candidates.forEach { document ->
-                val isRead = hideFinished && document.link in readLinks
+                val isRead = hideFinished && normalizeLink(document.link) in readLinks
                 if (!isRead && dataSource.hasOfflineDetail(document.link)) {
                     result.add(document)
                 }

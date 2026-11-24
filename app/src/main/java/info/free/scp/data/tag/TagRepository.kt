@@ -6,6 +6,7 @@ import info.free.scp.bean.TagModel
 import info.free.scp.db.DetailDatabase
 import info.free.scp.db.ScpDatabase
 import info.free.scp.service.HttpManager
+import info.free.scp.util.normalizeLink
 
 interface TagDataSource {
     fun hasOfflineDetailData(): Boolean
@@ -31,7 +32,7 @@ class RoomTagDataSource : TagDataSource {
 
     override fun getDocumentsByLinks(links: List<String>): List<ScpModel> {
         if (links.isEmpty()) return emptyList()
-        return scpDao?.getScpListByLinks(links).orEmpty()
+        return scpDao?.getScpListByLinks(links.map(::normalizeLink)).orEmpty()
     }
 
     override fun getAllTagStrings(): List<String?> {
@@ -39,7 +40,7 @@ class RoomTagDataSource : TagDataSource {
     }
 
     override fun getTagText(link: String): String? {
-        return detailDao?.getTag(link)
+        return detailDao?.getTag(normalizeLink(link))
     }
 
     override suspend fun fetchDocumentsByTag(tag: String): List<ScpModel> {

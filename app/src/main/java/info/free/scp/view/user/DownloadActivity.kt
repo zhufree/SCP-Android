@@ -94,7 +94,7 @@ class DownloadActivity : BaseActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             val success = backupRepository.importDetailDatabase(uri)
             withContext(Dispatchers.Main) {
-                showToast(if (success) "\u6570\u636e\u5e93\u5df2\u52a0\u8f7d" else "\u6570\u636e\u5e93\u8bfb\u53d6\u5931\u8d25")
+                showToast(if (success) "正文库已就绪，下次冷启动时生效" else "\u6570\u636e\u5e93\u8bfb\u53d6\u5931\u8d25")
             }
         }
     }

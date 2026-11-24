@@ -13,8 +13,8 @@ data class UserStats(
 )
 
 class UserDashboardRepository {
-    private val likeDao = AppInfoDatabase.getInstance().likeAndReadDao()
-    private val recordDao = AppInfoDatabase.getInstance().readRecordDao()
+    private val likeDao get() = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val recordDao get() = AppInfoDatabase.getInstance().readRecordDao()
 
     suspend fun loadUserStats(): UserStats = withContext(Dispatchers.IO) {
         UserStats(

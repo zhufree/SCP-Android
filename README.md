@@ -1,9 +1,113 @@
 [![forthebadge](https://forthebadge.com/images/badges/built-for-android.svg)](https://forthebadge.com)
 
 
-SCP Android 第三方客户端
+# SCP Android
 
-`kotlin`
+SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.com)）的第三方 Android 阅读客户端，应用名“SCP基金会”，包名 `info.free.scp`。
+
+`kotlin` `jetpack-compose` `room`
+
+## 项目简介
+
+应用内置 SCP 中文站的文档目录，可以按分类浏览、搜索、收藏和阅读文档。正文既可以在线从后端接口获取，也可以导入离线正文数据库后无网络阅读（并支持全文搜索）。阅读记录、收藏夹、草稿等个人数据保存在本地，可备份与恢复。
+
+文档内容来自 SCP 基金会中文站，遵循 CC BY-SA 3.0；应用代码使用 MIT 许可（见 [LICENSE](LICENSE)）。
+
+## 功能
+
+以下均能在代码中找到对应页面：
+
+- **浏览**：首页（公告、分类入口、最近原创/翻译、最高评分、Tag）、图书馆、SCP 国际版、GOI 格式、艺术作品、背景资料与指导；SCP / SCP-CN / 故事 / 设定 / 征文 / 被放逐者图书馆等分类，列表支持反序、隐藏已读。
+- **查找**：标题搜索、全文搜索（需离线正文库）、Tag 检索与 Tag 云、编号直达（CN/J 等类型）、随机（全部 / SCP / 故事 / 搞笑）。
+- **阅读**：WebView 阅读页，白天/夜间主题、字号、上一篇/下一篇、在线/离线切换、评论查看（可在详情页保存网页 Cookie 与 User-Agent）、浏览器打开、复制链接、截图分享。
+- **个人数据**：收藏与收藏夹、已读、待读列表（支持批量导入编号）、阅读历史、草稿（创作沙盒）、昵称/职位/积分。
+- **数据管理**：检查目录更新、按块下载离线正文、导入整库、个人数据备份/恢复（SAF）。
+- **其他**：桌面随机小部件、游戏推荐与站点传送门（来自 Firebase 远程配置）、设置、关于/捐赠页。
+- **渠道**：`Default`、`firim`、`GooglePlay`、`Github` 四个渠道（见 [构建与发布](docs/build-and-release.md)）。
+
+## 技术栈
+
+| 类别 | 内容 |
+| --- | --- |
+| 语言 / 构建 | Kotlin 2.2.0、Gradle 8.13、AGP 8.13.2、KSP、Java 17 |
+| UI | Jetpack Compose 1.7.4（Material 2）、AppCompat（Activity/Fragment 宿主）、WebView（阅读页）、Coil（图片） |
+| 架构 | ViewModel + LiveData/StateFlow，`data/*` Repository 边界 |
+| 本地存储 | Room 2.7.2（3 个数据库）、SharedPreferences |
+| 网络 | Retrofit 2.9.0 + Gson、OkHttp、jsoup 1.19.1（评论解析） |
+| 远程配置 | Firebase Realtime Database（BoM 33.5.0） |
+| SDK | `minSdk 21`、`targetSdk 34`、`compileSdk 34` |
+| 测试 | JUnit 4（JVM 单元测试，70 项） |
+
+## 构建与运行
+
+环境：JDK 17+、Android SDK（platform 34），使用仓库自带的 Gradle wrapper。
+
+1. 克隆仓库并切换到需要的分支（当前重构分支为 `compose-refactor`）。
+2. 准备三个被 `.gitignore` 忽略的本地文件，否则无法编译：`local.properties`（`sdk.dir`）、`app/google-services.json`（Firebase 配置）、`app/src/main/java/info/free/scp/PrivateConstants.kt`（`FEED_API_URL`、`FIREBASE_URL` 两个常量）。仅为编译可使用占位值，模板与说明见 [docs/build-and-release.md](docs/build-and-release.md)。
+3. 构建并安装 debug 包：
+
+   ```bash
+   ./gradlew installDefaultProductionDebug      # Windows: .\gradlew.bat installDefaultProductionDebug
+   ```
+
+   或在 Android Studio 中选择 `DefaultProductionDebug` 变体运行。
+4. 运行单元测试：`./gradlew testDefaultProductionDebugUnitTest`。
+
+占位配置只保证能编译（交接文档记录开发机即如此）；在线接口与远程配置需要真实的后端地址和 Firebase 配置，获取方式待确认，见构建文档。
+
+## 数据库与数据来源
+
+- **目录库** `scp_category_v2.db`：内置于 `app/src/main/assets`，约 2.2 万条文档的标题、链接、类型等信息（Room `ScpDatabase`）。
+- **正文库** `scp_detail_v2.db`：可在“设置 → 正文分块”中按需安装，也可在“离线与备份”中导入整库，整库在下次冷启动后生效。
+- **用户库** `scp_info.db`：收藏、已读、待读/历史、草稿（Room `AppInfoDatabase`）。
+- **在线接口**：后端地址来自 Firebase 远程配置（回退到 `PrivateConstants.FEED_API_URL`）；评论直接解析中文站页面。
+- **与 SCP-Spider 的关系**：目录与正文数据由爬虫从中文站抓取；爬虫代码已在提交 `55404a7`（2019-01-06）从本仓库拆出，成为独立项目 SCP-Spider。应用从 SCP-Spider Release 读取数据清单和数据库资产，详见 [数据 Release](docs/build-and-release.md#数据-release)。
+
+表结构、取值含义和迁移历史见 [docs/database.md](docs/database.md)。
+
+## 目录结构
+
+```
+SCP-Android/
+├── app/
+│   ├── build.gradle            # 模块配置：flavor、依赖、版本号
+│   ├── proguard-rules.pro
+│   ├── schemas/                # Room 导出的 schema JSON
+│   ├── libs/                   # 本地 jar（jcc-bate-0.7.3.jar）
+│   ├── <渠道>Production/release/   # 已提交的发布产物（APK、output-metadata）
+│   └── src/
+│       ├── main/
+│       │   ├── AndroidManifest.xml
+│       │   ├── assets/         # 内置目录库 + 详情页 WebView 用的 JS/CSS
+│       │   ├── res/            # 资源（仅保留 layout_widget.xml 一个布局）
+│       │   └── java/info/free/scp/
+│       │       ├── MainActivity.kt, ScpApplication.kt, ScpWidgetProvider.kt, SCPConstants.kt
+│       │       ├── bean/       # Room 实体与网络 DTO
+│       │       ├── db/         # Room 数据库与 DAO
+│       │       ├── data/       # Repository / DataSource / SettingsStore
+│       │       ├── service/    # Retrofit、HttpManager、评论 HTML 解析
+│       │       ├── ui/         # Compose Screen 与主题
+│       │       ├── view/       # Activity / Fragment / ViewModel 宿主
+│       │       ├── viewmodel/  # Firebase 数据 ViewModel 等
+│       │       ├── components/ # 通用 Compose 组件
+│       │       └── util/       # 偏好、文件、主题、更新检查等
+│       └── testDefaultProductionDebug/java/   # JVM 单元测试
+├── docs/                       # 项目文档（见下）
+├── build.gradle, settings.gradle, gradle.properties, gradle/
+├── LICENSE
+└── SCP基金会.png               # SCP 中文站内容结构思维导图
+```
+
+## 文档索引
+
+| 文档 | 内容 |
+| --- | --- |
+| [docs/architecture.md](docs/architecture.md) | 分层、模块、导航、数据流 |
+| [docs/database.md](docs/database.md) | 三个数据库的表结构、迁移、数据来源 |
+| [docs/build-and-release.md](docs/build-and-release.md) | 环境、构建变体、命令、发布流程 |
+| [docs/contributing.md](docs/contributing.md) | 贡献指南、代码与测试约定 |
+| [docs/refactor-handoff.md](docs/refactor-handoff.md) | Compose 重构的快速交接 |
+| [docs/kotlin-compose-modernization-plan.md](docs/kotlin-compose-modernization-plan.md) | 重构完整方案与历史记录 |
 
 ## 当前重构状态（2026-11-18）
 
@@ -27,7 +131,13 @@ SCP Android 第三方客户端
 
 最近验证：2026-11-18，62 项 JVM 测试 0 失败，主 debug、release staging（含 R8/资源压缩）和全部 debug 渠道通过。工具链 warning 清理后的复跑同样通过。
 
-下面保留的是历史功能计划和版本记录，当前重构任务以 `docs/kotlin-compose-modernization-plan.md` 为准。
+以上命令在 macOS/Linux 上使用 `./gradlew`，Windows 上使用 `.\gradlew.bat`。
+
+下面保留的是历史功能计划和版本记录，当前重构任务以 `docs/kotlin-compose-modernization-plan.md` 为准。其中的配置说明（如 v0.0.2 的 bmob）已过时，当前配置见上文和 `docs/build-and-release.md`。
+
+---
+
+# 历史记录与旧 TODO
 
 # Recommend game list
 - 以撒
@@ -361,6 +471,7 @@ fix bug
   - [x] 相关信息 √
 
 # v0.0.2
+（历史说明，已过时：当前不再使用 bmob，`PrivateConstants` 现在只含 `FEED_API_URL` 与 `FIREBASE_URL`。）
 数据来自爬虫抓取，存储在bmob平台，自己的api和key是私下存储的在PrivateConstants这个类里
 需要尝试这个开源项目的可以自己创建一个bmob账号然后把数据（后续会把爬虫和数据都整理一份上传）传到后台，填上自己的key：
 ```

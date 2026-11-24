@@ -10,6 +10,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
 import info.free.scp.PrivateConstants.FIREBASE_URL
+import info.free.scp.data.update.DataUpdates
+import info.free.scp.data.update.UpdateDatabases
 import info.free.scp.db.AppInfoDatabase
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
@@ -30,10 +32,10 @@ class ScpApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        database =
-            Firebase.database(FIREBASE_URL).reference
-
         context = applicationContext
+        UpdateDatabases(context).installAtColdStart()
+
+        database = Firebase.database(FIREBASE_URL).reference
 
         ThemeUtil.setTheme(this)
         registerActivityLifecycleCallbacks(object : ActivityLifecycleCallbacks {
@@ -70,6 +72,7 @@ class ScpApplication : Application() {
 
     companion object {
         lateinit var context: Context
+        internal val dataUpdates by lazy { DataUpdates(context) }
         lateinit var database: DatabaseReference
         var isDebug = true
         var currentActivity: BaseActivity? = null

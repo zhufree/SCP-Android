@@ -10,6 +10,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.data.catalog.ScpCatalogRepository
 import info.free.scp.db.DetailDatabase
 import info.free.scp.service.HttpManager
+import info.free.scp.util.normalizeLink
 
 class DetailRepository {
     val scp: MutableLiveData<ScpModel?> = MutableLiveData()
@@ -37,12 +38,12 @@ class DetailRepository {
     }
 
     fun loadOfflineDetail(link: String) {
-        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(link)
+        offlineDetail = DetailDatabase.getInstance()?.detailDao()?.getLiveDetail(normalizeLink(link))
             ?: MutableLiveData()
     }
 
     fun loadOfflineTag(link: String) {
-        offlineTag = DetailDatabase.getInstance()?.detailDao()?.getLiveTag(link)
+        offlineTag = DetailDatabase.getInstance()?.detailDao()?.getLiveTag(normalizeLink(link))
             ?: MutableLiveData()
     }
 

@@ -3,10 +3,10 @@ package info.free.scp.data.backup
 import android.content.Context
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
-import info.free.scp.SCPConstants.DETAIL_DB_NAME
 import info.free.scp.ScpApplication
+import info.free.scp.data.update.DETAIL_IMPORT_LOCK
+import info.free.scp.data.update.UpdateDatabases
 import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.DetailDatabase
 import info.free.scp.util.FileUtil
 import info.free.scp.util.copyFileFromUri
 import info.free.scp.util.copyFileToUri
@@ -25,16 +25,12 @@ class AndroidAppDataBackupRepository(
         FileUtil.privatePrefDirPath
     )
 ) : AppDataBackupRepository {
-    override fun importDetailDatabase(uri: Uri): Boolean {
-        val destination = File(FileUtil.privateDbDirPath + DETAIL_DB_NAME)
-        val success = runCatching {
-            copyFileFromUri(context, uri, destination)
-        }.getOrDefault(false)
-        if (success) {
-            DetailDatabase.getInstance()
-            FileUtil.checkDetailDb()
-        }
-        return success
+    override fun importDetailDatabase(uri: Uri): Boolean = synchronized(DETAIL_IMPORT_LOCK) {
+        runCatching {
+            checkNotNull(context.contentResolver.openInputStream(uri)).use {
+                UpdateDatabases(context).stageLegacyDetail(it)
+            }
+        }.isSuccess
     }
 
     override fun backupAppData(uriTree: Uri): Boolean {
@@ -60,6 +56,9 @@ class AndroidAppDataBackupRepository(
             }
         }
         AppInfoDatabase.getNewInstance()
-        return true
+        // Room opens lazily, so exercise the restored file and its upgrade now.
+        return runCatching {
+            AppInfoDatabase.getInstance().openHelper.writableDatabase
+        }.isSuccess
     }
 }

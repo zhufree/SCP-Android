@@ -7,6 +7,7 @@ import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.db.AppInfoDatabase
+import info.free.scp.util.normalizeLink
 
 data class ReadingDocumentStatus(
     val isLiked: Boolean,
@@ -33,35 +34,35 @@ interface ReadingListDataSource {
 }
 
 class RoomReadingListDataSource : ReadingListDataSource {
-    private val likeDao by lazy { AppInfoDatabase.getInstance().likeAndReadDao() }
-    private val recordDao by lazy { AppInfoDatabase.getInstance().readRecordDao() }
+    private val likeDao get() = AppInfoDatabase.getInstance().likeAndReadDao()
+    private val recordDao get() = AppInfoDatabase.getInstance().readRecordDao()
 
-    override fun getLikeInfo(link: String): ScpLikeModel? = likeDao.getInfoByLink(link)
+    override fun getLikeInfo(link: String): ScpLikeModel? = likeDao.getInfoByLink(normalizeLink(link))
 
     override fun saveLikeInfo(info: ScpLikeModel) {
-        likeDao.save(info)
+        likeDao.save(info.copy(link = normalizeLink(info.link)))
     }
 
     override fun saveLikeInfos(info: List<ScpLikeModel>) {
-        likeDao.saveAll(info)
+        likeDao.saveAll(info.map { it.copy(link = normalizeLink(it.link)) })
     }
 
     override fun deleteLikeInfo(info: ScpLikeModel) {
-        likeDao.deleteLike(info)
+        likeDao.deleteLike(info.copy(link = normalizeLink(info.link)))
     }
 
-    override fun getRecord(link: String): ScpRecordModel? = recordDao.getInfoByLink(link)
+    override fun getRecord(link: String): ScpRecordModel? = recordDao.getInfoByLink(normalizeLink(link))
 
     override fun saveRecord(record: ScpRecordModel) {
-        recordDao.save(record)
+        recordDao.save(record.copy(link = normalizeLink(record.link)))
     }
 
     override fun deleteRecord(link: String, viewType: Int) {
-        recordDao.delete(link, viewType)
+        recordDao.delete(normalizeLink(link), viewType)
     }
 
     override fun deleteRecord(record: ScpRecordModel) {
-        recordDao.delete(record)
+        recordDao.delete(record.copy(link = normalizeLink(record.link)))
     }
 
     override fun getRecords(viewType: Int, order: Int): List<ScpRecordModel> {
@@ -108,7 +109,7 @@ class ReadingListRepository(
 
     fun getLikeInfo(link: String, title: String): ScpLikeModel {
         return dataSource.getLikeInfo(link)
-            ?: ScpLikeModel(link, title, like = false, hasRead = false, boxId = 0)
+            ?: ScpLikeModel(normalizeLink(link), title, like = false, hasRead = false, boxId = 0)
     }
 
     fun toggleRead(link: String, title: String): Boolean {

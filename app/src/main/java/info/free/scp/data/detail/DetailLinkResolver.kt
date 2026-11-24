@@ -1,21 +1,18 @@
 package info.free.scp.data.detail
 
 import info.free.scp.SCPConstants.SCP_SITE_URL
+import info.free.scp.util.normalizeLink
 
 object DetailLinkResolver {
     fun toFullUrl(link: String): String {
-        return if (link.contains("http")) link else "$SCP_SITE_URL$link"
+        val target = link.replaceFirst(fileScheme, "")
+        return if (absoluteLink.containsMatchIn(target)) target else "$SCP_SITE_URL$target"
     }
 
-    fun toLocalLink(requestUrl: String): String {
-        return when {
-            requestUrl.startsWith(SCP_SITE_URL) -> requestUrl.removePrefix(SCP_SITE_URL)
-            requestUrl.startsWith("file:") -> requestUrl.removePrefix("file://")
-            else -> requestUrl
-        }
-    }
+    fun toLocalLink(requestUrl: String): String = normalizeLink(requestUrl)
 
-    fun toApiPath(link: String): String {
-        return link.substring(1)
-    }
+    fun toApiPath(link: String): String = normalizeLink(link).removePrefix("/")
+
+    private val fileScheme = Regex("^file://(?=/)", RegexOption.IGNORE_CASE)
+    private val absoluteLink = Regex("^(https?://|//)", RegexOption.IGNORE_CASE)
 }

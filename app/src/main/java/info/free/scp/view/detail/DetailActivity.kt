@@ -75,7 +75,7 @@ class DetailActivity : BaseActivity() {
     private var randomTitleList = emptyList<String>()
     private var url = ""
         set(value) {
-            field = value
+            field = DetailLinkResolver.toLocalLink(value)
             fullUrl = DetailLinkResolver.toFullUrl(value)
         }
     private var title = ""
@@ -121,7 +121,8 @@ class DetailActivity : BaseActivity() {
         binding.webView.setBackgroundColor(ThemeUtil.containerBg)
         binding.webView.settings.javaScriptEnabled = true
 
-        url = intent.getStringExtra("link") ?: ""
+        val initialLink = intent.getStringExtra("link") ?: intent.dataString.orEmpty()
+        url = initialLink
         title = intent.getStringExtra("title") ?: ""
         index = intent.getIntExtra("index", 0)
         scpType = intent.getIntExtra("scp_type", 0)
@@ -135,7 +136,7 @@ class DetailActivity : BaseActivity() {
         forceOnline = intent.getBooleanExtra("forceOnline", false)
 
         // 有些不是以/开头的而是完整链接
-        if (url.isEmpty()) {
+        if (initialLink.isEmpty()) {
             // 入口都确定了有url，没有的话直接finish
             finish()
         } else if (!forceOnline) {
@@ -207,7 +208,7 @@ class DetailActivity : BaseActivity() {
                 if (onlineMode == 1) {
                     view.loadUrl(requestUrl)
                 } else {
-                    url = DetailLinkResolver.toLocalLink(requestUrl)
+                    url = requestUrl
                     Log.i("scp-detail", url)
                     val tmpScp = viewModel.getDocumentByLink(url)
                     tmpScp?.let {

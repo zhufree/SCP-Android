@@ -103,7 +103,7 @@ class MainActivity : BaseActivity() {
         UpdateManager.getInstance(this).checkAppData()
         FileUtil.checkDetailDb()
         requireFilePermission()
-        ScpDatabase.getNewInstance()
+        ScpDatabase.getInstance()
         AppInfoDatabase.getNewInstance()
     }
 

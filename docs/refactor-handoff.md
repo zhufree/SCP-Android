@@ -140,4 +140,4 @@ rg -n "PreferenceUtil|APP_SP" app/src/main/java/info/free/scp/view app/src/main/
 .\gradlew.bat testDefaultProductionDebugUnitTest
 ```
 
-阶段 5A 的设备复验开始前应确认：62 项 JVM 测试通过，且已连接设备。每个阶段的完成证据必须同时包含定向扫描、自动测试/构建结果，以及涉及平台行为时的手动验证结果。远端 `origin/compose-refactor` 已不存在，不要推送。
+阶段 5A 的设备复验开始前应确认：62 项 JVM 测试通过，且已连接设备。每个阶段的完成证据必须同时包含定向扫描、自动测试/构建结果，以及涉及平台行为时的手动验证结果。原文写“远端 `origin/compose-refactor` 已不存在，不要推送”；2026-11-23 用 `git ls-remote --heads origin` 核对，该分支在远端存在且指向 `57f4e7a`（与本地一致）。是否可以推送以仓库所有者为准（待确认）。

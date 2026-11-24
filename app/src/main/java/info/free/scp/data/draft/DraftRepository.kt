@@ -13,7 +13,7 @@ interface DraftDataSource {
 }
 
 class RoomDraftDataSource : DraftDataSource {
-    private val draftDao by lazy { AppInfoDatabase.getInstance().draftDao() }
+    private val draftDao get() = AppInfoDatabase.getInstance().draftDao()
 
     override fun getDraftList(): LiveData<List<DraftModel>> {
         return draftDao.getAllDraft()

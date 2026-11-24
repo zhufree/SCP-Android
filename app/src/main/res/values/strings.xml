@@ -94,7 +94,7 @@
     <string name="request_permission_notice">本APP需要申请外部存储权限用于备份数据库，导出文章图片等</string>
     <string name="download_notice">离线文档后，无需联网即可加载文档内容，且支持全文搜索功能。\n\n
 要离线文档，首先点击左侧按钮选择线路下载数据库文件，要注意下载当前APP对应版本的数据库。\n
-下载完成后，点击右侧按钮，找到并选择刚刚下载的“scp_detail_v2.db”，APP会自动加载数据库文件，加载完成后即自动进入离线模式。\n\n
+下载完成后，点击右侧按钮，找到并选择刚刚下载的“scp_detail_v2.db”，校验通过后将在下次冷启动时安装并进入离线模式。也可以在“设置 → 正文分块”按需下载。\n\n
 注：1. 数据库文件不包括最近更新页面、最高评分页面。数据库文件总大小约超过500M，请在确实需要的情况下自由下载。\n
 2. 关于数据库的更新问题，请查阅“如何更新数据库”。</string>
     <string name="backup_notice">个性化数据是APP使用过程中包括收藏夹、历史记录、选择的职位及等级积分等。备份过程中将在手机存储内创建备份文件。\n\n
@@ -135,4 +135,5 @@
     <string name="traditional_setting">繁体简体</string>
     <!-- tag -->
     <string name="all_tags">全部标签</string>
+    <string name="detail_part_summary">%1$.1f MiB · %2$s</string>
 </resources>

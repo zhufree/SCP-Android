@@ -1,17 +1,10 @@
 package info.free.scp.util
 
-import android.content.Context
-import android.content.res.AssetManager
 import android.os.Environment
-import android.util.Log
-import info
 import info.free.scp.SCPConstants.AppMode.OFFLINE
 import info.free.scp.SCPConstants.DETAIL_DB_NAME
-import info.free.scp.SCPConstants.SCP_DB_NAME
 import info.free.scp.ScpApplication.Companion.context
-import info.free.scp.db.AppInfoDatabase
-import info.free.scp.db.ScpDatabase
-import java.io.*
+import java.io.File
 
 
 /**
@@ -31,27 +24,6 @@ object FileUtil {
     val privateDbDirPath = "$absPath${sp}data$sp$pkgName${sp}databases$sp"
 
 
-    /**
-     * Copies your database from your local assets-folder to the just created
-     * empty database in the system folder, from where it can be accessed and
-     * handled. This is done by transfering bytestream.
-     */
-    @Throws(IOException::class)
-    fun copyCategoryDb(force: Boolean) {
-        val dbReady = checkDataReady(SCP_DB_NAME)
-        if (dbReady && !force) return
-        val am: AssetManager = context.assets
-        val inp: InputStream = am.open(SCP_DB_NAME)
-        val dirPath = File(privateDbDirPath)
-        dirPath.mkdir()
-        val outFileName = privateDbDirPath + SCP_DB_NAME
-        // Open the empty db as the output stream
-        val oup = FileOutputStream(outFileName)
-        inp.copyTo(oup)
-        oup.close()
-        inp.close()
-    }
-
     fun checkDetailDb() {
         val dbReady = checkDataReady(DETAIL_DB_NAME)
         if (dbReady) {
@@ -65,8 +37,7 @@ object FileUtil {
      * 检查私有数据库中db是否存在
      */
     fun checkDataReady(dbName: String): Boolean {
-        val backUpFile = File("$privateDbDirPath$dbName")
-        return backUpFile.exists()
+        return context.getDatabasePath(dbName).isFile
     }
 
 }

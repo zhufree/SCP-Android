@@ -43,7 +43,7 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 环境：JDK 17+（推荐 21）、Android 17 SDK Platform（`android-37.0`），使用仓库自带的 Gradle wrapper。
 
 1. 克隆仓库并切换到需要的分支（当前重构分支为 `compose-refactor`）。
-2. 准备三个被 `.gitignore` 忽略的本地文件，否则无法编译：`local.properties`（`sdk.dir`）、`app/google-services.json`（Firebase 配置）、`app/src/main/java/info/free/scp/PrivateConstants.kt`（`FEED_API_URL`、`FIREBASE_URL` 两个常量）。仅为编译可使用占位值，模板与说明见 [docs/build-and-release.md](docs/build-and-release.md)。
+2. 准备三个被 `.gitignore` 忽略的本地文件，否则无法编译：`local.properties`（`sdk.dir`）、`app/google-services.json`（Firebase 配置）、`app/src/main/java/info/free/scp/PrivateConstants.kt`（`FEED_API_URL`、`FIREBASE_URL` 两个常量）。可使用占位值完成编译，Feed 接口会回退到公开 Bridge，模板与说明见 [docs/build-and-release.md](docs/build-and-release.md)。
 3. 构建 debug APK 并运行 JVM 单元测试：
 
    ```bash
@@ -59,7 +59,7 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 - **目录库** `scp_category_v2.db`：内置于 `app/src/main/assets`，约 2.2 万条文档的标题、链接、类型等信息（Room `ScpDatabase`）。
 - **正文库** `scp_detail_v2.db`：可在“设置 → 正文分块”中按需安装，也可在“离线与备份”中导入整库，整库在下次冷启动后生效。
 - **用户库** `scp_info.db`：收藏、已读、待读/历史、草稿（Room `AppInfoDatabase`）。
-- **在线接口**：后端地址来自 Firebase 远程配置（回退到 `PrivateConstants.FEED_API_URL`）；评论直接解析中文站页面。
+- **在线接口**：Feed 接口依次使用有效的 Firebase 缓存地址、`PrivateConstants.FEED_API_URL` 和公开 Bridge `https://api.zhufree.fun/`。评论直接解析中文站页面。
 - **与 SCP-Spider 的关系**：目录与正文数据由爬虫从中文站抓取；爬虫代码已在提交 `55404a7`（2019-01-06）从本仓库拆出，成为独立项目 SCP-Spider。应用从 SCP-Spider Release 读取数据清单和数据库资产，详见 [数据 Release](docs/build-and-release.md#数据-release)。
 
 表结构、取值含义和迁移历史见 [docs/database.md](docs/database.md)。

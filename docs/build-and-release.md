@@ -33,12 +33,12 @@
 package info.free.scp
 
 object PrivateConstants {
-    const val FEED_API_URL = "https://example.com/"            // 后端接口基地址（Retrofit baseUrl，需以 / 结尾）
+    const val FEED_API_URL = "https://example.com/"            // 可选的 Feed 接口基地址（占位值会触发默认回退）
     const val FIREBASE_URL = "https://example.firebaseio.com"  // Firebase Realtime Database 地址
 }
 ```
 
-仅为通过编译，可使用占位值（交接文档记录开发机上就是占位文件）；此时联网功能和 Firebase 远程配置不会返回真实数据。要在真机上联调，需要换成真实的后端与 Firebase 配置。真实值的获取方式属于维护者私有信息，本仓库没有记录（待确认）。不要提交这些文件。
+可以使用占位值完成编译。Feed 接口优先使用 Firebase `config/api_url` 的有效缓存，其次使用 `PrivateConstants.FEED_API_URL`，两者均为空、占位或无效时使用公开 Bridge `https://api.zhufree.fun/`。自定义地址应使用 HTTPS，旧版 Bridge 的 HTTP 地址会自动升级为 HTTPS。Firebase 功能联调需要可用的 Firebase 配置。不要提交这些文件。
 
 ## 3. 构建变体
 

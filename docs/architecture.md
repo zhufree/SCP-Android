@@ -93,7 +93,7 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 
 ### 后端接口（`service/ApiService.kt`）
 
-基地址：`PreferenceUtil.getApiUrl()`，即 Firebase `config/api_url` 缓存值，为空时回退 `PrivateConstants.FEED_API_URL`。`HttpManager` 是单例，Retrofit 在构造时读取一次基地址，因此新地址在下次进程启动才会生效。
+`PreferenceUtil.getApiUrl()` 依次选择有效的 Firebase `config/api_url` 缓存、`PrivateConstants.FEED_API_URL` 和公开 Bridge `https://api.zhufree.fun/`。`HttpManager` 在每次请求时读取有效地址，地址变化后才重建 Retrofit 服务，所有 Feed 请求共用同一个 OkHttp 客户端。
 
 | 路径 | 用途 |
 | --- | --- |

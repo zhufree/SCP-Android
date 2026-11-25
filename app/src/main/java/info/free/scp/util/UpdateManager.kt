@@ -76,7 +76,6 @@ class UpdateManager(private var activity: BaseActivity) {
     private fun getConfig() {
         // Write a message to the database
         database.child("config").get().addOnSuccessListener {
-            Log.i("firebase", "Got value ${it.value}")
             // 检查更新信息
             var newVersionCode = 0
             var updateDesc: String? = ""

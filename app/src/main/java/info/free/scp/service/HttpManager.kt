@@ -12,11 +12,7 @@ import info.free.scp.SCPConstants.TOP_RATED_WANDERS
 import info.free.scp.ScpApplication
 import info.free.scp.bean.*
 import info.free.scp.util.PreferenceUtil
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 
@@ -27,24 +23,21 @@ import java.util.concurrent.TimeUnit
 
 class HttpManager {
 
-    private val httpClientBuilder = OkHttpClient.Builder()
+    private val httpClient = OkHttpClient.Builder()
         .readTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         .addInterceptor { chain ->
-            val url = chain.request().url.toUrl().toString()
+            val request = chain.request()
             if (ScpApplication.isDebug) {
-                Log.i("api", url)
+                Log.i("api", request.url.encodedPath)
             }
-            chain.proceed(chain.request())
+            chain.proceed(request)
         }
-
-    private val feedRetrofit: Retrofit = Retrofit.Builder()
-        .baseUrl(PreferenceUtil.getApiUrl())
-        .addConverterFactory(GsonConverterFactory.create())
-        .client(httpClientBuilder.build())
         .build()
 
-    private val feedApiService = feedRetrofit.create(ApiService::class.java)
+    private val feedServices = FeedApiServiceCache(httpClient, PreferenceUtil::getApiUrl)
+    private val feedApiService: ApiService
+        get() = feedServices.get()
     private val htmlParserService = HtmlParserService()
 
 

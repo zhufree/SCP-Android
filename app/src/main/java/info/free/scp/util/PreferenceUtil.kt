@@ -14,6 +14,8 @@ import info.free.scp.data.settings.USER_SETTINGS_FILE
 import info.free.scp.data.settings.putHanzType
 import info.free.scp.data.settings.readHanzType
 import info.free.scp.data.settings.stableUserCode
+import info.free.scp.service.FeedApiEndpoint
+import okhttp3.HttpUrl
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -86,9 +88,8 @@ object PreferenceUtil {
         setStringValue(APP_SP, "api_url", url)
     }
 
-    fun getApiUrl(): String {
-        val prefUrl = getStringValue(APP_SP, "api_url")
-        return if (prefUrl.isNotEmpty()) prefUrl else PrivateConstants.FEED_API_URL
+    fun getApiUrl(): HttpUrl {
+        return FeedApiEndpoint.resolve(getStringValue(APP_SP, "api_url"), PrivateConstants.FEED_API_URL)
     }
 
     fun setShowMeal(show: Boolean) {

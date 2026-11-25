@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import info.free.scp.R
 import info.free.scp.bean.DraftModel
 import info.free.scp.ui.MainTheme
+import info.free.scp.ui.common.ScpConfirmDialog
 import info.free.scp.util.ThemeUtil
 
 @Composable
@@ -72,25 +72,17 @@ fun DraftListScreen(
     }
 
     pendingDelete?.let { draft ->
-        AlertDialog(
-            onDismissRequest = { pendingDelete = null },
-            title = { Text(text = "删除草稿") },
-            text = { Text(text = "确定删除草稿“${draft.title}”吗？") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteDraft(draft)
-                        pendingDelete = null
-                    }
-                ) {
-                    Text(text = "确定")
-                }
+        ScpConfirmDialog(
+            title = "删除草稿",
+            message = "确定删除草稿“${draft.title}”吗？",
+            confirmText = "确定",
+            dismissText = "取消",
+            destructive = true,
+            onConfirm = {
+                onDeleteDraft(draft)
+                pendingDelete = null
             },
-            dismissButton = {
-                TextButton(onClick = { pendingDelete = null }) {
-                    Text(text = "取消")
-                }
-            }
+            onDismiss = { pendingDelete = null }
         )
     }
 }

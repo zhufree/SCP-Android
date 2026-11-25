@@ -2,7 +2,6 @@ package info.free.scp.view.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -24,6 +23,7 @@ import info.free.scp.data.direct.DirectLookupResult
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.DirectScreen
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.detail.DetailActivity
@@ -133,6 +133,6 @@ class DirectActivity : BaseActivity() {
     }
 
     private fun showNotFound() {
-        Toast.makeText(this, "\u6ca1\u6709\u8fd9\u7bc7\u6587\u7ae0", Toast.LENGTH_SHORT).show()
+        ScpDialogs.snackbar(this, "\u6ca1\u6709\u8fd9\u7bc7\u6587\u7ae0")
     }
 }

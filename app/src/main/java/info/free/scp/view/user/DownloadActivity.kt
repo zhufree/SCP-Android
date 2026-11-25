@@ -1,9 +1,7 @@
 package info.free.scp.view.user
 
-import android.app.AlertDialog
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.padding
@@ -17,6 +15,7 @@ import info.free.scp.data.backup.AndroidAppDataBackupRepository
 import info.free.scp.data.backup.AppDataBackupRepository
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.user.DownloadScreen
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
@@ -82,12 +81,9 @@ class DownloadActivity : BaseActivity() {
             "https://mbd.pub/o/bread/mbd-YZiZl51u",
             "https://drive.google.com/drive/folders/1iGSW2u_-RuAS8HxebBzV-oCOgAZnVUr5?usp=sharing"
         )
-        AlertDialog.Builder(this)
-            .setTitle("\u9009\u62e9\u4e0b\u8f7d\u7ebf\u8def")
-            .setItems(downloadTitles.toTypedArray()) { _, index ->
-                Utils.openUrl(downloadLinks[index])
-            }
-            .show()
+        ScpDialogs.showActionSheet(this, "\u9009\u62e9\u4e0b\u8f7d\u7ebf\u8def", downloadTitles) { index ->
+            Utils.openUrl(downloadLinks[index])
+        }
     }
 
     private fun importDetailDatabase(uri: Uri) =
@@ -109,15 +105,11 @@ class DownloadActivity : BaseActivity() {
             val result = withContext(Dispatchers.IO) { operation() }
             val error = result.exceptionOrNull()
             if (error == null) showToast(success)
-            else AlertDialog.Builder(this@DownloadActivity)
-                .setTitle(failure)
-                .setMessage(error.message ?: "文件读写失败")
-                .setPositiveButton(android.R.string.ok, null)
-                .show()
+            else ScpDialogs.showMessage(this@DownloadActivity, error.message ?: "文件读写失败", title = failure)
         }
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        ScpDialogs.snackbar(this, message)
     }
 }

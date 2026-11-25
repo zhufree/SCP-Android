@@ -1,7 +1,6 @@
 package info.free.scp.util
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Intent
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.home.PrivacyActivity
@@ -13,7 +12,7 @@ import info.free.scp.view.home.PrivacyActivity
 object NewbieManager {
 
     fun showPrivacyDialog(activity: Activity) {
-        AlertDialog.Builder(activity)
+        ScpDialogs.builder(activity)
             .setMessage("使用本 APP 之前，请阅读隐私协议。")
             .setPositiveButton("确定") { dialog, _ ->
                 PreferenceUtil.setCheckPrivacy()
@@ -31,16 +30,13 @@ object NewbieManager {
             "对 SCP 了解不多或只知道衍生游戏",
             "资深读者 / 作者（路过简介）"
         )
-        AlertDialog.Builder(activity)
-            .setTitle("请选择你对 SCP 基金会的了解程度")
-            .setItems(levels) { _, index ->
-                PreferenceUtil.setFirstInstallApp()
-                when (index) {
-                    0 -> showNewReaderNotice(activity)
-                    1 -> showExperiencedReaderNotice(activity)
-                }
+        ScpDialogs.showChoice(activity, "请选择你对 SCP 基金会的了解程度", levels.toList()) { index ->
+            PreferenceUtil.setFirstInstallApp()
+            when (index) {
+                0 -> showNewReaderNotice(activity)
+                1 -> showExperiencedReaderNotice(activity)
             }
-            .show()
+        }
     }
 
     private fun showNewReaderNotice(activity: Activity) {
@@ -60,7 +56,7 @@ object NewbieManager {
             如果你想从最初的作品开始，可以先阅读 SCP-173。
         """.trimIndent()
 
-        AlertDialog.Builder(activity)
+        ScpDialogs.builder(activity)
             .setMessage(message)
             .setPositiveButton("阅读 SCP-173") { _, _ ->
                 openDetail(activity, "/scp-173", "SCP-173")
@@ -78,7 +74,7 @@ object NewbieManager {
             如果对 APP 有改进建议或疑难反馈，欢迎加入 QQ 群 805194504 联系我们。
         """.trimIndent()
 
-        AlertDialog.Builder(activity)
+        ScpDialogs.builder(activity)
             .setMessage(message)
             .setPositiveButton("查看指导中心") { _, _ ->
                 openDetail(activity, "/guide-hub", "指导中心")

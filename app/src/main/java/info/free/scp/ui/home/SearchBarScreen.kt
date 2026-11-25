@@ -12,10 +12,14 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.outlined.Dialpad
+import androidx.compose.material.icons.outlined.AutoStories
+import androidx.compose.material.icons.outlined.Casino
+import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.SentimentSatisfied
+import info.free.scp.ui.common.ScpDropdownMenu
+import info.free.scp.ui.common.ScpMenuItem
 import androidx.compose.material.icons.outlined.Shuffle
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +47,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import info.free.scp.R
+
+private val randomTypeIcons = listOf(
+    Icons.Outlined.Casino,
+    Icons.Outlined.Description,
+    Icons.Outlined.AutoStories,
+    Icons.Outlined.SentimentSatisfied
+)
 
 /** 随机类型下标，顺序与 RandomActivity 的 `random_type` 一致。 */
 internal val randomTypeLabels = listOf(
@@ -122,13 +133,14 @@ fun SearchBarScreen(
                     icon = Icons.Outlined.Shuffle,
                     onClick = { randomMenuOpen = true }
                 )
-                DropdownMenu(
+                ScpDropdownMenu(
                     expanded = randomMenuOpen,
                     onDismissRequest = { randomMenuOpen = false }
                 ) {
                     randomTypeLabels.forEachIndexed { index, labelRes ->
-                        DropdownMenuItem(
-                            text = { Text(stringResource(labelRes)) },
+                        ScpMenuItem(
+                            text = stringResource(labelRes),
+                            icon = randomTypeIcons[index],
                             onClick = {
                                 randomMenuOpen = false
                                 onRandom(index)

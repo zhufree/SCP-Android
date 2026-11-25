@@ -38,6 +38,16 @@
         <item name="colorSurfaceContainer">@color/md_day_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/md_day_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_day_surfaceContainerHighest</item>
+        <item name="colorSurfaceInverse">@color/md_day_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_day_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_day_inversePrimary</item>
+        <!-- 弹窗/底部面板/Snackbar/菜单：遗留调用自动套用这里；统一封装见 util/ScpDialogs.kt 与 ui/common/Dialogs.kt -->
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Scp.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Scp.MaterialAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Scp.BottomSheetDialog</item>
+        <item name="snackbarStyle">@style/Widget.Scp.Snackbar</item>
+        <item name="popupMenuStyle">@style/Widget.Scp.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Scp.PopupMenu.Overflow</item>
         <!-- Preference 分类标题等仍读取 colorAccent -->
         <item name="colorAccent">@color/md_day_primary</item>
 
@@ -98,6 +108,15 @@
         <item name="colorSurfaceContainer">@color/md_night_surfaceContainer</item>
         <item name="colorSurfaceContainerHigh">@color/md_night_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_night_surfaceContainerHighest</item>
+        <item name="colorSurfaceInverse">@color/md_night_inverseSurface</item>
+        <item name="colorOnSurfaceInverse">@color/md_night_inverseOnSurface</item>
+        <item name="colorPrimaryInverse">@color/md_night_inversePrimary</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Scp.MaterialAlertDialog</item>
+        <item name="alertDialogTheme">@style/ThemeOverlay.Scp.MaterialAlertDialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Scp.BottomSheetDialog</item>
+        <item name="snackbarStyle">@style/Widget.Scp.Snackbar</item>
+        <item name="popupMenuStyle">@style/Widget.Scp.PopupMenu</item>
+        <item name="actionOverflowMenuStyle">@style/Widget.Scp.PopupMenu.Overflow</item>
         <item name="colorAccent">@color/md_night_primary</item>
 
         <item name="android:statusBarColor">@color/md_night_toolbar</item>
@@ -125,15 +144,18 @@
 
     <!-- 程序化构建的标题栏放在此主题下：标题和溢出菜单图标用浅色（标题栏日夜都是深色） -->
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.Material3.Dark.ActionBar" />
-    <!-- 弹出菜单：颜色取自当前 Activity 的 ThemeUtil 属性，随日夜切换 -->
-    <style name="ToolbarPopupTheme" parent="ThemeOverlay.Material3">
-        <item name="colorSurfaceContainer">?attr/itemBoxBg</item>
-        <item name="colorSurface">?attr/itemBoxBg</item>
-        <item name="colorOnSurface">?attr/darkText</item>
-        <item name="android:colorBackground">?attr/itemBoxBg</item>
-        <item name="android:textColor">?attr/darkText</item>
-        <item name="android:textColorPrimary">?attr/darkText</item>
-        <item name="android:textSize">16sp</item>
+    <!--
+        弹窗 / 面板 / 提示 / 菜单的统一样式（日夜共用，颜色全部取主题的 M3 角色，随 setTheme 切换）。
+        View 侧新代码用 util/ScpDialogs.kt，Compose 侧用 ui/common/Dialogs.kt；这里让遗留调用自动跟随。
+    -->
+    <style name="ThemeOverlay.Scp.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog" />
+    <style name="ThemeOverlay.Scp.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog" />
+    <style name="Widget.Scp.Snackbar" parent="Widget.Material3.Snackbar" />
+    <style name="Widget.Scp.PopupMenu" parent="Widget.Material3.PopupMenu">
+        <item name="android:popupBackground">@drawable/scp_popup_menu_background</item>
+    </style>
+    <style name="Widget.Scp.PopupMenu.Overflow" parent="Widget.Material3.PopupMenu.Overflow">
+        <item name="android:popupBackground">@drawable/scp_popup_menu_background</item>
     </style>
 
 </resources>

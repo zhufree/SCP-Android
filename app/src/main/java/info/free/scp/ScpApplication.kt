@@ -1,7 +1,6 @@
 package info.free.scp
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.app.Application
 import android.app.DownloadManager
 import android.content.Context
@@ -15,6 +14,7 @@ import info.free.scp.PrivateConstants.FIREBASE_URL
 import info.free.scp.data.backup.AndroidAppDataBackupRepository
 import info.free.scp.data.update.DataUpdates
 import info.free.scp.data.update.UpdateDatabases
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
@@ -53,10 +53,7 @@ class ScpApplication : Application() {
 
             override fun onActivityResumed(activity: Activity) {
                 if (startupMessages.isEmpty() || activity.isFinishing) return
-                AlertDialog.Builder(activity)
-                    .setMessage(startupMessages.joinToString("\n"))
-                    .setPositiveButton(android.R.string.ok, null)
-                    .show()
+                ScpDialogs.showMessage(activity, startupMessages.joinToString("\n"))
                 startupMessages.clear()
             }
 

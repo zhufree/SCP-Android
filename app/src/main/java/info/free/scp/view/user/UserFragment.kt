@@ -1,6 +1,5 @@
 package info.free.scp.view.user
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -28,6 +27,7 @@ import info.free.scp.ui.user.UserDashboardScreen
 import info.free.scp.ui.user.UserDashboardViewModel
 import info.free.scp.util.EventUtil
 import info.free.scp.util.NewbieManager
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -155,44 +155,22 @@ class UserFragment : BaseFragment() {
     }
 
     private fun checkUserInfo() {
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext())
-            )
+        ScpDialogs.showInput(
+            context = requireContext(),
+            title = "\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c\u8c03\u67e5\u5458\uff0c\u8bf7\u8f93\u5165\u4f60\u7684\u540d\u5b57",
+            label = "\u540d\u5b57",
+            initialText = userPreferences.nickname,
+            positiveText = "\u786e\u5b9a",
+            negativeText = "\u53d6\u6d88"
+        ) { name ->
+            userPreferences.saveNickname(name)
+            profileVersion += 1
+            checkJob()
         }
-        val titleView = TextView(requireContext()).apply {
-            text = "\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c\u8c03\u67e5\u5458\uff0c\u8bf7\u8f93\u5165\u4f60\u7684\u540d\u5b57"
-            setTextColor(ThemeUtil.darkText)
-            textSize = 18f
-        }
-        val input = EditText(requireContext()).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            isSingleLine = true
-            setText(userPreferences.nickname)
-        }
-        container.addView(titleView)
-        container.addView(input)
-
-        AlertDialog.Builder(requireContext())
-            .setView(container)
-            .setPositiveButton("\u786e\u5b9a") { _, _ ->
-                userPreferences.saveNickname(input.text?.toString().orEmpty())
-                profileVersion += 1
-                checkJob()
-            }
-            .setNegativeButton("\u53d6\u6d88", null)
-            .show()
     }
 
     private fun checkJob() {
-        val jobList = arrayOf(
+        val jobList = listOf(
             "\u6536\u5bb9\u4e13\u5bb6",
             "\u7814\u7a76\u5458",
             "\u5b89\u4fdd\u4eba\u5458",
@@ -200,13 +178,14 @@ class UserFragment : BaseFragment() {
             "\u5916\u52e4\u7279\u5de5",
             "\u673a\u52a8\u7279\u9063\u961f\u6210\u5458"
         )
-        AlertDialog.Builder(requireContext())
-            .setTitle("\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c${userPreferences.nickname}\uff0c\u8bf7\u9009\u62e9\u4f60\u7684\u804c\u4e1a")
-            .setItems(jobList) { _, i ->
-                userPreferences.saveJob(jobList[i])
-                profileVersion += 1
-            }
-            .show()
+        ScpDialogs.showChoice(
+            requireContext(),
+            "\u6b22\u8fce\u6765\u5230 SCP \u57fa\u91d1\u4f1a\uff0c${userPreferences.nickname}\uff0c\u8bf7\u9009\u62e9\u4f60\u7684\u804c\u4e1a",
+            jobList
+        ) { i ->
+            userPreferences.saveJob(jobList[i])
+            profileVersion += 1
+        }
     }
 
     companion object {

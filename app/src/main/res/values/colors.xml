@@ -37,6 +37,10 @@
     <color name="md_day_surfaceContainer">#EEF3EF</color>
     <color name="md_day_surfaceContainerHigh">#E8EEE9</color>
     <color name="md_day_surfaceContainerHighest">#E2E8E3</color>
+    <!-- 反色容器：Snackbar 等用 -->
+    <color name="md_day_inverseSurface">#2F3631</color>
+    <color name="md_day_inverseOnSurface">#EDF2EE</color>
+    <color name="md_day_inversePrimary">#81C995</color>
     <!-- 标题栏/状态栏：日间用主色，文字和图标用 onToolbar -->
     <color name="md_day_toolbar">#1B5E3A</color>
     <color name="md_day_onToolbar">#FFFFFF</color>
@@ -71,6 +75,9 @@
     <color name="md_night_surfaceContainer">#18211C</color>
     <color name="md_night_surfaceContainerHigh">#222B26</color>
     <color name="md_night_surfaceContainerHighest">#2D3631</color>
+    <color name="md_night_inverseSurface">#DDE5DF</color>
+    <color name="md_night_inverseOnSurface">#2B3630</color>
+    <color name="md_night_inversePrimary">#1B5E3A</color>
     <color name="md_night_toolbar">#14402A</color>
     <color name="md_night_onToolbar">#FFFFFF</color>
 

@@ -56,6 +56,9 @@ private fun dayColorScheme(): ColorScheme = lightColorScheme(
     surfaceContainer = colorResource(R.color.md_day_surfaceContainer),
     surfaceContainerHigh = colorResource(R.color.md_day_surfaceContainerHigh),
     surfaceContainerHighest = colorResource(R.color.md_day_surfaceContainerHighest),
+    inverseSurface = colorResource(R.color.md_day_inverseSurface),
+    inverseOnSurface = colorResource(R.color.md_day_inverseOnSurface),
+    inversePrimary = colorResource(R.color.md_day_inversePrimary),
 )
 
 @Composable
@@ -89,6 +92,9 @@ private fun nightColorScheme(): ColorScheme = darkColorScheme(
     surfaceContainer = colorResource(R.color.md_night_surfaceContainer),
     surfaceContainerHigh = colorResource(R.color.md_night_surfaceContainerHigh),
     surfaceContainerHighest = colorResource(R.color.md_night_surfaceContainerHighest),
+    inverseSurface = colorResource(R.color.md_night_inverseSurface),
+    inverseOnSurface = colorResource(R.color.md_night_inverseOnSurface),
+    inversePrimary = colorResource(R.color.md_night_inversePrimary),
 )
 
 /**

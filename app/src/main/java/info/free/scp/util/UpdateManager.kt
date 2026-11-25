@@ -1,6 +1,5 @@
 package info.free.scp.util
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
@@ -26,7 +25,7 @@ class UpdateManager(private var activity: BaseActivity) {
         var manager: UpdateManager? = null
 
         internal fun confirmCatalogDownload(host: BaseActivity) {
-            AlertDialog.Builder(host)
+            ScpDialogs.builder(host)
                 .setTitle("下载目录更新")
                 .setMessage("当前网络可能产生流量费用。是否下载目录库？")
                 .setPositiveButton("下载") { _, _ -> ScpApplication.dataUpdates.downloadCatalog() }
@@ -90,7 +89,7 @@ class UpdateManager(private var activity: BaseActivity) {
             PreferenceUtil.setQueryLink(it.child("query_link").getValue<String>() ?: "")
             if (currentVersionCode < newVersionCode && !activity.isFinishing) {
                 Log.i("scp", "current = $currentVersionCode, new = $newVersionCode, 需要升级")
-                AlertDialog.Builder(activity)
+                ScpDialogs.builder(activity)
                     .setTitle("发现新版本")
                     .setMessage(updateDesc)
                     .setPositiveButton("现在升级") { _, _ ->

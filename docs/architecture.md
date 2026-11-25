@@ -123,7 +123,7 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 - **View 侧**：`DayTheme` 继承 `Theme.Material3.Light.NoActionBar`，`NightTheme` 继承 `Theme.Material3.Dark.NoActionBar`（都不是 DayNight 基类，所以不跟随系统 uiMode，也不需要 `values-night`）。两个 style 逐项设置 M3 角色属性（`colorPrimary`、`colorSurfaceContainer*`、`colorOutline`、`colorError*` 等）和 `ThemeUtil` 读取的自定义属性（`toolbarBg`、`onToolbar`、`containerBg`、`itemBoxBg`、`accentColor`、`darkText` 等）。`AppTheme` 等同 `DayTheme`，是 Manifest 里的应用默认主题。
 - **Compose 侧**：`MainTheme`（`ui/Theme.kt`）按 `ThemeUtil.currentTheme` 选 `lightColorScheme`/`darkColorScheme`，值由 `colorResource(R.color.md_*)` 取得，与 View 侧同源；组件全部是 `androidx.compose.material3`（已移除 Material 2 依赖）。形状见 `ui/Shape.kt`（小 8dp、中 12dp、大 16dp），卡片统一 12dp 圆角、1dp 阴影。新增 Compose 页面优先用 `MaterialTheme.colorScheme.*`；沿用的 `Color(ThemeUtil.xxx)` 读取是快照状态，切换主题后自动重组，不要缓存成普通变量。
 - **M3 Scaffold 注意**：M3 的 `Scaffold` 内容区从屏幕顶端开始，必须使用 lambda 传入的 `padding`，否则内容会被标题栏盖住（M2 不需要）。M3 `Card` 的内容是 `Column`，固定高度的条目里要给 `Row` 加 `fillMaxHeight()` 才能垂直居中。
-- 标题栏（`CommonTopBar` 和 `DetailActivityLayout` 的 Toolbar）日夜都是深色底，文字和图标用 `ThemeUtil.onToolbar`；程序化构建的 Toolbar 必须放在 `AppTheme.AppBarOverlay` 主题下（`DetailActivityLayout` 用 `ContextThemeWrapper` 包裹 `AppBarLayout`），弹出菜单用 `ToolbarPopupTheme`（颜色取自当前 Activity 的 ThemeUtil 属性）。
+- 标题栏（`CommonTopBar` 和 `DetailActivityLayout` 的 Toolbar）日夜都是深色底，文字和图标用 `ThemeUtil.onToolbar`；程序化构建的 Toolbar 必须放在 `AppTheme.AppBarOverlay` 主题下（`DetailActivityLayout` 用 `ContextThemeWrapper` 包裹 `AppBarLayout`），详情页标题栏右侧的星标和溢出菜单不再用 Toolbar 菜单，改为嵌入 Toolbar 的 `ComposeView`（见第 9 节）。
 - 设置页是 Compose（见第 8 节），开关用 Material 3 `Switch`，不再使用 Preference 与 `MaterialSwitch` 布局资源。
 - `targetSdk 35+` 在 Android 15+ 强制 edge-to-edge，`window.statusBarColor` 不再生效。`view/base/ActivityInsets.kt` 的 `keepContentInsideSystemBars()` 把内容放到系统栏内侧，并用窗口背景给状态栏区域画 `toolbarBg`、其余区域画 `containerBg`；`refreshSystemBars()` 负责状态栏/导航栏图标深浅，并在主题切换时刷新。新增 Activity 若不继承 `BaseActivity`，需要自己调用 `keepContentInsideSystemBars()`。
 - 启动页：`MainActivity` 的 Manifest 主题是 `Theme.App.Splash`（继承 `DayTheme`）。Android 12+ 用系统 SplashScreen 属性（`values-v31`：近黑底 + 白色标志），更低版本用 `windowBackground`；进入 `BaseActivity.onCreate` 后 `ThemeUtil.setTheme` 换成日/夜主题，所以 `ThemeUtil` 仍是唯一切换点。没有使用 `androidx.core:core-splashscreen`（见 build-and-release 第 10 节）。
@@ -181,3 +181,34 @@ JVM 单元测试位于 `app/src/testDefaultProductionDebug/java`，覆盖 `data/
 - 入口网格：4 列，`entryRowSpans()` 算跨度（7 项时最后一项跨 2 列，“其他作品”显示的 8 项为 4×2）。
 - 赞助入口保留原大图 `bg_donation`，压到 120dp，叠半透明遮罩，中间放一个纯色胶囊（作者头像 + “支持开发者” + 箭头）保证文字清晰。
 - 浏览历史：行高 64dp，标题单行省略，时间等宽字；无记录时显示“暂无浏览历史”。
+
+## 9. 弹窗 / 菜单 / 提示组件约定
+
+全应用统一用 Material 3 组件，日夜只由 `ThemeUtil.currentTheme` 决定。View 与 Compose 各有一处封装，新增弹窗请先用它们，不要再直接 `AlertDialog.Builder`（平台版）、`Toast`（Activity 内）或自己拼 `EditText`。
+
+**选型规则**
+
+| 场景 | 组件 |
+| --- | --- |
+| 确认一个决定（含危险操作） | 对话框。删除/清空/覆盖类用错误色确认键（Compose：`ScpConfirmDialog(destructive = true)`） |
+| 文字输入 | 对话框 + 描边输入框 + 浮动标签（`ScpInputDialog` / `ScpDialogs.showInput`）；`allowBlank = false` 时空输入禁用确认键并提示 |
+| 必须选一项的短列表（≤ 6 项，如职业、了解程度） | M3 简单对话框（`ScpDialogs.showChoice`） |
+| 从列表里选一个去执行（选收藏夹、选下载线路、长按条目的操作） | 底部面板（Compose `ScpActionSheet` = `ModalBottomSheet`；View `ScpDialogs.showActionSheet` = `BottomSheetDialog`）；点选即关闭。长标题（文章名）作为面板标题，最多两行 |
+| 锚定在按钮旁的短菜单（随机类型、文章页更多） | `ScpDropdownMenu` + `ScpMenuItem`（12dp 圆角、`surfaceContainerHigh`、前置图标、可勾选项在行尾显示对勾），分组用 `HorizontalDivider` |
+| 操作后的轻量反馈 | `ScpDialogs.snackbar(activity, msg)`；Compose 页面用 `SnackbarHostState`。页面马上要关闭、或跨应用跳转时（草稿保存失败、捐赠跳转提示）继续用 `Toast` |
+
+**文件**
+
+- `ui/common/Dialogs.kt`：`ScpConfirmDialog`、`ScpInputDialog`、`ScpActionSheet`（`SheetAction` 可带图标、`destructive`）、`ScpDropdownMenu`、`ScpMenuItem`。
+- `util/ScpDialogs.kt`：`builder`（`MaterialAlertDialogBuilder`）、`showMessage`、`showChoice`、`showActionSheet`、`showInput`、`inputField`/`withDialogPadding`（自定义内容对话框，见 `DetailCookieDialog`）、`snackbar`。
+- `ui/detail/DetailToolbarActions.kt`：详情页标题栏的星标 + 溢出菜单。`DetailActivity` 把它放进 Toolbar 右侧的 `ComposeView`；`onlineMode`、收藏状态是 Compose 状态，日夜项显示切换后的模式、阅读模式项显示切换目标。菜单项顺序与旧版一致，`DetailMenuAction` 及其 id 映射保留（有单元测试）。
+
+**主题（遗留调用自动跟随）**：`DayTheme`/`NightTheme` 都设置了 `materialAlertDialogTheme`/`alertDialogTheme`（`ThemeOverlay.Scp.MaterialAlertDialog`）、`bottomSheetDialogTheme`、`snackbarStyle`、`popupMenuStyle`/`actionOverflowMenuStyle`（12dp 圆角背景 `drawable/scp_popup_menu_background`）和 `colorSurfaceInverse`/`colorOnSurfaceInverse`/`colorPrimaryInverse`（Snackbar 配色；Compose 的 `inverse*` 与之同源，色值 `md_*_inverse*`）。
+
+**主题陷阱**
+
+- 没有 `values-night`，日夜靠 `Activity.setTheme` 运行时切换，而 `changeTheme` 只对触发切换的那个 Activity 调用。`BaseActivity.refreshTheme()` 现在会再调一次 `ThemeUtil.setTheme(this)`，让后台栈里的 Activity 也换到当前主题。
+- `ScpDialogs.themed(context)` 每次都按 `ThemeUtil.currentTheme` 给传入的 context 套一层 `DayTheme`/`NightTheme`，所以 View 弹窗不依赖 Activity 的 theme 是否已更新。传入的必须是 Activity（弹窗需要窗口 token），不要传 `ScpApplication.context`；`Application.setTheme` 只在冷启动时调用一次，不会随运行时切换更新。
+- Compose 的 `AlertDialog`/`ModalBottomSheet`/`DropdownMenu` 是独立窗口，但共享组合的 `MaterialTheme`，必须在 `MainTheme` 内调用。
+
+**没有用到的旧组件**：代码中没有 `ProgressDialog`、`PopupMenu`、`DialogFragment`、`res/menu`；备份/恢复/导入期间目前没有进度提示（待确认是否需要）。

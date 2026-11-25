@@ -64,7 +64,6 @@ class DetailActivityLayout private constructor(
             val toolbar = Toolbar(appBar.context).apply {
                 id = R.id.detail_toolbar
                 setBackgroundColor(ThemeUtil.toolbarBg)
-                popupTheme = R.style.ToolbarPopupTheme
             }
             val titleView = TextView(appBar.context).apply {
                 id = R.id.tv_detail_toolbar
@@ -76,7 +75,11 @@ class DetailActivityLayout private constructor(
                 textSize = 18f
                 setTextColor(ThemeUtil.onToolbar)
             }
-            toolbar.addView(titleView, Toolbar.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            // 右侧 96dp 留给收藏星标和溢出菜单（DetailToolbarActions），标题不要压到它们
+            toolbar.addView(
+                titleView,
+                Toolbar.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { marginEnd = Utils.dp2px(96, context) }
+            )
             appBar.addView(
                 toolbar,
                 AppBarLayout.LayoutParams(MATCH_PARENT, Utils.dp2px(56, context)).apply {

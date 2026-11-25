@@ -1,6 +1,5 @@
 package info.free.scp.view.detail
 
-import android.app.AlertDialog
 import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -26,12 +25,16 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.LinearLayout.VERTICAL
 import android.widget.SeekBar
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.widget.Toolbar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import androidx.lifecycle.lifecycleScope
@@ -48,8 +51,11 @@ import info.free.scp.data.detail.DetailTitleFormatter
 import info.free.scp.data.settings.DetailSettingsStore
 import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import info.free.scp.service.HtmlParserService
+import info.free.scp.ui.MainTheme
 import info.free.scp.ui.detail.DetailMenuAction
+import info.free.scp.ui.detail.DetailToolbarActions
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.ThemeUtil.DAY_THEME
 import info.free.scp.util.ThemeUtil.NIGHT_THEME
@@ -68,7 +74,8 @@ import java.io.InputStreamReader
 class DetailActivity : BaseActivity() {
 
     private val detailSettings: DetailSettingsStore = PreferenceDetailSettingsStore()
-    private var onlineMode = 0 // 0 离线 1 网页
+    private var onlineMode by mutableIntStateOf(0) // 0 离线 1 网页；菜单文案读取它，所以是 Compose 状态
+    private var liked by mutableStateOf(false)
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
     //    private var randomType = 0 // 0 所有，1仅scp，2 故事，3 joke
@@ -180,7 +187,7 @@ class DetailActivity : BaseActivity() {
                 binding.llCommentContainer.visibility = GONE
                 binding.llCommentContainer.removeAllViews()
                 binding.pbLoading.visibility = VISIBLE
-                invalidateOptionsMenu()
+                refreshLikeState()
                 refreshReadBtnStatus()
             }
             if (changedArticle || state.document != previous.document) {
@@ -336,7 +343,7 @@ class DetailActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         if (detailSettings.shouldShowDetailNotice) {
-            AlertDialog.Builder(this)
+            ScpDialogs.builder(this)
                     .setTitle("Notice")
                     .setMessage("！！！升级到0.2.6版本后请务必确认数据库也更新到新版本，使用旧版本数据库会导致正文页面闪退\n" +
                             "1.右上角菜单可以切换网络阅读和离线阅读模式（如果本地数据没有加载完成则离线模式可能不可用）\n" +
@@ -347,7 +354,7 @@ class DetailActivity : BaseActivity() {
                         detailSettings.markDetailNoticeShown()
                         dialog.dismiss()
                     }
-                    .create().show()
+                    .show()
         }
 
         var isMoving = false
@@ -452,7 +459,7 @@ class DetailActivity : BaseActivity() {
         tvLoad?.text = "评论加载中..."
         viewModel.recordOpened(s.link, s.title)
         // 刷新toolbar（收藏状态
-        invalidateOptionsMenu()
+        refreshLikeState()
         // 更新标题
         supportActionBar?.setDisplayShowTitleEnabled(false)
         if (!back) {
@@ -508,117 +515,113 @@ class DetailActivity : BaseActivity() {
     private fun initToolbar() {
         baseToolbar = binding.detailToolbar
         supportActionBar?.title = null
-        populateDetailMenu(binding.detailToolbar.menu)
-        binding.detailToolbar.setOnMenuItemClickListener {
-            when (DetailMenuAction.fromMenuItemId(it.itemId)) {
-                DetailMenuAction.SWITCH_READ_MODE -> {
-                    viewModel.rewardReadModeSwitch()
-                    if (onlineMode == 0) {
-                        if (Utils.enabledNetwork(this)) {
-                            binding.pbLoading.visibility = VISIBLE
-                            onlineMode = 1
-                            it.setTitle(R.string.offline_mode)
-                            binding.webView.loadUrl(fullUrl)
-                        } else {
-                            showToast("请先开启网络")
-                        }
-                    } else if (detailHtml.isNotEmpty()) {
-                        onlineMode = 0
-                        it.setTitle(R.string.online_mode)
-                        refreshStyle()
-                    } else {
-                        showToast("当前文章没有可切换的本地正文")
-                    }
+        val actions = ComposeView(this).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MainTheme {
+                    DetailToolbarActions(
+                        liked = liked,
+                        webMode = onlineMode == 1,
+                        onAction = ::handleMenuAction
+                    )
                 }
-                DetailMenuAction.OPEN_IN_BROWSER -> {
-                    scp?.let { s->
-                        EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
-                    }
-                    viewModel.rewardExternalOpen()
-                    startActivity(Utils.getUrlIntent(fullUrl))
-                }
-                DetailMenuAction.COPY_LINK -> {
-                    scp?.let {s->
-                        EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
-                    }
-                    val clipboardManager =
-                        getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-                    val clipData = ClipData.newPlainText("scp_link", fullUrl)
-                    clipboardManager?.setPrimaryClip(clipData)
-                    showToast("已复制到剪贴板")
-                }
-                DetailMenuAction.TOGGLE_LIKE -> {
-                    likeScp()
-                }
-                DetailMenuAction.CHANGE_THEME -> {
-                    it.setTitle(if (ThemeUtil.currentTheme == DAY_THEME) R.string.day_mode else R.string.dark_mode)
-                    changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
-                }
-                DetailMenuAction.ADD_READ_LATER -> {
-                    scp?.let { s->
-                        viewModel.addToLater(s.link, s.title)
-                        showToast("已加入待读列表")
-                    }?:run {
-                        showToast("本文只可在线浏览，不可加入待读")
-                    }
-                }
-                DetailMenuAction.SHARE_PICTURE -> {
-                    // 截屏分享
-                    scp?.let { s ->
-                        EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
-                    }
-                    showToast("生成图片中...")
-                    binding.gpShareContent.visibility = VISIBLE
-                    binding.clDetailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
-                        ViewTreeObserver.OnGlobalLayoutListener {
-                        override fun onGlobalLayout() {
-                            binding.clDetailContainer.viewTreeObserver?.removeOnGlobalLayoutListener(
-                                this
-                            )
-                            val bitmap = Bitmap.createBitmap(
-                                binding.webView.width, binding.clDetailContainer.height,
-                                Bitmap.Config.RGB_565
-                            )
-                            //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
-                            val canvas = Canvas(bitmap)
-                            binding.clDetailContainer.draw(canvas)
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val fileName = DetailTitleFormatter.toScreenshotFileName(
-                                    scp?.title.orEmpty()
-                                )
-                                Utils.saveBitmapFile(bitmap, fileName)
-                                withContext(Dispatchers.Main) {
-                                    showToast("图片已保存")
-                                    binding.gpShareContent.visibility = GONE
-                                }
-                            }
-                        }
-                    })
-                }
-
-                DetailMenuAction.SET_COOKIE -> {
-                    showCookieDialog()
-                }
-                null -> Unit
             }
-            true
         }
+        binding.detailToolbar.addView(
+            actions,
+            Toolbar.LayoutParams(WRAP_CONTENT, MATCH_PARENT).apply { gravity = Gravity.END }
+        )
+        refreshLikeState()
     }
 
-    private fun populateDetailMenu(menu: Menu?) {
-        menu ?: return
-        menu.clear()
-        menu.add(Menu.NONE, R.id.like, 0, R.string.menu_like).apply {
-            setIcon(R.drawable.ic_star_border_white_24dp)
-            setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+    private fun handleMenuAction(action: DetailMenuAction) {
+        when (action) {
+            DetailMenuAction.SWITCH_READ_MODE -> {
+                viewModel.rewardReadModeSwitch()
+                if (onlineMode == 0) {
+                    if (Utils.enabledNetwork(this)) {
+                        binding.pbLoading.visibility = VISIBLE
+                        onlineMode = 1
+                        binding.webView.loadUrl(fullUrl)
+                    } else {
+                        showToast("请先开启网络")
+                    }
+                } else if (detailHtml.isNotEmpty()) {
+                    onlineMode = 0
+                    refreshStyle()
+                } else {
+                    showToast("当前文章没有可切换的本地正文")
+                }
+            }
+            DetailMenuAction.OPEN_IN_BROWSER -> {
+                scp?.let { s->
+                    EventUtil.onEvent(this, EventUtil.clickOpenInBrowser, s.link)
+                }
+                viewModel.rewardExternalOpen()
+                startActivity(Utils.getUrlIntent(fullUrl))
+            }
+            DetailMenuAction.COPY_LINK -> {
+                scp?.let { s ->
+                    EventUtil.onEvent(this, EventUtil.clickCopyLink, s.link)
+                }
+                val clipboardManager =
+                    getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+                val clipData = ClipData.newPlainText("scp_link", fullUrl)
+                clipboardManager?.setPrimaryClip(clipData)
+                showToast("已复制到剪贴板")
+            }
+            DetailMenuAction.TOGGLE_LIKE -> {
+                likeScp()
+            }
+            DetailMenuAction.CHANGE_THEME -> {
+                changeTheme(if (ThemeUtil.currentTheme == DAY_THEME) NIGHT_THEME else DAY_THEME)
+            }
+            DetailMenuAction.ADD_READ_LATER -> {
+                scp?.let { s->
+                    viewModel.addToLater(s.link, s.title)
+                    showToast("已加入待读列表")
+                }?:run {
+                    showToast("本文只可在线浏览，不可加入待读")
+                }
+            }
+            DetailMenuAction.SHARE_PICTURE -> {
+                // 截屏分享
+                scp?.let { s ->
+                    EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
+                }
+                showToast("生成图片中...")
+                binding.gpShareContent.visibility = VISIBLE
+                binding.clDetailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        binding.clDetailContainer.viewTreeObserver?.removeOnGlobalLayoutListener(
+                            this
+                        )
+                        val bitmap = Bitmap.createBitmap(
+                            binding.webView.width, binding.clDetailContainer.height,
+                            Bitmap.Config.RGB_565
+                        )
+                        //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
+                        val canvas = Canvas(bitmap)
+                        binding.clDetailContainer.draw(canvas)
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val fileName = DetailTitleFormatter.toScreenshotFileName(
+                                scp?.title.orEmpty()
+                            )
+                            Utils.saveBitmapFile(bitmap, fileName)
+                            withContext(Dispatchers.Main) {
+                                showToast("图片已保存")
+                                binding.gpShareContent.visibility = GONE
+                            }
+                        }
+                    }
+                })
+            }
+
+            DetailMenuAction.SET_COOKIE -> {
+                showCookieDialog()
+            }
         }
-        menu.add(Menu.NONE, R.id.change_theme, 1, R.string.dark_mode)
-        menu.add(Menu.NONE, R.id.add_read_later, 2, R.string.menu_add_read_later)
-        menu.add(Menu.NONE, R.id.switch_read_mode, 3, R.string.online_mode)
-        menu.add(Menu.NONE, R.id.open_in_browser, 4, R.string.menu_open_in_browser)
-        menu.add(Menu.NONE, R.id.copy_link, 5, R.string.menu_copy_link)
-        menu.add(Menu.NONE, R.id.share_picture, 6, R.string.share_with_picture)
-        menu.add(Menu.NONE, R.id.set_cookie, 7, R.string.set_cookie)
     }
 
     private fun showCookieDialog() {
@@ -686,55 +689,33 @@ class DetailActivity : BaseActivity() {
             val nameList = arrayListOf<String>()
             nameList.addAll(boxList.map { it.name })
             nameList.add("新建收藏夹")
-            // 显示收藏夹列表和新建收藏夹选项
-            AlertDialog.Builder(this)
-                .setTitle("加入收藏夹")
-                .setItems(nameList.toTypedArray()) { _, i ->
-                    if (i == boxList.size) {
-                        createNewBox()
-                    } else {
-                        viewModel.setLiked(currentScp.link, currentScp.title, boxList[i].id)
-                    }
+            // 显示收藏夹列表和新建收藏夹选项：收藏夹数量不定，用底部面板
+            ScpDialogs.showActionSheet(this, "加入收藏夹", nameList) { i ->
+                if (i == boxList.size) {
+                    createNewBox()
+                } else {
+                    viewModel.setLiked(currentScp.link, currentScp.title, boxList[i].id)
+                    refreshLikeState()
                 }
-                .show()
+            }
         } else {
             viewModel.setUnliked(currentScp.link, currentScp.title)
+            refreshLikeState()
         }
     }
 
     private fun createNewBox() {
-        val container = LinearLayout(this).apply {
-            orientation = VERTICAL
-            setPadding(
-                Utils.dp2px(16, this@DetailActivity),
-                Utils.dp2px(16, this@DetailActivity),
-                Utils.dp2px(16, this@DetailActivity),
-                Utils.dp2px(16, this@DetailActivity)
-            )
+        ScpDialogs.showInput(
+            context = this,
+            title = "输入收藏夹标题",
+            label = "收藏夹标题",
+            positiveText = "确定",
+            negativeText = "取消"
+        ) { boxName ->
+            Log.i("scp-detail", "create like box: $boxName")
+            viewModel.createLikeBox(boxName)
+            likeScp()
         }
-        val titleView = TextView(this).apply {
-            text = "输入收藏夹标题"
-            setTextColor(ThemeUtil.darkText)
-            textSize = 18f
-        }
-        val input = EditText(this).apply {
-            layoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-            isSingleLine = true
-        }
-        container.addView(titleView)
-        container.addView(input)
-
-        AlertDialog.Builder(this)
-            .setView(container)
-            .setPositiveButton("确定") { _, _ ->
-                input.clearFocus()
-                val boxName = input.text?.toString().orEmpty()
-                Log.i("scp-detail", "create like box: $boxName")
-                viewModel.createLikeBox(boxName)
-                likeScp()
-            }
-            .setNegativeButton("取消", null)
-            .show()
     }
 
     private fun toNextArticle() {
@@ -911,31 +892,23 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        populateDetailMenu(menu)
-        return true
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        val isLiked = viewModel.getDocumentStatus(url).isLiked
-        val menuItem = menu?.getItem(0)
-        if (!isLiked) {
-            menuItem?.setIcon(R.drawable.ic_star_border_white_24dp)
+    /** 刷新标题栏星标和底部“收藏”按钮的收藏状态（原来由 onPrepareOptionsMenu 负责）。 */
+    private fun refreshLikeState() {
+        liked = viewModel.getDocumentStatus(url).isLiked
+        if (!liked) {
             binding.tvBottomLike.text = "收藏"
             binding.tvBottomLike.background = ThemeUtil.customShape(
                 ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
             )
         } else {
-            menuItem?.setIcon(R.drawable.ic_star_white_24dp)
             binding.tvBottomLike.text = "取消收藏"
             binding.tvBottomLike.background = ThemeUtil.customShape(
                 ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, Utils.dp2px(15, this)
             )
         }
-        return super.onPrepareOptionsMenu(menu)
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        ScpDialogs.snackbar(this, message)
     }
 }

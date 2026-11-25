@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +41,13 @@ import info.free.scp.data.catalog.catalogRowKey
 import info.free.scp.R
 import info.free.scp.bean.ScpModel
 import info.free.scp.ui.MainTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.BookmarkAdd
+import androidx.compose.material.icons.outlined.BookmarkRemove
+import androidx.compose.material.icons.outlined.DoneAll
+import androidx.compose.material.icons.outlined.RemoveDone
+import info.free.scp.ui.common.ScpActionSheet
+import info.free.scp.ui.common.SheetAction
 import info.free.scp.util.ThemeUtil
 
 data class ScpDocumentStatus(
@@ -87,7 +93,7 @@ fun ScpDocumentListScreen(
 
     selectedDocument?.let { document ->
         val status = statusProvider(document)
-        ScpDocumentActionDialog(
+        ScpDocumentActionSheet(
             document = document,
             status = status,
             onDismiss = { selectedDocument = null },
@@ -163,37 +169,28 @@ private fun ScpDocumentListItem(
 }
 
 @Composable
-private fun ScpDocumentActionDialog(
+private fun ScpDocumentActionSheet(
     document: ScpModel,
     status: ScpDocumentStatus,
     onDismiss: () -> Unit,
     onToggleRead: () -> Unit,
     onToggleLater: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                text = document.title,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
+    ScpActionSheet(
+        title = document.title,
+        actions = listOf(
+            SheetAction(
+                label = if (status.isInLater) "取消待读" else "添加待读",
+                icon = if (status.isInLater) Icons.Outlined.BookmarkRemove else Icons.Outlined.BookmarkAdd,
+                onClick = onToggleLater
+            ),
+            SheetAction(
+                label = if (status.hasRead) "取消已读" else "标记已读",
+                icon = if (status.hasRead) Icons.Outlined.RemoveDone else Icons.Outlined.DoneAll,
+                onClick = onToggleRead
             )
-        },
-        text = {
-            Column {
-                TextButton(onClick = onToggleLater) {
-                    Text(text = if (status.isInLater) "取消待读" else "添加待读")
-                }
-                TextButton(onClick = onToggleRead) {
-                    Text(text = if (status.hasRead) "取消已读" else "标记已读")
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = "关闭")
-            }
-        }
+        ),
+        onDismiss = onDismiss
     )
 }
 

@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -25,6 +24,7 @@ import info.free.scp.SCPConstants.OrderType.ASC
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.components.CommonTopBar
 import info.free.scp.ui.MainTheme
+import info.free.scp.ui.common.ScpConfirmDialog
 import info.free.scp.ui.later.RecordListScreen
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
@@ -85,25 +85,17 @@ class LaterAndHistoryActivity : BaseActivity() {
                 }
 
                 if (showClearDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showClearDialog = false },
-                        title = { Text(text = "Notice") },
-                        text = { Text(text = "\u4f60\u786e\u5b9a\u8981\u6e05\u9664\u6240\u6709\u7684\u9605\u8bfb\u8bb0\u5f55\u5417\uff1f") },
-                        confirmButton = {
-                            TextButton(
-                                onClick = {
-                                    clearHistory()
-                                    showClearDialog = false
-                                }
-                            ) {
-                                Text(text = "\u786e\u5b9a")
-                            }
+                    ScpConfirmDialog(
+                        title = "Notice",
+                        message = "\u4f60\u786e\u5b9a\u8981\u6e05\u9664\u6240\u6709\u7684\u9605\u8bfb\u8bb0\u5f55\u5417\uff1f",
+                        confirmText = "\u786e\u5b9a",
+                        dismissText = "\u53d6\u6d88",
+                        destructive = true,
+                        onConfirm = {
+                            clearHistory()
+                            showClearDialog = false
                         },
-                        dismissButton = {
-                            TextButton(onClick = { showClearDialog = false }) {
-                                Text(text = "\u53d6\u6d88")
-                            }
-                        }
+                        onDismiss = { showClearDialog = false }
                     )
                 }
             }

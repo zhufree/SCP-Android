@@ -21,6 +21,7 @@ import info.free.scp.data.settings.DraftPreferencesStore
 import info.free.scp.data.settings.PreferenceSettingsStore
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.draft.DraftEditScreen
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseActivity
 
@@ -108,7 +109,7 @@ class DraftEditActivity : BaseActivity() {
             return
         }
         if (showMessage) {
-            Toast.makeText(this, "\u5df2\u4fdd\u5b58", Toast.LENGTH_SHORT).show()
+            ScpDialogs.snackbar(this, "\u5df2\u4fdd\u5b58")
         }
     }
 }

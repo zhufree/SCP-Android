@@ -1,14 +1,11 @@
 package info.free.scp.view.later
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,9 +37,11 @@ import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.ui.MainTheme
 import info.free.scp.ui.home.SearchBarScreen
+import info.free.scp.ui.home.randomTypeLabels
 import info.free.scp.ui.later.LikeBoxListScreen
 import info.free.scp.ui.later.RecordListScreen
 import info.free.scp.util.EventUtil
+import info.free.scp.util.ScpDialogs
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseFragment
@@ -76,7 +75,7 @@ class LaterFragment : BaseFragment() {
                         ) {
                             SearchBarScreen(
                                 onDirect = { startActivity(Intent(requireContext(), DirectActivity::class.java)) },
-                                onRandom = { showRandomDialog() },
+                                onRandom = { type -> openRandom(type) },
                                 onSearch = { keyword -> openSearch(keyword) }
                             )
                             TabRow(
@@ -172,28 +171,24 @@ class LaterFragment : BaseFragment() {
         )
     }
 
-    private fun showRandomDialog() {
-        val randomTypes = listOf("\u968f\u673a\u5168\u90e8", "\u968f\u673aSCP", "\u968f\u673a\u6545\u4e8b", "\u968f\u673a\u641e\u7b11")
-        AlertDialog.Builder(requireContext())
-            .setItems(randomTypes.toTypedArray()) { _, i ->
-                when (i) {
-                    0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
-                    1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
-                    2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
-                    3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
-                }
-                startActivity(
-                    Intent(requireContext(), RandomActivity::class.java)
-                        .putExtra("random_type", i)
-                        .putExtra("random_title", randomTypes[i])
-                )
-            }
-            .show()
+    /** 随机类型下拉菜单已在 SearchBarScreen 里选好类型，这里直接进入随机页（与首页行为一致）。 */
+    private fun openRandom(type: Int) {
+        when (type) {
+            0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
+            1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
+            2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
+            3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
+        }
+        startActivity(
+            Intent(requireContext(), RandomActivity::class.java)
+                .putExtra("random_type", type)
+                .putExtra("random_title", getString(randomTypeLabels[type]))
+        )
     }
 
     private fun handleImportClick() {
         if (viewModel.shouldShowReadSuggestion()) {
-            AlertDialog.Builder(requireContext())
+            ScpDialogs.builder(requireContext())
                 .setTitle("\u4e0d\u77e5\u9053\u8bfb\u4ec0\u4e48\uff1f")
                 .setMessage("\u8981\u4e0d\u8981\u8bbf\u95ee\u5927\u4f6c\u4eec\u6574\u7406\u7684\u5f85\u8bfb\u5217\u8868\uff1f\u53ef\u4ee5\u590d\u5236\u5217\u8868\u540e\u70b9\u51fb\u6b64\u6309\u94ae\u5bfc\u5165\u3002")
                 .setPositiveButton("\u5e26\u6211\u53bb\uff01") { _, _ ->
@@ -211,34 +206,17 @@ class LaterFragment : BaseFragment() {
     }
 
     private fun showInputListDialog() {
-        val input = EditText(requireContext()).apply {
-            minLines = 1
-            maxLines = 8
-            setPadding(
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext()),
-                Utils.dp2px(16, requireContext())
-            )
-        }
-        val container = LinearLayout(requireContext()).apply {
-            orientation = LinearLayout.VERTICAL
-            addView(input)
-        }
-        val inputDialog = AlertDialog.Builder(requireContext())
-            .setTitle(R.string.menu_import_read_list)
-            .setMessage(
-                "\u5bfc\u5165\u7684\u6587\u7ae0\u6807\u9898\u53ef\u7528\u4e2d\u82f1\u6587\u9017\u53f7\u3001\u5206\u53f7\u6216\u6362\u884c\u5206\u9694\uff0c\u6709\u6570\u5b57\u5373\u53ef\u8bc6\u522b\u3002" +
-                    "\u9ed8\u8ba4\u4e3a SCP \u6587\u6863\uff0c\u5176\u4ed6\u7c7b\u578b\u9700\u5728\u6807\u9898\u5185\u5305\u542b cn\u3001j \u7b49\u5173\u952e\u8bcd\u3002"
-            )
-            .setView(container)
-            .setPositiveButton("OK") { _, _ -> }
-            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-            .create()
-        inputDialog.show()
-        inputDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-            splitReadList(input.text.toString())
-            inputDialog.dismiss()
+        ScpDialogs.showInput(
+            context = requireContext(),
+            title = getString(R.string.menu_import_read_list),
+            label = "\u5f85\u8bfb\u5217\u8868",
+            message = "\u5bfc\u5165\u7684\u6587\u7ae0\u6807\u9898\u53ef\u7528\u4e2d\u82f1\u6587\u9017\u53f7\u3001\u5206\u53f7\u6216\u6362\u884c\u5206\u9694\uff0c\u6709\u6570\u5b57\u5373\u53ef\u8bc6\u522b\u3002" +
+                "\u9ed8\u8ba4\u4e3a SCP \u6587\u6863\uff0c\u5176\u4ed6\u7c7b\u578b\u9700\u5728\u6807\u9898\u5185\u5305\u542b cn\u3001j \u7b49\u5173\u952e\u8bcd\u3002",
+            singleLine = false,
+            positiveText = "OK",
+            negativeText = "Cancel"
+        ) { text ->
+            splitReadList(text)
             EventUtil.onEvent(context, EventUtil.importReadList)
         }
     }

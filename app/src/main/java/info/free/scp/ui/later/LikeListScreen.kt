@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +36,13 @@ import info.free.scp.R
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.bean.ScpLikeModel
 import info.free.scp.ui.MainTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.FolderOpen
+import info.free.scp.ui.common.ScpActionSheet
+import info.free.scp.ui.common.ScpConfirmDialog
+import info.free.scp.ui.common.SheetAction
 import info.free.scp.util.ThemeUtil
 
 @Composable
@@ -62,79 +68,51 @@ fun LikeListScreen(
     }
 
     selectedLike?.let { like ->
-        AlertDialog(
-            onDismissRequest = { selectedLike = null },
-            title = { Text(text = "收藏操作") },
-            text = { Text(text = like.title) },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        selectedLike = null
-                        movingLike = like
-                    }
-                ) {
-                    Text(text = "移动")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        selectedLike = null
-                        deletingLike = like
-                    }
-                ) {
-                    Text(text = "删除")
-                }
-            }
+        ScpActionSheet(
+            title = like.title,
+            actions = listOf(
+                SheetAction(
+                    label = "移动",
+                    icon = Icons.AutoMirrored.Outlined.DriveFileMove,
+                    onClick = { movingLike = like }
+                ),
+                SheetAction(
+                    label = "删除",
+                    icon = Icons.Outlined.Delete,
+                    destructive = true,
+                    onClick = { deletingLike = like }
+                )
+            ),
+            onDismiss = { selectedLike = null }
         )
     }
 
     deletingLike?.let { like ->
-        AlertDialog(
-            onDismissRequest = { deletingLike = null },
-            title = { Text(text = "删除收藏") },
-            text = { Text(text = "确定删除“${like.title}”吗？") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteLike(like)
-                        deletingLike = null
-                    }
-                ) {
-                    Text(text = "确定")
-                }
+        ScpConfirmDialog(
+            title = "删除收藏",
+            message = "确定删除“${like.title}”吗？",
+            confirmText = "确定",
+            dismissText = "取消",
+            destructive = true,
+            onConfirm = {
+                onDeleteLike(like)
+                deletingLike = null
             },
-            dismissButton = {
-                TextButton(onClick = { deletingLike = null }) {
-                    Text(text = "取消")
-                }
-            }
+            onDismiss = { deletingLike = null }
         )
     }
 
     movingLike?.let { like ->
-        AlertDialog(
-            onDismissRequest = { movingLike = null },
-            title = { Text(text = "选择收藏夹") },
-            text = {
-                androidx.compose.foundation.layout.Column {
-                    likeBoxes.forEach { box ->
-                        TextButton(
-                            onClick = {
-                                onMoveLike(like, box)
-                                movingLike = null
-                            }
-                        ) {
-                            Text(text = box.name)
-                        }
-                    }
-                }
+        ScpActionSheet(
+            title = "选择收藏夹",
+            actions = likeBoxes.map { box ->
+                SheetAction(
+                    label = box.name,
+                    icon = Icons.Outlined.FolderOpen,
+                    onClick = { onMoveLike(like, box) }
+                )
             },
-            confirmButton = {
-                TextButton(onClick = { movingLike = null }) {
-                    Text(text = "取消")
-                }
-            }
+            onDismiss = { movingLike = null }
         )
     }
 }

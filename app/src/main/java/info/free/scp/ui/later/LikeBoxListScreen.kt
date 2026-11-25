@@ -11,9 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,6 +29,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.free.scp.bean.ScpLikeBox
 import info.free.scp.ui.MainTheme
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.DriveFileMove
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Edit
+import info.free.scp.ui.common.ScpActionSheet
+import info.free.scp.ui.common.ScpConfirmDialog
+import info.free.scp.ui.common.ScpInputDialog
+import info.free.scp.ui.common.SheetAction
 import info.free.scp.util.ThemeUtil
 
 @Composable
@@ -62,128 +68,77 @@ fun LikeBoxListScreen(
     }
 
     selectedBox?.let { box ->
-        AlertDialog(
-            onDismissRequest = { selectedBox = null },
-            title = { Text(text = "Notice") },
-            text = {
-                Column {
-                    TextButton(
-                        onClick = {
-                            selectedBox = null
-                            clearDeletingBox = box
-                        }
-                    ) {
-                        Text(text = "\u5220\u9664\u6536\u85cf\u5939\u5e76\u6e05\u7a7a\u5176\u4e2d\u6536\u85cf")
+        ScpActionSheet(
+            title = box.name,
+            actions = listOf(
+                SheetAction(
+                    label = "\u91cd\u547d\u540d\u6536\u85cf\u5939",
+                    icon = Icons.Outlined.Edit,
+                    onClick = {
+                        renameText = box.name
+                        renamingBox = box
                     }
-                    TextButton(
-                        onClick = {
-                            selectedBox = null
-                            moveDeletingBox = box
-                        }
-                    ) {
-                        Text(text = "\u5220\u9664\u6536\u85cf\u5939\u5e76\u8f6c\u79fb\u5230\u9ed8\u8ba4\u6536\u85cf\u5939")
-                    }
-                    TextButton(
-                        onClick = {
-                            selectedBox = null
-                            renameText = box.name
-                            renamingBox = box
-                        }
-                    ) {
-                        Text(text = "\u91cd\u547d\u540d\u6536\u85cf\u5939")
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { selectedBox = null }) {
-                    Text(text = "\u53d6\u6d88")
-                }
-            }
+                ),
+                SheetAction(
+                    label = "\u5220\u9664\u6536\u85cf\u5939\u5e76\u8f6c\u79fb\u5230\u9ed8\u8ba4\u6536\u85cf\u5939",
+                    icon = Icons.AutoMirrored.Outlined.DriveFileMove,
+                    destructive = true,
+                    onClick = { moveDeletingBox = box }
+                ),
+                SheetAction(
+                    label = "\u5220\u9664\u6536\u85cf\u5939\u5e76\u6e05\u7a7a\u5176\u4e2d\u6536\u85cf",
+                    icon = Icons.Outlined.Delete,
+                    destructive = true,
+                    onClick = { clearDeletingBox = box }
+                )
+            ),
+            onDismiss = { selectedBox = null }
         )
     }
 
     clearDeletingBox?.let { box ->
-        AlertDialog(
-            onDismissRequest = { clearDeletingBox = null },
-            title = { Text(text = "Notice") },
-            text = { Text(text = "\u786e\u5b9a\u5220\u9664\u8be5\u6536\u85cf\u5939\uff0c\u5e76\u6e05\u7a7a\u5176\u4e2d\u7684\u6536\u85cf\u5185\u5bb9\u5417\uff1f") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteAndClear(box)
-                        clearDeletingBox = null
-                    }
-                ) {
-                    Text(text = "\u786e\u5b9a\u5220\u9664")
-                }
+        ScpConfirmDialog(
+            title = "Notice",
+            message = "\u786e\u5b9a\u5220\u9664\u8be5\u6536\u85cf\u5939\uff0c\u5e76\u6e05\u7a7a\u5176\u4e2d\u7684\u6536\u85cf\u5185\u5bb9\u5417\uff1f",
+            confirmText = "\u786e\u5b9a\u5220\u9664",
+            dismissText = "\u53d6\u6d88",
+            destructive = true,
+            onConfirm = {
+                onDeleteAndClear(box)
+                clearDeletingBox = null
             },
-            dismissButton = {
-                TextButton(onClick = { clearDeletingBox = null }) {
-                    Text(text = "\u53d6\u6d88")
-                }
-            }
+            onDismiss = { clearDeletingBox = null }
         )
     }
 
     moveDeletingBox?.let { box ->
-        AlertDialog(
-            onDismissRequest = { moveDeletingBox = null },
-            title = { Text(text = "Notice") },
-            text = { Text(text = "\u786e\u5b9a\u5220\u9664\u8be5\u6536\u85cf\u5939\uff0c\u5e76\u628a\u5185\u5bb9\u8f6c\u79fb\u5230\u9ed8\u8ba4\u6536\u85cf\u5939\u5417\uff1f") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteAndMove(box)
-                        moveDeletingBox = null
-                    }
-                ) {
-                    Text(text = "\u786e\u5b9a\u5220\u9664")
-                }
+        ScpConfirmDialog(
+            title = "Notice",
+            message = "\u786e\u5b9a\u5220\u9664\u8be5\u6536\u85cf\u5939\uff0c\u5e76\u628a\u5185\u5bb9\u8f6c\u79fb\u5230\u9ed8\u8ba4\u6536\u85cf\u5939\u5417\uff1f",
+            confirmText = "\u786e\u5b9a\u5220\u9664",
+            dismissText = "\u53d6\u6d88",
+            destructive = true,
+            onConfirm = {
+                onDeleteAndMove(box)
+                moveDeletingBox = null
             },
-            dismissButton = {
-                TextButton(onClick = { moveDeletingBox = null }) {
-                    Text(text = "\u53d6\u6d88")
-                }
-            }
+            onDismiss = { moveDeletingBox = null }
         )
     }
 
     renamingBox?.let { box ->
-        AlertDialog(
-            onDismissRequest = { renamingBox = null },
-            title = { Text(text = "Notice") },
-            text = {
-                Column {
-                    Text(
-                        text = "\u8f93\u5165\u65b0\u7684\u6536\u85cf\u5939\u540d",
-                        color = Color(ThemeUtil.darkText),
-                        fontSize = 18.sp
-                    )
-                    OutlinedTextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp),
-                        value = renameText,
-                        onValueChange = { renameText = it },
-                        singleLine = true
-                    )
-                }
+        ScpInputDialog(
+            title = "\u8f93\u5165\u65b0\u7684\u6536\u85cf\u5939\u540d",
+            label = "\u6536\u85cf\u5939\u540d\u79f0",
+            initialValue = renameText,
+            confirmText = "\u786e\u5b9a",
+            dismissText = "\u53d6\u6d88",
+            allowBlank = false,
+            onConfirm = {
+                onRenameBox(box, it)
+                renamingBox = null
             },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onRenameBox(box, renameText)
-                        renamingBox = null
-                    }
-                ) {
-                    Text(text = "\u786e\u5b9a")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { renamingBox = null }) {
-                    Text(text = "\u53d6\u6d88")
-                }
-            }
+            onDismiss = { renamingBox = null }
         )
     }
 }

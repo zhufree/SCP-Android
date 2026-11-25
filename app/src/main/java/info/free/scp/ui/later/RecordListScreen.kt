@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -38,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import info.free.scp.R
 import info.free.scp.bean.ScpRecordModel
 import info.free.scp.ui.MainTheme
+import info.free.scp.ui.common.ScpConfirmDialog
 import info.free.scp.util.ThemeUtil
 import java.util.Date
 
@@ -71,25 +71,17 @@ fun RecordListScreen(
     }
 
     deletingRecord?.let { record ->
-        AlertDialog(
-            onDismissRequest = { deletingRecord = null },
-            title = { Text(text = "Notice") },
-            text = { Text(text = "\u662f\u5426\u786e\u8ba4\u5220\u9664\uff1f") },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onDeleteRecord(record)
-                        deletingRecord = null
-                    }
-                ) {
-                    Text(text = "\u786e\u5b9a")
-                }
+        ScpConfirmDialog(
+            title = "Notice",
+            message = "\u662f\u5426\u786e\u8ba4\u5220\u9664\uff1f",
+            confirmText = "\u786e\u5b9a",
+            dismissText = "\u53d6\u6d88",
+            destructive = true,
+            onConfirm = {
+                onDeleteRecord(record)
+                deletingRecord = null
             },
-            dismissButton = {
-                TextButton(onClick = { deletingRecord = null }) {
-                    Text(text = "\u53d6\u6d88")
-                }
-            }
+            onDismiss = { deletingRecord = null }
         )
     }
 }

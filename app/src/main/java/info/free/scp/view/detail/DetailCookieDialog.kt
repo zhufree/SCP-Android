@@ -1,17 +1,12 @@
 package info.free.scp.view.detail
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface.BUTTON_POSITIVE
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.LinearLayout.VERTICAL
+import com.google.android.material.button.MaterialButton
 import info.free.scp.data.settings.DetailWebCredentials
-import info.free.scp.util.Utils
+import info.free.scp.util.ScpDialogs
 
+/** 设置 Cookie / User-Agent 的 M3 对话框：两个描边输入框 + 网页登录按钮，保存与回调逻辑不变。 */
 class DetailCookieDialog(
     private val context: Context
 ) {
@@ -21,38 +16,21 @@ class DetailCookieDialog(
         onOpenLogin: () -> Unit,
         onSave: (cookie: String, userAgent: String) -> Unit
     ) {
-        val margin = Utils.dp2px(16, context)
-        val container = LinearLayout(context).apply { orientation = VERTICAL }
-        val cookieInput = EditText(context).apply {
-            hint = "cookie"
-            setSingleLine(false)
-            setText(credentials.cookie)
+        val builder = ScpDialogs.builder(context)
+        val dialogContext = builder.context
+        val cookieInput = ScpDialogs.inputField(dialogContext, "cookie", credentials.cookie, singleLine = false, maxLines = 6)
+        val agentInput = ScpDialogs.inputField(dialogContext, "agent", credentials.userAgent, singleLine = false, maxLines = 6)
+        val loginButton = MaterialButton(
+            dialogContext, null, com.google.android.material.R.attr.materialButtonOutlinedStyle
+        ).apply {
+            text = "使用网页登录"
         }
-        val agentInput = EditText(context).apply {
-            hint = "agent"
-            setSingleLine(false)
-            setText(credentials.userAgent)
-        }
-        val loginButton = Button(context).apply {
-            text = "\u4f7f\u7528\u7f51\u9875\u767b\u5f55"
-        }
-        val inputLayoutParams = LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-            setMargins(margin, margin, margin, 0)
-        }
-        container.addView(cookieInput, inputLayoutParams)
-        container.addView(agentInput, inputLayoutParams)
-        container.addView(
-            loginButton,
-            LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                setMargins(margin, margin, margin, margin)
-            }
-        )
 
-        val dialog = AlertDialog.Builder(context)
-            .setTitle("\u8bbe\u7f6eCookie")
-            .setView(container)
-            .setNeutralButton("\u5982\u4f55\u83b7\u53d6cookie\u548cagent") { _, _ -> onOpenHelp() }
-            .setPositiveButton("OK") { _, _ -> }
+        val dialog = builder
+            .setTitle("设置Cookie")
+            .setView(ScpDialogs.withDialogPadding(dialogContext, cookieInput, agentInput, loginButton))
+            .setNeutralButton("如何获取cookie和agent") { _, _ -> onOpenHelp() }
+            .setPositiveButton("OK", null)
             .setNegativeButton("Cancel") { currentDialog, _ -> currentDialog.dismiss() }
             .create()
         dialog.show()
@@ -62,7 +40,7 @@ class DetailCookieDialog(
             dialog.dismiss()
         }
         dialog.getButton(BUTTON_POSITIVE).setOnClickListener {
-            onSave(cookieInput.text.toString(), agentInput.text.toString())
+            onSave(cookieInput.editText?.text.toString(), agentInput.editText?.text.toString())
             dialog.dismiss()
         }
     }

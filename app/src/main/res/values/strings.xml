@@ -221,4 +221,6 @@
     <string name="settings_part_not_installed">未装 · 点击安装</string>
     <string name="settings_part_action_install">安装</string>
     <string name="settings_part_action_update">更新</string>
+    <string name="detail_more_actions">更多</string>
+    <string name="dialog_input_required">请输入内容</string>
 </resources>

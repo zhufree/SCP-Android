@@ -46,6 +46,8 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     open fun refreshTheme() {
+        // 后台栈里的 Activity 没有走过 changeTheme，这里补上 setTheme，之后它弹出的 View 弹窗/Snackbar 才是当前日夜主题
+        ThemeUtil.setTheme(this)
         baseToolbar?.setBackgroundColor(ThemeUtil.toolbarBg)
         window.statusBarColor = ThemeUtil.toolbarBg
         window.navigationBarColor = ThemeUtil.containerBg

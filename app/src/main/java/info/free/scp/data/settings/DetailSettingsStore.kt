@@ -11,6 +11,8 @@ data class DetailWebCredentials(
 interface DetailSettingsStore {
     val isOfflineReadingEnabled: Boolean
     var detailTextSize: String
+    /** 0 简体 / 1 繁体；繁体时详情页把离线正文转换为繁体后再渲染。 */
+    val hanzType: Int
     val webCredentials: DetailWebCredentials
     val shouldShowDetailNotice: Boolean
 
@@ -29,6 +31,9 @@ class PreferenceDetailSettingsStore : DetailSettingsStore {
     override var detailTextSize: String
         get() = PreferenceUtil.getDetailTextSize()
         set(value) = PreferenceUtil.setDetailTextSize(value)
+
+    override val hanzType: Int
+        get() = PreferenceUtil.getHanzType()
 
     override val webCredentials: DetailWebCredentials
         get() = DetailWebCredentials(

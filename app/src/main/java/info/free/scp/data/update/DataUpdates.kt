@@ -31,7 +31,9 @@ internal data class DataUpdateState(
     val reinstallParts: Boolean = false,
     val obsoletePartsManifest: Boolean = false,
     val busy: Boolean = false,
-    val status: String = ""
+    val status: String = "",
+    /** 最近一次操作失败（[status] 是失败原因），设置页据此显示错误色和“重试”。 */
+    val failed: Boolean = false
 )
 
 internal class DataUpdates(private val context: Context) {
@@ -228,7 +230,7 @@ internal class DataUpdates(private val context: Context) {
         scope.launch {
             operations.withLock {
                 try {
-                    mutableState.value = state.value.copy(busy = true, status = progress)
+                    mutableState.value = state.value.copy(busy = true, status = progress, failed = false)
                     action()
                 } catch (failure: Exception) {
                     runCatching { publishLocalState() }
@@ -248,10 +250,11 @@ internal class DataUpdates(private val context: Context) {
             is IllegalArgumentException, is IllegalStateException -> failure.message ?: "数据更新失败"
             else -> "数据更新失败"
         })
+        mutableState.value = state.value.copy(failed = true)
     }
 
     private fun status(message: String) {
-        mutableState.value = state.value.copy(status = message)
+        mutableState.value = state.value.copy(status = message, failed = false)
     }
 
     @Suppress("DEPRECATION")

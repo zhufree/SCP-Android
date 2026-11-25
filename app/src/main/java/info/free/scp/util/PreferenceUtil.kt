@@ -7,6 +7,13 @@ import info.free.scp.PrivateConstants
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ScpApplication
+import info.free.scp.data.settings.KEY_DETAIL_TEXT_SIZE
+import info.free.scp.data.settings.KEY_HIDE_FINISHED
+import info.free.scp.data.settings.READ_SETTINGS_FILE
+import info.free.scp.data.settings.USER_SETTINGS_FILE
+import info.free.scp.data.settings.putHanzType
+import info.free.scp.data.settings.readHanzType
+import info.free.scp.data.settings.stableUserCode
 
 /**
  * Created by zhufree on 2018/8/30.
@@ -300,24 +307,34 @@ object PreferenceUtil {
     }
 
     fun getHideFinished(): Boolean {
-        return getBooleanValue("read_settings", "hide_finished_article")
+        return getBooleanValue(READ_SETTINGS_FILE, KEY_HIDE_FINISHED)
+    }
+
+    fun setHideFinished(hide: Boolean) {
+        setBooleanValue(READ_SETTINGS_FILE, KEY_HIDE_FINISHED, hide)
     }
 
     fun getDetailTextSize(): String {
-        val textSize = getStringValue("read_settings", "detail_text_size")
+        val textSize = getStringValue(READ_SETTINGS_FILE, KEY_DETAIL_TEXT_SIZE)
         return if (textSize.isNotEmpty()) textSize else "16px"
     }
 
     fun setDetailTextSize(size: String) {
-        setStringValue("read_settings", "detail_text_size", size)
+        setStringValue(READ_SETTINGS_FILE, KEY_DETAIL_TEXT_SIZE, size)
     }
 
     fun setHanzType(type: Int) {
-        setIntValue("read_settings", "detail_hanz_type", type)
+        getPrivateSharedPreference(READ_SETTINGS_FILE)?.edit { putHanzType(type) }
     }
 
+    /** 0 简体、1 繁体；见 [readHanzType] 对旧字符串存储的兼容。 */
     fun getHanzType(): Int {
-        return getIntValue("read_settings", "detail_hanz_type")
+        return getPrivateSharedPreference(READ_SETTINGS_FILE)?.readHanzType() ?: SCPConstants.SIMPLE
+    }
+
+    /** 用户“编号”：首次读取时生成并持久化。 */
+    fun getUserCode(): Int {
+        return getPrivateSharedPreference(USER_SETTINGS_FILE)?.stableUserCode() ?: 0
     }
 
     /**

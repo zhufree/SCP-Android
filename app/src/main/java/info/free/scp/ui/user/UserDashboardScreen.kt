@@ -8,48 +8,75 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Assignment
+import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
+import androidx.compose.material.icons.outlined.Description
+import androidx.compose.material.icons.outlined.Download
+import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material.icons.outlined.MeetingRoom
+import androidx.compose.material.icons.outlined.SportsEsports
+import androidx.compose.material.icons.outlined.Storefront
+import androidx.compose.material.icons.outlined.Tune
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import info.free.scp.R
 import info.free.scp.bean.ScpRecordModel
+import info.free.scp.ui.common.ContainerShape
+import info.free.scp.ui.common.SectionTitleRow
+import info.free.scp.ui.common.outlinedContainerBorder
+import info.free.scp.ui.common.outlinedContainerColors
 import info.free.scp.util.ThemeUtil
 
 @Composable
 fun UserDashboardScreen(
-    nicknameText: String,
-    jobText: String,
-    dataText: String,
+    nickname: String,
+    userCode: Int,
+    jobTitle: String,
+    readCount: Int,
+    likeCount: Int,
     userHead: Bitmap?,
     recentHistory: List<ScpRecordModel>,
     showDonation: Boolean,
@@ -74,144 +101,313 @@ fun UserDashboardScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(ThemeUtil.containerBg))
-            .verticalScroll(rememberScrollState())
-            .padding(bottom = 24.dp)
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        ProfileHeader(
-            nicknameText = nicknameText,
-            jobText = jobText,
-            dataText = dataText,
-            userHead = userHead,
-            onToggleTheme = onToggleTheme,
-            onPickUserHead = onPickUserHead,
-            onEditNickname = onEditNickname,
-            onEditJob = onEditJob
-        )
-        EntryGrid(
-            showOtherWork = showOtherWork,
-            onOpenDraft = onOpenDraft,
-            onOpenGame = onOpenGame,
-            onOpenPortal = onOpenPortal,
-            onOpenReadSettings = onOpenReadSettings,
-            onOpenLocalData = onOpenLocalData,
-            onOpenAbout = onOpenAbout,
-            onOpenQuery = onOpenQuery,
-            onOpenOtherWork = onOpenOtherWork
-        )
-        if (showDonation) {
-            DonationCard(onOpenDonation = onOpenDonation)
+        UserTopBar(onToggleTheme = onToggleTheme)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 24.dp)
+        ) {
+            ProfileCard(
+                nickname = nickname,
+                userCode = userCode,
+                jobTitle = jobTitle,
+                readCount = readCount,
+                likeCount = likeCount,
+                userHead = userHead,
+                onPickUserHead = onPickUserHead,
+                onEditNickname = onEditNickname,
+                onEditJob = onEditJob
+            )
+            EntryGrid(
+                showOtherWork = showOtherWork,
+                onOpenDraft = onOpenDraft,
+                onOpenGame = onOpenGame,
+                onOpenPortal = onOpenPortal,
+                onOpenReadSettings = onOpenReadSettings,
+                onOpenLocalData = onOpenLocalData,
+                onOpenAbout = onOpenAbout,
+                onOpenQuery = onOpenQuery,
+                onOpenOtherWork = onOpenOtherWork
+            )
+            if (showDonation) {
+                DonationBanner(onOpenDonation = onOpenDonation)
+            }
+            SectionTitleRow(
+                title = stringResource(R.string.me_history_title),
+                tag = stringResource(R.string.me_history_tag),
+                modifier = Modifier.padding(top = 8.dp),
+                trailing = {
+                    IconButton(onClick = onOpenMoreHistory) {
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = stringResource(R.string.me_history_more),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+            )
+            HistoryList(recentHistory = recentHistory, onOpenHistoryItem = onOpenHistoryItem)
         }
-        HistoryCard(
-            recentHistory = recentHistory,
-            onOpenMoreHistory = onOpenMoreHistory,
-            onOpenHistoryItem = onOpenHistoryItem
-        )
     }
 }
 
+/** 绿色标题栏：右侧日夜切换键（日间显示月亮，夜间显示太阳）。状态栏区域由 Activity 窗口背景画成同色。 */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ProfileHeader(
-    nicknameText: String,
-    jobText: String,
-    dataText: String,
+private fun UserTopBar(onToggleTheme: () -> Unit) {
+    val night = ThemeUtil.currentTheme == ThemeUtil.NIGHT_THEME
+    TopAppBar(
+        title = { Text(text = stringResource(R.string.me_title)) },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color(ThemeUtil.toolbarBg),
+            titleContentColor = Color(ThemeUtil.onToolbar),
+            actionIconContentColor = Color(ThemeUtil.onToolbar)
+        ),
+        actions = {
+            IconButton(onClick = onToggleTheme) {
+                Icon(
+                    imageVector = if (night) Icons.Default.LightMode else Icons.Default.DarkMode,
+                    contentDescription = stringResource(
+                        if (night) R.string.me_theme_to_day else R.string.me_theme_to_night
+                    )
+                )
+            }
+        }
+    )
+}
+
+@Composable
+private fun ProfileCard(
+    nickname: String,
+    userCode: Int,
+    jobTitle: String,
+    readCount: Int,
+    likeCount: Int,
     userHead: Bitmap?,
-    onToggleTheme: () -> Unit,
     onPickUserHead: () -> Unit,
     onEditNickname: () -> Unit,
     onEditJob: () -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = stringResource(R.string.slogan),
-            modifier = Modifier
-                .padding(start = 45.dp)
-                .height(64.dp),
-            color = Color(ThemeUtil.lightText).copy(alpha = 0.2f),
-            fontSize = 20.sp
-        )
-        IconButton(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 24.dp, end = 24.dp)
-                .size(36.dp)
-                .clip(RoundedCornerShape(18.dp))
-                .background(MaterialTheme.colorScheme.primary),
-            onClick = onToggleTheme
-        ) {
-            Icon(
-                imageVector = Icons.Default.DarkMode,
-                contentDescription = "Theme",
-                tint = MaterialTheme.colorScheme.onPrimary
-            )
-        }
+    val scheme = MaterialTheme.colorScheme
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = outlinedContainerColors(),
+        border = outlinedContainerBorder()
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 60.dp, end = 16.dp),
+                .background(scheme.surfaceContainer)
+                .height(32.dp)
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .clickable(onClick = onPickUserHead),
-                contentAlignment = Alignment.Center
-            ) {
-                if (userHead != null) {
-                    Image(
-                        bitmap = userHead.asImageBitmap(),
-                        contentDescription = stringResource(R.string.app_name),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Image(
-                        painter = painterResource(R.drawable.icon_read),
-                        contentDescription = stringResource(R.string.app_name),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+            Text(
+                text = stringResource(R.string.me_profile_motto),
+                modifier = Modifier.weight(1f),
+                color = scheme.onSurfaceVariant,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace,
+                letterSpacing = 1.2.sp
+            )
+            Surface(shape = CircleShape, color = scheme.primaryContainer) {
                 Text(
-                    text = "\u673a\u5bc6\u4eba\u5458",
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .background(Color.White.copy(alpha = 0.78f), RoundedCornerShape(6.dp))
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    color = Color(0xFF1B5E3A),
-                    fontSize = 12.sp
+                    text = stringResource(R.string.me_profile_badge),
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp),
+                    color = scheme.onPrimaryContainer,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
+        }
+        HorizontalDivider(color = scheme.outlineVariant)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Avatar(userHead = userHead, onClick = onPickUserHead)
             Column(modifier = Modifier.padding(start = 16.dp)) {
-                Text(
-                    text = nicknameText,
-                    modifier = Modifier.clickable(onClick = onEditNickname),
-                    color = Color(ThemeUtil.darkText),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 24.sp
+                ProfileField(
+                    label = stringResource(R.string.me_label_nickname),
+                    value = nickname,
+                    emphasized = true,
+                    onClick = onEditNickname
                 )
-                Text(
-                    text = jobText,
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .clickable(onClick = onEditJob),
-                    color = Color(ThemeUtil.mediumText),
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp
+                ProfileField(
+                    label = stringResource(R.string.me_label_code),
+                    value = userCode.toString(),
+                    mono = true
                 )
-                Text(
-                    text = dataText,
-                    modifier = Modifier.padding(top = 8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 14.sp,
-                    lineHeight = 20.sp
+                ProfileField(
+                    label = stringResource(R.string.me_label_job),
+                    value = jobTitle,
+                    onClick = onEditJob
+                )
+            }
+        }
+        HorizontalDivider(color = scheme.outlineVariant)
+        Row(modifier = Modifier.height(72.dp)) {
+            StatCell(
+                count = readCount,
+                label = stringResource(R.string.me_stat_read),
+                modifier = Modifier.weight(1f)
+            )
+            VerticalDivider(color = scheme.outlineVariant)
+            StatCell(
+                count = likeCount,
+                label = stringResource(R.string.me_stat_like),
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun Avatar(userHead: Bitmap?, onClick: () -> Unit) {
+    val scheme = MaterialTheme.colorScheme
+    Box(modifier = Modifier.size(76.dp), contentAlignment = Alignment.TopStart) {
+        Box(
+            modifier = Modifier
+                .size(72.dp)
+                .clip(RoundedCornerShape(16.dp))
+                // 默认头像是黑/灰线条的位图：夜间换浅色底衬，保证线条可辨（不改图本身）
+                .background(
+                    if (ThemeUtil.currentTheme == ThemeUtil.NIGHT_THEME) scheme.onPrimaryContainer
+                    else scheme.primaryContainer
+                )
+                .clickable(
+                    onClickLabel = stringResource(R.string.me_avatar_change),
+                    role = Role.Button,
+                    onClick = onClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (userHead != null) {
+                Image(
+                    bitmap = userHead.asImageBitmap(),
+                    contentDescription = stringResource(R.string.me_avatar_change),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.icon_read),
+                    contentDescription = stringResource(R.string.me_avatar_change),
+                    modifier = Modifier.size(48.dp),
+                    contentScale = ContentScale.Fit
+                )
+            }
+        }
+        Surface(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .offset(x = 0.dp, y = 0.dp)
+                .size(26.dp),
+            shape = CircleShape,
+            color = scheme.primary,
+            border = androidx.compose.foundation.BorderStroke(2.dp, scheme.surface)
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.CameraAlt,
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = scheme.onPrimary
                 )
             }
         }
     }
 }
+
+/** 键 – 值一行。可点击项（代号/职务）≥ 48dp 高并带铅笔；未设置时值显示主色“点击设置”。 */
+@Composable
+private fun ProfileField(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    emphasized: Boolean = false,
+    mono: Boolean = false,
+    onClick: (() -> Unit)? = null
+) {
+    val scheme = MaterialTheme.colorScheme
+    val unset = value.isBlank()
+    Row(
+        modifier = modifier
+            .then(
+                if (onClick != null) {
+                    Modifier
+                        .heightIn(min = 48.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .clickable(role = Role.Button, onClick = onClick)
+                } else {
+                    Modifier.heightIn(min = 32.dp)
+                }
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(end = 12.dp),
+            color = scheme.onSurfaceVariant,
+            fontSize = 12.sp
+        )
+        Text(
+            text = if (unset) stringResource(R.string.me_tap_to_set) else value,
+            color = if (unset) scheme.primary else scheme.onSurface,
+            fontSize = if (emphasized) 18.sp else 15.sp,
+            fontWeight = if (emphasized) FontWeight.SemiBold else FontWeight.Normal,
+            fontFamily = if (mono) FontFamily.Monospace else null,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        if (onClick != null) {
+            Icon(
+                imageVector = Icons.Outlined.Edit,
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .size(16.dp),
+                tint = scheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatCell(count: Int, label: String, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = count.toString(),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 24.sp,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = label,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp
+        )
+    }
+}
+
+private data class DashboardEntry(
+    val title: String,
+    val icon: ImageVector,
+    val onClick: () -> Unit
+)
 
 @Composable
 private fun EntryGrid(
@@ -225,43 +421,36 @@ private fun EntryGrid(
     onOpenQuery: () -> Unit,
     onOpenOtherWork: () -> Unit
 ) {
-    val items = buildList {
-        add(DashboardEntry("\u8349\u7a3f\u7bb1", R.drawable.baseline_border_color_white_24dp, onOpenDraft))
-        add(DashboardEntry("\u6e38\u620f\u5217\u8868", R.drawable.baseline_videogame_asset_white_24dp, onOpenGame))
-        add(DashboardEntry("\u4f20\u9001\u95e8", R.drawable.baseline_sensor_door_white_24dp, onOpenPortal))
-        add(DashboardEntry("\u9605\u8bfb\u8bbe\u7f6e", R.drawable.baseline_settings_white_24dp, onOpenReadSettings))
-        add(DashboardEntry("\u672c\u5730\u6570\u636e", R.drawable.baseline_download_for_offline_white_24dp, onOpenLocalData))
-        add(DashboardEntry("app\u4f7f\u7528\u8bf4\u660e", R.drawable.baseline_info_white_24dp, onOpenAbout))
-        add(DashboardEntry("\u7528\u6237\u95ee\u5377", R.drawable.baseline_receipt_long_white_24dp, onOpenQuery))
+    val entries = buildList {
+        add(DashboardEntry(stringResource(R.string.me_entry_draft), Icons.Outlined.Edit, onOpenDraft))
+        add(DashboardEntry(stringResource(R.string.me_entry_game), Icons.Outlined.SportsEsports, onOpenGame))
+        add(DashboardEntry(stringResource(R.string.me_entry_portal), Icons.Outlined.MeetingRoom, onOpenPortal))
+        add(DashboardEntry(stringResource(R.string.me_entry_read_settings), Icons.Outlined.Tune, onOpenReadSettings))
+        add(DashboardEntry(stringResource(R.string.me_entry_local_data), Icons.Outlined.Download, onOpenLocalData))
+        add(DashboardEntry(stringResource(R.string.me_entry_about), Icons.Outlined.Info, onOpenAbout))
+        add(DashboardEntry(stringResource(R.string.me_entry_query), Icons.AutoMirrored.Outlined.Assignment, onOpenQuery))
         if (showOtherWork) {
-            add(DashboardEntry("\u5176\u4ed6\u4f5c\u54c1", R.drawable.baseline_food_bank_white_24dp, onOpenOtherWork))
+            add(DashboardEntry(stringResource(R.string.me_entry_other_work), Icons.Outlined.Storefront, onOpenOtherWork))
         }
     }
-    Card(
+    val rows = entryRowSpans(entries.size)
+    val outline = MaterialTheme.colorScheme.outlineVariant
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 40.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            .padding(top = 16.dp),
+        shape = ContainerShape,
+        colors = outlinedContainerColors(),
+        border = outlinedContainerBorder()
     ) {
-        Column(modifier = Modifier.padding(bottom = 24.dp)) {
-            items.chunked(4).forEach { row ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 24.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    row.forEach { item ->
-                        DashboardEntryItem(
-                            item = item,
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-                    repeat(4 - row.size) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
+        var next = 0
+        rows.forEachIndexed { rowIndex, spans ->
+            if (rowIndex > 0) HorizontalDivider(color = outline)
+            Row(modifier = Modifier.height(80.dp)) {
+                spans.forEachIndexed { cellIndex, span ->
+                    if (cellIndex > 0) VerticalDivider(color = outline)
+                    val entry = entries[next++]
+                    EntryCell(entry = entry, wide = span > 1, modifier = Modifier.weight(span.toFloat()))
                 }
             }
         }
@@ -269,72 +458,98 @@ private fun EntryGrid(
 }
 
 @Composable
-private fun DashboardEntryItem(item: DashboardEntry, modifier: Modifier = Modifier) {
-    Column(
-        modifier = modifier.clickable(onClick = item.onClick),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .size(50.dp)
-                .clip(RoundedCornerShape(25.dp))
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(14.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(item.iconRes),
-                contentDescription = item.title,
-                modifier = Modifier.fillMaxSize(),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-        Text(
-            text = item.title,
-            modifier = Modifier.padding(top = 10.dp),
-            color = Color(ThemeUtil.darkText),
-            fontSize = 14.sp,
-            textAlign = TextAlign.Center
+private fun EntryCell(entry: DashboardEntry, wide: Boolean, modifier: Modifier = Modifier) {
+    val content: @Composable () -> Unit = {
+        Icon(
+            imageVector = entry.icon,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.primary
         )
+        Text(
+            text = entry.title,
+            modifier = if (wide) Modifier.padding(start = 12.dp) else Modifier.padding(top = 6.dp),
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Center,
+            maxLines = 2
+        )
+    }
+    if (wide) {
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+                .clickable(role = Role.Button, onClick = entry.onClick),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) { content() }
+    } else {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .clickable(role = Role.Button, onClick = entry.onClick)
+                .padding(horizontal = 2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) { content() }
     }
 }
 
+/** 保留原有赞助大图，压到 120dp，加半透明遮罩，中间放一个纯色胶囊保证头像和文字清晰。 */
 @Composable
-private fun DonationCard(onOpenDonation: () -> Unit) {
-    Card(
+private fun DonationBanner(onOpenDonation: () -> Unit) {
+    val scheme = MaterialTheme.colorScheme
+    OutlinedCard(
+        onClick = onOpenDonation,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 14.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+            .padding(top = 12.dp, bottom = 8.dp),
+        shape = ContainerShape,
+        colors = outlinedContainerColors(),
+        border = outlinedContainerBorder()
     ) {
-        Box(modifier = Modifier.height(140.dp)) {
+        Box(modifier = Modifier.height(120.dp), contentAlignment = Alignment.Center) {
             Image(
                 painter = painterResource(R.drawable.bg_donation),
-                contentDescription = stringResource(R.string.app_name),
+                contentDescription = null,
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-            Column(
-                modifier = Modifier.align(Alignment.Center),
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(scheme.scrim.copy(alpha = 0.35f))
+            )
+            Surface(
+                shape = CircleShape,
+                color = scheme.surface
             ) {
-                Image(
-                    painter = painterResource(R.drawable.author_head),
-                    contentDescription = stringResource(R.string.app_name),
+                Row(
                     modifier = Modifier
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                    contentScale = ContentScale.Crop
-                )
-                Button(
-                    modifier = Modifier
-                        .padding(top = 20.dp)
-                        .height(30.dp),
-                    onClick = onOpenDonation
+                        .heightIn(min = 56.dp)
+                        .padding(start = 8.dp, end = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(text = "\u652f\u6301\u5f00\u53d1\u8005", fontSize = 12.sp)
+                    Image(
+                        painter = painterResource(R.drawable.author_head),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(40.dp)
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                    Text(
+                        text = stringResource(R.string.donation),
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        color = scheme.onSurface,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        tint = scheme.onSurfaceVariant
+                    )
                 }
             }
         }
@@ -342,45 +557,42 @@ private fun DonationCard(onOpenDonation: () -> Unit) {
 }
 
 @Composable
-private fun HistoryCard(
-    recentHistory: List<ScpRecordModel>,
-    onOpenMoreHistory: () -> Unit,
-    onOpenHistoryItem: (ScpRecordModel) -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = Color(ThemeUtil.itemBg)),
-        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+private fun HistoryList(recentHistory: List<ScpRecordModel>, onOpenHistoryItem: (ScpRecordModel) -> Unit) {
+    OutlinedCard(
+        modifier = Modifier.fillMaxWidth(),
+        shape = ContainerShape,
+        colors = outlinedContainerColors(),
+        border = outlinedContainerBorder()
     ) {
-        Column {
-            Row(
+        if (recentHistory.isEmpty()) {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, top = 24.dp, end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = "\u6d4f\u89c8\u5386\u53f2",
-                    modifier = Modifier.weight(1f),
-                    color = Color(ThemeUtil.darkText),
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Medium
+                Icon(
+                    imageVector = Icons.Outlined.Description,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                IconButton(onClick = onOpenMoreHistory) {
-                    Icon(
-                        imageVector = Icons.Default.ChevronRight,
-                        contentDescription = "More",
-                        tint = Color(ThemeUtil.mediumText)
+                Text(
+                    text = stringResource(R.string.me_history_empty),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 14.sp
+                )
+            }
+        } else {
+            recentHistory.forEachIndexed { index, history ->
+                if (index > 0) {
+                    HorizontalDivider(
+                        modifier = Modifier.padding(start = 56.dp),
+                        color = MaterialTheme.colorScheme.outlineVariant
                     )
                 }
-            }
-            recentHistory.forEach { history ->
                 HistoryRow(history = history, onClick = { onOpenHistoryItem(history) })
             }
-            Spacer(modifier = Modifier.height(12.dp))
         }
     }
 }
@@ -390,45 +602,44 @@ private fun HistoryRow(history: ScpRecordModel, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .height(64.dp)
             .clickable(onClick = onClick)
-            .padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp),
+            .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(R.drawable.outline_note_black_24dp),
-            contentDescription = history.title,
-            modifier = Modifier.size(30.dp)
+        Icon(
+            imageVector = Icons.Outlined.Description,
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Column(modifier = Modifier.padding(start = 8.dp)) {
+        Column(modifier = Modifier.padding(start = 16.dp)) {
             Text(
                 text = history.title,
-                color = Color(ThemeUtil.darkText),
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 15.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 text = history.showTime(),
-                modifier = Modifier.padding(top = 8.dp),
-                color = Color(ThemeUtil.mediumText),
-                fontSize = 14.sp
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace
             )
         }
     }
 }
 
-private data class DashboardEntry(
-    val title: String,
-    val iconRes: Int,
-    val onClick: () -> Unit
-)
-
 @Preview(showBackground = true)
 @Composable
 private fun UserDashboardScreenPreview() {
     UserDashboardScreen(
-        nicknameText = "\u4ee3\u53f7\uff1aAgent",
-        jobText = "\u7f16\u53f7\uff1a173\n\u804c\u52a1\uff1a\u7814\u7a76\u5458",
-        dataText = "\u5df2\u9605\u8bfb\u9879\u76ee\uff1a12    \u5df2\u6536\u85cf\u9879\u76ee\uff1a4",
+        nickname = "Agent",
+        userCode = 173,
+        jobTitle = "研究员",
+        readCount = 12,
+        likeCount = 4,
         userHead = null,
         recentHistory = emptyList(),
         showDonation = true,

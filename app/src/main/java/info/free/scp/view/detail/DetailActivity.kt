@@ -390,6 +390,9 @@ class DetailActivity : BaseActivity() {
             detailHtml = detailHtml.replace("""<iframe src="/""", """<iframe src="http://scp-wiki-cn.wikidot.com/""")
         }
         detailHtml = detailHtml.replace("html-block-iframe", "")
+        if (detailHtml.isNotEmpty() && detailSettings.hanzType == TRADITIONAL) {
+            detailHtml = toTraditional(detailHtml)
+        }
 
         if (detailHtml.isEmpty()) {
             binding.pbLoading.visibility = VISIBLE
@@ -639,6 +642,14 @@ class DetailActivity : BaseActivity() {
         ThemeUtil.changeTheme(this, mode)
     }
 
+
+    /** 设置里选了“繁体”时转换正文；转换库读取失败则保持简体原文，不影响阅读。 */
+    private fun toTraditional(html: String): String = try {
+        JChineseConvertor.getInstance().s2t(html)
+    } catch (e: Exception) {
+        Log.w("scp", "s2t failed: ${e.javaClass.simpleName}")
+        html
+    }
 
     /**
      * 繁简转换

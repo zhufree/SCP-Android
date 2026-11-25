@@ -30,10 +30,10 @@
 | `draft` | `DraftRepository` | 草稿增删改查 |
 | `random` | `RandomRepository` | 随机批次获取与过滤（隐藏已读、缺失离线正文），桌面小部件复用 |
 | `direct` | `DirectDocumentRepository` | 编号直达：离线查本地库，在线走 `/get_direct` |
-| `feed` | `FeedRepository` | 最近更新/最高评分（仅在线接口） |
+| `feed` | `FeedRepository`、`FeedIndexState` | 最近更新/最高评分（仅在线接口）；首页用 `FeedIndexUiState`（每个区块 Loading/Content/Empty/Failed）区分加载中、成功、空、失败 |
 | `update` | `DataUpdates`、`UpdateDatabases`、`DetailPartImporter` | Release 检查、校验、冷启动安装、正文事务合并 |
 | `backup` | `AppDataBackupRepository`、`BackupFilePlan` | 详情库导入、个人数据备份/恢复（SAF） |
-| `settings` | `DetailSettingsStore`、`PreferenceSettingsStore` | 对 `PreferenceUtil` 的语义化封装 |
+| `settings` | `DetailSettingsStore`、`PreferenceSettingsStore`、`ReadSettingValues` | 对 `PreferenceUtil` 的语义化封装；`ReadSettingValues.kt` 放阅读设置的键、字号档位和繁简/编号的兼容读写（纯函数，有 JVM 测试） |
 | `user` | `UserDashboardRepository` | “我的”页面统计与最近历史 |
 
 约定（来自 `refactor-handoff.md`）：`view` 与 `ui` 不应再直接访问 `AppInfoDatabase`/`ScpDatabase`/`DetailDatabase`/`HttpManager`/`PreferenceUtil`，需经 Repository 或 SettingsStore。
@@ -45,7 +45,7 @@
 应用没有统一的 `NavHost`，导航由三层组成：
 
 1. **主壳层**：`MainActivity` 使用 Compose `Scaffold + BottomNavigation`，三个标签 `HOME`（首页）、`LATER`（待读）、`USER`（我的），分别对应 `HomeFragment`、`LaterFragment`、`UserFragment`。Fragment 通过固定 tag（`main.fragment.home/later/user`）add/show/hide 到 Compose `AndroidView` 提供的 `flMainContainer`，选中标签通过 `onSaveInstanceState` 保存。
-2. **首页二级标签**：`HomeFragment` 用 Compose `ScrollableTabRow` 切换 6 个子页，替换到 `fl_home_container`：首页（`HomePageFragment`）、图书馆（`ScpListFragment`，`LIBRARY_DOC`）、SCP 国际版（`CategoryFragment`，`INTERNATIONAL_DOC`）、GOI 格式（`CategoryFragment`，`GOI_DOC`）、艺术作品（`CategoryFragment`，`ART_DOC`）、背景资料与指导（`ScpListFragment`，`INFORMATION_DOC`）。
+2. **首页二级标签**：`HomeFragment` 的顶区是 `HomeTopBar`（绿色容器：搜索胶囊 + `PrimaryScrollableTabRow`，状态栏区域由 Activity 窗口背景画成同色），切换 6 个子页，所选标签用 `rememberSaveable` 在 Activity 重建后保留，替换到 `fl_home_container`：首页（`HomePageFragment`）、图书馆（`ScpListFragment`，`LIBRARY_DOC`）、SCP 国际版（`CategoryFragment`，`INTERNATIONAL_DOC`）、GOI 格式（`CategoryFragment`，`GOI_DOC`）、艺术作品（`CategoryFragment`，`ART_DOC`）、背景资料与指导（`ScpListFragment`，`INFORMATION_DOC`）。
 3. **页面跳转**：其余页面都是独立 Activity，用显式 `Intent` + extras 启动，在 `AndroidManifest.xml` 中注册。例如 `DetailActivity` 读取 extras `link`、`title`、`index`、`scp_type`、`read_type`、`random_index`；`RandomActivity` 读取 `random_type`、`random_title`。
 
 `navigation-compose` 仅在 `TagDetailActivity` 内部使用（一个 `NavHost`，起点 `"tag"`）。
@@ -56,8 +56,8 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 
 | 入口 | 页面 |
 | --- | --- |
-| 首页 | 公告、分类入口（`GroupListActivity` → `DocListActivity`）、最近更新（`FeedActivity`）、最高评分（`TopRatedActivity`）、Tag（`TagCloudActivity`） |
-| 搜索栏 | 编号直达（`DirectActivity`）、随机（`RandomActivity`）、标题/全文搜索（`SearchActivity`） |
+| 首页 | 公告、分类入口（`GroupListActivity` → `DocListActivity`）、最近原创/翻译（“查看更多”→`FeedActivity`）、最高评分（`TopRatedActivity`）、Tag（`TagCloudActivity`） |
+| 搜索栏 | 胶囊内右侧两个图标：编号直达（`DirectActivity`）、随机（下拉 4 项 → `RandomActivity`）；回车 → 标题/全文搜索（`SearchActivity`） |
 | 待读 | 待读列表、收藏夹（`LikeListActivity`）、待读导入 |
 | 我的 | 草稿（`DraftListActivity`）、游戏（`GameListActivity`）、传送门（`PortalListActivity`）、设置（`SettingsActivity`）、离线与备份（`DownloadActivity`）、关于、其他作品、捐赠、历史（`LaterAndHistoryActivity`） |
 | 阅读 | `DetailActivity`（WebView 阅读页） |
@@ -124,7 +124,7 @@ Manifest 中仅 `MainActivity` 是 LAUNCHER；部分 Activity（`AboutAppActivit
 - **Compose 侧**：`MainTheme`（`ui/Theme.kt`）按 `ThemeUtil.currentTheme` 选 `lightColorScheme`/`darkColorScheme`，值由 `colorResource(R.color.md_*)` 取得，与 View 侧同源；组件全部是 `androidx.compose.material3`（已移除 Material 2 依赖）。形状见 `ui/Shape.kt`（小 8dp、中 12dp、大 16dp），卡片统一 12dp 圆角、1dp 阴影。新增 Compose 页面优先用 `MaterialTheme.colorScheme.*`；沿用的 `Color(ThemeUtil.xxx)` 读取是快照状态，切换主题后自动重组，不要缓存成普通变量。
 - **M3 Scaffold 注意**：M3 的 `Scaffold` 内容区从屏幕顶端开始，必须使用 lambda 传入的 `padding`，否则内容会被标题栏盖住（M2 不需要）。M3 `Card` 的内容是 `Column`，固定高度的条目里要给 `Row` 加 `fillMaxHeight()` 才能垂直居中。
 - 标题栏（`CommonTopBar` 和 `DetailActivityLayout` 的 Toolbar）日夜都是深色底，文字和图标用 `ThemeUtil.onToolbar`；程序化构建的 Toolbar 必须放在 `AppTheme.AppBarOverlay` 主题下（`DetailActivityLayout` 用 `ContextThemeWrapper` 包裹 `AppBarLayout`），弹出菜单用 `ToolbarPopupTheme`（颜色取自当前 Activity 的 ThemeUtil 属性）。
-- 设置页 Preference：开关换成 Material 3 `MaterialSwitch`（`SwitchPreferenceCompat` + `layout/preference_widget_material_switch.xml`），分类标题颜色来自 `colorAccent`。
+- 设置页是 Compose（见第 8 节），开关用 Material 3 `Switch`，不再使用 Preference 与 `MaterialSwitch` 布局资源。
 - `targetSdk 35+` 在 Android 15+ 强制 edge-to-edge，`window.statusBarColor` 不再生效。`view/base/ActivityInsets.kt` 的 `keepContentInsideSystemBars()` 把内容放到系统栏内侧，并用窗口背景给状态栏区域画 `toolbarBg`、其余区域画 `containerBg`；`refreshSystemBars()` 负责状态栏/导航栏图标深浅，并在主题切换时刷新。新增 Activity 若不继承 `BaseActivity`，需要自己调用 `keepContentInsideSystemBars()`。
 - 启动页：`MainActivity` 的 Manifest 主题是 `Theme.App.Splash`（继承 `DayTheme`）。Android 12+ 用系统 SplashScreen 属性（`values-v31`：近黑底 + 白色标志），更低版本用 `windowBackground`；进入 `BaseActivity.onCreate` 后 `ThemeUtil.setTheme` 换成日/夜主题，所以 `ThemeUtil` 仍是唯一切换点。没有使用 `androidx.core:core-splashscreen`（见 build-and-release 第 10 节）。
 - 预测性返回：Manifest `<application android:enableOnBackInvokedCallback="true">`。代码里没有重写 `onBackPressed`/`OnBackPressedCallback`/`KEYCODE_BACK`，标题栏返回箭头直接调用 `finish()`；以后新增自定义返回逻辑请用 `OnBackPressedCallback`，不要重写 `onBackPressed`。
@@ -144,3 +144,40 @@ JVM 单元测试位于 `app/src/testDefaultProductionDebug/java`，覆盖 `data/
 - `ScpTable.kt` 保留了旧版手写 SQL 常量（旧 `ScpTable`/`DetailTable` 建表语句）；`AppInfoDatabase` 的 4→5 迁移引用了其中的常量，其余部分是否仍被使用待确认。
 - `EventUtil.onEvent` 的实现被注释掉（友盟调用已移除），目前是空操作；`firebase-analytics` 依赖在源码中未发现 `FirebaseAnalytics` 调用。
 - `TabFragmentPager` 在源码中未发现引用；它依赖的 `androidx.viewpager2` 未在 `app/build.gradle` 中显式声明（来自传递依赖）。
+
+## 8. 首页 / 设置页 / “我的”页结构与偏好键
+
+按 `scp-design` 设计稿（2026-11-25）重做。目录页和分类列表页没有改。三页都只用 `MaterialTheme.colorScheme` 或 `ThemeUtil` 取色，不写硬编码色值。
+
+**首页**（`view/home/HomeFragment` + `HomePageFragment`）
+
+- 顶区 `ui/home/HomeTopBar`：`toolbarBg` 底，里面是 `SearchBarScreen`（48dp 胶囊，`BasicTextField`，回车 `ImeAction.Search`）和 6 个 Tab。直达（拨号图标）、随机（交叉箭头图标，点开 `DropdownMenu`：随机全部/SCP/故事/搞笑）各 48dp，带 `contentDescription` 和长按提示。随机类型下标与 `RandomActivity` 的 `random_type` 一致，埋点事件不变。
+- `ui/home/HomePageScreen`：公告条（默认折叠 2 行，点击展开；关闭键独立；关闭后用 Snackbar 提示“公告已隐藏，可在app使用说明中查看”，语义同旧 Toast）、4 个入口、“最近原创/最近翻译”标题行 + 描边列表、底部并排“最高评分页面/全部标签”。
+- 4 个入口继续用原位图（`scp_logo`、`img_logo_cn`、`img_break_logo`、`wander_logo`）。图是黑/灰线条的，所以放在浅色底衬上（日间 `primaryContainer`、夜间 `onPrimaryContainer`）；放逐者图标是白线条，放在深绿底衬上（日间 `primary`、夜间 `primaryContainer`）。
+- 最近原创/翻译的状态来自 `FeedListViewModel.feedIndexState`（`StateFlow<FeedIndexUiState>`）：请求中显示 3 行骨架；有数据显示列表；接口返回空显示“暂无内容”；失败显示区块内错误态（“网络请求出错” + “重试”），不再弹 Toast。“重试”调用 `loadFeedIndex(force = true)` 真正重新请求；已有内容时刷新失败保留旧内容。`FeedListViewModel` 挂在 `HomeFragment` 上（`requireParentFragment()`），切换 Tab 再回来不会重复请求。
+- `FeedRepository.fetchFeedIndex()` 不弹 Toast；`loadFeedList`（最近更新等整页列表）仍沿用 `apiCall` 的 Toast，没有改。
+
+**设置页**（`view/user/SettingsActivity` + `ui/settings/*`）
+
+- `SettingsActivity` 仍是 `BaseActivity`，入口不变；内容是 Compose `SettingsScreen`，不再有 `PreferenceFragmentCompat`、`res/xml/pref_read_settings.xml`、`res/values/array.xml`、`preference_widget_material_switch.xml`（`androidx.preference` 依赖仍在 `app/build.gradle`，已无代码使用，是否移除待确认）。
+- `SettingsUpdateModel.kt` 是从 `DataUpdateState` 派生展示状态的纯函数（状态横幅、分块行状态、可点击条件、已装计数），逻辑照搬旧 `renderUpdates`。“检查数据更新”的点击逻辑与旧版一致：`canConfirmCachedCatalog()` 为真走 `UpdateManager.confirmCatalogDownload`（计费网络确认弹窗），否则 `check(manual = true)`。`DataUpdateState` 新增 `failed`（`reportFailure` 置位，`status()`/开始新操作时清除），用于“失败色 + 重试”。
+- 计费网络的目录下载确认仍由 `UpdateManager.checkAppData()` 注册在 `MainActivity` 上，设置页没有改动。
+
+**偏好键**（`SharedPreferences` 文件 `read_settings`，键与类型沿用旧 Preference 时代，升级用户的值直接可读）
+
+| 键 | 类型 | 说明 |
+| --- | --- | --- |
+| `hide_finished_article` | Boolean，缺省 false | 隐藏已读文档。`ScpCatalogRepository`、`RandomRepository` 读取。Compose 设置页点击时显式写入 `PreferenceUtil.setHideFinished`（以前由 `SwitchPreferenceCompat` 自动落盘） |
+| `detail_text_size` | String，如 `"16px"`，缺省 `"16px"` | 正文字号，`DetailActivity` 经 `DetailHtmlComposer` 拼进 CSS。设置页是 12/14/16/18/20 五档滑块，旧值不在档位内时取最近档位显示 |
+| `detail_hanz_type` | String `"0"` 简体 / `"1"` 繁体 | 旧 `DropDownPreference` 存的是字符串，而旧 `PreferenceUtil.getHanzType()` 用 `getInt`，且全工程没有调用点。现在 `readHanzType()` 按实际类型读取（String/Int 都接受，缺省按简体），仍以字符串写入。`DetailActivity.setDetail` 在选“繁体”时用 `JChineseConvertor.s2t` 转换正文（转换库读取失败则保持原文） |
+| `detail_wifi_only` | 不在 `read_settings` 中 | 在 `data_updates` 文件里（`DataUpdates.wifiOnly`，缺省 true），设置页开关直接读写它，与旧版一致 |
+
+“我的”页的 `level` 文件新增 `user_code`（Int，0–599）：“编号”首次读取时随机生成并保存，之后保持不变（以前每次重组都 `Random(System.currentTimeMillis())`，编号会跳变）。
+
+**“我的”页**（`view/user/UserFragment` + `ui/user/UserDashboardScreen`）
+
+- 绿色 `TopAppBar`（标题“我的” + 日夜切换键，日间显示月亮、夜间显示太阳），回调仍是 `ThemeUtil.changeTheme`，Compose 立即重组；状态栏图标深浅由 `ActivityInsets.refreshSystemBars` 处理（标题栏日夜都是深色，图标始终为浅色）。
+- 档案卡：抬头条（“控制 收容 保护”+“机密人员”）、头像（点击更换，右下相机角标）、代号/编号/职务三行（代号、职务带铅笔，点击行为不变：代号 → `checkUserInfo()`，职务 → `checkJob()`；编号只读、等宽字）、已读/收藏两格。夜间默认头像放在浅色底衬上。
+- 入口网格：4 列，`entryRowSpans()` 算跨度（7 项时最后一项跨 2 列，“其他作品”显示的 8 项为 4×2）。
+- 赞助入口保留原大图 `bg_donation`，压到 120dp，叠半透明遮罩，中间放一个纯色胶囊（作者头像 + “支持开发者” + 箭头）保证文字清晰。
+- 浏览历史：行高 64dp，标题单行省略，时间等宽字；无记录时显示“暂无浏览历史”。

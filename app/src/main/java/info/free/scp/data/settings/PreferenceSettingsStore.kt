@@ -5,6 +5,8 @@ import info.free.scp.util.PreferenceUtil
 interface UserPreferencesStore {
     val nickname: String
     val points: Int
+    /** 稳定的“编号”，首次读取时生成并保存。 */
+    val userCode: Int
     val showOtherWork: Boolean
     val queryLink: String
     val hasAcceptedPrivacy: Boolean
@@ -22,7 +24,9 @@ interface HomePreferencesStore {
 }
 
 interface ReadingPreferencesStore {
-    val hideFinishedArticles: Boolean
+    var hideFinishedArticles: Boolean
+    /** 0 简体 / 1 繁体（[info.free.scp.SCPConstants.SIMPLE] / TRADITIONAL）。 */
+    var hanzType: Int
     val shouldShowReadSuggestion: Boolean
 
     fun markReadSuggestionShown()
@@ -68,8 +72,16 @@ class PreferenceSettingsStore :
     override val shouldShowNotice: Boolean
         get() = PreferenceUtil.getShowNotice()
 
-    override val hideFinishedArticles: Boolean
+    override var hideFinishedArticles: Boolean
         get() = PreferenceUtil.getHideFinished()
+        set(value) = PreferenceUtil.setHideFinished(value)
+
+    override var hanzType: Int
+        get() = PreferenceUtil.getHanzType()
+        set(value) = PreferenceUtil.setHanzType(value)
+
+    override val userCode: Int
+        get() = PreferenceUtil.getUserCode()
 
     override val shouldShowReadSuggestion: Boolean
         get() = !PreferenceUtil.getShownReadSuggest()

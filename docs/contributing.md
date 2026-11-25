@@ -32,7 +32,7 @@
 
 - 新页面使用 Compose（Material 2）与 `MainTheme`；颜色目前通过 `ThemeUtil` 取值。
 - 不要新增 ViewBinding、RecyclerView/Adapter、XML 页面布局或菜单资源。`res/layout/layout_widget.xml` 是唯一保留的 XML 布局，服务于桌面小部件 RemoteViews。
-- 设置页仍使用 `PreferenceFragmentCompat`（`res/xml/pref_read_settings.xml`），属于保留项。
+- 设置页已是 Compose（`ui/settings/SettingsScreen`），不再有 Preference 资源；`read_settings` 里的键、类型和语义见 `docs/architecture.md` 第 8 节，改动必须兼容升级用户的旧值。
 
 **不要随意改变的行为**（除非单独立项并补迁移验证；来自 `refactor-handoff.md`）：
 

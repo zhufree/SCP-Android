@@ -1,6 +1,5 @@
 package info.free.scp.view.home
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,17 +7,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.viewinterop.AndroidView
@@ -26,9 +20,9 @@ import androidx.fragment.app.Fragment
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.ui.MainTheme
-import info.free.scp.ui.home.SearchBarScreen
+import info.free.scp.ui.home.HomeTopBar
+import info.free.scp.ui.home.randomTypeLabels
 import info.free.scp.util.EventUtil
-import info.free.scp.util.ThemeUtil
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.category.CategoryFragment
 import info.free.scp.view.category.ScpListFragment
@@ -64,29 +58,17 @@ class HomeFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                var selectedTab by remember { mutableIntStateOf(0) }
+                var selectedTab by rememberSaveable { mutableIntStateOf(0) }
                 MainTheme {
                     Column(modifier = Modifier.fillMaxSize()) {
-                        SearchBarScreen(
+                        HomeTopBar(
+                            titles = titles,
+                            selectedTab = selectedTab,
+                            onTabSelected = { selectedTab = it },
                             onDirect = { startActivity(Intent(requireContext(), DirectActivity::class.java)) },
-                            onRandom = { showRandomDialog() },
+                            onRandom = { openRandom(it) },
                             onSearch = { keyword -> openSearch(keyword) }
                         )
-                        ScrollableTabRow(
-                            selectedTabIndex = selectedTab,
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.primary
-                        ) {
-                            titles.forEachIndexed { index, title ->
-                                Tab(
-                                    selected = selectedTab == index,
-                                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                                    unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    onClick = { selectedTab = index },
-                                    text = { Text(text = title) }
-                                )
-                            }
-                        }
                         AndroidView(
                             modifier = Modifier.weight(1f),
                             factory = { context ->
@@ -115,7 +97,7 @@ class HomeFragment : BaseFragment() {
 
     private fun openSearch(keyword: String) {
         if (keyword.isEmpty()) {
-            toast("\u8bf7\u8f93\u5165\u6b63\u786e\u7684\u5173\u952e\u8bcd")
+            toast(getString(R.string.home_search_empty))
             return
         }
         startActivity(
@@ -124,23 +106,18 @@ class HomeFragment : BaseFragment() {
         )
     }
 
-    private fun showRandomDialog() {
-        val randomTypes = listOf("\u968f\u673a\u5168\u90e8", "\u968f\u673aSCP", "\u968f\u673a\u6545\u4e8b", "\u968f\u673a\u641e\u7b11")
-        AlertDialog.Builder(requireContext())
-            .setItems(randomTypes.toTypedArray()) { _, i ->
-                when (i) {
-                    0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
-                    1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
-                    2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
-                    3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
-                }
-                startActivity(
-                    Intent(requireContext(), RandomActivity::class.java)
-                        .putExtra("random_type", i)
-                        .putExtra("random_title", randomTypes[i])
-                )
-            }
-            .show()
+    private fun openRandom(type: Int) {
+        when (type) {
+            0 -> EventUtil.onEvent(context, EventUtil.clickRandomAll)
+            1 -> EventUtil.onEvent(context, EventUtil.clickRandomScp)
+            2 -> EventUtil.onEvent(context, EventUtil.clickRandomTale)
+            3 -> EventUtil.onEvent(context, EventUtil.clickRandomJoke)
+        }
+        startActivity(
+            Intent(requireContext(), RandomActivity::class.java)
+                .putExtra("random_type", type)
+                .putExtra("random_title", getString(randomTypeLabels[type]))
+        )
     }
 
     override fun refreshTheme() {

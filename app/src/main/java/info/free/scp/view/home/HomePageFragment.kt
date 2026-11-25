@@ -10,10 +10,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.lifecycle.ViewModelProvider
+import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.data.settings.HomePreferencesStore
 import info.free.scp.data.settings.PreferenceSettingsStore
@@ -26,12 +31,12 @@ import info.free.scp.view.feed.FeedActivity
 import info.free.scp.view.feed.FeedListViewModel
 import info.free.scp.view.feed.TopRatedActivity
 import info.free.scp.view.tag.TagCloudActivity
-import toast
 
 class HomePageFragment : BaseFragment() {
     private val homePreferences: HomePreferencesStore = PreferenceSettingsStore()
+    // 挂在父 Fragment 上：首页 Tab 被替换掉再切回来时不丢状态，也不会每次重新请求
     private val feedVm by lazy {
-        ViewModelProvider(this)[FeedListViewModel::class.java]
+        ViewModelProvider(requireParentFragment())[FeedListViewModel::class.java]
     }
 
     override fun onCreateView(
@@ -42,21 +47,26 @@ class HomePageFragment : BaseFragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                val feedIndex by feedVm.getFeedIndex().observeAsState()
+                val feedState by feedVm.feedIndexState.collectAsState()
                 var showNotice by remember { mutableStateOf(homePreferences.shouldShowNotice) }
+                val snackbarHostState = remember { SnackbarHostState() }
+                val scope = rememberCoroutineScope()
+                val dismissedMessage = stringResource(R.string.home_notice_dismissed)
                 MainTheme {
                     HomePageScreen(
                         notice = homePreferences.notice,
                         showNotice = showNotice,
-                        latestCreate = feedIndex?.latestCreate.orEmpty(),
-                        latestTranslate = feedIndex?.latestTranslate.orEmpty(),
+                        createState = feedState.create,
+                        translateState = feedState.translate,
+                        snackbarHostState = snackbarHostState,
                         onDismissNotice = {
                             homePreferences.dismissNotice()
                             showNotice = false
-                            toast("\u516c\u544a\u5df2\u9690\u85cf\uff0c\u53ef\u5728app\u4f7f\u7528\u8bf4\u660e\u4e2d\u67e5\u770b")
+                            scope.launch { snackbarHostState.showSnackbar(dismissedMessage) }
                         },
                         onOpenGroup = { goToGroupPage(it) },
                         onOpenFeed = { startActivity(Intent(requireContext(), FeedActivity::class.java)) },
+                        onRetryFeed = { feedVm.loadFeedIndex(force = true) },
                         onOpenTopRated = { startActivity(Intent(requireContext(), TopRatedActivity::class.java)) },
                         onOpenTags = { startActivity(Intent(requireContext(), TagCloudActivity::class.java)) },
                         onOpenFeedItem = { feed ->

@@ -37,7 +37,6 @@ import info.free.scp.util.privatePictureDir
 import info.free.scp.view.base.BaseFragment
 import info.free.scp.view.detail.DetailActivity
 import info.free.scp.view.draft.DraftListActivity
-import java.util.Random
 
 class UserFragment : BaseFragment() {
     private val userPreferences: UserPreferencesStore = PreferenceSettingsStore()
@@ -68,9 +67,11 @@ class UserFragment : BaseFragment() {
                 val version = profileVersion
                 MainTheme {
                     UserDashboardScreen(
-                        nicknameText = nicknameText(version),
-                        jobText = jobText(version),
-                        dataText = "\u5df2\u9605\u8bfb\u9879\u76ee\uff1a${uiState.readCount}    \u5df2\u6536\u85cf\u9879\u76ee\uff1a${uiState.likeCount}",
+                        nickname = userPreferences.nickname,
+                        userCode = userPreferences.userCode,
+                        jobTitle = jobTitle(version),
+                        readCount = uiState.readCount,
+                        likeCount = uiState.likeCount,
                         userHead = userHeadBitmap,
                         recentHistory = uiState.recentHistory,
                         showDonation = BuildConfig.FLAVOR != "GooglePlayProduction",
@@ -126,23 +127,11 @@ class UserFragment : BaseFragment() {
         )
     }
 
-    private fun nicknameText(version: Int): String {
-        val nickname = userPreferences.nickname
-        return if (nickname.isNotEmpty()) {
-            "\u4ee3\u53f7\uff1a$nickname"
-        } else {
-            "\u4ee3\u53f7\uff1a\u70b9\u51fb\u8bbe\u7f6e"
-        }
-    }
-
-    private fun jobText(version: Int): String {
-        val nickname = userPreferences.nickname
-        val code = Random(System.currentTimeMillis()).nextInt(600)
-        return if (nickname.isNotEmpty()) {
-            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a${getRank(userPreferences.points)}"
-        } else {
-            "\u7f16\u53f7\uff1a$code\n\u804c\u52a1\uff1a\u70b9\u51fb\u8bbe\u7f6e"
-        }
+    /** 未设置代号时职务也视为未设置（与旧版“点击设置”的判断一致）；职业没选时同样显示“点击设置”。 */
+    @Suppress("UNUSED_PARAMETER")
+    private fun jobTitle(version: Int): String {
+        if (userPreferences.nickname.isEmpty()) return ""
+        return getRank(userPreferences.points)
     }
 
     private fun getRank(point: Int): String {

@@ -136,4 +136,89 @@
     <!-- tag -->
     <string name="all_tags">全部标签</string>
     <string name="detail_part_summary">%1$.1f MiB · %2$s</string>
+
+    <!--首页-->
+    <string name="home_search_hint">搜索</string>
+    <string name="home_search_clear">清除搜索内容</string>
+    <string name="home_direct">编号直达</string>
+    <string name="home_random">随机阅读</string>
+    <string name="random_all">随机全部</string>
+    <string name="random_scp">随机SCP</string>
+    <string name="random_tale">随机故事</string>
+    <string name="random_joke">随机搞笑</string>
+    <string name="home_search_empty">请输入正确的关键词</string>
+    <string name="home_notice_icon">公告</string>
+    <string name="home_notice_close">关闭公告</string>
+    <string name="home_notice_expand">展开公告</string>
+    <string name="home_notice_collapse">收起公告</string>
+    <string name="home_notice_dismissed">公告已隐藏，可在app使用说明中查看</string>
+    <string name="home_section_original">最近原创</string>
+    <string name="home_section_translation">最近翻译</string>
+    <string name="home_section_original_tag">ORIGINAL</string>
+    <string name="home_section_translation_tag">TRANSLATION</string>
+    <string name="home_section_more">查看更多</string>
+    <string name="home_feed_error_title">网络请求出错</string>
+    <string name="home_feed_error_original">无法获取最近原创，请检查网络</string>
+    <string name="home_feed_error_translation">无法获取最近翻译，请检查网络</string>
+    <string name="home_feed_retry">重试</string>
+    <string name="home_feed_empty">暂无内容</string>
+    <string name="home_feed_loading">加载中</string>
+
+    <!--我的-->
+    <string name="me_title">我的</string>
+    <string name="me_theme_to_night">切换到夜间模式</string>
+    <string name="me_theme_to_day">切换到日间模式</string>
+    <string name="me_profile_motto">控制  收容  保护</string>
+    <string name="me_profile_badge">机密人员</string>
+    <string name="me_avatar_change">更换头像</string>
+    <string name="me_label_nickname">代号</string>
+    <string name="me_label_code">编号</string>
+    <string name="me_label_job">职务</string>
+    <string name="me_tap_to_set">点击设置</string>
+    <string name="me_stat_read">已阅读项目</string>
+    <string name="me_stat_like">已收藏项目</string>
+    <string name="me_entry_draft">草稿箱</string>
+    <string name="me_entry_game">游戏列表</string>
+    <string name="me_entry_portal">传送门</string>
+    <string name="me_entry_read_settings">阅读设置</string>
+    <string name="me_entry_local_data">本地数据</string>
+    <string name="me_entry_about">app使用说明</string>
+    <string name="me_entry_query">用户问卷</string>
+    <string name="me_entry_other_work">其他作品</string>
+    <string name="me_history_title">浏览历史</string>
+    <string name="me_history_tag">HISTORY</string>
+    <string name="me_history_more">查看全部浏览历史</string>
+    <string name="me_history_empty">暂无浏览历史</string>
+
+    <!--设置页（Compose）-->
+    <string name="settings_hide_finished_summary">目录列表中不再显示已读过的文档</string>
+    <string name="settings_group_reading">阅读设置</string>
+    <string name="settings_group_data_update">数据更新</string>
+    <string name="settings_group_detail_parts">正文分块</string>
+    <string name="settings_font_size_value">%1$d</string>
+    <string name="settings_hanz_simplified">简体</string>
+    <string name="settings_hanz_traditional">繁体</string>
+    <string name="settings_check_update">检查数据更新</string>
+    <string name="settings_check_action">检查</string>
+    <string name="settings_check_retry">重试</string>
+    <string name="settings_catalog_legacy">目录：内置旧版</string>
+    <string name="settings_catalog_unknown">目录版本未知</string>
+    <string name="settings_catalog_version">目录：%1$s · %2$s</string>
+    <string name="settings_catalog_pending">待安装：%1$s · %2$s（下次冷启动）</string>
+    <string name="settings_wifi_only">正文仅 Wi-Fi 下载</string>
+    <string name="settings_wifi_only_summary">使用移动网络时不下载正文块</string>
+    <string name="settings_parts_installed_count">已装 %1$d / 共 %2$d</string>
+    <string name="settings_parts_empty">检查数据更新后可查看可下载的正文块</string>
+    <string name="settings_parts_source">内容来自 SCP 基金会中文站（CC BY-SA 3.0）</string>
+    <string name="settings_parts_banner_inventory_unavailable">无法读取本地正文库</string>
+    <string name="settings_parts_banner_full_import">整库导入（未分块）</string>
+    <string name="settings_parts_banner_legacy_pending">正文整库将在下次冷启动时生效</string>
+    <string name="settings_parts_banner_reinstall">分块规则已更新，请重装已有正文块</string>
+    <string name="settings_parts_banner_obsolete">清单分块规则早于本地版本，请等待后续更新</string>
+    <string name="settings_part_unknown">安装状态未知</string>
+    <string name="settings_part_installed">已装</string>
+    <string name="settings_part_update_available">有更新 · 点击更新</string>
+    <string name="settings_part_not_installed">未装 · 点击安装</string>
+    <string name="settings_part_action_install">安装</string>
+    <string name="settings_part_action_update">更新</string>
 </resources>

@@ -121,6 +121,7 @@ internal class DataUpdates(private val context: Context) {
             status("正文块已安装")
             return@runOperation
         }
+        require(!part.exceedsSizeLimit) { "正文块超过 200 MiB 下载或解压上限" }
         check(!state.value.detailInventoryUnavailable) { "无法读取本地正文库" }
         check(!state.value.obsoletePartsManifest) { "清单分块规则早于设备已安装的版本" }
         check(!databases.legacyDetailPending) { "请先重启应用以完成整库导入" }
@@ -154,6 +155,7 @@ internal class DataUpdates(private val context: Context) {
     private fun withAsset(
         asset: UpdateFile, limit: Long, requireNetwork: (UpdateNetwork) -> Unit, action: (File) -> Unit
     ) {
+        require(asset.size in 1..limit && asset.rawSize in 1..limit) { "数据文件超出大小限制" }
         requireNetwork(network())
         val zipped = File.createTempFile("scp-update-", ".part", context.cacheDir)
         try {

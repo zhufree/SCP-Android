@@ -215,6 +215,7 @@
     <string name="settings_parts_banner_legacy_pending">正文整库将在下次冷启动时生效</string>
     <string name="settings_parts_banner_reinstall">分块规则已更新，请重装已有正文块</string>
     <string name="settings_parts_banner_obsolete">清单分块规则早于本地版本，请等待后续更新</string>
+    <string name="settings_part_too_large">超过 200 MiB 下载或解压上限</string>
     <string name="settings_part_unknown">安装状态未知</string>
     <string name="settings_part_installed">已装</string>
     <string name="settings_part_update_available">有更新 · 点击更新</string>

@@ -64,4 +64,12 @@ class SettingsUpdateModelTest {
         assertEquals(1, installedPartCount(base))
         assertEquals(0, installedPartCount(DataUpdateState()))
     }
+
+    @Test
+    fun oversizedPartIsUnavailableWithoutDisablingOtherDownloads() {
+        val state = base.copy(partActions = base.partActions + ("b" to PartAction.TOO_LARGE))
+        assertEquals(PartRowStatus.TOO_LARGE, partRowStatus(state, "b"))
+        assertFalse(isPartActionEnabled(state, "b"))
+        assertTrue(isPartActionEnabled(state, "c"))
+    }
 }

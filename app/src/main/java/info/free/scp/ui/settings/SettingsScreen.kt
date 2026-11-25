@@ -492,6 +492,7 @@ private fun PartRow(state: DataUpdateState, part: DetailPart, onInstall: () -> U
         PartRowStatus.INSTALLED -> stringResource(R.string.settings_part_installed)
         PartRowStatus.UPDATE -> stringResource(R.string.settings_part_update_available)
         PartRowStatus.NOT_INSTALLED -> stringResource(R.string.settings_part_not_installed)
+        PartRowStatus.TOO_LARGE -> stringResource(R.string.settings_part_too_large)
     }
     Row(
         modifier = Modifier
@@ -525,6 +526,7 @@ private fun PartRow(state: DataUpdateState, part: DetailPart, onInstall: () -> U
                 PartRowStatus.UPDATE -> Button(onClick = onInstall, enabled = enabled) {
                     Text(stringResource(R.string.settings_part_action_update))
                 }
+                PartRowStatus.TOO_LARGE -> Unit
                 else -> FilledTonalButton(onClick = onInstall, enabled = enabled) {
                     Text(stringResource(R.string.settings_part_action_install))
                 }

@@ -22,7 +22,7 @@ internal fun validateDatabase(
     }
 }
 
-internal const val VALID_DETAIL_PROBE = """
+private const val VALID_DETAIL_PROBE = """
     SELECT link, detail, not_found, tags FROM scp_detail
     WHERE typeof(link) = 'text' AND length(trim(link)) > 0
         AND typeof(detail) = 'text' AND length(trim(detail)) > 0 AND trim(detail) != 'null'
@@ -31,6 +31,20 @@ internal const val VALID_DETAIL_PROBE = """
     LIMIT 1
 """
 
-internal fun requireReadableDetail(found: Boolean) {
-    require(found) { "正文库没有可读取的正文，请选择非空的整库发布文件" }
+internal fun requireFullDetailSource(hasTable: (String) -> Boolean, scalar: (String) -> String) {
+    require(!hasTable("spider_meta") ||
+        scalar("SELECT EXISTS(SELECT 1 FROM spider_meta WHERE key = 'part_id')") == "0") {
+        "这是正文分块，请前往我的 → 阅读设置 → 正文分块安装"
+    }
+    require(!hasTable("x_part_state") && !hasTable("x_detail_part")) { "请选择整库发布文件" }
+}
+
+internal fun probeDetailDatabase(file: File, requireContent: Boolean, query: (String) -> Boolean) {
+    requireNonEmpty(file)
+    if (requireContent) {
+        require(query(VALID_DETAIL_PROBE)) { "正文库没有可读取的正文，请选择非空的整库发布文件" }
+    } else {
+        // A merged snapshot can be empty. Opening Room and querying its schema is enough.
+        query("SELECT link, detail, not_found, tags FROM scp_detail LIMIT 0")
+    }
 }

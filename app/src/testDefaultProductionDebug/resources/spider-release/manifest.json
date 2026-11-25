@@ -1,0 +1,78 @@
+{
+  "assets": [
+    {
+      "kind": "category",
+      "name": "scp_category_v2.db.gz",
+      "raw_sha256": "2d1e679538104b08665856ce022b6b236ce8bc032b8a46f0984eb11b29877e59",
+      "raw_size": 36864,
+      "release_tag": "db-20261124-1",
+      "sha256": "b1424ed14affe770d6ceac71a1bcdadb3af94003be70f2e3ab986a34acec4c67",
+      "size": 883
+    },
+    {
+      "content_digest": "407fc56d8922f6743dbb18e81b42db070bd91a187c2333e2f500cd7e5d0f0469",
+      "coverage": {
+        "covered": 1,
+        "expected": 1
+      },
+      "kind": "part",
+      "label": "SCP-EN 0–1999",
+      "name": "detail-scp-en-1-407fc56d8922.db.gz",
+      "part_export_id": "88297c8c6431410694d118ac5178c732",
+      "part_id": "scp-en-1",
+      "range": {
+        "first": 0,
+        "last": 1999
+      },
+      "raw_sha256": "9e6b3898ec37a16a93485675175b2833956420002e8911143eb948eb35f47acd",
+      "raw_size": 20480,
+      "release_tag": "detail-parts",
+      "rows": 1,
+      "scp_types": [
+        1
+      ],
+      "sha256": "149d61073c2a6629baf500a426694900d0c09b36c7b2bfb36cdcfa9cdbb55d58",
+      "size": 908
+    },
+    {
+      "content_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "coverage": {
+        "covered": 0,
+        "expected": 0
+      },
+      "kind": "part",
+      "label": "SCP-EN 2000–3999",
+      "name": "detail-scp-en-2-e3b0c44298fc.db.gz",
+      "part_export_id": "88297c8c6431410694d118ac5178c732",
+      "part_id": "scp-en-2",
+      "range": {
+        "first": 2000,
+        "last": 3999
+      },
+      "raw_sha256": "6cd0198af008772ece5e29fe7078c2c631365fdef6d856d8f7ca0750cf818c69",
+      "raw_size": 20480,
+      "release_tag": "detail-parts",
+      "rows": 0,
+      "scp_types": [
+        1
+      ],
+      "sha256": "1da2ba0050db1661d1c0a7758771b39f42539548463eafb7fcb12a9c9cc14221",
+      "size": 857
+    }
+  ],
+  "category_counts": {
+    "1": 1
+  },
+  "contract_version": 1,
+  "export_id": "88297c8c6431410694d118ac5178c732",
+  "exported_at": 1795521600,
+  "generated_at": 1795521600,
+  "git_sha": "a1eeadbe1671c04ec79245be8489c699904e921c",
+  "manifest_version": 1,
+  "parent_tag": null,
+  "parts_version": 1,
+  "source_run_id": 1,
+  "steps": {},
+  "tag": "db-20261124-1",
+  "work_version": 3
+}

@@ -20,20 +20,23 @@ internal fun partsBanners(state: DataUpdateState): List<PartsBanner> = listOfNot
     PartsBanner.OBSOLETE.takeIf { state.obsoletePartsManifest }
 )
 
-internal enum class PartRowStatus { UNKNOWN, INSTALLED, UPDATE, NOT_INSTALLED }
+internal enum class PartRowStatus { UNKNOWN, INSTALLED, UPDATE, NOT_INSTALLED, TOO_LARGE }
 
 internal fun partRowStatus(state: DataUpdateState, partId: String): PartRowStatus =
     when (state.partActions[partId]) {
         null -> PartRowStatus.UNKNOWN
         PartAction.SKIP -> PartRowStatus.INSTALLED
         PartAction.REPLACE -> PartRowStatus.UPDATE
+        PartAction.TOO_LARGE -> PartRowStatus.TOO_LARGE
         else -> PartRowStatus.NOT_INSTALLED
     }
 
-/** 分块行能否点击：与旧版 `row.isEnabled` 相同（已装的行不可点）。 */
 internal fun isPartActionEnabled(state: DataUpdateState, partId: String): Boolean =
-    !state.busy && !state.legacyDetailPending && !state.detailInventoryUnavailable &&
-        !state.obsoletePartsManifest && state.partActions[partId] != PartAction.SKIP
+    when (partRowStatus(state, partId)) {
+        PartRowStatus.INSTALLED, PartRowStatus.TOO_LARGE -> false
+        else -> !state.busy && !state.legacyDetailPending && !state.detailInventoryUnavailable &&
+            !state.obsoletePartsManifest
+    }
 
 internal fun installedPartCount(state: DataUpdateState): Int =
     state.parts.count { state.partActions[it.id] == PartAction.SKIP }

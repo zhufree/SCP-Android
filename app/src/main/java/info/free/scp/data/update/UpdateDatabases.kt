@@ -114,8 +114,7 @@ internal class UpdateDatabases(private val context: Context) {
                 "目录库的 sub_scp_type 不能为 NULL"
             }
             val actual = if (db.hasTable("spider_meta")) catalogVersion(db.spiderMeta()) else CatalogVersion.Legacy
-            require(actual.exportId == expected.exportId && actual.contractVersion == expected.contractVersion &&
-                sameExportTime(actual, expected)) { "目录库 spider_meta 与清单不一致" }
+            require(sameCatalogExport(actual, expected)) { "目录库 spider_meta 与清单不一致" }
         }
 
         // SQLiteOpenHelper writes a Room identity and user_version on first open. Check a
@@ -183,6 +182,8 @@ internal class UpdateDatabases(private val context: Context) {
         }
 
         try {
+            // A swap backup only exists during a full import. The promoted file must still
+            // meet full-import requirements; the restored local file may be an empty part store.
             if (detailSwap.recover(::probeFullDetail)) report("正文整库安装中断，已还原旧库")
             if (legacyDetailPending) {
                 try {
@@ -226,7 +227,8 @@ internal class UpdateDatabases(private val context: Context) {
             context.assets.open(SCP_DB_NAME).use { copyBounded(it, file, CATEGORY_LIMIT) }
             // Bundled recovery uses its own staging path, independent of a failed download.
             val bundled = bundledCatalogVersion()
-            require(catalogVersionAt(file) == bundled) { "内置目录元数据不一致" }
+            val actual = catalogVersionAt(file)
+            require(actual != null && sameCatalogExport(actual, bundled)) { "内置目录元数据不一致" }
             probeCatalog(file)
             checkpointBeforeSwap(catalogSwap.live)
             DatabaseSwap(catalogSwap.live, file).install(::probeCatalog)
@@ -271,7 +273,6 @@ internal class UpdateDatabases(private val context: Context) {
             validateDatabase(file, 2, { listOf("scp_detail") }, db::scalar, db::hasTable)
             require(db.scalar("PRAGMA user_version") in setOf("0", "2")) { "整库数据库版本不支持" }
             db.requireColumns("scp_detail", DETAIL_COLUMNS)
-            require(!db.hasTable("x_part_state") && !db.hasTable("x_detail_part")) { "请选择整库发布文件" }
         }
         probeFullDetail(file)
     }
@@ -291,15 +292,18 @@ internal class UpdateDatabases(private val context: Context) {
         }
     }
 
-    private fun probeFullDetail(file: File) = probeDetail(file, requireContent = true)
+    private fun probeFullDetail(file: File) {
+        requireNonEmpty(file)
+        openSqlite(file, writable = true).use { db -> requireFullDetailSource(db::hasTable, db::scalar) }
+        probeDetail(file, requireContent = true)
+    }
 
     private fun probeDetail(file: File, requireContent: Boolean) {
-        requireNonEmpty(file)
-        DetailDatabase.builder(context, file.name).setJournalMode(RoomDatabase.JournalMode.TRUNCATE).build().useRoom { room ->
-            val sql = if (requireContent) VALID_DETAIL_PROBE else "SELECT link FROM scp_detail LIMIT 1"
-            room.openHelper.writableDatabase.query(sql).use {
-                if (requireContent) requireReadableDetail(it.moveToFirst() && it.getString(1).isNotBlank())
-                else check(it.moveToFirst()) { "本地正文库是空的" }
+        probeDetailDatabase(file, requireContent) { sql ->
+            DetailDatabase.builder(context, file.name).setJournalMode(RoomDatabase.JournalMode.TRUNCATE).build().useRoom { room ->
+                room.openHelper.writableDatabase.query(sql).use {
+                    it.moveToFirst() && it.getString(1).isNotBlank()
+                }
             }
         }
     }

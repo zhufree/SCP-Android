@@ -9,6 +9,8 @@ import java.net.URI
 import java.security.MessageDigest
 import java.text.ParsePosition
 import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.TimeZone
 
@@ -87,23 +89,31 @@ internal fun newerCatalog(candidate: CatalogVersion, current: CatalogVersion?): 
         (candidateTime.first == currentTime.first && candidateTime.second > currentTime.second)
 }
 
-internal fun sameExportTime(a: CatalogVersion, b: CatalogVersion): Boolean =
-    timestamp(a.exportedAt) == timestamp(b.exportedAt)
+internal fun sameCatalogExport(a: CatalogVersion, b: CatalogVersion): Boolean =
+    a.exportId == b.exportId && a.contractVersion == b.contractVersion &&
+        timestamp(a.exportedAt) == timestamp(b.exportedAt)
 
+private val unixSeconds = Regex("-?[0-9]+")
 private val isoTimestamp = Regex(
     """(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})"""
 )
 
-private fun timestamp(value: String): Pair<Long, String> {
+private fun timestamp(value: String): Pair<Long, Int> {
+    if (unixSeconds.matches(value)) {
+        val seconds = requireNotNull(value.toLongOrNull()) { "exported_at 超出范围" }
+        return seconds to 0
+    }
     val match = requireNotNull(isoTimestamp.matchEntire(value)) { "exported_at 格式无效" }
     val (seconds, fraction, zone) = match.destructured
     val offset = if (zone == "Z") "+0000" else zone.replace(":", "")
     val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ROOT).apply {
+        calendar = GregorianCalendar(TimeZone.getTimeZone("UTC"), Locale.ROOT).apply {
+            gregorianChange = Date(Long.MIN_VALUE)
+        }
         isLenient = false
-        timeZone = TimeZone.getTimeZone("UTC")
     }
     val date = requireNotNull(parser.parse(seconds + offset, ParsePosition(0))) { "exported_at 格式无效" }
-    return date.time to fraction.padEnd(9, '0')
+    return date.time / 1000 to fraction.padEnd(9, '0').toInt()
 }
 
 internal data class UpdateFile(
@@ -116,7 +126,9 @@ internal data class UpdateFile(
 internal data class DetailPart(
     val id: String, val label: String, val rows: Long, val digest: String,
     val exportId: String, val file: UpdateFile
-)
+) {
+    val exceedsSizeLimit: Boolean get() = file.size > PART_LIMIT || file.rawSize > PART_LIMIT
+}
 
 internal data class UpdateManifest(
     val catalogVersion: CatalogVersion, val catalog: UpdateFile,
@@ -156,7 +168,8 @@ internal fun parseManifest(json: String): UpdateManifest {
         val item = asset as? JsonObject ?: error("清单资产格式无效")
         val kind = item.field("kind")
         require(kind == "category" || kind == "part") { "未知资产类型：$kind" }
-        val limit = if (kind == "category") CATEGORY_LIMIT else PART_LIMIT
+        // Keep all declared part IDs so a size-limited part cannot look retired.
+        val limit = if (kind == "category") CATEGORY_LIMIT else Long.MAX_VALUE
         val file = UpdateFile(
             item.field("name"), item.field("release_tag"), item.number("size", 1..limit),
             item.hash("sha256"), item.number("raw_size", 1..limit), item.hash("raw_sha256")
@@ -219,7 +232,7 @@ internal fun matchesRoomColumns(expected: Map<String, RoomColumn>, actual: Map<S
     expected == actual
 
 internal data class InstalledPart(val version: String, val digest: String)
-internal enum class PartAction { INSTALL, REPLACE, DELETE, SKIP }
+internal enum class PartAction { INSTALL, REPLACE, DELETE, SKIP, TOO_LARGE }
 
 internal fun planParts(
     version: String, assets: List<DetailPart>, installed: Map<String, InstalledPart>
@@ -227,8 +240,9 @@ internal fun planParts(
     for (part in assets) {
         val existing = installed[part.id]
         put(part.id, when {
+            existing?.version == version && existing.digest == part.digest -> PartAction.SKIP
+            part.exceedsSizeLimit -> PartAction.TOO_LARGE
             existing == null -> PartAction.INSTALL
-            existing.version == version && existing.digest == part.digest -> PartAction.SKIP
             else -> PartAction.REPLACE
         })
     }

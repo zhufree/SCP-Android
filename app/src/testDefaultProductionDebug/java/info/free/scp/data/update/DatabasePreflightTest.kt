@@ -69,10 +69,13 @@ class DatabasePreflightTest {
     }
 
     @Test fun rejectsEmptyOrUnreadableFullDetailDatabase() {
-        DriverManager.getConnection("jdbc:sqlite::memory:").use { db ->
+        val file = temp.newFile()
+        DriverManager.getConnection("jdbc:sqlite:$file").use { db ->
             db.createStatement().use { sql ->
                 sql.execute("CREATE TABLE scp_detail (link TEXT PRIMARY KEY, detail TEXT, not_found INTEGER, tags TEXT)")
-                fun probe() = sql.executeQuery(VALID_DETAIL_PROBE).use { requireReadableDetail(it.next()) }
+                fun probe() = probeDetailDatabase(file, requireContent = true) { query ->
+                    sql.executeQuery(query).use { it.next() && it.getString(2).isNotBlank() }
+                }
                 assertThrows(IllegalArgumentException::class.java, ::probe)
                 sql.execute("INSERT INTO scp_detail VALUES ('/missing', NULL, 1, NULL), ('/bad', X'0102', 0, NULL)")
                 assertThrows(IllegalArgumentException::class.java, ::probe)

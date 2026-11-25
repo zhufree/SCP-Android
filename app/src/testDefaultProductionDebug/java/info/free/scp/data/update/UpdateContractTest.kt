@@ -36,12 +36,35 @@ class UpdateContractTest {
         }
     }
 
-    @Test fun rejectsConflictingTagsAndOversizedAssets() {
+    @Test fun rejectsConflictingTagsAndOversizedCatalogs() {
         assertThrows(IllegalArgumentException::class.java) {
             parseManifest(manifest().replace("\"release_tag\":\"detail-parts\"", "\"release_tag\":\"work-state\""))
         }
         assertThrows(IllegalArgumentException::class.java) {
-            parseManifest(manifest().replace("\"raw_size\":21", "\"raw_size\":${PART_LIMIT + 1}"))
+            parseManifest(manifest().replace("\"raw_size\":20", "\"raw_size\":${CATEGORY_LIMIT + 1}"))
+        }
+    }
+
+    @Test fun keepsOversizedPartsInTheManifestAndPreventsTheirRetirement() {
+        for ((field, size) in listOf("size" to 13, "raw_size" to 21)) {
+            val other = """{"kind":"part","name":"detail-other.db.gz","release_tag":"detail-parts",
+                "size":13,"raw_size":21,"sha256":"$hash","raw_sha256":"$hash",
+                "part_id":"other","label":"其他","rows":0,"content_digest":"$hash","part_export_id":"other-export"}"""
+            val json = manifest().replace("\"$field\":$size", "\"$field\":${PART_LIMIT + 1}")
+                .replace("]", ",$other]")
+            val parsed = parseManifest(json)
+            val (oversized, available) = parsed.parts
+            assertEquals("category.db.gz", parsed.catalog.name)
+            assertTrue(oversized.exceedsSizeLimit)
+            assertFalse(available.exceedsSizeLimit)
+            val installed = mapOf(
+                oversized.id to InstalledPart("6", oversized.digest),
+                "retired" to InstalledPart("6", hash)
+            )
+            assertEquals(
+                mapOf("misc" to PartAction.TOO_LARGE, "other" to PartAction.INSTALL, "retired" to PartAction.DELETE),
+                planParts(parsed.partsVersion, parsed.parts, installed)
+            )
         }
     }
 
@@ -54,11 +77,30 @@ class UpdateContractTest {
         assertFalse(newerCatalog(current.copy(exportedAt = "2026-11-25T00:00:00Z"), current))
         assertFalse(newerCatalog(current.copy(exportId = "older", exportedAt = "2026-11-24T12:01:00+01:00"), current))
         val equivalentTime = current.copy(exportId = "same-time", exportedAt = "2026-11-24T20:00:00.000+08:00")
-        assertTrue(sameExportTime(equivalentTime, current))
+        assertTrue(sameCatalogExport(equivalentTime.copy(exportId = current.exportId), current))
+        assertFalse(sameCatalogExport(equivalentTime, current))
         assertFalse(newerCatalog(equivalentTime, current))
         assertTrue(newerCatalog(equivalentTime.copy(exportedAt = "2026-11-24T12:00:00.000000001Z"), current))
         assertThrows(IllegalArgumentException::class.java) {
             newerCatalog(current.copy(contractVersion = "2"), CatalogVersion.Legacy)
+        }
+    }
+
+    @Test fun comparesUnixSecondsWithoutLosingIsoNanosecondsOrOverflowing() {
+        val unix = CatalogVersion("unix", "1795521600", "1")
+        val iso = unix.copy(exportedAt = "2026-11-24T20:00:00.000000000+08:00")
+        assertTrue(sameCatalogExport(unix, iso))
+        assertFalse(newerCatalog(unix.copy(exportId = "different"), iso))
+        assertTrue(newerCatalog(iso.copy(exportId = "later", exportedAt = "2026-11-24T12:00:00.000000001Z"), unix))
+        val secondsBeforeEpoch = unix.copy(exportedAt = "-1")
+        assertTrue(sameCatalogExport(secondsBeforeEpoch, unix.copy(exportedAt = "1969-12-31T23:59:59Z")))
+        assertTrue(newerCatalog(unix.copy(exportId = "later", exportedAt = "1969-12-31T23:59:59.999999999Z"), secondsBeforeEpoch))
+        assertTrue(newerCatalog(unix.copy(exportId = "max", exportedAt = Long.MAX_VALUE.toString()), unix))
+        assertTrue(newerCatalog(unix, unix.copy(exportId = "min", exportedAt = Long.MIN_VALUE.toString())))
+        for (invalid in listOf("9223372036854775808", "-9223372036854775809", "1795521600.5", "1e9")) {
+            assertThrows(IllegalArgumentException::class.java) {
+                readAssetVersion("""{"export_id":"bad","exported_at":$invalid,"contract_version":1}""")
+            }
         }
     }
 

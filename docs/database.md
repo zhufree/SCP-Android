@@ -1,7 +1,5 @@
 # 数据库表结构说明
 
-> 依据 Room 实体/DAO、`app/schemas/` 导出文件和 `app/src/main/assets/scp_category_v2.db` 的实际内容整理，核对日期 2026-11-26。标注“待确认”的内容在代码中无法核实。
-
 应用使用三个 Room 数据库，文件名定义在 `SCPConstants`。三者都启用了 `allowMainThreadQueries()`。
 
 | 数据库类 | 文件名 | 代码版本 | 来源 | 实体 |
@@ -25,13 +23,13 @@
 | `scp_type` | INTEGER NOT NULL | 文档类型，取值见下表 |
 | `author` | TEXT | 作者（可空） |
 | `created_time` | TEXT | 创建时间（故事类使用，可空） |
-| `sub_scp_type` | TEXT | 子分类：内置库中 `scp_type` 7/8（故事）为标题首字母或 `0-9`；`scp_type` 23（国际分部）形如 `俄国分部-series`；其余类型的取值未逐一核对（待确认） |
+| `sub_scp_type` | TEXT | 子分类。故事（7/8）使用标题首字母或 `0-9`，国际分部（23）形如 `俄国分部-series` |
 
 主要查询（`ScpDao`）：按类型取全表、按 `(type, sub_type)` 取故事、国际分部按 `sub_scp_type LIKE`（固定 `scp_type = 23`）、标题 `LIKE` 搜索、按 link 批量查询、随机（`ORDER BY random()`）、按编号 `title LIKE`。
 
 ### `scp_type` 取值（`SCPConstants.ScpType`）与内置库条目数
 
-内置库使用 SCP-Spider 的 `db-20261126-1` 导出，共 35,811 条，各类型计数与导出清单一致。表中“—”表示内置库没有该类型的行。
+内置目录共 35,811 条。表中“—”表示内置目录没有该类型的行。
 
 | 值 | 常量 | 内置库条数 |
 | --- | --- | --- |
@@ -54,15 +52,11 @@
 | 24 | `SAVE_INFO_PAGE` | 21 |
 | 100 / 101 | `SAVE_OFFSET` / `SAVE_TALES_BY_TIME` | 1666 / — |
 
-`ScpCatalogRepository` 也引用了 `SAVE_TALES_BY_TIME`，当前内置库没有该类型的行。
+### 目录库格式与安装
 
-### 与导出 schema 的出入
-
-- 内置库的实际建表语句是 `scps(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, _index, title, link, scp_type, author, created_time, sub_scp_type)`，与 `app/schemas/info.free.scp.db.ScpDatabase/2.json` 的列一致。
-- 该目录下另有 `1.json`、`3.json`、`4.json`。其中 `4.json` 含 `scps`（`sId`、`index`、`createdAt`…）和 `details` 表，与当前实体不一致，应是更早的数据模型（当时代码版本号更高）。**当前以代码中的 `version = 2` 与 `2.json` 为准**。
-- 发布目录保持上述 8 列，空子类用空串。发布文件的 `PRAGMA user_version` 为 0，Room 的本地版本为 2。
+- 目录库使用 `app/schemas/info.free.scp.db.ScpDatabase/2.json` 的八列结构，空子类用空串。发布文件的 `PRAGMA user_version` 为 0，Room 数据库版本为 2。
 - 内置库的 `spider_meta` 与 `assets/scp_category_v2.meta.json` 记录同一导出。替换内置库时，先按发布清单校验压缩包和解压文件的大小与 SHA-256，再用库内 `spider_meta(key, value)` 生成 JSON。
-- 新目录要求契约版本 `1`。按 `export_id` 识别同一导出，按 `exported_at` 比较不同导出。下载后校验压缩包和原始文件的 SHA-256，再执行只读 SQLite 的 `quick_check`、列和元数据检查，并用临时 Room 实例校验一次副本。原始库暂存为 `scp_category_v2.staging.db`，冷启动时再次用 Room 开库并查询一行。
+- 目录要求契约版本 `1`。按 `export_id` 识别同一导出，按 `exported_at` 比较不同导出。下载后校验压缩包和原始文件的 SHA-256，再执行只读 SQLite 的 `quick_check`、列和元数据检查，并用临时 Room 实例校验一次副本。原始库暂存为 `scp_category_v2.staging.db`，冷启动时再次用 Room 开库并查询一行。
 - 首次冷启动从 APK 复制目录。有本地目录时，冷启动用 Room 开库并查询 `scps`，再比较导出版本。内置目录会升级无 `spider_meta` 的 legacy 目录或导出时间更早的目录，保留同版和更新的目录。同一导出的发布清单也不会触发目录下载提示。目录替换只操作目录库文件。暂存安装完成前保留旧库 `.bak`，新库验证失败则回滚。现有目录打不开时，将文件和旁路文件隔离到 `.corrupt`，从 assets 独立恢复。恢复失败会提示重启重试，当前进程暂停目录查询。
 
 ## 2. DetailDatabase（正文库）
@@ -87,13 +81,13 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 | `x_detail_part` | `link`（主键）、`part_id` | 记录当前写入该正文的块 |
 | `x_part_state` | `part_id`（主键）、`parts_version`、`digest`、`export_id`、`sha256`、`rows`、`installed_at` | 记录已装块及校验信息，时间为 Unix 毫秒 |
 
-快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则从 1 升到 2 时，沿用 ID 的块也须重装。首个成功的 v2 合并事务会一并清理清单已撤除的旧版块及仍归属于它们的行，失败时整个事务回滚。同规则下暂时缺席的块保留。本地已有新版块时会拒绝按更早的规则安装。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。Room 打开含附加表的库、Android SQLite 的 WAL 与分块合并行为待设备验证。
+快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则从 1 升到 2 时，沿用 ID 的块也须重装。首个成功的 v2 合并事务会一并清理清单已撤除的旧版块及仍归属于它们的行，失败时整个事务回滚。同规则下暂时缺席的块保留。本地已有新版块时会拒绝按更早的规则安装。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。
 
 ## 3. AppInfoDatabase（用户数据库）
 
-当前 schema 为 `app/schemas/info.free.scp.db.AppInfoDatabase/8.json`，保留 5–7 供历史升级核对。8 的表结构与 7 相同。
+当前 schema 为 `app/schemas/info.free.scp.db.AppInfoDatabase/8.json`。
 
-`records.link` 和 `like_table.link` 是用户库的全部链接键，均为主键。`like_table.boxId` 记录收藏夹归属，引用收藏夹的独立整数 ID。`like_box_table` 与 `draft` 没有链接键。历史用户表 `LaterAndHistoryTable.link` 与 `LikeAndReadTable.link` 在 4→5 已分别转入以上两列。
+`records.link` 和 `like_table.link` 是用户库的全部链接键，均为主键。`like_table.boxId` 记录收藏夹归属，引用收藏夹的独立整数 ID。`like_box_table` 与 `draft` 没有链接键。
 
 文章键采用小写路径，保留百分号编码并将其十六进制写成大写，移除 query、fragment 和末尾斜杠。例如 `/SCP-CN-2901/?x=1#pages` 对应 `/scp-cn-2901`。中文站完整 URL 按不区分大小写的主机名识别，使用站内路径作为键。其他 HTTP(S) URL 保留主机信息，避免历史用户记录中不同站点的同名路径合并。
 
@@ -123,7 +117,7 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 | `id` | INTEGER PK AUTOINCREMENT | 收藏夹 id |
 | `name` | TEXT | 名称 |
 
-默认收藏夹的创建逻辑在 `ReadingListRepository`（`ReadingListRepositoryTest` 覆盖“默认收藏夹创建”）。
+默认收藏夹的创建逻辑在 `ReadingListRepository`。
 
 ### `draft`（`DraftModel`）——草稿
 
@@ -134,9 +128,9 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 | `title` | TEXT | 标题 |
 | `content` | TEXT | 内容 |
 
-新增草稿由 SQLite 在一条 INSERT 语句里按现有最大 ID 分配主键。编辑对已有主键执行 UPDATE。草稿沿用现有 schema 和 ID。
+新增草稿由 SQLite 在一条 INSERT 语句里按现有最大 ID 分配主键。编辑对已有主键执行 UPDATE。
 
-### 迁移历史（`AppInfoDatabase`）
+### 迁移（`AppInfoDatabase`）
 
 | 迁移 | 内容 |
 | --- | --- |
@@ -156,9 +150,7 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 
 ## 5. 数据来源与 SCP-Spider
 
-目录库在冷启动时整体替换，正文可按块合并。用户库中的链接状态通过 7→8 保留。现有内置目录库仍包含旧格式链接，单篇查询先查规范键，失败后兼容大小写和旧的 `#pages` 后缀。
+目录库在冷启动时整体替换，正文可按块合并。用户库中的链接状态通过 7→8 保留。单篇目录查询先查规范键，失败后兼容大小写和旧的 `#pages` 后缀。
 
-- 目录库与正文库的内容来自对 SCP 基金会中文站（`http://scp-wiki-cn.wikidot.com`，`SCPConstants.SCP_SITE_URL`）的抓取。本仓库历史记录可以佐证：旧版 README 写明“数据来自爬虫抓取”；提交 `55404a7`（2019-01-06，“删除爬虫代码做独立项目”）把爬虫从本仓库拆出，成为独立项目，即 SCP-Spider。
-- 应用内“离线与备份”页面有“如何更新数据库”按钮（代码里的回调名为 `onOpenSpiderDoc`），跳转到一篇外部文档；该文档的内容不在仓库中。
+- 目录库与正文库的内容来自对 SCP 基金会中文站（`http://scp-wiki-cn.wikidot.com`，`SCPConstants.SCP_SITE_URL`）的抓取，抓取工具为 SCP-Spider。
 - 应用通过 SCP-Spider Release 上的固定 `manifest.json` 检查数据更新，再用清单的标签和文件名拼接 HTTPS 下载地址。分发契约见 [数据 Release](build-and-release.md#数据-release)。
-- 在线接口（见 [`architecture.md`](architecture.md)）由独立后端提供，实现不在本仓库，**待确认**其代码位置，以及与 SCP-Spider 的关系。

@@ -1,5 +1,6 @@
 {
-  "export_id": "legacy",
-  "exported_at": "0001-01-01T00:00:00Z",
-  "contract_version": "0"
+  "contract_version": "1",
+  "export_id": "dfc392161c7640ab82c90537bbd8442b",
+  "exported_at": "1795689469",
+  "source_run_id": "67"
 }

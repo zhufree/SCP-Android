@@ -1,0 +1,98 @@
+{
+  "assets": [
+    {
+      "kind": "category",
+      "name": "scp_category_v2.db.gz",
+      "raw_sha256": "2d1e679538104b08665856ce022b6b236ce8bc032b8a46f0984eb11b29877e59",
+      "raw_size": 36864,
+      "release_tag": "db-20261124-1",
+      "sha256": "b1424ed14affe770d6ceac71a1bcdadb3af94003be70f2e3ab986a34acec4c67",
+      "size": 883
+    },
+    {
+      "kind": "part",
+      "name": "detail-scp-en-efb310a0e683.db.gz",
+      "release_tag": "db-20261124-1",
+      "size": 742,
+      "sha256": "c60caf6f052ff224001493424ca9a7c9838b52128b83a7477affec69a9bdbb28",
+      "raw_size": 20480,
+      "raw_sha256": "9a16090538a2793756b2ee4f79bd401d4afb0844c9be93da5d3c41d595113b60",
+      "part_id": "scp-en",
+      "label": "英文 SCP",
+      "rows": 1,
+      "content_digest": "efb310a0e683cb852d4966a0d340303b36004543306f8573652da78e3827d3c2",
+      "part_export_id": "synthetic-parts-v2"
+    },
+    {
+      "kind": "part",
+      "name": "detail-tales-cn-9b57b62f2a11.db.gz",
+      "release_tag": "db-20261124-1",
+      "size": 748,
+      "sha256": "66f33effaa276e3b866f9e72228c4b7a92fec514e03d63791e9b8f2cd6945d5d",
+      "raw_size": 20480,
+      "raw_sha256": "718d485d0673861843153e2bc0c9f841d37453775c2c2fce1f1f3049eb485ad4",
+      "part_id": "tales-cn",
+      "label": "中文故事",
+      "rows": 1,
+      "content_digest": "9b57b62f2a11ce5c5f2eb1c99ea6469c15aa414f8da5e28fd86dd8e4e33c7b79",
+      "part_export_id": "synthetic-parts-v2"
+    },
+    {
+      "kind": "part",
+      "name": "detail-scp-cn-973988907aa6.db.gz",
+      "release_tag": "db-20261124-1",
+      "size": 740,
+      "sha256": "e14b07953884a64913556156c5aad95ed4db52ebbd73b0255bb7808f8101be2d",
+      "raw_size": 20480,
+      "raw_sha256": "b05e0829230531bcf1b9e112baeeafc9dc360baa37d31c20f24d5e138b676968",
+      "part_id": "scp-cn",
+      "label": "中文 SCP",
+      "rows": 1,
+      "content_digest": "973988907aa605cda1d05fd77fec9c93387e4eab27085a0c9623e07ec18412d7",
+      "part_export_id": "synthetic-parts-v2"
+    },
+    {
+      "kind": "part",
+      "name": "detail-creative-0743e3ca3cec.db.gz",
+      "release_tag": "db-20261124-1",
+      "size": 764,
+      "sha256": "76a4efa02a9c46a6febc08ab2f7c5978fb24984af9f61dec9294c48aba5e3d95",
+      "raw_size": 20480,
+      "raw_sha256": "0ca81d1a78cd43a30f34ea3394136d49041b57e509b884394c90032f531993ec",
+      "part_id": "creative",
+      "label": "英文故事与其他创作",
+      "rows": 1,
+      "content_digest": "0743e3ca3cec95fdaa253d84cd3b7325183474717fb819ffda71f043954c8768",
+      "part_export_id": "synthetic-parts-v2"
+    },
+    {
+      "kind": "part",
+      "name": "detail-library-e3b0c44298fc.db.gz",
+      "release_tag": "db-20261124-1",
+      "size": 730,
+      "sha256": "71de8f44980a0beab25fdf8df88c58b496de658f416a62327e0dbf844355a51f",
+      "raw_size": 20480,
+      "raw_sha256": "51bc9dd8da858092466913a9c63fd7b2be86fb2c34c1010efde82c4b333877ff",
+      "part_id": "library",
+      "label": "资料、竞赛与国际分部",
+      "rows": 0,
+      "content_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "part_export_id": "synthetic-parts-v2"
+    }
+  ],
+  "category_counts": {
+    "1": 1
+  },
+  "contract_version": 1,
+  "export_id": "88297c8c6431410694d118ac5178c732",
+  "exported_at": 1795521600,
+  "generated_at": 1795521600,
+  "git_sha": "a1eeadbe1671c04ec79245be8489c699904e921c",
+  "manifest_version": 1,
+  "parent_tag": null,
+  "parts_version": 2,
+  "source_run_id": 1,
+  "steps": {},
+  "tag": "db-20261124-1",
+  "work_version": 3
+}

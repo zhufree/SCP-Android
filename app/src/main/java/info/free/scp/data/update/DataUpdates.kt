@@ -3,11 +3,15 @@ package info.free.scp.data.update
 import android.content.Context
 import android.net.ConnectivityManager
 import android.util.Log
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -17,6 +21,13 @@ import java.util.zip.GZIPInputStream
 
 private const val LAST_CHECK = "last_manifest_check"
 private const val WIFI_ONLY = "detail_wifi_only"
+
+internal data class PartBatchProgress(
+    val total: Int,
+    val downloadBytes: Long,
+    val index: Int = 0,
+    val label: String = ""
+)
 
 internal data class DataUpdateState(
     val catalog: CatalogVersion? = null,
@@ -30,6 +41,7 @@ internal data class DataUpdateState(
     val legacyDetailPending: Boolean = false,
     val reinstallParts: Boolean = false,
     val obsoletePartsManifest: Boolean = false,
+    val partBatch: PartBatchProgress? = null,
     val busy: Boolean = false,
     val status: String = "",
     /** 最近一次操作失败（[status] 是失败原因），设置页据此显示错误色和“重试”。 */
@@ -49,6 +61,7 @@ internal class DataUpdates(private val context: Context) {
 
     private var manifest: UpdateManifest? = null
     private var promptedExport: String? = null
+    @Volatile private var partBatchJob: Job? = null
 
     var wifiOnly: Boolean
         get() = prefs.getBoolean(WIFI_ONLY, true)
@@ -79,7 +92,7 @@ internal class DataUpdates(private val context: Context) {
     fun check(manual: Boolean = false) = runOperation("正在检查数据更新…") {
         loadCachedManifest()
         val now = System.currentTimeMillis()
-        val due = checkDue(prefs.getLong(LAST_CHECK, 0L), now)
+        val due = shouldCheckManifest(manifestFile, manifest, prefs.getLong(LAST_CHECK, 0L), now)
         if (network().connected && due) {
             check(prefs.edit().putLong(LAST_CHECK, now).commit()) { "无法保存数据检查时间" }
             val temporary = File.createTempFile("scp-update-", ".part", context.cacheDir)
@@ -122,23 +135,75 @@ internal class DataUpdates(private val context: Context) {
             return@runOperation
         }
         require(!part.exceedsSizeLimit) { "正文块超过 200 MiB 下载或解压上限" }
+        requirePartInstallReady()
+        downloadAndInstallPart(current, part)
+        publishLocalState()
+        status("正文块已安装")
+    }
+
+    fun installAllParts() = runOperation("正在准备下载全部正文…") {
+        loadCachedManifest()
+        val current = checkNotNull(manifest) { "请先检查数据更新" }
+        publishLocalState()
+        requirePartInstallReady()
+        val pending = pendingPartDownloads(current.parts, state.value.partActions)
+        if (pending.isEmpty()) return@runOperation status("")
+
+        val job = coroutineContext.job
+        partBatchJob = job
+        val progress = PartBatchProgress(pending.size, pending.sumOf { it.file.size })
+        mutableState.value = state.value.copy(partBatch = progress)
+        requirePartNetwork(network())
+        val failures = installDetailParts(pending) { index, part ->
+            job.ensureActive()
+            mutableState.value = state.value.copy(
+                partBatch = progress.copy(index = index, label = part.label),
+                status = "正在准备下载正文块…"
+            )
+            downloadAndInstallPart(current, part, job::ensureActive)
+            publishLocalState()
+        }
+        job.ensureActive()
+        publishLocalState()
+        val installed = pending.size - failures.size
+        val firstFailure = failures.firstOrNull()
+        if (firstFailure == null) {
+            status("已安装全部可下载的正文块（$installed 块）")
+        } else {
+            val reason = failureMessage(firstFailure.cause)
+            status("已安装 $installed 块，${failures.size} 块失败。${firstFailure.part.label}：$reason")
+            mutableState.value = state.value.copy(failed = true)
+        }
+    }
+
+    fun cancelPartBatch() {
+        partBatchJob?.cancel()
+    }
+
+    private fun requirePartInstallReady() {
         check(!state.value.detailInventoryUnavailable) { "无法读取本地正文库" }
         check(!state.value.obsoletePartsManifest) { "清单分块规则早于设备已安装的版本" }
         check(!databases.legacyDetailPending) { "请先重启应用以完成整库导入" }
+    }
+
+    private fun downloadAndInstallPart(
+        current: UpdateManifest,
+        part: DetailPart,
+        checkCancelled: () -> Unit = {}
+    ) {
         requirePartNetwork(network())
         val storage = databases.detailFile.parentFile?.takeIf(File::isDirectory) ?: context.filesDir
         check(enoughPartSpace(part.file.rawSize, storage.usableSpace)) {
-            "可用空间不足，需要正文块原始大小的 3 倍加 50 MB"
+            "可用空间不足，需要正文块原始大小的 3 倍加 50 MiB"
         }
         check(context.cacheDir.usableSpace >= part.file.size) { "缓存目录空间不足" }
-        withAsset(part.file, PART_LIMIT, { requirePartNetwork(it) }) { file ->
+        withAsset(part.file, PART_LIMIT, ::requirePartNetwork, checkCancelled) { file ->
             status("正在校验正文块…")
             importer.validate(file, current, part)
+            checkCancelled()
             status("正在合并正文块…")
             importer.install(file, current, part)
         }
-        publishLocalState()
-        status("正文块已安装")
     }
 
     private fun stageCatalog(current: UpdateManifest, allowMetered: Boolean) {
@@ -153,14 +218,20 @@ internal class DataUpdates(private val context: Context) {
     }
 
     private fun withAsset(
-        asset: UpdateFile, limit: Long, requireNetwork: (UpdateNetwork) -> Unit, action: (File) -> Unit
+        asset: UpdateFile,
+        limit: Long,
+        requireNetwork: (UpdateNetwork) -> Unit,
+        checkCancelled: () -> Unit = {},
+        action: (File) -> Unit
     ) {
+        checkCancelled()
         require(asset.size in 1..limit && asset.rawSize in 1..limit) { "数据文件超出大小限制" }
         requireNetwork(network())
         val zipped = File.createTempFile("scp-update-", ".part", context.cacheDir)
         try {
             var previous = -1
             downloadReleaseFile(asset.url, zipped, limit, asset.size) { bytes ->
+                checkCancelled()
                 val percent = (bytes * 100 / asset.size).toInt()
                 if (percent != previous) {
                     requireNetwork(network())
@@ -168,15 +239,17 @@ internal class DataUpdates(private val context: Context) {
                     previous = percent
                 }
             }
-            verifySha256(zipped, asset.sha256)
+            checkCancelled()
+            verifySha256(zipped, asset.sha256, checkCancelled)
             val unpacked = databases.newDatabaseTemp()
             try {
                 status("正在解压并校验文件…")
                 val size = zipped.inputStream().buffered().use { input ->
-                    GZIPInputStream(input).use { copyBounded(it, unpacked, asset.rawSize) }
+                    GZIPInputStream(input).use { copyBounded(it, unpacked, asset.rawSize) { checkCancelled() } }
                 }
                 require(size == asset.rawSize) { "解压后的文件大小不匹配" }
-                verifySha256(unpacked, asset.rawSha256)
+                verifySha256(unpacked, asset.rawSha256, checkCancelled)
+                checkCancelled()
                 action(unpacked)
             } finally {
                 deleteSidecars(unpacked)
@@ -193,9 +266,7 @@ internal class DataUpdates(private val context: Context) {
     }
 
     private fun loadCachedManifest() {
-        if (manifest == null && manifestFile.isFile && manifestFile.length() in 1..MANIFEST_LIMIT) {
-            manifest = runCatching { parseManifest(manifestFile.readText(Charsets.UTF_8)) }.getOrNull()
-        }
+        if (manifest == null) manifest = readCachedManifest(manifestFile)
     }
 
     private fun publishLocalState() {
@@ -228,16 +299,21 @@ internal class DataUpdates(private val context: Context) {
         )
     }
 
-    private fun runOperation(progress: String, action: () -> Unit) {
+    private fun runOperation(progress: String, action: CoroutineScope.() -> Unit) {
         scope.launch {
             operations.withLock {
                 try {
-                    mutableState.value = state.value.copy(busy = true, status = progress, failed = false)
+                    mutableState.value = state.value.copy(busy = true, status = progress, failed = false, partBatch = null)
                     action()
+                } catch (cancelled: CancellationException) {
+                    runCatching { publishLocalState() }
+                    status("已取消正文下载")
+                    throw cancelled
                 } catch (failure: Exception) {
                     runCatching { publishLocalState() }
                     reportFailure(failure)
                 } finally {
+                    partBatchJob = null
                     mutableState.value = state.value.copy(busy = false)
                 }
             }
@@ -245,14 +321,18 @@ internal class DataUpdates(private val context: Context) {
     }
 
     private fun reportFailure(failure: Throwable) {
+        status(failureMessage(failure))
+        mutableState.value = state.value.copy(failed = true)
+    }
+
+    private fun failureMessage(failure: Throwable): String {
         // Do not log signed redirect URLs from network exceptions.
         Log.w(UPDATE_LOG, "Data update failed: ${failure.javaClass.simpleName}")
-        status(when (failure) {
+        return when (failure) {
             is java.io.IOException -> "数据下载或文件读写失败"
             is IllegalArgumentException, is IllegalStateException -> failure.message ?: "数据更新失败"
             else -> "数据更新失败"
-        })
-        mutableState.value = state.value.copy(failed = true)
+        }
     }
 
     private fun status(message: String) {

@@ -29,12 +29,9 @@ internal class DetailPartImporter(private val databases: UpdateDatabases) {
         require(db.scalar("PRAGMA user_version") == "0") { "正文块 user_version 必须为 0" }
         require(db.scalar("PRAGMA quick_check") == "ok") { "正文块完整性检查失败" }
         db.requireColumns("scp_detail", DETAIL_COLUMNS)
-        val meta = db.spiderMeta()
-        requireSupportedContract(meta["contract_version"].orEmpty())
-        require(meta["export_id"] == part.exportId && meta["part_id"] == part.id &&
-            meta["parts_version"] == manifest.partsVersion && meta["content_digest"] == part.digest &&
-            meta["rows"]?.toLongOrNull() == part.rows && db.scalar("SELECT count(*) FROM scp_detail").toLong() == part.rows
-        ) { "正文块 spider_meta 或行数与清单不一致" }
+        requirePartMetadata(db.spiderMeta(), manifest.partsVersion, part) {
+            db.scalar("SELECT count(*) FROM scp_detail").toLong()
+        }
     }
 
     fun install(file: File, manifest: UpdateManifest, part: DetailPart) = synchronized(DETAIL_IMPORT_LOCK) {

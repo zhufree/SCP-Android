@@ -38,6 +38,41 @@ class DatabasePreflightTest {
         assertTrue(failure.message.orEmpty().contains("draft"))
     }
 
+    @Test fun bundledCatalogMatchesItsVersionSidecarAndRoomColumns() {
+        val assets = File("src/main/assets")
+        val bundled = readAssetVersion(assets.resolve("scp_category_v2.meta.json").readText())
+        val file = assets.resolve("scp_category_v2.db")
+        assertTrue(file.length() in 1L..CATEGORY_LIMIT)
+
+        DriverManager.getConnection("jdbc:sqlite:${file.toURI()}?mode=ro").use { db ->
+            db.createStatement().use { sql ->
+                sql.executeQuery("SELECT key, value FROM spider_meta").use { rows ->
+                    val metadata = buildMap {
+                        while (rows.next()) put(rows.getString(1), rows.getString(2))
+                    }
+                    val installed = catalogVersion(metadata)
+                    assertTrue(sameCatalogExport(bundled, installed))
+                    assertTrue(newerCatalog(bundled, CatalogVersion.Legacy))
+                    assertFalse(newerCatalog(bundled, installed))
+                }
+                sql.executeQuery("PRAGMA table_info(scps)").use { rows ->
+                    val columns = buildMap {
+                        while (rows.next()) {
+                            put(rows.getString("name"), RoomColumn(
+                                rows.getString("type"), rows.getBoolean("notnull"), rows.getInt("pk")
+                            ))
+                        }
+                    }
+                    assertTrue(matchesRoomColumns(CATALOG_COLUMNS, columns))
+                }
+                sql.executeQuery("SELECT link FROM scps LIMIT 1").use { rows ->
+                    assertTrue(rows.next())
+                    assertTrue(rows.getString("link").isNotBlank())
+                }
+            }
+        }
+    }
+
     @Test fun catalogQuarantinesAnIncompatibleFileAndCanRetryAFailedAssetCopy() {
         val live = temp.newFile("catalog.db")
         DriverManager.getConnection("jdbc:sqlite:$live").use { db ->

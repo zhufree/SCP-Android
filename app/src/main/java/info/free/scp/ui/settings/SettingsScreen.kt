@@ -59,6 +59,8 @@ import info.free.scp.data.update.CatalogVersion
 import info.free.scp.data.update.DataUpdateState
 import info.free.scp.data.update.DetailPart
 import info.free.scp.data.update.MIB
+import info.free.scp.data.update.PartAction
+import info.free.scp.data.update.pendingPartDownloads
 import info.free.scp.ui.common.ContainerShape
 import info.free.scp.ui.common.outlinedContainerBorder
 import info.free.scp.ui.common.outlinedContainerColors
@@ -77,6 +79,8 @@ internal fun SettingsScreen(
     wifiOnly: Boolean,
     onWifiOnlyChange: (Boolean) -> Unit,
     onInstallPart: (String) -> Unit,
+    onInstallAllParts: () -> Unit,
+    onCancelPartBatch: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -142,6 +146,8 @@ internal fun SettingsScreen(
                 }
                 if (updateState.parts.isEmpty()) {
                     EmptyParts()
+                } else {
+                    PartBatchRow(updateState, onInstallAllParts, onCancelPartBatch)
                 }
             }
         }
@@ -390,7 +396,7 @@ private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit) {
                         fontFamily = mono
                     )
                 }
-                if (state.status.isNotEmpty()) {
+                if (state.partBatch == null && state.status.isNotEmpty()) {
                     Text(
                         text = state.status,
                         color = if (state.failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -405,7 +411,7 @@ private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit) {
                     FilledTonalButton(onClick = onCheck) {
                         Text(
                             text = stringResource(
-                                if (state.failed) R.string.settings_check_retry else R.string.settings_check_action
+                                if (state.failed && state.partBatch == null) R.string.settings_check_retry else R.string.settings_check_action
                             )
                         )
                     }
@@ -480,6 +486,60 @@ private fun EmptyParts() {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             fontSize = 14.sp
         )
+    }
+}
+
+@Composable
+private fun PartBatchRow(state: DataUpdateState, onInstall: () -> Unit, onCancel: () -> Unit) {
+    val pending = pendingPartDownloads(state.parts, state.partActions)
+    val skipped = state.partActions.values.count { it == PartAction.TOO_LARGE }
+    val batch = state.partBatch
+    val active = batch?.takeIf { state.busy }
+    val downloadBytes = active?.downloadBytes ?: pending.sumOf { it.file.size }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = stringResource(R.string.settings_parts_batch_size, downloadBytes.toDouble() / MIB),
+                modifier = Modifier.weight(1f).padding(end = 12.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 13.sp
+            )
+            if (active == null) {
+                Button(onClick = onInstall, enabled = canInstallParts(state) && pending.isNotEmpty()) {
+                    Text(stringResource(R.string.settings_parts_batch_download))
+                }
+            } else {
+                FilledTonalButton(onClick = onCancel) {
+                    Text(stringResource(R.string.settings_parts_batch_cancel))
+                }
+            }
+        }
+        if (active != null && active.index > 0) {
+            Text(
+                text = stringResource(R.string.settings_parts_batch_progress, active.index, active.total, active.label),
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp
+            )
+        }
+        if (batch != null && state.status.isNotEmpty()) {
+            Text(
+                text = state.status,
+                color = if (state.failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 13.sp
+            )
+        }
+        if (skipped > 0) {
+            Text(
+                text = stringResource(R.string.settings_parts_batch_oversized, skipped),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 13.sp
+            )
+        }
     }
 }
 

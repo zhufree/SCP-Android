@@ -34,9 +34,11 @@ internal fun partRowStatus(state: DataUpdateState, partId: String): PartRowStatu
 internal fun isPartActionEnabled(state: DataUpdateState, partId: String): Boolean =
     when (partRowStatus(state, partId)) {
         PartRowStatus.INSTALLED, PartRowStatus.TOO_LARGE -> false
-        else -> !state.busy && !state.legacyDetailPending && !state.detailInventoryUnavailable &&
-            !state.obsoletePartsManifest
+        else -> canInstallParts(state)
     }
+
+internal fun canInstallParts(state: DataUpdateState): Boolean =
+    !state.busy && !state.legacyDetailPending && !state.detailInventoryUnavailable && !state.obsoletePartsManifest
 
 internal fun installedPartCount(state: DataUpdateState): Int =
     state.parts.count { state.partActions[it.id] == PartAction.SKIP }

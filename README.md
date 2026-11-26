@@ -9,7 +9,7 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 
 ## 项目简介
 
-应用内置 SCP 中文站的文档目录，可以按分类浏览、搜索、收藏和阅读文档。正文既可以在线从后端接口获取，也可以导入离线正文数据库后无网络阅读（并支持全文搜索）。阅读记录、收藏夹、草稿等个人数据保存在本地，可备份与恢复。
+应用内置 SCP 中文站的文档目录，可以按分类浏览、搜索、收藏和阅读文档。正文支持在线阅读，也可下载离线正文或导入整库，供离线阅读与全文搜索。阅读记录、收藏夹、草稿等个人数据保存在本地，可备份与恢复。
 
 文档内容来自 SCP 基金会中文站，遵循 CC BY-SA 3.0；应用代码使用 MIT 许可（见 [LICENSE](LICENSE)）。
 
@@ -21,7 +21,7 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 - **查找**：标题搜索、全文搜索（需离线正文库）、Tag 检索与 Tag 云、编号直达（CN/J 等类型）、随机（全部 / SCP / 故事 / 搞笑）。
 - **阅读**：WebView 阅读页，白天/夜间主题、字号、上一篇/下一篇、在线/离线切换、评论查看（可在详情页保存网页 Cookie 与 User-Agent）、浏览器打开、复制链接、截图分享。
 - **个人数据**：收藏与收藏夹、已读、待读列表（支持批量导入编号）、阅读历史、草稿（创作沙盒）、昵称/职位/积分。
-- **数据管理**：检查目录更新、按块下载离线正文、导入整库、个人数据备份/恢复（SAF）。
+- **数据管理**包括检查目录更新、下载全部或按块安装离线正文、导入整库及个人数据备份与恢复（SAF）。
 - **其他**：桌面随机小部件、游戏推荐与站点传送门（来自 Firebase 远程配置）、设置、关于/捐赠页。
 - **渠道**：`Default`、`firim`、`GooglePlay`、`Github` 四个渠道（见 [构建与发布](docs/build-and-release.md)）。
 
@@ -56,11 +56,13 @@ SCP 基金会中文站（[scp-wiki-cn.wikidot.com](http://scp-wiki-cn.wikidot.co
 
 ## 数据库与数据来源
 
-- **目录库** `scp_category_v2.db`：内置于 `app/src/main/assets`，约 2.2 万条文档的标题、链接、类型等信息（Room `ScpDatabase`）。
-- **正文库** `scp_detail_v2.db`：可在“设置 → 正文分块”中按需安装，也可在“离线与备份”中导入整库，整库在下次冷启动后生效。
+- **目录库** `scp_category_v2.db` 随开发版 APK 内置，包含新版目录的 35,811 条文档条目。
+- **正文库** `scp_detail_v2.db` 由 5 个固定正文块合并而成。在「数据更新」里可选择「下载全部正文」或按块安装。全部下载约 211 MB，安装后的正文库约 731 MB，安装时还需预留下载、解压和合并用的临时空间。单块文件不能作为整库在「离线与备份」中手动导入。手动导入须使用整库文件，并在下次冷启动后生效。
 - **用户库** `scp_info.db`：收藏、已读、待读/历史、草稿（Room `AppInfoDatabase`）。
 - **在线接口**：Feed 接口依次使用有效的 Firebase 缓存地址、`PrivateConstants.FEED_API_URL` 和公开 Bridge `https://api.zhufree.fun/`。评论直接解析中文站页面。
-- **与 SCP-Spider 的关系**：目录与正文数据由爬虫从中文站抓取；爬虫代码已在提交 `55404a7`（2019-01-06）从本仓库拆出，成为独立项目 SCP-Spider。应用从 SCP-Spider Release 读取数据清单和数据库资产，详见 [数据 Release](docs/build-and-release.md#数据-release)。
+- **SCP-Spider** 从中文站抓取目录与正文。清单、目录库和 5 个正文块来自同一个 `db-YYYYMMDD-N` 数据 Release。[SCP-Spider 最新数据 Release](https://github.com/zhufree/SCP-Spider/releases/latest) · [数据发布说明](docs/build-and-release.md#数据-release)
+
+以上数据更新功能已在开发版 APK 上完成真机验证，App 尚未发版。
 
 表结构、取值含义和迁移历史见 [docs/database.md](docs/database.md)。
 

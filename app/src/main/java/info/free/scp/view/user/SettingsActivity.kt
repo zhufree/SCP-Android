@@ -73,7 +73,9 @@ class SettingsActivity : BaseActivity() {
                             wifiOnly = it
                             updates.wifiOnly = it
                         },
-                        onInstallPart = { updates.installPart(it) }
+                        onInstallPart = { updates.installPart(it) },
+                        onInstallAllParts = { updates.installAllParts() },
+                        onCancelPartBatch = { updates.cancelPartBatch() }
                     )
                 }
             }

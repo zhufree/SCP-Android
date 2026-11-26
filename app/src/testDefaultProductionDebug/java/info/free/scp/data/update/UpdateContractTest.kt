@@ -18,7 +18,7 @@ class UpdateContractTest {
         val part = parsed.parts.single()
         assertEquals("reused-export", part.exportId)
         assertEquals(3L, part.rows)
-        assertEquals(releaseUrl("detail-parts", "detail-misc-aabb.db.gz"), part.file.url)
+        assertEquals(releaseUrl("db-20261124-1", "detail-misc-aabb.db.gz"), part.file.url)
     }
 
     @Test fun rejectsMissingRequiredFieldsAndUnknownVersions() {
@@ -37,8 +37,8 @@ class UpdateContractTest {
     }
 
     @Test fun rejectsConflictingTagsAndOversizedCatalogs() {
-        assertThrows(IllegalArgumentException::class.java) {
-            parseManifest(manifest().replace("\"release_tag\":\"detail-parts\"", "\"release_tag\":\"work-state\""))
+        for (tag in listOf("detail-parts", "db-20261124-2")) {
+            assertThrows(IllegalArgumentException::class.java) { parseManifest(manifest(partTag = tag)) }
         }
         assertThrows(IllegalArgumentException::class.java) {
             parseManifest(manifest().replace("\"raw_size\":20", "\"raw_size\":${CATEGORY_LIMIT + 1}"))
@@ -47,7 +47,7 @@ class UpdateContractTest {
 
     @Test fun keepsOversizedPartsInTheManifestAndPreventsTheirRetirement() {
         for ((field, size) in listOf("size" to 13, "raw_size" to 21)) {
-            val other = """{"kind":"part","name":"detail-other.db.gz","release_tag":"detail-parts",
+            val other = """{"kind":"part","name":"detail-other.db.gz","release_tag":"db-20261124-1",
                 "size":13,"raw_size":21,"sha256":"$hash","raw_sha256":"$hash",
                 "part_id":"other","label":"其他","rows":0,"content_digest":"$hash","part_export_id":"other-export"}"""
             val json = manifest().replace("\"$field\":$size", "\"$field\":${PART_LIMIT + 1}")
@@ -171,6 +171,37 @@ class UpdateContractTest {
         assertFalse(checkDue(10, 9))
     }
 
+    @Test fun checksAgainWithAnInvalidCachedManifestEvenAfterARecentAttempt() {
+        val cache = temp.root.resolve("scp-update-manifest.json")
+        val lastCheck = 1000L
+        val now = lastCheck + 1
+        assertFalse(shouldCheckManifest(cache, readCachedManifest(cache), lastCheck, now))
+
+        for (invalid in listOf(manifest(partTag = "detail-parts"), "{")) {
+            cache.writeText(invalid)
+            val cached = readCachedManifest(cache)
+            assertNull(cached)
+            assertTrue(shouldCheckManifest(cache, cached, lastCheck, now))
+        }
+
+        cache.writeText(manifest())
+        val cached = readCachedManifest(cache)
+        assertNotNull(cached)
+        assertFalse(shouldCheckManifest(cache, cached, lastCheck, now))
+        assertTrue(shouldCheckManifest(cache, cached, lastCheck, lastCheck + CHECK_INTERVAL))
+    }
+
+    @Test fun skipsInstalledPartsWhenTheReleaseTagChanges() {
+        val previous = parseManifest(manifest())
+        val current = parseManifest(manifest(tag = "db-20261124-2"))
+        val part = previous.parts.single()
+        val installed = mapOf(part.id to InstalledPart(previous.partsVersion, part.digest))
+        assertNotEquals(part.file.url, current.parts.single().file.url)
+        val plan = planParts(current.partsVersion, current.parts, installed)
+        assertEquals(PartAction.SKIP, plan[part.id])
+        assertTrue(pendingPartDownloads(current.parts, plan).isEmpty())
+    }
+
     @Test fun plansInstallsReplacementsSkipsAndRetirementWhenPartsVersionChanges() {
         val part = parseManifest(manifest()).parts.single()
         val installed = mapOf(
@@ -237,14 +268,14 @@ class UpdateContractTest {
         assertFalse(backup.exists())
     }
 
-    private fun manifest() = """
+    private fun manifest(tag: String = "db-20261124-1", partTag: String = tag) = """
         {
-          "manifest_version": 1, "tag": "db-20261124-1", "export_id": "new-export",
+          "manifest_version": 1, "tag": "$tag", "export_id": "new-export",
           "contract_version": 1, "parts_version": 7, "exported_at": "2026-11-24T12:00:00Z",
           "assets": [
-            {"kind":"category","name":"category.db.gz","release_tag":"db-20261124-1",
+            {"kind":"category","name":"category.db.gz","release_tag":"$tag",
              "size":12,"raw_size":20,"sha256":"$hash","raw_sha256":"$hash","url":"http://evil.test"},
-            {"kind":"part","name":"detail-misc-aabb.db.gz","release_tag":"detail-parts",
+            {"kind":"part","name":"detail-misc-aabb.db.gz","release_tag":"$partTag",
              "size":13,"raw_size":21,"sha256":"$hash","raw_sha256":"$hash",
              "part_id":"misc","label":"其他","rows":3,"content_digest":"$hash","part_export_id":"reused-export"}
           ]

@@ -208,6 +208,11 @@
     <string name="settings_wifi_only">正文仅 Wi-Fi 下载</string>
     <string name="settings_wifi_only_summary">使用移动网络时不下载正文块</string>
     <string name="settings_parts_installed_count">已装 %1$d / 共 %2$d</string>
+    <string name="settings_parts_batch_download">下载全部正文</string>
+    <string name="settings_parts_batch_cancel">取消下载</string>
+    <string name="settings_parts_batch_size">下载总大小约 %1$.1f MiB</string>
+    <string name="settings_parts_batch_progress">第 %1$d / %2$d 块 · %3$s</string>
+    <string name="settings_parts_batch_oversized">%1$d 块超过 200 MiB 上限，将跳过</string>
     <string name="settings_parts_empty">检查数据更新后可查看可下载的正文块</string>
     <string name="settings_parts_source">内容来自 SCP 基金会中文站（CC BY-SA 3.0）</string>
     <string name="settings_parts_banner_inventory_unavailable">无法读取本地正文库</string>

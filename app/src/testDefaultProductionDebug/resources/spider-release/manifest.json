@@ -26,7 +26,7 @@
       },
       "raw_sha256": "9e6b3898ec37a16a93485675175b2833956420002e8911143eb948eb35f47acd",
       "raw_size": 20480,
-      "release_tag": "detail-parts",
+      "release_tag": "db-20261124-1",
       "rows": 1,
       "scp_types": [
         1
@@ -51,7 +51,7 @@
       },
       "raw_sha256": "6cd0198af008772ece5e29fe7078c2c631365fdef6d856d8f7ca0750cf818c69",
       "raw_size": 20480,
-      "release_tag": "detail-parts",
+      "release_tag": "db-20261124-1",
       "rows": 0,
       "scp_types": [
         1

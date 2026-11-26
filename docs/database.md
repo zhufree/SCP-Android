@@ -1,6 +1,6 @@
 # 数据库表结构说明
 
-> 依据 Room 实体/DAO、`app/schemas/` 导出文件和 `app/src/main/assets/scp_category_v2.db` 的实际内容整理，核对日期 2026-11-23。标注“待确认”的内容在代码中无法核实。
+> 依据 Room 实体/DAO、`app/schemas/` 导出文件和 `app/src/main/assets/scp_category_v2.db` 的实际内容整理，核对日期 2026-11-26。标注“待确认”的内容在代码中无法核实。
 
 应用使用三个 Room 数据库，文件名定义在 `SCPConstants`。三者都启用了 `allowMainThreadQueries()`。
 
@@ -31,39 +31,39 @@
 
 ### `scp_type` 取值（`SCPConstants.ScpType`）与内置库条目数
 
-内置库共 22281 条（2026-11-23 用 `sqlite3` 统计）。表中“—”表示内置库没有该类型的行。
+内置库使用 SCP-Spider 的 `db-20261126-1` 导出，共 35,811 条，各类型计数与导出清单一致。表中“—”表示内置库没有该类型的行。
 
 | 值 | 常量 | 内置库条数 |
 | --- | --- | --- |
-| 1 | `SAVE_SERIES`（SCP 系列） | 7998 |
-| 2 | `SAVE_SERIES_CN`（SCP-CN 系列） | 2999 |
-| 3 / 4 | `SAVE_JOKE` / `SAVE_JOKE_CN` | 383 / 107 |
-| 5 / 6 | `SAVE_EX` / `SAVE_EX_CN` | 46 / 33 |
-| 7 / 8 | `SAVE_TALES` / `SAVE_TALES_CN` | 2480 / 3113 |
-| 9 / 10 | `SAVE_CANON` / `SAVE_CANON_CN` | — / 20 |
-| 11 / 12 | `SAVE_STORY_SERIES` / `SAVE_STORY_SERIES_CN` | 120 / 83 |
-| 13 | `SAVE_REPORT` | 479 |
-| 14 | `SAVE_ANOMALOUS_CN` | 7 |
-| 15 | `SAVE_SHORT_STORY` | 3 |
+| 1 | `SAVE_SERIES`（SCP 系列） | 10994 |
+| 2 | `SAVE_SERIES_CN`（SCP-CN 系列） | 4999 |
+| 3 / 4 | `SAVE_JOKE` / `SAVE_JOKE_CN` | 474 / 182 |
+| 5 / 6 | `SAVE_EX` / `SAVE_EX_CN` | 67 / 49 |
+| 7 / 8 | `SAVE_TALES` / `SAVE_TALES_CN` | 3366 / 5339 |
+| 9 / 10 | `SAVE_CANON` / `SAVE_CANON_CN` | 43 / 25 |
+| 11 / 12 | `SAVE_STORY_SERIES` / `SAVE_STORY_SERIES_CN` | 151 / 56 |
+| 13 | `SAVE_REPORT` | 493 |
+| 14 | `SAVE_ANOMALOUS_CN` | 26 |
+| 15 | `SAVE_SHORT_STORY` | 7 |
 | 16 | `SAVE_LIBRARY_PAGE` | 5 |
-| 17 | `SAVE_GOI` | 728 |
-| 18 | `SAVE_ART` | 431 |
-| 19 / 20 | `SAVE_CONTEST` / `SAVE_CONTEST_CN` | 9 / 46 |
-| 21 / 22 | `SAVE_WANDER` / `SAVE_WANDER_CN` | 463 / 950 |
-| 23 | `SAVE_INTERNATIONAL` | 1757 |
+| 17 | `SAVE_GOI` | 1228 |
+| 18 | `SAVE_ART` | 1379 |
+| 19 / 20 | `SAVE_CONTEST` / `SAVE_CONTEST_CN` | 60 / 66 |
+| 21 / 22 | `SAVE_WANDER` / `SAVE_WANDER_CN` | 565 / 1592 |
+| 23 | `SAVE_INTERNATIONAL` | 2958 |
 | 24 | `SAVE_INFO_PAGE` | 21 |
-| 100 / 101 | `SAVE_OFFSET` / `SAVE_TALES_BY_TIME` | — / — |
+| 100 / 101 | `SAVE_OFFSET` / `SAVE_TALES_BY_TIME` | 1666 / — |
 
-常量 `SAVE_OFFSET`、`SAVE_TALES_BY_TIME`、`SAVE_CANON` 在代码里有引用（`ScpCatalogRepository`）而内置库没有对应行，原因待确认（可能由其他数据文件或旧版本使用）。
+`ScpCatalogRepository` 也引用了 `SAVE_TALES_BY_TIME`，当前内置库没有该类型的行。
 
 ### 与导出 schema 的出入
 
 - 内置库的实际建表语句是 `scps(_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, _index, title, link, scp_type, author, created_time, sub_scp_type)`，与 `app/schemas/info.free.scp.db.ScpDatabase/2.json` 的列一致。
 - 该目录下另有 `1.json`、`3.json`、`4.json`。其中 `4.json` 含 `scps`（`sId`、`index`、`createdAt`…）和 `details` 表，与当前实体不一致，应是更早的数据模型（当时代码版本号更高）。**当前以代码中的 `version = 2` 与 `2.json` 为准**。
 - 发布目录保持上述 8 列，空子类用空串。发布文件的 `PRAGMA user_version` 为 0，Room 的本地版本为 2。
-- 当前内置库没有 `spider_meta`。`assets/scp_category_v2.meta.json` 标记为 `legacy`、契约 `0`，用于无本地副本时初始化。以后更新内置库时，用新库的 `spider_meta(key, value)` 生成同名 JSON。
+- 内置库的 `spider_meta` 与 `assets/scp_category_v2.meta.json` 记录同一导出。替换内置库时，先按发布清单校验压缩包和解压文件的大小与 SHA-256，再用库内 `spider_meta(key, value)` 生成 JSON。
 - 新目录要求契约版本 `1`。按 `export_id` 识别同一导出，按 `exported_at` 比较不同导出。下载后校验压缩包和原始文件的 SHA-256，再执行只读 SQLite 的 `quick_check`、列和元数据检查，并用临时 Room 实例校验一次副本。原始库暂存为 `scp_category_v2.staging.db`，冷启动时再次用 Room 开库并查询一行。
-- 冷启动用 Room 开库并查询 `scps`。暂存安装完成前保留旧库 `.bak`，新库验证失败则回滚。现有目录打不开时，将文件和旁路文件隔离到 `.corrupt`，从 assets 独立恢复。恢复失败会提示重启重试，当前进程暂停目录查询。
+- 首次冷启动从 APK 复制目录。有本地目录时，冷启动用 Room 开库并查询 `scps`，再比较导出版本。内置目录会升级无 `spider_meta` 的 legacy 目录或导出时间更早的目录，保留同版和更新的目录。同一导出的发布清单也不会触发目录下载提示。目录替换只操作目录库文件。暂存安装完成前保留旧库 `.bak`，新库验证失败则回滚。现有目录打不开时，将文件和旁路文件隔离到 `.corrupt`，从 assets 独立恢复。恢复失败会提示重启重试，当前进程暂停目录查询。
 
 ## 2. DetailDatabase（正文库）
 
@@ -87,7 +87,7 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 | `x_detail_part` | `link`（主键）、`part_id` | 记录当前写入该正文的块 |
 | `x_part_state` | `part_id`（主键）、`parts_version`、`digest`、`export_id`、`sha256`、`rows`、`installed_at` | 记录已装块及校验信息，时间为 Unix 毫秒 |
 
-快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则升级后，首个成功的重装事务也会清理归属于已撤除块的行。同规则下暂时缺席的块保留。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。Room 打开含附加表的库、Android SQLite 的 WAL 与分块合并行为待设备验证。
+快照合并包含 `not_found=1` 的行。删除仅作用于仍归当前块、且本次快照中缺失的行。分块规则从 1 升到 2 时，沿用 ID 的块也须重装。首个成功的 v2 合并事务会一并清理清单已撤除的旧版块及仍归属于它们的行，失败时整个事务回滚。同规则下暂时缺席的块保留。本地已有新版块时会拒绝按更早的规则安装。SAF 整库导入走冷启动文件替换，整库中尚无归属的行在后续按块导入时保留。两张 `x_` 表由导入器维护，正文仍通过原有实体和 DAO 读取。Room 打开含附加表的库、Android SQLite 的 WAL 与分块合并行为待设备验证。
 
 ## 3. AppInfoDatabase（用户数据库）
 

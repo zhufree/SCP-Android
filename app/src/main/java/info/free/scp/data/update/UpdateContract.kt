@@ -135,6 +135,16 @@ internal data class UpdateManifest(
     val partsVersion: String, val parts: List<DetailPart>
 )
 
+internal fun requirePartMetadata(
+    meta: Map<String, String>, partsVersion: String, part: DetailPart, countRows: () -> Long
+) {
+    requireSupportedContract(meta["contract_version"].orEmpty())
+    require(meta["export_id"] == part.exportId && meta["part_id"] == part.id &&
+        meta["parts_version"] == partsVersion && meta["content_digest"] == part.digest &&
+        meta["rows"]?.toLongOrNull() == part.rows && countRows() == part.rows
+    ) { "正文块 spider_meta 或行数与清单不一致" }
+}
+
 private fun JsonObject.field(key: String): String {
     val value = this[key] as? JsonPrimitive
     require(value != null && value.content != "null" && value.content.isNotBlank()) { "清单缺少 $key" }
@@ -179,7 +189,7 @@ internal fun parseManifest(json: String): UpdateManifest {
             require(catalog == null && file.releaseTag == tag) { "目录库发布标签不匹配或重复" }
             catalog = file
         } else {
-            require(file.releaseTag == "detail-parts") { "正文块发布标签不匹配" }
+            require(file.releaseTag == tag) { "正文块发布标签不匹配" }
             val id = item.field("part_id")
             require(segment.matches(id) && usedPartIds.add(id)) { "正文块编号无效或重复" }
             parts += DetailPart(
@@ -191,11 +201,12 @@ internal fun parseManifest(json: String): UpdateManifest {
     return UpdateManifest(version, requireNotNull(catalog) { "清单缺少目录库" }, partsVersion, parts)
 }
 
-internal fun sha256(file: File): String {
+internal fun sha256(file: File, checkCancelled: () -> Unit = {}): String {
     val digest = MessageDigest.getInstance("SHA-256")
     file.inputStream().buffered().use { input ->
         val buffer = ByteArray(64 * 1024)
         while (true) {
+            checkCancelled()
             val count = input.read(buffer)
             if (count == -1) break
             digest.update(buffer, 0, count)
@@ -204,15 +215,23 @@ internal fun sha256(file: File): String {
     return digest.digest().joinToString("") { "%02x".format(Locale.ROOT, it.toInt() and 0xff) }
 }
 
-internal fun verifySha256(file: File, expected: String) {
-    require(digestPattern.matches(expected) && sha256(file) == expected) { "数据文件 SHA-256 不匹配" }
+internal fun verifySha256(file: File, expected: String, checkCancelled: () -> Unit = {}) {
+    require(digestPattern.matches(expected) && sha256(file, checkCancelled) == expected) { "数据文件 SHA-256 不匹配" }
 }
 
 internal fun enoughPartSpace(rawSize: Long, availableBytes: Long): Boolean =
     rawSize in 1..PART_LIMIT && availableBytes >= rawSize * 3 + 50 * MIB
 
+internal fun readCachedManifest(file: File): UpdateManifest? =
+    if (file.isFile && file.length() in 1..MANIFEST_LIMIT) {
+        runCatching { parseManifest(file.readText(Charsets.UTF_8)) }.getOrNull()
+    } else null
+
 internal fun checkDue(lastCheck: Long, now: Long): Boolean =
     lastCheck == 0L || (now >= lastCheck && now - lastCheck >= CHECK_INTERVAL)
+
+internal fun shouldCheckManifest(cacheFile: File, cached: UpdateManifest?, lastCheck: Long, now: Long): Boolean =
+    (cached == null && cacheFile.exists()) || checkDue(lastCheck, now)
 
 internal data class RoomColumn(val type: String, val notNull: Boolean = false, val primaryKey: Int = 0)
 

@@ -5,16 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.*
 import android.view.Gravity.CENTER
-import android.view.KeyEvent.KEYCODE_BACK
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -25,18 +18,18 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.children
+import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.ViewModelProvider
 import info.free.scp.BuildConfig
@@ -48,6 +41,7 @@ import info.free.scp.bean.ScpModel
 import info.free.scp.data.detail.DetailHtmlComposer
 import info.free.scp.data.detail.DetailLinkResolver
 import info.free.scp.data.detail.DetailTitleFormatter
+import info.free.scp.data.detail.DetailPageColors
 import info.free.scp.data.settings.DetailSettingsStore
 import info.free.scp.data.settings.PreferenceDetailSettingsStore
 import info.free.scp.service.HtmlParserService
@@ -62,6 +56,9 @@ import info.free.scp.util.ThemeUtil.NIGHT_THEME
 import info.free.scp.util.Utils
 import info.free.scp.view.base.BaseActivity
 import info.free.scp.view.tag.TagDetailActivity
+import com.google.android.material.chip.Chip
+import com.google.android.material.color.MaterialColors
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -74,7 +71,14 @@ import java.io.InputStreamReader
 class DetailActivity : BaseActivity() {
 
     private val detailSettings: DetailSettingsStore = PreferenceDetailSettingsStore()
-    private var onlineMode by mutableIntStateOf(0) // 0 离线 1 网页；菜单文案读取它，所以是 Compose 状态
+    private val onlineModeState = mutableIntStateOf(0)
+    // 0 离线 1 网页；菜单文案读取它，所以是 Compose 状态；顶栏副标题随它显示
+    private var onlineMode: Int
+        get() = onlineModeState.intValue
+        set(value) {
+            onlineModeState.intValue = value
+            refreshModeSubtitle()
+        }
     private var liked by mutableStateOf(false)
     private var readType = 0 // 0 普通（按顺序） 1 随机 2 TODO 未读列表
 
@@ -96,7 +100,16 @@ class DetailActivity : BaseActivity() {
         textSize = detailSettings.detailTextSize,
         initialNightTheme = ThemeUtil.currentTheme == NIGHT_THEME
     )
-    private var screenHeight = 0
+    private val barsPolicy by lazy {
+        ReadingBarsPolicy(
+            hideThresholdPx = Utils.dp2px(24, this),
+            showThresholdPx = Utils.dp2px(16, this),
+            edgeSlackPx = Utils.dp2px(8, this)
+        )
+    }
+    private var commentsRequested = false
+    private var readSnackbar: Snackbar? = null
+    private var currentTags: String? = null
     private val historyList: MutableList<ScpModel> = emptyList<ScpModel>().toMutableList()
 
     private var randomIndex = 0
@@ -123,7 +136,7 @@ class DetailActivity : BaseActivity() {
         tvLoad?.text = "评论加载中..."
         tvLoad?.gravity = CENTER
         tvLoad?.setTextColor(ThemeUtil.darkText)
-        screenHeight = Utils.getScreenHeight(this)
+        tvLoad?.setPadding(0, Utils.dp2px(16, this), 0, Utils.dp2px(16, this))
 
         EventUtil.onEvent(this, EventUtil.clickReadDetail)
         binding.webView.setBackgroundColor(0) // 设置背景色
@@ -144,6 +157,11 @@ class DetailActivity : BaseActivity() {
             randomTitleList = intent?.getStringArrayListExtra("random_title_list") ?: emptyList()
         }
         forceOnline = intent.getBooleanExtra("forceOnline", false)
+        refreshModeSubtitle()
+        onBackPressedDispatcher.addCallback(this, historyBackCallback)
+        initScrolling()
+        initToolbar()
+        initSwitchBtn()
 
         // 有些不是以/开头的而是完整链接
         configureWebViewClient()
@@ -181,11 +199,10 @@ class DetailActivity : BaseActivity() {
                 onlineMode = 0
                 binding.webView.stopLoading()
                 binding.webView.loadUrl("about:blank")
-                binding.nsvWebWrapper.scrollTo(0, 0)
-                binding.tvTagContainer.text = ""
-                binding.btnComment.hide()
-                binding.llCommentContainer.visibility = GONE
-                binding.llCommentContainer.removeAllViews()
+                readSnackbar?.dismiss()
+                resetReadingPosition()
+                clearTags()
+                resetComments()
                 binding.pbLoading.visibility = VISIBLE
                 refreshLikeState()
                 refreshReadBtnStatus()
@@ -357,36 +374,7 @@ class DetailActivity : BaseActivity() {
                     .show()
         }
 
-        var isMoving = false
-        val screenHeight = Utils.getScreenHeight(this@DetailActivity)
-
-        binding.sbDetail.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    binding.nsvWebWrapper.scrollTo(
-                        0,
-                        ((binding.webView.height - screenHeight) * (progress / 100f)).toInt()
-                    )
-                }
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {
-                isMoving = true
-            }
-
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                isMoving = false
-            }
-        })
-        binding.nsvWebWrapper.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-            if (!isMoving) {
-                binding.sbDetail.progress =
-                    ((scrollY.toFloat() / (binding.webView.height - screenHeight) * 100)).toInt()
-            }
-        }
-
-        initToolbar()
-        initSwitchBtn()
+        refreshLikeState()
         refreshReadBtnStatus()
     }
 
@@ -411,24 +399,18 @@ class DetailActivity : BaseActivity() {
                 "text/html", "utf-8", null
             )
         }
-        binding.nsvWebWrapper.scrollTo(0, 0)
-        binding.btnComment.show()
-        binding.llCommentContainer.removeAllViews()
-        binding.llCommentContainer.visibility = GONE
-        binding.llCommentContainer.addView(
-            tvLoad,
-            ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)
-        )
+        resetReadingPosition()
+        resetComments()
     }
 
     override fun refreshTheme() {
         super.refreshTheme()
         binding.root.setBackgroundColor(ThemeUtil.containerBg)
-        binding.clDetailContainer.setBackgroundColor(ThemeUtil.containerBg)
-        binding.tvDetailToolbar.setTextColor(ThemeUtil.onToolbar)
+        binding.detailContainer.setBackgroundColor(ThemeUtil.containerBg)
+        binding.refreshTheme()
         refreshStyle()
         refreshReadBtnStatus()
-        refreshButtonStyle()
+        currentTags?.let(::showTag)
         binding.llCommentContainer.children.forEach {
             if (it is CommentLayout) {
                 it.refreshTheme()
@@ -468,6 +450,7 @@ class DetailActivity : BaseActivity() {
             }
             historyList.add(s)
             historyIndex = historyList.size - 1
+            historyBackCallback.isEnabled = historyIndex > 0
         }
 
 //        if (newRandom) {
@@ -482,39 +465,32 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun showTag(tagString: String) {
-        val tags = tagString.split(",")
-        val spannableString = SpannableString(tagString)
-        tags.forEach { t ->
-            val foregroundColorSpan = ForegroundColorSpan(Color.parseColor("#FF0000"))
-            val tagIndex = tagString.indexOf(t)
-            val clickableSpan: ClickableSpan = object : ClickableSpan() {
-                override fun onClick(widget: View) {
+        currentTags = tagString
+        binding.tagGroup.removeAllViews()
+        tagString.split(",").map(String::trim).filter(String::isNotEmpty).forEach { t ->
+            val chip = Chip(this).apply {
+                text = t
+                setOnClickListener {
                     startActivity(
                         Intent(this@DetailActivity, TagDetailActivity::class.java)
                             .putExtra("tag", t)
                     )
                 }
             }
-            spannableString.setSpan(
-                foregroundColorSpan,
-                tagIndex,
-                tagIndex + t.length,
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            )
-            spannableString.setSpan(
-                clickableSpan,
-                tagIndex,
-                tagIndex + t.length,
-                Spanned.SPAN_INCLUSIVE_INCLUSIVE
-            )
+            binding.tagGroup.addView(chip)
         }
-        binding.tvTagContainer.movementMethod = LinkMovementMethod.getInstance()
-        binding.tvTagContainer.text = spannableString
+        binding.tagSection.visibility = if (binding.tagGroup.childCount > 0) VISIBLE else GONE
+    }
+
+    private fun clearTags() {
+        currentTags = null
+        binding.tagGroup.removeAllViews()
+        binding.tagSection.visibility = GONE
     }
 
     private fun initToolbar() {
         baseToolbar = binding.detailToolbar
-        supportActionBar?.title = null
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         val actions = ComposeView(this).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -527,10 +503,7 @@ class DetailActivity : BaseActivity() {
                 }
             }
         }
-        binding.detailToolbar.addView(
-            actions,
-            Toolbar.LayoutParams(WRAP_CONTENT, MATCH_PARENT).apply { gravity = Gravity.END }
-        )
+        binding.toolbarActions.addView(actions, FrameLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
         refreshLikeState()
     }
 
@@ -590,20 +563,20 @@ class DetailActivity : BaseActivity() {
                     EventUtil.onEvent(this, EventUtil.clickShareByPicture, s.link)
                 }
                 showToast("生成图片中...")
-                binding.gpShareContent.visibility = VISIBLE
-                binding.clDetailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
+                binding.llShareContent.visibility = VISIBLE
+                binding.detailContainer.viewTreeObserver?.addOnGlobalLayoutListener(object :
                     ViewTreeObserver.OnGlobalLayoutListener {
                     override fun onGlobalLayout() {
-                        binding.clDetailContainer.viewTreeObserver?.removeOnGlobalLayoutListener(
+                        binding.detailContainer.viewTreeObserver?.removeOnGlobalLayoutListener(
                             this
                         )
                         val bitmap = Bitmap.createBitmap(
-                            binding.webView.width, binding.clDetailContainer.height,
+                            binding.webView.width, binding.detailContainer.height,
                             Bitmap.Config.RGB_565
                         )
                         //使用Canvas，调用自定义view控件的onDraw方法，绘制图片
                         val canvas = Canvas(bitmap)
-                        binding.clDetailContainer.draw(canvas)
+                        binding.detailContainer.draw(canvas)
                         lifecycleScope.launch(Dispatchers.IO) {
                             val fileName = DetailTitleFormatter.toScreenshotFileName(
                                 scp?.title.orEmpty()
@@ -611,7 +584,7 @@ class DetailActivity : BaseActivity() {
                             Utils.saveBitmapFile(bitmap, fileName)
                             withContext(Dispatchers.Main) {
                                 showToast("图片已保存")
-                                binding.gpShareContent.visibility = GONE
+                                binding.llShareContent.visibility = GONE
                             }
                         }
                     }
@@ -776,75 +749,132 @@ class DetailActivity : BaseActivity() {
 
     }
 
-    private var readBtnLp: ConstraintLayout.LayoutParams? = null
-
     private fun setHasRead() {
-        scp?.let { s ->
+        val s = scp ?: return
+        val hasRead = viewModel.toggleRead(s.link, s.title)
+        refreshReadBtnStatus()
+        readSnackbar = ScpDialogs.snackbar(
+            this,
+            getString(if (hasRead) R.string.read_marked else R.string.read_unmarked),
+            getString(R.string.undo),
+            binding.bottomBar
+        ) {
             viewModel.toggleRead(s.link, s.title)
-            refreshReadBtnStatus()
+            if (scp?.link == s.link) refreshReadBtnStatus()
         }
     }
 
     private fun composeOfflineHtml(): String {
         return htmlComposer.compose(
             content = detailHtml,
-            nightTheme = ThemeUtil.currentTheme == NIGHT_THEME
+            nightTheme = ThemeUtil.currentTheme == NIGHT_THEME,
+            pageColors = pageColors()
         )
     }
 
     private fun refreshReadBtnStatus() {
-        val hasRead = viewModel.getDocumentStatus(url).hasRead
-        readBtnLp = binding.tvBottomSetHasRead.layoutParams as ConstraintLayout.LayoutParams?
-        if (hasRead) {
-            binding.tvBottomSetHasRead.setText(R.string.set_has_not_read)
-            binding.tvBottomSetHasRead.setTextColor(ThemeUtil.mediumText)
-            binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
-                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, Utils.dp2px(15, this)
-            )
-            readBtnLp?.endToEnd = -1
-            readBtnLp?.startToStart = -1
-            readBtnLp?.endToStart = R.id.gl_detail_center
-            binding.tvBottomSetHasRead.layoutParams = readBtnLp
-            binding.tvBottomLike.visibility = VISIBLE
-        } else {
-            binding.tvBottomSetHasRead.setText(R.string.set_has_read)
-            binding.tvBottomSetHasRead.setTextColor(ThemeUtil.darkText)
-            binding.tvBottomSetHasRead.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
-            )
-            readBtnLp?.endToEnd = 0
-            readBtnLp?.startToStart = 0
-            readBtnLp?.endToStart = -1
-            binding.tvBottomSetHasRead.layoutParams = readBtnLp
-            binding.tvBottomLike.visibility = GONE
-        }
+        binding.bottomBar.setRead(viewModel.getDocumentStatus(url).hasRead)
+    }
+
+    private fun pageColors(): DetailPageColors {
+        fun color(attr: Int) = MaterialColors.getColor(this, attr, Color.GRAY)
+        return DetailPageColors(
+            background = ThemeUtil.containerBg,
+            primary = color(androidx.appcompat.R.attr.colorPrimary),
+            primaryContainer = color(com.google.android.material.R.attr.colorPrimaryContainer),
+            surface = color(com.google.android.material.R.attr.colorSurface),
+            outline = color(com.google.android.material.R.attr.colorOutline),
+            outlineVariant = color(com.google.android.material.R.attr.colorOutlineVariant),
+            onSurfaceVariant = color(com.google.android.material.R.attr.colorOnSurfaceVariant)
+        )
     }
 
     private fun initSwitchBtn() {
-        refreshButtonStyle()
-        binding.tvBottomPreview.setOnClickListener {
+        binding.bottomBar.previous.setOnClickListener {
             toPreviewArticle()
         }
 
-        binding.tvBottomNext.setOnClickListener {
+        binding.bottomBar.next.setOnClickListener {
             toNextArticle()
         }
 
-        binding.tvBottomSetHasRead.setOnClickListener {
+        binding.bottomBar.read.setOnClickListener {
             setHasRead()
         }
 
-        binding.tvBottomLike.setOnClickListener { likeScp() }
-
-        binding.btnComment.setOnClickListener {
+        binding.bottomBar.comment.setOnClickListener {
             if (!detailSettings.hasCommentCredentials()) {
                 showToast("先点击右上角菜单设置 cookie 才能加载评论")
             } else {
-                binding.llCommentContainer.visibility = VISIBLE
-                binding.nsvWebWrapper.scrollTo(0, (binding.webView.height - screenHeight) + 100)
-                binding.btnComment.hide()
-                viewModel.loadComment(url)
+                binding.commentSection.visibility = VISIBLE
+                if (!commentsRequested) {
+                    commentsRequested = true
+                    viewModel.loadComment(url)
+                }
+                binding.commentSection.doOnLayout {
+                    // 评论标题落在屏幕顶部 16dp 处；向下滚动时顶栏会收起，所以不用给它留位置
+                    val scrollView = binding.nsvWebWrapper
+                    scrollView.smoothScrollTo(0, scrollView.paddingTop + binding.commentSection.top - Utils.dp2px(16, this))
+                }
             }
+        }
+    }
+
+    private fun refreshModeSubtitle() {
+        binding.tvDetailSubtitle.visibility = if (onlineMode == 1 || forceOnline) VISIBLE else GONE
+    }
+
+    private fun resetComments() {
+        commentsRequested = false
+        binding.commentSection.visibility = GONE
+        binding.llCommentContainer.removeAllViews()
+        tvLoad?.let { binding.llCommentContainer.addView(it, ViewGroup.LayoutParams(MATCH_PARENT, WRAP_CONTENT)) }
+    }
+
+    /** 回到文章开头：两栏展开、进度和滚动条归零。 */
+    private fun resetReadingPosition() {
+        binding.nsvWebWrapper.scrollTo(0, 0)
+        barsPolicy.reset()
+        setBarsExpanded(true, animate = false)
+        binding.fastScroll.reset()
+        binding.bottomBar.setProgress(0f)
+    }
+
+    private fun initScrolling() {
+        binding.fastScroll.bind(binding.nsvWebWrapper)
+        binding.nsvWebWrapper.setOnScrollChangeListener { _, _, scrollY, _, oldScrollY ->
+            onReadingScrolled(scrollY - oldScrollY)
+            binding.fastScroll.onContentScrolled()
+        }
+        // 正文加载完、评论展开、窗口尺寸变化都会改变可滚动距离
+        val onSizeChanged = View.OnLayoutChangeListener { _, _, top, _, bottom, _, oldTop, _, oldBottom ->
+            if (bottom - top != oldBottom - oldTop) onReadingScrolled(0)
+        }
+        binding.detailContainer.addOnLayoutChangeListener(onSizeChanged)
+        binding.nsvWebWrapper.addOnLayoutChangeListener(onSizeChanged)
+    }
+
+    private fun onReadingScrolled(dy: Int) {
+        val scrollView = binding.nsvWebWrapper
+        val content = scrollView.getChildAt(0) ?: return
+        val range = ReadingScroll.range(content.height + scrollView.paddingTop + scrollView.paddingBottom, scrollView.height)
+        val contentLoaded = binding.webView.contentHeight > 0
+        binding.bottomBar.setProgress(if (contentLoaded) ReadingScroll.progress(scrollView.scrollY, range) else 0f)
+        barsPolicy.onScrolled(dy, scrollView.scrollY, range, binding.fastScroll.isDragging)?.let { setBarsExpanded(it) }
+    }
+
+    /** 顶栏整体上移、底栏整体下移；底栏上沿的进度线留在手势条上方。 */
+    private fun setBarsExpanded(expanded: Boolean, animate: Boolean = true) {
+        slide(binding.detailToolbar, if (expanded) 0f else -binding.topBarHeight.toFloat(), animate)
+        slide(binding.bottomBar, if (expanded) 0f else binding.bottomBar.barHeight.toFloat(), animate)
+    }
+
+    private fun slide(view: View, translationY: Float, animate: Boolean) {
+        view.animate().cancel()
+        if (animate) {
+            view.animate().translationY(translationY).setDuration(200).start()
+        } else {
+            view.translationY = translationY
         }
     }
 
@@ -867,48 +897,25 @@ class DetailActivity : BaseActivity() {
         }
     }
 
-    private fun refreshButtonStyle() {
-        binding.tvBottomPreview.background = ThemeUtil.customShape(
-            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
-        )
-        binding.tvBottomNext.background = ThemeUtil.customShape(
-            ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
-        )
-        binding.tvBottomLike.setTextColor(ThemeUtil.darkText)
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KEYCODE_BACK && historyIndex > 0) {
-            scp = historyList[historyIndex - 1]
-            scp?.let {
-                historyBack = true
-                viewModel.setScp(it.link, it)
-            }
+    /** 站内跳转过的文章可以逐步返回；没有历史时交给系统返回（关闭页面）。 */
+    private val historyBackCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            val previous = historyList.getOrNull(historyIndex - 1) ?: return
+            scp = previous
+            historyBack = true
+            viewModel.setScp(previous.link, previous)
             historyList.removeAt(historyIndex - 1)
             historyIndex--
-            return true
-        } else {
-            return super.onKeyDown(keyCode, event)
+            isEnabled = historyIndex > 0
         }
     }
 
-    /** 刷新标题栏星标和底部“收藏”按钮的收藏状态（原来由 onPrepareOptionsMenu 负责）。 */
+    /** 刷新标题栏星标的收藏状态（原来由 onPrepareOptionsMenu 负责）。 */
     private fun refreshLikeState() {
         liked = viewModel.getDocumentStatus(url).isLiked
-        if (!liked) {
-            binding.tvBottomLike.text = "收藏"
-            binding.tvBottomLike.background = ThemeUtil.customShape(
-                ThemeUtil.itemBg, ThemeUtil.itemBg, 0, Utils.dp2px(15, this)
-            )
-        } else {
-            binding.tvBottomLike.text = "取消收藏"
-            binding.tvBottomLike.background = ThemeUtil.customShape(
-                ThemeUtil.disabledBg, ThemeUtil.disabledBg, 0, Utils.dp2px(15, this)
-            )
-        }
     }
 
     private fun showToast(message: String) {
-        ScpDialogs.snackbar(this, message)
+        ScpDialogs.snackbar(this, message, anchor = binding.bottomBar)
     }
 }

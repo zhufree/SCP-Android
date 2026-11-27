@@ -2,6 +2,7 @@ package info.free.scp.ui.detail
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
@@ -24,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -51,7 +53,7 @@ fun DetailToolbarActions(
         expanded = false
         onAction(action)
     }
-    Row {
+    Row(modifier = Modifier.fillMaxHeight(), verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = { onAction(DetailMenuAction.TOGGLE_LIKE) }) {
             Icon(
                 imageVector = if (liked) Icons.Filled.Star else Icons.Outlined.StarBorder,

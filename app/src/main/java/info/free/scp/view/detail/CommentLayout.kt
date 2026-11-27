@@ -8,8 +8,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import info.free.scp.R
+import com.google.android.material.color.MaterialColors
 import info.free.scp.bean.CommentModel
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
@@ -28,6 +27,7 @@ class CommentLayout : LinearLayout {
     private val accentWidth = Utils.dp2px(2, context)
     private val smallGap = Utils.dp2px(4, context)
     private val replyIndent = Utils.dp2px(14, context)
+    private val dividerView = android.view.View(context)
     private val titleView = TextView(context)
     private val metaRow = LinearLayout(context)
     private val usernameView = TextView(context)
@@ -42,16 +42,16 @@ class CommentLayout : LinearLayout {
 
     private fun initView() {
         orientation = VERTICAL
-        setPadding(smallGap, smallGap, smallGap, 0)
+        addView(dividerView, LayoutParams(MATCH_PARENT, Utils.dp2px(1, context)))
 
         titleView.apply {
-            textSize = 18f
+            textSize = 15f
             setTypeface(typeface, android.graphics.Typeface.BOLD)
         }
-        addView(titleView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
+        addView(titleView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { topMargin = Utils.dp2px(10, context) })
 
         metaRow.orientation = HORIZONTAL
-        usernameView.textSize = 14f
+        usernameView.textSize = 12f
         timeView.textSize = 12f
         metaRow.addView(usernameView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
         metaRow.addView(
@@ -71,7 +71,8 @@ class CommentLayout : LinearLayout {
         )
 
         contentColumn.orientation = VERTICAL
-        contentView.textSize = 16f
+        contentView.textSize = 15f
+        contentView.setLineSpacing(0f, 1.5f)
         contentColumn.addView(contentView, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
         replyContainer.orientation = VERTICAL
         contentColumn.addView(
@@ -84,13 +85,19 @@ class CommentLayout : LinearLayout {
         contentRow.addView(contentColumn, LayoutParams(0, WRAP_CONTENT, 1f))
         addView(
             contentRow,
-            LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { topMargin = smallGap }
+            LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
+                topMargin = smallGap
+                bottomMargin = Utils.dp2px(10, context)
+            }
         )
 
         refreshTheme()
     }
 
-    fun setData(comment: CommentModel) {
+    /** 顶层评论用分隔线隔开；回复缩进，左侧带一条强调线。 */
+    fun setData(comment: CommentModel, isReply: Boolean = false) {
+        dividerView.visibility = if (isReply) GONE else VISIBLE
+        accentView.visibility = if (isReply) VISIBLE else GONE
         titleView.visibility = if (comment.title.isEmpty()) GONE else VISIBLE
         titleView.text = comment.title
         usernameView.text = comment.username
@@ -103,7 +110,7 @@ class CommentLayout : LinearLayout {
         contentView.post {
             comment.reply.forEach { reply ->
                 val replyLayout = CommentLayout(context)
-                replyLayout.setData(reply)
+                replyLayout.setData(reply, isReply = true)
                 replyContainer.addView(replyLayout, replyLp)
                 replyList.add(replyLayout)
             }
@@ -111,6 +118,7 @@ class CommentLayout : LinearLayout {
     }
 
     fun refreshTheme() {
+        dividerView.setBackgroundColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOutlineVariant))
         titleView.setTextColor(ThemeUtil.darkText)
         contentView.setTextColor(ThemeUtil.darkText)
         usernameView.setTextColor(ThemeUtil.mediumText)

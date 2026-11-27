@@ -107,6 +107,13 @@ Manifest 将 `MainActivity` 声明为 LAUNCHER，并注册了 `FileProvider`（`
 3. `loadDetail(link)` 按模式走离线 `DetailDao` 或在线 `/get_detail`；结果汇入 `DetailUiState`（`document`、`content`、`tag`、`comments`、`isOfflineReadingEnabled`）。
 4. `DetailActivity` 观察状态，调用 `DetailHtmlComposer` 生成 HTML，写入 WebView；收藏/已读/待读/上下篇等操作回到 `DetailViewModel`，并同时增加阅读积分。
 
+阅读页界面（`view/detail/`）：
+
+- 正文滚动区铺满页面，顶栏（返回、标题、收藏星标、⋮ 菜单；网页模式带“网页模式”副标题）和底栏（上一篇、评论、标记已读、下一篇，顶部 2dp 阅读进度线）盖在上下两端，滚动区的上下留白等于两栏高度。收藏只在顶栏星标，评论入口只在底栏。
+- 向下滚动时两栏收起（进度线留在手势条上方），向上滚动、到顶、到文末或内容不足一屏时展开，规则在 `ReadingBarsPolicy`。
+- `FastScrollView` 是叠在右缘的快速滚动条，滚动时出现、拖动时显示百分比、停手约 1.5 秒后淡出；它只在滑块可见时拦截触摸，并申请手势排除区。进度按整篇内容高度换算（`ReadingScroll`）。
+- 文末依次是评分（网页内，样式见 `style.css` 的 `.page-rate-widget-box`，颜色由 `DetailHtmlComposer` 注入）、标签芯片和评论。图片分享只绘制正文容器，不含两栏和滚动条。
+
 ## 4. 主题
 
 `ScpApplication` 初始化 `ThemeUtil`，从偏好读取应用内的日夜选择。用户在「我的」切换主题时，`MainActivity.refreshTheme()` 向三个主 Fragment 传播，Compose 通过 `themeVersion` 触发重组。应用主题独立于系统深色模式。
@@ -116,7 +123,7 @@ Manifest 将 `MainActivity` 声明为 LAUNCHER，并注册了 `FileProvider`（`
 - **View 侧**：`DayTheme` 和 `NightTheme` 分别继承 `Theme.Material3.Light.NoActionBar` 和 `Theme.Material3.Dark.NoActionBar`，提供 Material 3 角色和 `ThemeUtil` 使用的自定义属性。Manifest 的默认 `AppTheme` 继承 `DayTheme`。
 - **Compose 侧**：`MainTheme` 按 `ThemeUtil.currentTheme` 选择 `lightColorScheme` 或 `darkColorScheme`，两套色彩都从资源读取。新增页面使用 `MaterialTheme.colorScheme`。形状定义在 `ui/Shape.kt`。
 - `Scaffold` 的内容应使用其传入的 padding。固定高度的卡片内可用 `Row.fillMaxHeight()` 实现垂直居中。
-- 标题栏使用 `toolbarBg` 和 `onToolbar`。程序化 Toolbar 使用 `AppTheme.AppBarOverlay`，详情页把星标和溢出菜单放在 Toolbar 内的 `ComposeView` 中。
+- 标题栏使用 `toolbarBg` 和 `onToolbar`。程序化 Toolbar 使用 `AppTheme.AppBarOverlay`，详情页的标题和星标、溢出菜单（`ComposeView`）放在 Toolbar 内唯一的横向容器里，由它分配宽度。
 - `targetSdk 35+` 的应用在 Android 15+ 使用 edge-to-edge。`view/base/ActivityInsets.kt` 的 `keepContentInsideSystemBars()` 把内容放到系统栏内侧，并用窗口背景给状态栏区域画 `toolbarBg`、其余区域画 `containerBg`；`refreshSystemBars()` 负责状态栏/导航栏图标深浅，并在主题切换时刷新。新增 Activity 若不继承 `BaseActivity`，需要自己调用 `keepContentInsideSystemBars()`。
 - 启动主题为 `Theme.App.Splash`。Android 12+ 使用系统 SplashScreen 属性，API 21–30 使用 `windowBackground`。`BaseActivity.onCreate` 通过 `ThemeUtil.setTheme` 应用日夜主题。
 - Manifest 启用预测性返回。标题栏返回箭头调用 `finish()`，自定义返回逻辑使用 `OnBackPressedCallback`。
@@ -181,7 +188,7 @@ Compose 页面使用 `ui/common/Dialogs.kt` 中的 Material 3 组件，View 宿�
 
 - `ui/common/Dialogs.kt`：`ScpConfirmDialog`、`ScpInputDialog`、`ScpActionSheet`（`SheetAction` 可带图标、`destructive`）、`ScpDropdownMenu`、`ScpMenuItem`。
 - `util/ScpDialogs.kt`：提供 `showMessage`、`showChoice`、`showActionSheet`、`showInput` 和 `snackbar`。自定义内容可使用 `inputField` 与 `withDialogPadding`。
-- `ui/detail/DetailToolbarActions.kt`：详情页将星标和溢出菜单嵌入 Toolbar 的 `ComposeView`。菜单中的主题和阅读模式项显示切换的目标状态，动作映射定义在 `DetailMenuAction`。
+- `ui/detail/DetailToolbarActions.kt`：详情页将星标和溢出菜单放进顶栏动作区的 `ComposeView`。菜单中的主题和阅读模式项显示切换的目标状态，动作映射定义在 `DetailMenuAction`。
 
 **View 主题**：`DayTheme` 和 `NightTheme` 为对话框、底部面板、Snackbar 和弹出菜单设置主题属性。Compose 的 Snackbar 反色角色与 View 侧使用同一组 `md_*_inverse*` 颜色。
 

@@ -1,100 +1,87 @@
 package info.free.scp.view.detail
 
 import android.content.Context
-import android.view.ContextThemeWrapper
 import android.graphics.Typeface
+import android.text.TextUtils
+import android.util.TypedValue
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.webkit.WebView
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
-import android.widget.Space
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.Group
-import androidx.constraintlayout.widget.Guideline
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.content.ContextCompat
 import androidx.core.view.setPadding
 import androidx.core.widget.NestedScrollView
-import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBar
-import com.h6ah4i.android.widget.verticalseekbar.VerticalSeekBarWrapper
+import com.google.android.material.chip.ChipGroup
+import com.google.android.material.color.MaterialColors
 import info.free.scp.R
 import info.free.scp.util.ThemeUtil
 import info.free.scp.util.Utils
 
+/**
+ * 正文阅读页的 View 树：正文滚动区铺满整个页面，顶栏和底栏盖在上下两端；滚动区的上下留白等于两栏高度，
+ * 所以文章开头和结尾不会被遮住，而两栏收起/展开时正文不会跟着重排。
+ */
 class DetailActivityLayout private constructor(
-    val root: CoordinatorLayout,
+    val root: FrameLayout,
     val detailToolbar: Toolbar,
     val tvDetailToolbar: TextView,
+    val tvDetailSubtitle: TextView,
+    val toolbarActions: FrameLayout,
     val nsvWebWrapper: NestedScrollView,
-    val clDetailContainer: ConstraintLayout,
+    val detailContainer: LinearLayout,
     val webView: WebView,
-    val tvTagContainer: AppCompatTextView,
-    val gpShareContent: Group,
+    val tagSection: LinearLayout,
+    val tagsHeader: SectionHeader,
+    val tagGroup: ChipGroup,
+    val commentSection: LinearLayout,
+    val commentsHeader: SectionHeader,
     val llCommentContainer: LinearLayout,
-    val tvBottomPreview: AppCompatButton,
-    val tvBottomSetHasRead: AppCompatButton,
-    val tvBottomLike: AppCompatButton,
-    val tvBottomNext: AppCompatButton,
-    val btnComment: FloatingActionButton,
-    val sbDetail: VerticalSeekBar,
+    val llShareContent: LinearLayout,
+    val bottomBar: DetailBottomBar,
+    val fastScroll: FastScrollView,
     val pbLoading: ProgressBar
 ) {
+    /** 顶栏高度，也是正文滚动区的上留白。 */
+    val topBarHeight: Int get() = detailToolbar.layoutParams.height
+
+    /** 带进度线的底栏总高度，也是正文滚动区的下留白。 */
+    val bottomBarHeight: Int get() = bottomBar.barHeight + Utils.dp2px(2, root.context)
+
+    fun refreshTheme() {
+        tvDetailToolbar.setTextColor(ThemeUtil.onToolbar)
+        tvDetailSubtitle.setTextColor(ThemeUtil.onToolbar)
+        tagsHeader.refreshTheme()
+        commentsHeader.refreshTheme()
+        bottomBar.refreshTheme()
+        fastScroll.refreshTheme()
+    }
+
     companion object {
         fun create(context: Context): DetailActivityLayout {
-            val root = CoordinatorLayout(context).apply {
-                layoutParams = CoordinatorLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+            val root = FrameLayout(context).apply {
+                layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
                 setBackgroundColor(ThemeUtil.containerBg)
             }
-
-            // 与旧版布局里 AppBarLayout 的 android:theme 一致：标题和溢出菜单图标用浅色
-            val appBar = AppBarLayout(ContextThemeWrapper(context, R.style.AppTheme_AppBarOverlay)).apply {
-                id = R.id.ablToolbarWrapper
-                fitsSystemWindows = true
-            }
-            val toolbar = Toolbar(appBar.context).apply {
-                id = R.id.detail_toolbar
-                setBackgroundColor(ThemeUtil.toolbarBg)
-            }
-            val titleView = TextView(appBar.context).apply {
-                id = R.id.tv_detail_toolbar
-                ellipsize = android.text.TextUtils.TruncateAt.MARQUEE
-                isFocusable = true
-                isFocusableInTouchMode = true
-                marqueeRepeatLimit = -1
-                setSingleLine(true)
-                textSize = 18f
-                setTextColor(ThemeUtil.onToolbar)
-            }
-            // 右侧 96dp 留给收藏星标和溢出菜单（DetailToolbarActions），标题不要压到它们
-            toolbar.addView(
-                titleView,
-                Toolbar.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply { marginEnd = Utils.dp2px(96, context) }
-            )
-            appBar.addView(
-                toolbar,
-                AppBarLayout.LayoutParams(MATCH_PARENT, Utils.dp2px(56, context)).apply {
-                    scrollFlags = AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or
-                        AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS
-                }
-            )
-            root.addView(appBar, CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            val barHeight = Utils.dp2px(56, context)
+            val bottomBar = DetailBottomBar(context)
+            val bottomBarHeight = bottomBar.barHeight + Utils.dp2px(2, context)
 
             val scrollView = NestedScrollView(context).apply {
                 id = R.id.nsv_web_wrapper
+                isFillViewport = true
+                clipToPadding = false
+                setPadding(0, barHeight, 0, bottomBarHeight)
             }
-            val detailContainer = ConstraintLayout(context).apply {
+            val detailContainer = LinearLayout(context).apply {
                 id = R.id.cl_detail_container
-                minHeight = Utils.dp2px(500, context)
+                orientation = LinearLayout.VERTICAL
                 setBackgroundColor(ThemeUtil.containerBg)
             }
             val webView = WebView(context).apply {
@@ -103,264 +90,188 @@ class DetailActivityLayout private constructor(
                 isVerticalScrollBarEnabled = false
                 isHorizontalScrollBarEnabled = false
             }
-            detailContainer.addView(
-                webView,
-                ConstraintLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                    topToTop = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
+            detailContainer.addView(webView, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
 
-            val tagView = AppCompatTextView(context).apply {
+            val sidePadding = Utils.dp2px(16, context)
+            val tagsHeader = SectionHeader(context, R.string.reading_tags, R.string.reading_tags_en)
+            val tagGroup = ChipGroup(context).apply {
                 id = R.id.tv_tag_container
-                text = "\u8fd9\u91cc\u662f\u6807\u7b7e"
-                textAlignment = View.TEXT_ALIGNMENT_VIEW_START
-                setPadding(0, 0, 0, Utils.dp2px(8, context))
+                chipSpacingHorizontal = Utils.dp2px(8, context)
+                chipSpacingVertical = 0
             }
-            detailContainer.addView(
-                tagView,
-                ConstraintLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                    marginStart = Utils.dp2px(16, context)
-                    marginEnd = Utils.dp2px(16, context)
-                    topMargin = Utils.dp2px(16, context)
-                    topToBottom = R.id.webView
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
+            val tagSection = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                visibility = View.GONE
+                setPadding(sidePadding, Utils.dp2px(8, context), sidePadding, 0)
+                addView(tagsHeader, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+                addView(tagGroup, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            }
+            detailContainer.addView(tagSection, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
 
+            val commentsHeader = SectionHeader(context, R.string.reading_comments, R.string.reading_comments_en)
+            val commentContainer = LinearLayout(context).apply {
+                id = R.id.ll_comment_container
+                orientation = LinearLayout.VERTICAL
+            }
+            val commentSection = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                visibility = View.GONE
+                setPadding(sidePadding, Utils.dp2px(8, context), sidePadding, 0)
+                addView(commentsHeader, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+                addView(commentContainer, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            }
+            detailContainer.addView(commentSection, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+
+            // 图片分享才会显示的二维码区域
             val shareNotice = TextView(context).apply {
                 id = R.id.tv_share_notice
                 gravity = Gravity.CENTER
-                text = "\u626b\u63cf\u4e8c\u7ef4\u7801\uff0c\u63a2\u7d22SCP\u57fa\u91d1\u4f1a\u7684\u79d8\u5bc6"
+                text = "扫描二维码，探索SCP基金会的秘密"
                 textSize = 16f
             }
-            detailContainer.addView(
-                shareNotice,
-                ConstraintLayout.LayoutParams(0, WRAP_CONTENT).apply {
-                    topMargin = Utils.dp2px(8, context)
-                    topToBottom = R.id.tv_tag_container
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
             val qrView = ImageView(context).apply {
                 id = R.id.iv_download_qrcode
                 contentDescription = context.getString(R.string.app_name)
                 setImageResource(R.drawable.download_qr)
             }
-            detailContainer.addView(
-                qrView,
-                ConstraintLayout.LayoutParams(Utils.dp2px(250, context), Utils.dp2px(250, context)).apply {
-                    topMargin = Utils.dp2px(4, context)
-                    topToBottom = R.id.tv_share_notice
-                    bottomToTop = R.id.s_blank_bottom
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            val shareGroup = Group(context).apply {
+            val shareContent = LinearLayout(context).apply {
                 id = R.id.gp_share_content
-                referencedIds = intArrayOf(R.id.tv_share_notice, R.id.iv_download_qrcode)
-                visibility = View.GONE
-            }
-            detailContainer.addView(shareGroup)
-
-            val commentContainer = LinearLayout(context).apply {
-                id = R.id.ll_comment_container
                 orientation = LinearLayout.VERTICAL
-                minimumHeight = Utils.dp2px(100, context)
+                gravity = Gravity.CENTER_HORIZONTAL
                 visibility = View.GONE
-                setPadding(
-                    Utils.dp2px(12, context),
-                    Utils.dp2px(8, context),
-                    Utils.dp2px(12, context),
-                    Utils.dp2px(64, context)
-                )
+                setPadding(0, Utils.dp2px(16, context), 0, Utils.dp2px(16, context))
+                addView(shareNotice, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
                 addView(
-                    TextView(context).apply {
-                        gravity = Gravity.CENTER
-                        text = "\u8bc4\u8bba\u52a0\u8f7d\u4e2d..."
-                        textSize = 20f
-                    },
-                    LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                        gravity = Gravity.CENTER_HORIZONTAL
+                    qrView,
+                    LinearLayout.LayoutParams(Utils.dp2px(250, context), Utils.dp2px(250, context)).apply {
+                        topMargin = Utils.dp2px(4, context)
                     }
                 )
             }
-            detailContainer.addView(
-                commentContainer,
-                ConstraintLayout.LayoutParams(0, WRAP_CONTENT).apply {
-                    topToBottom = R.id.tv_tag_container
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
+            detailContainer.addView(shareContent, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
 
-            val bottomSpace = Space(context).apply { id = R.id.s_blank_bottom }
-            detailContainer.addView(
-                bottomSpace,
-                ConstraintLayout.LayoutParams(MATCH_PARENT, Utils.dp2px(64, context)).apply {
-                    topToBottom = R.id.iv_download_qrcode
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            scrollView.addView(
-                detailContainer,
-                android.view.ViewGroup.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-            )
-            root.addView(
-                scrollView,
-                CoordinatorLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
-                    behavior = AppBarLayout.ScrollingViewBehavior()
-                }
-            )
-
-            val bottomBar = ConstraintLayout(context)
-            root.addView(
-                bottomBar,
-                CoordinatorLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT).apply {
-                    gravity = Gravity.BOTTOM
-                    topMargin = Utils.dp2px(16, context)
-                    bottomMargin = Utils.dp2px(16, context)
-                }
-            )
-
-            val previewButton = bottomButton(context, R.string.preview_article).apply {
-                id = R.id.tv_bottom_preview
-            }
-            bottomBar.addView(
-                previewButton,
-                ConstraintLayout.LayoutParams(Utils.dp2px(60, context), Utils.dp2px(30, context)).apply {
-                    marginStart = Utils.dp2px(16, context)
-                    bottomMargin = Utils.dp2px(4, context)
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            val guideline = Guideline(context).apply { id = R.id.gl_detail_center }
-            bottomBar.addView(
-                guideline,
-                ConstraintLayout.LayoutParams(0, MATCH_PARENT).apply {
-                    orientation = ConstraintLayout.LayoutParams.VERTICAL
-                    guideBegin = Utils.dp2px(206, context)
-                }
-            )
-
-            val readButton = bottomButton(context, R.string.set_has_read).apply {
-                id = R.id.tv_bottom_set_has_read
-            }
-            bottomBar.addView(
-                readButton,
-                ConstraintLayout.LayoutParams(Utils.dp2px(80, context), Utils.dp2px(30, context)).apply {
-                    bottomMargin = Utils.dp2px(4, context)
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                    startToStart = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            val likeButton = bottomButton(context, R.string.menu_like).apply {
-                id = R.id.tv_bottom_like
-                visibility = View.GONE
-            }
-            bottomBar.addView(
-                likeButton,
-                ConstraintLayout.LayoutParams(Utils.dp2px(80, context), Utils.dp2px(30, context)).apply {
-                    bottomMargin = Utils.dp2px(4, context)
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                    startToStart = R.id.gl_detail_center
-                }
-            )
-
-            val nextButton = bottomButton(context, R.string.next_article).apply {
-                id = R.id.tv_bottom_next
-            }
-            bottomBar.addView(
-                nextButton,
-                ConstraintLayout.LayoutParams(Utils.dp2px(60, context), Utils.dp2px(30, context)).apply {
-                    marginEnd = Utils.dp2px(16, context)
-                    bottomMargin = Utils.dp2px(4, context)
-                    bottomToBottom = ConstraintLayout.LayoutParams.PARENT_ID
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            val commentButton = FloatingActionButton(context).apply {
-                id = R.id.btn_comment
-                // 颜色交给 Material 3 主题的 FloatingActionButton 样式（primaryContainer / onPrimaryContainer）
-                setImageResource(R.drawable.baseline_textsms_white_24dp)
-            }
-            bottomBar.addView(
-                commentButton,
-                ConstraintLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                    marginEnd = Utils.dp2px(16, context)
-                    bottomMargin = Utils.dp2px(16, context)
-                    bottomToTop = R.id.tv_bottom_next
-                    endToEnd = ConstraintLayout.LayoutParams.PARENT_ID
-                }
-            )
-
-            val seekWrapper = VerticalSeekBarWrapper(context)
-            val seekBar = VerticalSeekBar(context).apply {
-                id = R.id.sb_detail
-                splitTrack = false
-                thumb = ContextCompat.getDrawable(context, R.drawable.ic_seekbar_thumb)
-                progressDrawable = ContextCompat.getDrawable(context, R.drawable.progress_bar)
-            }
-            seekWrapper.addView(seekBar, android.view.ViewGroup.LayoutParams(0, 0))
-            root.addView(
-                seekWrapper,
-                CoordinatorLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT).apply {
-                    gravity = Gravity.END
-                    topMargin = Utils.dp2px(48, context)
-                    bottomMargin = Utils.dp2px(16, context)
-                }
-            )
+            scrollView.addView(detailContainer, FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            root.addView(scrollView, FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT))
 
             val progress = ProgressBar(context, null, android.R.attr.progressBarStyle).apply {
                 id = R.id.pbLoading
             }
             root.addView(
                 progress,
-                CoordinatorLayout.LayoutParams(Utils.dp2px(40, context), Utils.dp2px(40, context)).apply {
+                FrameLayout.LayoutParams(Utils.dp2px(40, context), Utils.dp2px(40, context)).apply {
                     gravity = Gravity.CENTER
-                    topMargin = Utils.dp2px(60, context)
-                    bottomMargin = Utils.dp2px(60, context)
                 }
+            )
+
+            val fastScroll = FastScrollView(context).apply { id = R.id.fast_scroll }
+            fastScroll.bind(scrollView)
+            root.addView(
+                fastScroll,
+                FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT).apply {
+                    topMargin = barHeight
+                    bottomMargin = bottomBarHeight
+                }
+            )
+
+            // 与旧版布局里 AppBarLayout 的 android:theme 一致：标题和返回箭头用浅色
+            val toolbar = Toolbar(ContextThemeWrapper(context, R.style.AppTheme_AppBarOverlay)).apply {
+                id = R.id.detail_toolbar
+                setBackgroundColor(ThemeUtil.toolbarBg)
+                setContentInsetsRelative(Utils.dp2px(16, context), Utils.dp2px(4, context))
+            }
+            val titleView = TextView(toolbar.context).apply {
+                id = R.id.tv_detail_toolbar
+                ellipsize = TextUtils.TruncateAt.MARQUEE
+                isFocusable = true
+                isFocusableInTouchMode = true
+                marqueeRepeatLimit = -1
+                setSingleLine(true)
+                textSize = 18f
+                setTextColor(ThemeUtil.onToolbar)
+            }
+            val subtitleView = TextView(toolbar.context).apply {
+                id = R.id.tv_detail_subtitle
+                setSingleLine(true)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 11f)
+                setTextColor(ThemeUtil.onToolbar)
+                alpha = 0.78f
+                setText(R.string.reading_web_mode)
+                visibility = View.GONE
+            }
+            val titleColumn = LinearLayout(toolbar.context).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER_VERTICAL
+                addView(titleView, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+                addView(subtitleView, LinearLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT))
+            }
+            // 收藏星标和菜单（DetailToolbarActions 的 ComposeView）放在 actions 里
+            val actions = FrameLayout(toolbar.context)
+            // Toolbar 按顺序测量自定义子 View，先加的满宽 View 会把剩余宽度用光。所以只加这一个横向容器，
+            // 标题 weight=1、动作区 WRAP_CONTENT，由它自己分配宽度。
+            val toolbarContent = LinearLayout(toolbar.context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                gravity = Gravity.CENTER_VERTICAL
+                addView(titleColumn, LinearLayout.LayoutParams(0, WRAP_CONTENT, 1f))
+                addView(actions, LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT))
+            }
+            toolbar.addView(toolbarContent, Toolbar.LayoutParams(MATCH_PARENT, MATCH_PARENT))
+            root.addView(toolbar, FrameLayout.LayoutParams(MATCH_PARENT, barHeight, Gravity.TOP))
+            root.addView(
+                bottomBar,
+                FrameLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT, Gravity.BOTTOM)
             )
 
             return DetailActivityLayout(
                 root = root,
                 detailToolbar = toolbar,
                 tvDetailToolbar = titleView,
+                tvDetailSubtitle = subtitleView,
+                toolbarActions = actions,
                 nsvWebWrapper = scrollView,
-                clDetailContainer = detailContainer,
+                detailContainer = detailContainer,
                 webView = webView,
-                tvTagContainer = tagView,
-                gpShareContent = shareGroup,
+                tagSection = tagSection,
+                tagsHeader = tagsHeader,
+                tagGroup = tagGroup,
+                commentSection = commentSection,
+                commentsHeader = commentsHeader,
                 llCommentContainer = commentContainer,
-                tvBottomPreview = previewButton,
-                tvBottomSetHasRead = readButton,
-                tvBottomLike = likeButton,
-                tvBottomNext = nextButton,
-                btnComment = commentButton,
-                sbDetail = seekBar,
+                llShareContent = shareContent,
+                bottomBar = bottomBar,
+                fastScroll = fastScroll,
                 pbLoading = progress
             )
         }
+    }
 
-        private fun bottomButton(context: Context, textRes: Int): AppCompatButton {
-            return AppCompatButton(context).apply {
-                gravity = Gravity.CENTER
-                setPadding(0)
-                setText(textRes)
-                setTextColor(ThemeUtil.darkText)
-                setTypeface(typeface, Typeface.BOLD)
+    /** 文末小节标题：“标签 TAGS”“评论 COMMENTS”。 */
+    class SectionHeader(context: Context, zhRes: Int, enRes: Int) : LinearLayout(context) {
+        private val zh = TextView(context)
+        private val en = TextView(context)
+
+        init {
+            orientation = HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            minimumHeight = Utils.dp2px(32, context)
+            zh.apply {
+                setText(zhRes)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
+                typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
             }
+            en.apply {
+                setText(enRes)
+                setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f)
+                typeface = Typeface.MONOSPACE
+                letterSpacing = 0.12f
+            }
+            addView(zh, LayoutParams(WRAP_CONTENT, WRAP_CONTENT))
+            addView(en, LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply { marginStart = Utils.dp2px(8, context) })
+            refreshTheme()
+        }
+
+        fun refreshTheme() {
+            zh.setTextColor(MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface))
+            en.setTextColor(ThemeUtil.mediumText)
         }
     }
 }

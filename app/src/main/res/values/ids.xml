@@ -5,6 +5,7 @@
     <item name="ablToolbarWrapper" type="id" />
     <item name="detail_toolbar" type="id" />
     <item name="tv_detail_toolbar" type="id" />
+    <item name="tv_detail_subtitle" type="id" />
     <item name="nsv_web_wrapper" type="id" />
     <item name="cl_detail_container" type="id" />
     <item name="webView" type="id" />
@@ -13,14 +14,11 @@
     <item name="tv_share_notice" type="id" />
     <item name="iv_download_qrcode" type="id" />
     <item name="ll_comment_container" type="id" />
-    <item name="s_blank_bottom" type="id" />
     <item name="tv_bottom_preview" type="id" />
-    <item name="gl_detail_center" type="id" />
     <item name="tv_bottom_set_has_read" type="id" />
-    <item name="tv_bottom_like" type="id" />
     <item name="tv_bottom_next" type="id" />
     <item name="btn_comment" type="id" />
-    <item name="sb_detail" type="id" />
+    <item name="fast_scroll" type="id" />
     <item name="pbLoading" type="id" />
     <item name="like" type="id" />
     <item name="change_theme" type="id" />

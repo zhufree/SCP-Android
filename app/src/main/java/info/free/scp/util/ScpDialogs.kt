@@ -214,10 +214,25 @@ object ScpDialogs {
     }
 
     /** 在当前页面底部弹出 M3 Snackbar，用来替代 Toast。页面即将关闭时的提示请继续用 Toast。 */
-    fun snackbar(activity: AppCompatActivity, message: CharSequence) {
+    fun snackbar(activity: AppCompatActivity, message: CharSequence, anchor: View? = null) {
         val root = activity.findViewById<View>(android.R.id.content) ?: return
         val duration = if (message.length > 16) Snackbar.LENGTH_LONG else Snackbar.LENGTH_SHORT
-        Snackbar.make(root, message, duration).show()
+        Snackbar.make(root, message, duration).also { if (anchor != null) it.setAnchorView(anchor) }.show()
+    }
+
+    /** 带一个动作按钮（如“撤销”）的 Snackbar；[anchor] 不为空时显示在它上方。返回 Snackbar 以便页面切换时关闭。 */
+    fun snackbar(
+        activity: AppCompatActivity,
+        message: CharSequence,
+        actionText: CharSequence,
+        anchor: View? = null,
+        onAction: () -> Unit
+    ): Snackbar? {
+        val root = activity.findViewById<View>(android.R.id.content) ?: return null
+        return Snackbar.make(root, message, Snackbar.LENGTH_LONG)
+            .setAction(actionText) { onAction() }
+            .also { if (anchor != null) it.setAnchorView(anchor) }
+            .also { it.show() }
     }
 
     private fun resolveColor(context: Context, @AttrRes attr: Int): Int {

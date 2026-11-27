@@ -49,7 +49,15 @@
     <string name="next_article">下一篇</string>
     <string name="preview_article">上一篇</string>
     <string name="set_has_read">标记已读</string>
-    <string name="set_has_not_read">取消已读</string>
+    <string name="has_read">已读</string>
+    <string name="read_marked">已标记为已读</string>
+    <string name="read_unmarked">已取消已读</string>
+    <string name="undo">撤销</string>
+    <string name="reading_comments">评论</string>
+    <string name="reading_comments_en">COMMENTS</string>
+    <string name="reading_tags">标签</string>
+    <string name="reading_tags_en">TAGS</string>
+    <string name="reading_web_mode">网页模式</string>
 
     <!--列表操作项-->
     <string name="menu_reverse">逆序</string>

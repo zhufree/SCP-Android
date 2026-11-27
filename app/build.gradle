@@ -123,7 +123,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.4'
-    implementation 'com.h6ah4i.android.widget.verticalseekbar:verticalseekbar:1.0.0'
 //    implementation 'com.youth.banner:banner:2.1.0'
 
     // firebase

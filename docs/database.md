@@ -153,4 +153,4 @@ SAF 整库文件支持 v0 和 v2。暂存文件经只读完整性、列与类型
 目录库在冷启动时整体替换，正文可按块合并。用户库中的链接状态通过 7→8 保留。单篇目录查询先查规范键，失败后兼容大小写和旧的 `#pages` 后缀。
 
 - 目录库与正文库的内容来自对 SCP 基金会中文站（`http://scp-wiki-cn.wikidot.com`，`SCPConstants.SCP_SITE_URL`）的抓取，抓取工具为 SCP-Spider。
-- 应用通过 SCP-Spider Release 上的固定 `manifest.json` 检查数据更新，再用清单的标签和文件名拼接 HTTPS 下载地址。分发契约见 [数据 Release](build-and-release.md#数据-release)。
+- 应用优先从 R2 检查和下载数据更新，失败时回退至 GitHub Release。分发契约见 [数据 Release](build-and-release.md#数据-release)。

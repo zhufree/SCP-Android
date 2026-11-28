@@ -94,11 +94,10 @@ versionName = '0.3.5'
 
 ## 数据 Release
 
-- 固定清单地址为 `https://github.com/zhufree/SCP-Spider/releases/latest/download/manifest.json`。清单、目录库和全部正文块随同一个 `db-YYYYMMDD-N` Release 发布。每个资产的 `release_tag` 必须等于清单顶层的 `tag`。已安装的块按块 ID 匹配，`parts_version` 和 `content_digest` 都相同时跳过下载。重新发布已有块文件时，清单用 `part_export_id` 保留该块自身的导出 ID，供 Android 校验。
-- 清单上限 64 KiB，目录压缩包和原始库各限 50 MiB，正文块各限 200 MiB。安装正文块至少需要原始大小的三倍加 50 MiB 可用空间。下载地址由已校验的 `release_tag` 和 `name` 生成。
-- `parts_version` 描述分块规则，独立于 `manifest_version` 和 `contract_version`。`parts_version: 2` 使用 `scp-en`（英文 SCP）、`tales-cn`（中文故事）、`scp-cn`（中文 SCP）、`creative`（英文故事与其他创作）和 `library`（资料、竞赛与国际分部）。Android 从清单读取块 ID、顺序和数量，并核对 SQLite 块的 `spider_meta.parts_version`。
-- 「数据更新」的「下载全部正文」逐块执行单块下载、校验和事务合并，按块重新检查网络和空间。已是最新的块直接跳过，超限块会提示并跳过。单块失败后继续尝试后续块，重试时按本地安装状态重新计算。取消后保留已提交的块，正在合并的事务会运行至结束。
-- 资源下载允许重定向到 `release-assets.githubusercontent.com` 和 `objects.githubusercontent.com`。固定清单地址允许跳转到同仓库带标签的 `manifest.json`。更新请求使用 HTTPS。
+- App 优先从 R2 获取清单（`https://scp-data.zhufree.fun/latest/manifest.json`）和资产（`https://scp-data.zhufree.fun/<release_tag>/<name>`）。连接、响应或校验失败时回退到 [GitHub Release](https://github.com/zhufree/SCP-Spider/releases/latest/download/manifest.json)。GitHub 的资源重定向限同仓库带标签的清单及 `release-assets.githubusercontent.com`、`objects.githubusercontent.com` 两个资源域名。全程使用 HTTPS。
+- 每次发布先上传两边的同一套 `db-YYYYMMDD-N` 资产，再同步更新两边的固定清单并清除 R2 旧清单缓存。App 直接采用有效的 R2 清单，能否发现新版本取决于两个入口同步发布。资产 `release_tag` 须等于清单的 `tag`，复用正文块时保留其原始 `part_export_id`。
+- 清单上限 64 KiB，目录和正文块的压缩包与原始库分别限 50 MiB、200 MiB。压缩包和原始库均校验大小与 SHA-256。安装正文块需原始大小的三倍加 50 MiB 可用空间。
+- `parts_version` 描述分块规则，独立于 `manifest_version` 和 `contract_version`。版本 2 使用 `scp-en`（英文 SCP）、`tales-cn`（中文故事）、`scp-cn`（中文 SCP）、`creative`（英文故事与其他创作）和 `library`（资料、竞赛与国际分部）。Android 按清单提供的顺序逐块安装，跳过本地 `parts_version` 和 `content_digest` 均匹配的块。重试只补仍需安装的块，取消时完成已经开始的合并事务。
 
 ## 主题配色、启动页与图标
 

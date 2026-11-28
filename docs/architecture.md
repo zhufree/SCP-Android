@@ -81,7 +81,7 @@ Manifest 将 `MainActivity` 声明为 LAUNCHER，并注册了 `FileProvider`（`
   - `UpdateManager.getConfig()` 读 `config` 节点：`app_version`（与 `BuildConfig.VERSION_CODE` 比较，较大则弹更新对话框）、`update_desc`、`update_link`、`notice`、`api_url`、`query_link`。
   - `FireViewModel` 读 `games`、`portals` 节点（游戏列表、站点传送门）。
 
-`UpdateManager.checkAppData()` 和“设置 → 检查数据更新”共享 `DataUpdates`。常规联网检查间隔为 24 小时，设置页可读取上次有效清单。如果本地已有清单但无法解析，下次联网检查会立即重新拉取，包括启动时的自动检查。目录库在不计费网络自动下载，计费网络需要用户确认。正文只在点击时下载，默认仅 Wi-Fi，可在设置中关闭。下载进度与待冷启动安装状态通过 `StateFlow` 显示。
+`UpdateManager.checkAppData()` 和“设置 → 检查数据更新”共享 `DataUpdates`。自动联网检查间隔为 24 小时，设置页可主动检查或读取上次有效清单。如果本地已有清单但无法解析，下次联网检查会立即重新拉取，包括启动时的自动检查。目录库在不计费网络自动下载，计费网络需要用户确认。正文只在点击时下载，默认仅 Wi-Fi，可在设置中关闭。下载进度与待冷启动安装状态通过应用级 `StateFlow` 显示。下载期间设置页保持常亮，离开页面后进程内任务继续运行，后台运行和息屏联网受系统限制。
 
 正文合并使用独立 SQLite 连接，以块文件为主库，`ATTACH` 本地正文库后执行一个写事务。失败时自动改为游标分批复制，行上限约 2 MB。分块合并与整库 SAF 导入使用同一互斥锁。
 

@@ -20,15 +20,21 @@ internal const val CATEGORY_LIMIT = 50 * MIB
 internal const val PART_LIMIT = 200 * MIB
 internal const val CHECK_INTERVAL = 24L * 60 * 60 * 1000
 internal const val MANIFEST_URL = "https://github.com/zhufree/SCP-Spider/releases/latest/download/manifest.json"
+private const val R2_BASE = "https://scp-data.zhufree.fun/"
+internal const val R2_MANIFEST_URL = R2_BASE + "latest/manifest.json"
 private const val RELEASE_BASE = "https://github.com/zhufree/SCP-Spider/releases/download/"
 private val segment = Regex("[A-Za-z0-9][A-Za-z0-9._-]{0,199}")
 private val digestPattern = Regex("[0-9a-f]{64}")
-// 待确认：首次公开 Release 时核对 GitHub 实际返回的资源域名。
 internal val GITHUB_RESOURCE_HOSTS = setOf("release-assets.githubusercontent.com", "objects.githubusercontent.com")
 
 internal fun releaseUrl(tag: String, name: String): URI {
     require(segment.matches(tag) && segment.matches(name)) { "发布标签或文件名无效" }
     return URI(RELEASE_BASE + tag + "/" + name)
+}
+
+internal fun r2ReleaseUrl(tag: String, name: String): URI {
+    require(segment.matches(tag) && segment.matches(name)) { "发布标签或文件名无效" }
+    return URI(R2_BASE + tag + "/" + name)
 }
 
 internal fun isReleaseUrl(uri: URI): Boolean {
@@ -44,9 +50,9 @@ internal fun allowedRedirect(target: URI, hosts: Set<String> = GITHUB_RESOURCE_H
         (target.port == -1 || target.port == 443) && target.rawFragment == null
 
 internal fun allowedDownloadRedirect(from: URI, to: URI): Boolean =
-    allowedRedirect(to) ||
-        // GitHub may resolve latest to a tagged download on its release origin before the CDN hop.
-        (from.toString() == MANIFEST_URL && isReleaseUrl(to) && to.path.endsWith("/manifest.json"))
+    (from.toString() == MANIFEST_URL || isReleaseUrl(from) || allowedRedirect(from)) &&
+        (allowedRedirect(to) ||
+            (from.toString() == MANIFEST_URL && isReleaseUrl(to) && to.path.endsWith("/manifest.json")))
 
 internal data class CatalogVersion(val exportId: String, val exportedAt: String, val contractVersion: String) {
     companion object {
@@ -93,6 +99,16 @@ internal fun sameCatalogExport(a: CatalogVersion, b: CatalogVersion): Boolean =
     a.exportId == b.exportId && a.contractVersion == b.contractVersion &&
         timestamp(a.exportedAt) == timestamp(b.exportedAt)
 
+/** 界面显示用的本地日期；内置旧版或没有有效日期时返回 null。 */
+internal fun catalogDate(version: CatalogVersion, zone: TimeZone = TimeZone.getDefault()): String? {
+    if (version == CatalogVersion.Legacy) return null
+    val seconds = runCatching { timestamp(version.exportedAt).first }.getOrNull()
+    if (seconds == null || seconds !in 1..MAX_DISPLAY_SECONDS) return null
+    return SimpleDateFormat("yyyy-MM-dd", Locale.ROOT).apply { timeZone = zone }.format(Date(seconds * 1000))
+}
+
+// 9999-12-31T00:00:00Z
+private const val MAX_DISPLAY_SECONDS = 253_402_214_400L
 private val unixSeconds = Regex("-?[0-9]+")
 private val isoTimestamp = Regex(
     """(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,9}))?(Z|[+-]\d{2}:\d{2})"""
@@ -216,7 +232,9 @@ internal fun sha256(file: File, checkCancelled: () -> Unit = {}): String {
 }
 
 internal fun verifySha256(file: File, expected: String, checkCancelled: () -> Unit = {}) {
-    require(digestPattern.matches(expected) && sha256(file, checkCancelled) == expected) { "数据文件 SHA-256 不匹配" }
+    if (!digestPattern.matches(expected) || sha256(file, checkCancelled) != expected) {
+        throw ReleaseSourceFailure("数据文件 SHA-256 不匹配")
+    }
 }
 
 internal fun enoughPartSpace(rawSize: Long, availableBytes: Long): Boolean =

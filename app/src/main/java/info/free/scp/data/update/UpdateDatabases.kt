@@ -66,7 +66,7 @@ internal fun copyBounded(input: InputStream, target: File, limit: Long, onBytes:
             val count = input.read(buffer)
             if (count == -1) break
             total += count
-            require(total <= limit) { "数据文件超出大小限制" }
+            if (total > limit) throw ReleaseSourceFailure("数据文件超出大小限制")
             output.write(buffer, 0, count)
             onBytes(total)
         }
@@ -105,7 +105,7 @@ internal class UpdateDatabases(private val context: Context) {
         return File.createTempFile("scp-update-", ".db", directory)
     }
 
-    fun prepareCatalog(file: File, expected: CatalogVersion) {
+    fun prepareCatalog(file: File, expected: CatalogVersion, beforeStaging: () -> Unit) {
         openSqlite(file).use { db ->
             require(db.scalar("PRAGMA user_version") == "0") { "目录库 user_version 必须为 0" }
             require(db.scalar("PRAGMA quick_check") == "ok") { "目录库完整性检查失败" }
@@ -123,6 +123,7 @@ internal class UpdateDatabases(private val context: Context) {
         try {
             file.copyTo(checkFile, overwrite = true)
             probeCatalog(checkFile)
+            beforeStaging()
             moveFile(file, catalogSwap.staging)
             check(prefs.edit().putBoolean(CATALOG_PENDING, true).commit()) { "无法保存目录库待安装标记" }
         } finally {

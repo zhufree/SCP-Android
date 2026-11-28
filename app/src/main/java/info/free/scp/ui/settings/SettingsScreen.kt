@@ -1,5 +1,9 @@
 package info.free.scp.ui.settings
 
+import android.os.SystemClock
+import android.text.format.DateUtils
+import android.text.format.Formatter
+
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,7 +17,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,13 +43,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
@@ -55,15 +62,22 @@ import androidx.compose.ui.unit.sp
 import info.free.scp.R
 import info.free.scp.SCPConstants
 import info.free.scp.data.settings.DETAIL_TEXT_SIZES
-import info.free.scp.data.update.CatalogVersion
 import info.free.scp.data.update.DataUpdateState
 import info.free.scp.data.update.DetailPart
 import info.free.scp.data.update.MIB
 import info.free.scp.data.update.PartAction
+import info.free.scp.data.update.TransferKind
+import info.free.scp.data.update.TransferPhase
+import info.free.scp.data.update.TransferProgress
+import info.free.scp.data.update.catalogDate
 import info.free.scp.data.update.pendingPartDownloads
 import info.free.scp.ui.common.ContainerShape
 import info.free.scp.ui.common.outlinedContainerBorder
 import info.free.scp.ui.common.outlinedContainerColors
+import kotlinx.coroutines.delay
+
+// The category and reading groups each occupy two LazyColumn items.
+private const val DATA_UPDATE_HEADING_INDEX = 4
 
 @Composable
 internal fun SettingsScreen(
@@ -80,10 +94,16 @@ internal fun SettingsScreen(
     onWifiOnlyChange: (Boolean) -> Unit,
     onInstallPart: (String) -> Unit,
     onInstallAllParts: () -> Unit,
-    onCancelPartBatch: () -> Unit,
+    onCancelDownload: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val transferKind = updateState.transfer?.kind
+    LaunchedEffect(transferKind) {
+        if (transferKind != null) listState.animateScrollToItem(DATA_UPDATE_HEADING_INDEX)
+    }
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background),
@@ -116,7 +136,7 @@ internal fun SettingsScreen(
         item { GroupLabel(stringResource(R.string.settings_group_data_update)) }
         item {
             GroupCard {
-                UpdateRow(state = updateState, onCheck = onCheckUpdate)
+                UpdateRow(state = updateState, onCheck = onCheckUpdate, onCancel = onCancelDownload)
                 RowDivider()
                 SwitchRow(
                     title = stringResource(R.string.settings_wifi_only),
@@ -147,7 +167,7 @@ internal fun SettingsScreen(
                 if (updateState.parts.isEmpty()) {
                     EmptyParts()
                 } else {
-                    PartBatchRow(updateState, onInstallAllParts, onCancelPartBatch)
+                    PartBatchRow(updateState, onInstallAllParts)
                 }
             }
         }
@@ -357,15 +377,14 @@ private fun HanzRow(hanzType: Int, onChange: (Int) -> Unit) {
 }
 
 @Composable
-private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit) {
+private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit, onCancel: () -> Unit) {
     val mono = FontFamily.Monospace
-    val catalogLine = when (val catalog = state.catalog) {
-        CatalogVersion.Legacy -> stringResource(R.string.settings_catalog_legacy)
-        null -> stringResource(R.string.settings_catalog_unknown)
-        else -> stringResource(R.string.settings_catalog_version, catalog.exportId, catalog.exportedAt.take(10))
-    }
+    val legacyDate = stringResource(R.string.settings_catalog_date_legacy)
+    val catalogLine = state.catalog?.let {
+        stringResource(R.string.settings_catalog_version, catalogDate(it) ?: legacyDate)
+    } ?: stringResource(R.string.settings_catalog_unknown)
     val pendingLine = state.stagedCatalog?.let {
-        stringResource(R.string.settings_catalog_pending, it.exportId, it.exportedAt.take(10))
+        stringResource(R.string.settings_catalog_pending, catalogDate(it) ?: legacyDate)
     }
     Column {
         Row(
@@ -396,7 +415,7 @@ private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit) {
                         fontFamily = mono
                     )
                 }
-                if (state.partBatch == null && state.status.isNotEmpty()) {
+                if (state.transfer == null && state.status.isNotEmpty()) {
                     Text(
                         text = state.status,
                         color = if (state.failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
@@ -406,24 +425,111 @@ private fun UpdateRow(state: DataUpdateState, onCheck: () -> Unit) {
             }
             Box(modifier = Modifier.padding(start = 12.dp), contentAlignment = Alignment.Center) {
                 if (state.busy) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.5.dp)
+                    if (state.transfer == null) {
+                        CircularProgressIndicator(modifier = Modifier.size(24.dp), strokeWidth = 2.5.dp)
+                    }
                 } else {
                     FilledTonalButton(onClick = onCheck) {
                         Text(
                             text = stringResource(
-                                if (state.failed && state.partBatch == null) R.string.settings_check_retry else R.string.settings_check_action
+                                if (state.failed &&
+                                    (state.lastTransferKind == null || state.lastTransferKind == TransferKind.CATALOG)
+                                ) {
+                                    R.string.settings_check_retry
+                                } else R.string.settings_check_action
                             )
                         )
                     }
                 }
             }
         }
-        if (state.busy) {
+        val transfer = state.transfer
+        if (transfer != null) {
+            UpdateTransferRow(transfer, state.cancellingDownload, onCancel)
+        } else if (state.busy) {
             LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             )
+        }
+    }
+}
+
+@Composable
+private fun UpdateTransferRow(progress: TransferProgress, cancelling: Boolean, onCancel: () -> Unit) {
+    val context = LocalContext.current
+    val phaseLabel = when {
+        cancelling && progress.phase == TransferPhase.MERGING -> R.string.settings_transfer_cancel_after_merge
+        cancelling -> R.string.settings_transfer_cancelling
+        progress.switchingSource -> R.string.settings_transfer_switching
+        progress.phase == TransferPhase.MERGING -> R.string.settings_transfer_merging
+        progress.phase == TransferPhase.VERIFYING -> R.string.settings_transfer_verifying
+        else -> R.string.settings_transfer_downloading
+    }
+    val showActivity = cancelling || progress.switchingSource || progress.phase != TransferPhase.DOWNLOADING
+    val sampleTime = progress.rateSampleElapsedMillis
+    val rateIsCurrent by produceState(initialValue = false, key1 = sampleTime) {
+        val remaining = sampleTime?.let { 3_000 - (SystemClock.elapsedRealtime() - it) } ?: 0
+        value = remaining > 0
+        if (remaining > 0) {
+            delay(remaining)
+            value = false
+        }
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 12.dp, bottom = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = if (progress.kind == TransferKind.CATALOG) {
+                    stringResource(R.string.settings_transfer_catalog)
+                } else {
+                    stringResource(
+                        R.string.settings_parts_batch_progress,
+                        progress.partIndex, progress.partCount, progress.partLabel
+                    )
+                },
+                modifier = Modifier.weight(1f).padding(end = 8.dp),
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 14.sp
+            )
+            FilledTonalButton(onClick = onCancel, enabled = !cancelling) {
+                Text(stringResource(R.string.settings_parts_batch_cancel))
+            }
+        }
+        LinearProgressIndicator(progress = { progress.fraction }, modifier = Modifier.fillMaxWidth())
+        Text(
+            text = stringResource(
+                R.string.settings_transfer_bytes, progress.percent,
+                progress.receivedBytes.toDouble() / MIB,
+                progress.totalBytes.toDouble() / MIB
+            ),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 13.sp
+        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            if (showActivity) {
+                CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp)
+            }
+            Text(stringResource(phaseLabel), fontSize = 13.sp)
+        }
+        if (!cancelling && rateIsCurrent) {
+            progress.bytesPerSecond?.let { speed ->
+                val rate = Formatter.formatFileSize(context, speed)
+                val eta = progress.remainingSeconds
+                Text(
+                    text = if (eta == null) stringResource(R.string.settings_transfer_rate, rate)
+                    else stringResource(R.string.settings_transfer_rate_eta, rate, DateUtils.formatElapsedTime(eta)),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp
+                )
+            }
         }
     }
 }
@@ -490,12 +596,12 @@ private fun EmptyParts() {
 }
 
 @Composable
-private fun PartBatchRow(state: DataUpdateState, onInstall: () -> Unit, onCancel: () -> Unit) {
+private fun PartBatchRow(state: DataUpdateState, onInstall: () -> Unit) {
     val pending = pendingPartDownloads(state.parts, state.partActions)
     val skipped = state.partActions.values.count { it == PartAction.TOO_LARGE }
-    val batch = state.partBatch
-    val active = batch?.takeIf { state.busy }
-    val downloadBytes = active?.downloadBytes ?: pending.sumOf { it.file.size }
+    val downloadBytes = state.transfer?.takeIf { it.kind == TransferKind.ALL_PARTS }?.totalBytes
+        ?: pending.sumOf { it.file.size }
+    val retry = state.failed && state.lastTransferKind == TransferKind.ALL_PARTS
 
     Column(
         modifier = Modifier
@@ -509,29 +615,9 @@ private fun PartBatchRow(state: DataUpdateState, onInstall: () -> Unit, onCancel
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 13.sp
             )
-            if (active == null) {
-                Button(onClick = onInstall, enabled = canInstallParts(state) && pending.isNotEmpty()) {
-                    Text(stringResource(R.string.settings_parts_batch_download))
-                }
-            } else {
-                FilledTonalButton(onClick = onCancel) {
-                    Text(stringResource(R.string.settings_parts_batch_cancel))
-                }
+            Button(onClick = onInstall, enabled = canInstallParts(state) && pending.isNotEmpty()) {
+                Text(stringResource(if (retry) R.string.settings_transfer_retry else R.string.settings_parts_batch_download))
             }
-        }
-        if (active != null && active.index > 0) {
-            Text(
-                text = stringResource(R.string.settings_parts_batch_progress, active.index, active.total, active.label),
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp
-            )
-        }
-        if (batch != null && state.status.isNotEmpty()) {
-            Text(
-                text = state.status,
-                color = if (state.failed) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                fontSize = 13.sp
-            )
         }
         if (skipped > 0) {
             Text(

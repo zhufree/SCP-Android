@@ -1,6 +1,7 @@
 package info.free.scp.view.user
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import info.free.scp.R
 import info.free.scp.ScpApplication
 import info.free.scp.components.CommonTopBar
@@ -26,6 +30,9 @@ import info.free.scp.ui.settings.SettingsScreen
 import info.free.scp.util.EventUtil
 import info.free.scp.util.UpdateManager
 import info.free.scp.view.base.BaseActivity
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 
 class SettingsActivity : BaseActivity() {
     private val updates get() = ScpApplication.dataUpdates
@@ -34,6 +41,18 @@ class SettingsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val flag = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                try {
+                    updates.state.map { it.transfer != null }.distinctUntilChanged().collect { active ->
+                        if (active) window.addFlags(flag) else window.clearFlags(flag)
+                    }
+                } finally {
+                    window.clearFlags(flag)
+                }
+            }
+        }
         setContent {
             MainTheme {
                 val updateState by updates.state.collectAsState()
@@ -75,7 +94,7 @@ class SettingsActivity : BaseActivity() {
                         },
                         onInstallPart = { updates.installPart(it) },
                         onInstallAllParts = { updates.installAllParts() },
-                        onCancelPartBatch = { updates.cancelPartBatch() }
+                        onCancelDownload = { updates.cancelDownload() }
                     )
                 }
             }
